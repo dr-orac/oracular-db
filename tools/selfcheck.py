@@ -163,15 +163,20 @@ if not js.rstrip().endswith(("}", ";", ")")):
     warn("app.js does not end with } ; or ) — possible truncation")
 
 # ---------------------------------------------------------------- 7. soft: token drift
-# component hex colors that aren't part of the token palette (encourage var(--..) use)
+# Precise check: flag a hex used OUTSIDE :root that is an exact duplicate of a theme token
+# (--green / -bright / -dim / -faint / --amber / the bg ladder). Those should be var(--..)
+# so a theme change propagates. Legit one-off colors (shadows, the metal-frame palette) are
+# NOT flagged — keeping this signal actionable rather than noisy.
 root_block = re.search(r':root\{(.*?)\}', css, re.S)
-token_hexes = set(re.findall(r'#[0-9a-fA-F]{3,8}', root_block.group(1))) if root_block else set()
-all_hexes = re.findall(r'#[0-9a-fA-F]{3,8}', css)
-stray = sorted({h for h in all_hexes if h not in token_hexes})
-# many are legit (shadows, masks #000). only flag opaque-ish greens that look like dupes.
-green_dupes = [h for h in stray if re.match(r'#[0-9a-fA-F]', h) and h.lower() not in ("#000","#000000","#fff","#ffffff")]
-if len(green_dupes) > 12:
-    info(f"{len(green_dupes)} hardcoded hex colors outside :root — consider tokenizing recurring ones")
+token_hex = {}
+if root_block:
+    for name, hexv in re.findall(r'(--[\w-]+)\s*:\s*(#[0-9a-fA-F]{3,8})', root_block.group(1)):
+        token_hex[hexv.lower()] = name
+# strip the :root block, then look for token-valued hexes in the rest of the CSS
+body_css = css.replace(root_block.group(0), "") if root_block else css
+for hexv in sorted(set(re.findall(r'#[0-9a-fA-F]{3,8}', body_css))):
+    if hexv.lower() in token_hex:
+        warn(f'hardcoded {hexv} duplicates token {token_hex[hexv.lower()]} — use var({token_hex[hexv.lower()]}) so theme changes propagate')
 
 # ---------------------------------------------------------------- 8b. dead CSS classes
 # class selectors defined in CSS but referenced nowhere in HTML/JS (dead style → rot).
