@@ -26,8 +26,9 @@ Reads a Google Sheet read-only; deploys as static files.
   hardcoded values; deterministic tools over manual checks.
 
 ## Project specifics
-- **Preview:** `python3 tools/preview.py`, (re)start the `yuma-roster` server, open
-  `/index.html?sheet=<public-mirror-id>`. Never edit `CONFIG.sheetId` for preview — use `?sheet=`.
+- **Preview:** `python3 tools/preview.py`, (re)start the `yuma-roster` server, open `/` (it reads
+  the public mirror automatically — `preview.py` injects the override into the served copy). Never
+  edit `CONFIG.sheetId` for preview; `?sheet=<id>` forces a specific sheet for one load.
 - **Data is read-only.** Don't point `CONFIG.sheetId` at the original source sheet.
 - **Legibility floor 17px** for prose/labels (chips ~15px ok); `--green-dim` is the darkest text;
   `--green-faint` is borders only; no glow on small text.

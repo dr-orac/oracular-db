@@ -64,16 +64,29 @@ def main():
         s = os.path.join(SRC, fn)
         if os.path.exists(s):
             shutil.copy2(s, os.path.join(LIVE, fn))
+    # inject the preview's sheet override into the SERVED index.html (source untouched) so the
+    # preview reads the public mirror at ANY url — no need to remember ?sheet=.
+    live_index = os.path.join(LIVE, "index.html")
+    if os.path.exists(live_index):
+        with open(live_index, encoding="utf-8") as f:
+            doc = f.read()
+        inject = (f'<script>window.YUMA_SHEET_OVERRIDE="{sheet}";'
+                  f'/* preview-only override injected by tools/preview.py — source is untouched */</script>')
+        if "YUMA_SHEET_OVERRIDE" not in doc:
+            doc = doc.replace("</head>", "  " + inject + "\n</head>", 1)
+            with open(live_index, "w", encoding="utf-8") as f:
+                f.write(doc)
     for d in ["fonts", "media", "c"]:
         s = os.path.join(SRC, d)
         if os.path.isdir(s):
             shutil.copytree(s, os.path.join(LIVE, d), dirs_exist_ok=True)
     print(f"✓ synced app + fonts/ media/ c/ into {LIVE}")
 
+    print(f"✓ injected preview sheet override ({sheet[:8]}…) into served index.html (source untouched)")
     print("\nNext:")
     print("  • (re)start the preview server named 'yuma-roster' (port 4173).")
-    print(f"  • open:  /index.html?sheet={sheet}")
-    print("    (the ?sheet= override means the SOURCE app.js is never edited for preview)")
+    print("  • open:  /  (the preview reads the public mirror automatically — no ?sheet= needed)")
+    print(f"  • to force a different sheet for one load, append ?sheet=<id>")
 
 if __name__ == "__main__":
     main()

@@ -87,15 +87,17 @@ wipe both** — so the whole preview is rebuildable in one command:
 
 ```bash
 python3 tools/preview.py            # rebuilds serve.py + /tmp/yuma-live from source
-# then (re)start the 'yuma-roster' preview server, and open:
-#   /index.html?sheet=10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY
+# then (re)start the 'yuma-roster' preview server and open  /  (no query needed)
 ```
 
-**Why the `?sheet=` param:** the live working-copy sheet is private; the preview uses a public
-**mirror** sheet. `app.js` reads a `?sheet=<id>` URL param (or `localStorage.yuma-sheet-override`)
-as an override of `CONFIG.sheetId` — see `effectiveSheetId()`. This means **the source file is
-never edited for preview.** (Historically we hand-edited the sheet id on every sync and
-clobbered the preview repeatedly; that footgun is now gone.)
+**Why it just works:** the live working-copy sheet is private; the preview uses a public
+**mirror** sheet. `preview.py` injects `window.YUMA_SHEET_OVERRIDE="<mirror id>"` into the
+**served** `index.html` only (the `/tmp` copy — the source is never touched), and
+`effectiveSheetId()` honors it. So the preview reads the mirror at **any** URL, including a bare
+reload. Precedence in `effectiveSheetId()`: `?sheet=<id>` URL param → `window.YUMA_SHEET_OVERRIDE`
+→ `localStorage.yuma-sheet-override` → `CONFIG.sheetId`. (Historically we hand-edited the sheet
+id on every sync and clobbered the preview; that footgun is gone — and a bare preview reload no
+longer falls back to the private sheet.)
 
 The server sends `Cache-Control: no-store` (no stale assets) and routes any foreign path back
 to our `index.html` (no neighbour-demo leakage).

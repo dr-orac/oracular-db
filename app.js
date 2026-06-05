@@ -324,7 +324,8 @@ function effectiveSheetId(){
   const ok = v => typeof v === "string" && /^[A-Za-z0-9_-]{20,}$/.test(v);
   try{
     const p = new URLSearchParams(location.search).get("sheet");
-    if(ok(p)) return p;
+    if(ok(p)) return p;                                  // explicit per-load override
+    if(ok(window.YUMA_SHEET_OVERRIDE)) return window.YUMA_SHEET_OVERRIDE;  // env (preview injects this)
     const ls = localStorage.getItem("yuma-sheet-override");
     if(ok(ls)) return ls;
   }catch(e){ /* sandboxed / no storage — fall through to the configured id */ }
