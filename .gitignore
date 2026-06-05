@@ -14,3 +14,6 @@ tools/__pycache__/
 .claude/settings.local.json
 
 # the preview is rebuilt into /tmp by tools/preview.py — never part of the repo
+
+# generated dev snapshot (regenerated via tools/dump-roster.js) — rots, not tracked
+tools/roster-dump.json

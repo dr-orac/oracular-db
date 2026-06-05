@@ -33,8 +33,14 @@ og-card.png       Discord/social link-preview card (1200×630)
 fonts/            self-hosted woff2/ttf — Fallout, Fixedsys, VT323, IBM Plex Mono, …
 media/            code-defined character portraits (referenced by MEDIA in app.js)
 c/                per-character Open-Graph stubs for rich Discord embeds (generated)
-tools/            dev scripts (regenerate c/ stubs, the OG card, the roster dump)
+tools/            dev scripts — selfcheck.py (integrity linter), preview.py (rebuild
+                  the local preview), regenerate c/ stubs / OG card / roster dump,
+                  git-hooks/ (pre-commit guard)
 docs/             project-agnostic reference: CRT theme guide + portable crt-theme.css
+
+MAINTENANCE.md    how it's built + how not to break it (read this first when resuming)
+STYLE-GUIDE.md    the portable phosphor-terminal design system
+DEPLOY.md         go-live steps (host static + optional Apps Script write-back)
 ```
 
 ## Where things live in `app.js`
@@ -52,8 +58,10 @@ banners to jump around:
 
 ## Key config (top of `app.js`)
 
-- `CONFIG.sheetId` — the **working-copy** sheet (private; the live preview swaps in the
-  public source id). Don't repoint this at the original source-of-truth sheet.
+- `CONFIG.sheetId` — the **working-copy** sheet (private). Don't repoint this at the
+  original source-of-truth sheet. For previewing against a public mirror, **don't edit this** —
+  pass `?sheet=<id>` in the URL (or set `localStorage.yuma-sheet-override`); `effectiveSheetId()`
+  uses it as an override so the source file is never touched.
 - `CONFIG.webAppUrl` — paste the deployed Apps Script `/exec` URL here to enable
   write-back. Empty = read-only (uploads/edits persist only in the local browser).
 
@@ -64,6 +72,17 @@ python3 tools/make-og-card.py                          # rebuild og-card.png
 python3 tools/make-og-stubs.py --base-url "https://…/" # rebuild c/ Discord stubs
 # refresh tools/roster-dump.json first via tools/dump-roster.js (console snippet)
 ```
+
+## Before you deploy or commit
+
+```bash
+python3 tools/selfcheck.py      # integrity linter: dangling element ids, undefined CSS
+                                # vars, missing fonts/media, truncated JS, dead CSS classes
+python3 tools/preview.py        # rebuild the local preview in /tmp (then open ?sheet=…)
+```
+
+`selfcheck.py` also runs automatically as a git **pre-commit hook** (it blocks a broken
+commit; `--no-verify` to override). Full maintenance notes live in **MAINTENANCE.md**.
 
 ## Conventions worth knowing
 

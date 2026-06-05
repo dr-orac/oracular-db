@@ -293,7 +293,9 @@ the active background so mobile browser chrome matches.
 
 - **Contrast:** body/labels ≥ 4.5:1; large text/decoration ≥ 3:1. Tune `--green-dim` against
   the *lightest* background it appears on, not the darkest.
-- **Min text size 17px.** Pixel fonts especially — "authentic but unreadable" is a bug.
+- **Min text size 17px** for prose and labels. Pixel fonts especially — "authentic but
+  unreadable" is a bug. (Allowed exception: short uppercase *chip* labels like tags sit at
+  ~15px — they're glanceable tokens, tracked and bright, not reading text.)
 - **No glow on small text.** It smears at small sizes.
 - **Keyboard:** every interactive chip/menu is focusable with a visible `:focus-visible`
   state; menus close on Escape; modals trap focus.

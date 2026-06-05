@@ -84,10 +84,18 @@ const FONTS = {
 };
 const FONT_ORDER = ["fallout","falloutplex","fixedsys","monofonto","terminal","plex","ticker","workbench","overseer","typewriter","block"];
 
+/* "#3cff7a" -> "60,255,122" so rgba(var(--green-rgb), a) tracks the active preset. */
+function hexToRgbTriplet(hex){
+  let h=(hex||"").replace("#","").trim();
+  if(h.length===3) h=h.split("").map(c=>c+c).join("");
+  const n=parseInt(h,16);
+  return isNaN(n) ? "60,255,122" : `${(n>>16)&255},${(n>>8)&255},${n&255}`;
+}
 function applyColor(key){
   const t=THEMES[key]||THEMES.green, r=document.documentElement.style;
   r.setProperty("--green",t.primary);  r.setProperty("--green-bright",t.bright);
   r.setProperty("--green-dim",t.dim);  r.setProperty("--green-faint",t.faint);
+  r.setProperty("--green-rgb", hexToRgbTriplet(t.primary));   // translucent fills/glows follow the preset
   r.setProperty("--glow","0 0 2px "+t.glow);     // softer glow for legibility
   localStorage.setItem("yuma-color",key);
   document.querySelectorAll("#color-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));

@@ -66,7 +66,8 @@ the sheet.
 
 1. **Read-only by default.** Never point `CONFIG.sheetId` at the original source-of-truth for
    editing. The app reads; it does not write (unless `webAppUrl` is set, which is opt-in).
-2. **Legibility floor.** Min text size 17px. `--green-dim` is the darkest any *text* may be
+2. **Legibility floor.** Min text size 17px for prose/labels (short uppercase chip labels
+   like tags are an allowed ~15px exception). `--green-dim` is the darkest any *text* may be
    (AA-contrast); `--green-faint` is borders only, never text. No glow on small text.
 3. **Self-host everything.** No CDN. New fonts go in `fonts/` as `woff2` with an `@font-face`.
 4. **Soft edges for content, crisp for chrome** (see STYLE-GUIDE.md §3). Don't feather grids,

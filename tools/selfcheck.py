@@ -173,6 +173,20 @@ green_dupes = [h for h in stray if re.match(r'#[0-9a-fA-F]', h) and h.lower() no
 if len(green_dupes) > 12:
     info(f"{len(green_dupes)} hardcoded hex colors outside :root — consider tokenizing recurring ones")
 
+# ---------------------------------------------------------------- 8b. dead CSS classes
+# class selectors defined in CSS but referenced nowhere in HTML/JS (dead style → rot).
+# require a selector boundary before the dot so url("x.ttf")/format("woff2") aren't matched.
+FILE_EXT = {"ttf","woff","woff2","eot","svg","png","jpg","jpeg","gif","webp","ico","css","js","json","html"}
+css_classes = set(re.findall(r'(?:^|[\s,>+~({])\.([a-zA-Z][\w-]+)', css, re.M))
+hay = html + js
+dead_classes = []
+for c in sorted(css_classes):
+    if c in FILE_EXT: continue
+    if re.search(r'(?<![\w-])' + re.escape(c) + r'(?![\w-])', hay): continue   # token appears in HTML/JS
+    dead_classes.append(c)
+for c in dead_classes:
+    warn(f'CSS class ".{c}" is defined but never referenced in index.html or app.js (dead style?)')
+
 # ---------------------------------------------------------------- report
 print("── Yuma Roster self-check ──")
 print(f"   ids: {len(ref_ids)} refs / {len(defined_ids)} defined   "

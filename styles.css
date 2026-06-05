@@ -27,6 +27,8 @@
 
   :root{
     --green:        #3cff7a;   /* primary phosphor */
+    --green-rgb:    60,255,122; /* same as --green, as RGB components → use rgba(var(--green-rgb), a)
+                                   for glows/translucent fills so they track the theme green. */
     --green-bright: #b6ffce;   /* highlights / titles */
     --green-dim:    #21954d;   /* labels, secondary — WCAG-AA on every bg */
     --green-faint:  #0f3a22;   /* borders, rules */
@@ -34,7 +36,7 @@
     --bg-panel:     #07140c;   /* panel fill */
     --bg-panel-2:   #0a1d11;   /* raised fill */
     --amber:        #ffd24a;   /* rare accent (warnings) */
-    --glow:         0 0 2px rgba(60,255,122,.5);
+    --glow:         0 0 2px rgba(var(--green-rgb),.5);
     --font-body:    "Fallout", "VT323", ui-monospace, monospace;
     --font-head:    "Fallout", "VT323", monospace;
   }
@@ -244,7 +246,7 @@
     border-bottom:1px solid var(--green-faint);
     box-shadow:0 3px 0 -2px var(--green-faint);          /* faux double-rule under the header */
     padding:10px 16px 8px;
-    background:linear-gradient(180deg, rgba(60,255,122,.05), rgba(0,0,0,0));
+    background:linear-gradient(180deg, rgba(var(--green-rgb),.05), rgba(0,0,0,0));
     flex:0 0 auto;
   }
   .titlebar{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
@@ -584,13 +586,13 @@
   .tag{ display:inline-flex; align-items:center; gap:7px; cursor:pointer;
     font-family:var(--font-body); font-size:15px; letter-spacing:1.5px; text-transform:uppercase;
     color:var(--green-bright); padding:4px 11px 4px 9px;
-    background:linear-gradient(180deg, rgba(60,255,122,.11), rgba(60,255,122,.025));
+    background:linear-gradient(180deg, rgba(var(--green-rgb),.11), rgba(var(--green-rgb),.025));
     border:1px solid var(--green-faint);
     transition:background .12s ease, border-color .12s ease; }
   .tag::before{ content:""; flex:0 0 auto; width:5px; height:5px; background:var(--green);
     box-shadow:0 0 6px var(--green); }   /* glowing LED-style marker */
   .tag:hover, .tag:focus-visible{ border-color:var(--green);
-    background:linear-gradient(180deg, rgba(60,255,122,.22), rgba(60,255,122,.07)); }
+    background:linear-gradient(180deg, rgba(var(--green-rgb),.22), rgba(var(--green-rgb),.07)); }
   /* compact tag row inside roster cards (non-interactive — cards open on click) */
   .card .tags{ margin-top:10px; gap:6px; }
   .card .tag{ font-size:13px; padding:2px 8px 2px 7px; gap:6px; pointer-events:none; }
@@ -706,9 +708,6 @@
   .termbox::before{ top:-2px; left:-2px; border-right:0; border-bottom:0; }
   .termbox::after{ right:-2px; bottom:-2px; border-left:0; border-top:0; }
 
-  /* dossier "record" tag above the name */
-  .unit-tag{ font-family:var(--font-body); font-size:17px; letter-spacing:2.5px;
-    text-transform:uppercase; color:var(--green-dim); text-shadow:none; margin-bottom:5px; }
   .state-box{ padding:28px 40px; display:flex; flex-direction:column; align-items:center; gap:12px;
     max-width:560px; }
 
@@ -720,7 +719,7 @@
   .modal-back.open{ display:flex; }
   .modal{
     width:min(820px,100%); max-height:calc(100vh - 60px); overflow:auto;
-    background:var(--bg); border:1px solid var(--green); box-shadow:0 0 30px rgba(60,255,122,.25);
+    background:var(--bg); border:1px solid var(--green); box-shadow:0 0 30px rgba(var(--green-rgb),.25);
     padding:22px 26px 40px; position:relative;
   }
   .modal .close{
