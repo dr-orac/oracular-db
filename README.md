@@ -38,6 +38,10 @@ tools/            dev scripts — selfcheck.py (integrity linter), preview.py (r
                   git-hooks/ (pre-commit guard)
 docs/             project-agnostic reference: CRT theme guide + portable crt-theme.css
 
+CLAUDE.md         lean, always-loaded operating rules for AI sessions (self-critique,
+                  anti-entropy, verify-in-preview, run selfcheck)
+MANIFESTO.md      how we work here — self-critique rule + anti-entropy + researched
+                  agent directives, with sources
 MAINTENANCE.md    how it's built + how not to break it (read this first when resuming)
 STYLE-GUIDE.md    the portable phosphor-terminal design system
 DEPLOY.md         go-live steps (host static + optional Apps Script write-back)
