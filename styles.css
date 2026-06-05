@@ -1,0 +1,905 @@
+/* Fixedsys Excelsior (CC0 / public domain) — authentic Fallout terminal font, self-hosted */
+  /* self-hosted fonts (all in /fonts) — no CDN dependency */
+  @font-face{font-family:"Fallout";src:url("fonts/Fallout12.woff2") format("woff2"),url("fonts/Fallout12.ttf") format("truetype");font-display:swap;}
+  /* "JH Fallout" — same Fallout pixel look but glyphs fill ~88% of the em (vs 44%),
+     so it renders ~2x larger/clearer at the same px. This is now the primary Fallout face.
+     unicode-range limits it to printable ASCII: it maps "·"/symbols to box glyphs, so we
+     scope it to A–Z/0–9/punctuation and let everything else fall back to the next font. */
+  @font-face{font-family:"JH Fallout";src:url("fonts/JH_Fallout.woff2") format("woff2"),url("fonts/JH_Fallout.ttf") format("truetype");font-display:swap;unicode-range:U+0020-007E;}
+  @font-face{font-family:"Fallouty";src:url("fonts/Fallouty.woff2") format("woff2");font-display:swap;}
+  @font-face{font-family:"Gothic 821";src:url("fonts/Gothic821Cn.woff2") format("woff2");font-display:swap;}
+  @font-face{font-family:"Fixedsys Excelsior";src:url("fonts/FSEX300.woff2") format("woff2"),url("fonts/FSEX300.ttf") format("truetype");font-display:swap;}
+  @font-face{font-family:"Monofonto";src:url("fonts/Monofonto.woff2") format("woff2");font-display:swap;}
+  @font-face{font-family:"Overseer";src:url("fonts/Overseer.woff2") format("woff2");font-weight:400;font-display:swap;}
+  @font-face{font-family:"Overseer";src:url("fonts/Overseer-Bold.woff2") format("woff2");font-weight:700;font-display:swap;}
+  @font-face{font-family:"Special Elite";src:url("fonts/SpecialElite.woff2") format("woff2");font-display:swap;}
+  @font-face{font-family:"Share Tech Mono";src:url("fonts/share-tech-mono.woff2") format("woff2");font-display:swap;}
+  @font-face{font-family:"VT323";src:url("fonts/vt323.woff2") format("woff2");font-display:swap;}
+  @font-face{font-family:"IBM Plex Mono";src:url("fonts/ibm-plex-mono.woff2") format("woff2");font-display:swap;}
+  @font-face{font-family:"Pixelify Sans";src:url("fonts/pixelify-sans.woff2") format("woff2");font-display:swap;}
+  @font-face{font-family:"DotGothic16";src:url("fonts/dotgothic16.woff2") format("woff2");font-display:swap;}
+  @font-face{font-family:"Workbench";src:url("fonts/workbench.woff2") format("woff2");font-display:swap;}
+  /* ============================================================
+     CONFIG NOTE: the sheet to read is set in JS (CONFIG.sheetId).
+     The sheet must be shared "Anyone with the link -> Viewer".
+     Nothing is ever written back to the sheet.
+     ============================================================ */
+
+  :root{
+    --green:        #3cff7a;   /* primary phosphor */
+    --green-bright: #b6ffce;   /* highlights / titles */
+    --green-dim:    #21954d;   /* labels, secondary — WCAG-AA on every bg */
+    --green-faint:  #0f3a22;   /* borders, rules */
+    --bg:           #050a06;   /* deep terminal black-green */
+    --bg-panel:     #07140c;   /* panel fill */
+    --bg-panel-2:   #0a1d11;   /* raised fill */
+    --amber:        #ffd24a;   /* rare accent (warnings) */
+    --glow:         0 0 2px rgba(60,255,122,.5);
+    --font-body:    "Fallout", "VT323", ui-monospace, monospace;
+    --font-head:    "Fallout", "VT323", monospace;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--green);
+    font-family:var(--font-body);
+    font-size:18px;                  /* default body — sized for the pixel font, bigger for legibility */
+    line-height:1.6;
+    letter-spacing:.3px;
+    text-shadow:var(--glow);
+    overflow:hidden; /* app manages its own scroll regions */
+  }
+  /* Text Size — adjustable from the Theme popover, persisted as 'yuma-textsize'. */
+  body[data-textsize="cozy"]        { font-size:17px;   }   /* the minimum — still legible */
+  body[data-textsize="comfortable"] { font-size:19px;   }   /* default for legible (Plex-body) fonts */
+  body[data-textsize="large"]       { font-size:23px;   }   /* default for pixel fonts (Fallout, etc.) — bitmap reads small, so bumped */
+  body[data-textsize="xlarge"]      { font-size:26px;   }
+  /* Fallout pixel BODY breathes a bit more — the bitmap reads better with loose tracking.
+     (Applies to "Fallout pure" AND the "Workbench" preset, which both use Fallout as body.) */
+  body[data-font="fallout"], body[data-font="workbench"]{ line-height:1.78; letter-spacing:.4px; }
+  body[data-font="fallout"] .row-sub, body[data-font="workbench"] .row-sub{ font-size:17px; }
+
+  /* ---- "Workbench" preset ----
+     Everything is Fallout (set via the preset's head+body) EXCEPT the big character
+     NAME and the brand, which use the wide, heavy Workbench display face. Workbench is
+     airy and wide, so it gets near-zero tracking, tight line-height and a slightly
+     smaller px than the Fallout titles (so its visual mass matches). Section headings,
+     the spirit-animal name ("THE BRAHMIN"), etc. stay Fallout. */
+  body[data-font="workbench"] .brand{ font-family:"Workbench", monospace; font-size:30px; letter-spacing:0; line-height:1.05; }
+  body[data-font="workbench"] .brand small{ font-family:var(--font-body); }   /* keep "// PIP-LINK" in Fallout */
+  body[data-font="workbench"] .doss-name{ font-family:"Workbench", monospace; font-size:46px; letter-spacing:.5px; line-height:1.1; }
+  /* Workbench card titles: smaller + block caps so wide names fit the card tile cleanly */
+  body[data-font="workbench"] .card .cname{ font-family:"Workbench", monospace; font-size:19px; letter-spacing:.5px; line-height:1.2; text-transform:uppercase; }
+  /* small / secondary text: drop the glow so it stays crisp and legible */
+  .row-sub, .idcell .k, .conn-k, .spec-k, .logmeta, .composer-note, .uploadnote,
+  .statusline, .editnote, .tag, .chip, .crole, .cmeta, .row-name, .elabel{ text-shadow:none; }
+
+  /* ---------- CRT overlay effects (toggle .crt on body) ---------- */
+  .scanlines, .vignette, .flicker{ display:none; }
+  body.crt .scanlines,
+  body.crt .vignette{ display:block; }
+  .scanlines{
+    position:fixed; inset:0; z-index:9000; pointer-events:none;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,.28) 3px,
+      rgba(0,0,0,.28) 4px);
+    mix-blend-mode:multiply;
+  }
+  .vignette{
+    position:fixed; inset:0; z-index:9001; pointer-events:none;
+    background:radial-gradient(ellipse at center,
+      rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%);
+    box-shadow:inset 0 0 160px 30px rgba(0,0,0,.7);
+  }
+  /* optional behind-glass sheen — off by default, kept faint to protect legibility */
+  .glass{
+    position:fixed; inset:0; z-index:6500; pointer-events:none;
+    display:none; mix-blend-mode:screen;
+    background:
+      linear-gradient(125deg,
+        rgba(255,255,255,.05) 0%, rgba(255,255,255,.015) 18%,
+        rgba(255,255,255,0) 42%, rgba(255,255,255,0) 100%),
+      radial-gradient(120% 80% at 18% 0%,
+        rgba(255,255,255,.04) 0%, rgba(255,255,255,0) 55%);
+  }
+  body[data-sheen="on"] .glass{ display:block; }
+
+  body.crt .app{ animation:flicker 6s infinite steps(1); }
+  @keyframes flicker{
+    0%,100%{ opacity:1; } 49.9%{ opacity:1; }
+    50%{ opacity:.965; } 50.4%{ opacity:1; }
+    73%{ opacity:.98; } 73.3%{ opacity:1; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    body.crt .app{ animation:none; }
+    .cursor{ animation:none; }
+  }
+
+  /* ---------- layout shell ---------- */
+  /* ---- Fallout-1 style olive panel surround (heavy beveled "metal" frame) ---- */
+  :root{
+    --panel:        #565033;   /* olive panel face */
+    --panel-hi:     #9a9160;   /* raised bevel highlight (top-left catch-light) */
+    --panel-mid:    #6f6740;   /* mid tone for the plate face */
+    --panel-lo:     #2c2814;   /* bevel shadow (bottom-right) */
+    --panel-ink:    #080702;   /* crisp dark groove line */
+    --rivet-hi:     #b9b079;   /* rivet dome highlight */
+    --rivet-lo:     #181505;   /* rivet shadow ring */
+    --frame:        clamp(18px, 2.1vw, 34px);   /* plate width — scales with the window */
+    --lip:          6px;       /* the canted lip that overhangs the screen */
+  }
+  /* dark olive surround behind the centred panel, with a faint vignette */
+  body{
+    background:
+      radial-gradient(120% 120% at 50% 0%, #1b1a10 0%, #100f08 60%, #070602 100%);
+  }
+  .app{
+    height:100vh; display:flex; flex-direction:column;
+    max-width:1400px; margin:0 auto; position:relative;
+    background:var(--bg);
+    image-rendering:pixelated;
+  }
+
+  /* =======================================================================
+     FRAME MODES — switched by body[data-frame]; default is the clean screen.
+     "screen"  → a subtle, theme-aware screen edge + gentle inset vignette.
+     "border"  → the experimental heavy Fallout-1 olive metal surround.
+     ======================================================================= */
+
+  /* ---- screen-only (default) ---- */
+  body[data-frame="screen"] .app{
+    border:1px solid var(--green-faint);
+    box-shadow:
+      inset 0 0 0 1px rgba(0,0,0,.55),     /* crisp dark screen edge */
+      inset 0 0 90px rgba(0,0,0,.40);      /* soft corner vignette, very gentle */
+  }
+
+  /* ---- frame tint: blend the metal palette toward the active theme colour ----
+     Default ("olive") leaves the authentic fixed palette above untouched.
+     "theme" re-derives the panel + rivet vars from --green via color-mix,
+     so the frame reads as tinted metal (brassy amber, gunmetal blue, steel…). */
+  body[data-frametint="theme"]{
+    --panel:     color-mix(in srgb, var(--green) 22%,        #20201a);
+    --panel-hi:  color-mix(in srgb, var(--green-bright) 42%, #4a4a3a);
+    --panel-mid: color-mix(in srgb, var(--green) 28%,        #33332a);
+    --panel-lo:  color-mix(in srgb, var(--green-dim) 30%,    #14140e);
+    --panel-ink: color-mix(in srgb, var(--green-dim) 16%,    #060604);
+    --rivet-hi:  color-mix(in srgb, var(--green-bright) 46%, #5a5a48);
+    --rivet-lo:  color-mix(in srgb, var(--green-dim) 20%,    #0c0c08);
+  }
+
+  /* ---- experimental pixel-art Fallout-1 bezel ----
+     Built in three crisp layers (no soft gradients on the metal, so it reads pixel-art):
+       .app          = the flat stamped plate, raised with a directional bevel
+       .app::before  = frame furniture: subtle rivets + the centred top tab
+       .app::after   = the CANTED LIP — a chamfered rim that overhangs the screen
+                       and casts a shadow down onto the glass.                          */
+  body[data-frame="border"] .app{
+    /* flat olive plate with a hard, directional pixel bevel (light top-left) */
+    border:var(--frame) solid var(--panel);
+    border-top-color:var(--panel-hi);
+    border-left-color:var(--panel-hi);
+    border-right-color:var(--panel-lo);
+    border-bottom-color:var(--panel-lo);
+    box-shadow:
+      inset 0 0 0 1px var(--panel-mid),        /* breaks the flat plate edge */
+      0 0 0 1px var(--panel-ink),              /* crisp outer keyline */
+      0 5px 16px -2px rgba(0,0,0,.6);          /* the whole unit sits on the desk */
+  }
+  /* ::before = frame furniture on the plate: subtle evenly-spaced rivets + a top tab.
+     Rivets are tiny and low-contrast now — they read as stamped bolts, not buttons. */
+  body[data-frame="border"] .app::before{
+    content:""; position:absolute; z-index:6000; pointer-events:none;
+    inset:calc(var(--frame) * -1);
+    --mid: calc(var(--frame) * 0.5);
+    /* a subtle stud: faint dome + thin shadow ring, barely above the plate */
+    --rv: radial-gradient(circle 2.5px at center,
+            var(--panel-hi) 0 1px, var(--panel-lo) 1.5px 2.5px, transparent 2.5px);
+    /* the centred top tab — a small raised boss (lit top, dark bottom) with a keyline */
+    --tab: linear-gradient(180deg,
+            var(--panel-ink) 0 1px, var(--panel-hi) 1px 35%,
+            var(--panel-mid) 35% 70%, var(--panel-lo) 70% calc(100% - 1px),
+            var(--panel-ink) calc(100% - 1px) 100%);
+    background-image:
+      var(--rv), var(--rv), var(--rv), var(--rv),   /* four edge runs */
+      var(--tab);                                   /* top-centre tab */
+    background-repeat:
+      repeat-x, repeat-x, repeat-y, repeat-y,
+      no-repeat;
+    background-size:
+      64px var(--frame), 64px var(--frame),
+      var(--frame) 64px, var(--frame) 64px,
+      clamp(48px, 7vw, 92px) calc(var(--frame) + 3px);
+    background-position:
+      var(--mid) top, var(--mid) bottom,
+      left var(--mid), right var(--mid),
+      top center;
+  }
+  /* ::after = the canted lip: a chamfered metal rim sitting on the screen's edge,
+     lit on the top/left faces and dark on the bottom/right, casting a shadow inward. */
+  body[data-frame="border"] .app::after{
+    content:""; position:absolute; inset:0; z-index:5998; pointer-events:none;
+    border:var(--lip) solid var(--panel-mid);
+    border-top-color:var(--panel-hi);
+    border-left-color:var(--panel-hi);
+    border-right-color:var(--panel-lo);
+    border-bottom-color:var(--panel-lo);
+    box-shadow:
+      0 0 0 1px var(--panel-ink),                  /* keyline where the lip meets the plate */
+      inset 0 0 0 1px var(--panel-ink),            /* crisp dark edge against the glass */
+      inset 0 8px 12px -5px rgba(0,0,0,.80),       /* lip shadow cast DOWN onto the screen */
+      inset 7px 0 14px -8px rgba(0,0,0,.45),       /* a little from the left lip too */
+      inset 0 0 44px rgba(0,0,0,.40);              /* overall screen recess */
+  }
+
+  /* ---------- header ---------- */
+  header{
+    border-bottom:1px solid var(--green-faint);
+    box-shadow:0 3px 0 -2px var(--green-faint);          /* faux double-rule under the header */
+    padding:10px 16px 8px;
+    background:linear-gradient(180deg, rgba(60,255,122,.05), rgba(0,0,0,0));
+    flex:0 0 auto;
+  }
+  .titlebar{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+  /* masthead — "Gothic 821 Condensed" is the typeface the Fallout LOGO is built from;
+     used here as a fixed logo wordmark regardless of the chosen body font. It's condensed
+     (narrow), so it carries a larger size + tighter tracking than the pixel fonts. */
+  .brand{
+    font-family:"Gothic 821","Oswald",sans-serif;
+    font-size:46px; line-height:.9;
+    color:var(--green-bright);
+    letter-spacing:1px;
+    text-shadow:0 0 10px rgba(182,255,206,.6);
+  }
+  .brand small{ font-size:21px; color:var(--green-dim); letter-spacing:1.5px; }
+  .cursor{ display:inline-block; width:.6ch; background:var(--green-bright);
+    animation:blink 1.1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  /* lightweight status readout — subdued chrome, the link dot is the only accent */
+  .statusline{
+    margin-top:5px; font-size:15px; color:var(--green-dim);
+    letter-spacing:1px; opacity:.78;
+    display:flex; gap:16px; flex-wrap:wrap; align-items:center;
+  }
+  .dot{ color:var(--green); }
+  .dot.warn{ color:var(--amber); text-shadow:0 0 4px rgba(255,210,74,.6); }
+
+  /* ---------- toolbar ---------- */
+  .toolbar{
+    margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  }
+  .search{
+    flex:1 1 240px; min-width:160px; display:flex; align-items:center; gap:8px;
+    background:var(--bg-panel); border:1px solid var(--green-faint);
+    padding:6px 10px;
+  }
+  .search input{
+    flex:1; background:transparent; border:0; outline:0;
+    color:var(--green-bright); font:inherit; text-shadow:var(--glow);
+  }
+  .search input::placeholder{ color:var(--green-dim); }
+  .search .prompt{ color:var(--green-dim); }
+  /* a11y skip-link: hidden until keyboard focus, then jumps past the header into the list */
+  .skip-link{
+    position:fixed; top:8px; left:8px; z-index:9800;
+    background:var(--green-bright); color:var(--bg); padding:6px 12px;
+    font-family:var(--font-head); font-size:17px; letter-spacing:1.5px;
+    text-decoration:none; transform:translateY(-200%); transition:transform .15s;
+  }
+  .skip-link:focus{ transform:translateY(0); outline:2px solid var(--bg); outline-offset:2px; }
+  /* small "/" hint chip — discoverability for keyboard nav; hidden when search has a value or focus */
+  .search .kbd-hint{
+    font-family:var(--font-head); font-size:17px; line-height:1;
+    color:var(--green-dim); border:1px solid var(--green-faint);
+    padding:2px 6px; margin-left:6px; text-shadow:none; user-select:none;
+    transition:opacity .15s;
+  }
+  .search:focus-within .kbd-hint,
+  .search.has-value .kbd-hint{ opacity:0; pointer-events:none; }
+  /* clear-X button: hidden until the search has a value */
+  .search .search-clear{
+    display:none; background:transparent; border:0; color:var(--green-dim);
+    font:inherit; font-size:17px; cursor:pointer; padding:2px 6px; margin-left:4px;
+    text-shadow:none;
+  }
+  .search .search-clear:hover{ color:var(--green-bright); }
+  .search.has-value .search-clear{ display:inline-block; }
+
+  .seg{ display:flex; border:1px solid var(--green-faint); }
+  .btn, .seg button{
+    background:var(--bg-panel); color:var(--green);
+    border:1px solid var(--green-faint); font:inherit; text-shadow:var(--glow);
+    padding:6px 12px; cursor:pointer; letter-spacing:1px; text-transform:uppercase;
+    transition:background .08s, color .08s;
+  }
+  .seg button{ border:0; border-right:1px solid var(--green-faint); }
+  .seg button:last-child{ border-right:0; }
+  .btn:hover, .seg button:hover{ background:var(--bg-panel-2); color:var(--green-bright); }
+  .seg button.active{ background:var(--green); color:var(--bg); text-shadow:none; font-weight:bold; }
+  .btn:active{ transform:translateY(1px); }
+
+  /* ---------- main scroll area ---------- */
+  main{ flex:1 1 auto; min-height:0; position:relative; }
+
+  /* roster view: list + dossier */
+  .roster{ display:grid; grid-template-columns:300px 1fr; height:100%; min-height:0; }
+  .listcol{ display:flex; flex-direction:column; min-height:0; min-width:0; border-right:1px solid var(--green-faint); }
+  .listctl{ flex:0 0 auto; display:flex; gap:6px; padding:8px 10px; border-bottom:1px solid var(--green-faint);
+    background:linear-gradient(180deg, rgba(255,255,255,.02), transparent); }
+  .listctl select{ flex:1; min-width:0; background:var(--bg-panel); color:var(--green);
+    border:1px solid var(--green-faint); font:inherit; font-size:17px; padding:4px 6px; text-shadow:var(--glow); }
+  .listctl select:focus{ outline:0; border-color:var(--green); }
+  /* roster list: rows RECEDE softly at the bottom edge (a scroll-fade mask) rather than
+     being clipped by a hard line — reads as the list continuing into the frame. Only the
+     bottom fades, so the sticky section header (pinned at top) stays full-strength. */
+  .list{ overflow:auto; min-height:0; padding:6px 0;
+    -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 22px), transparent 100%);
+    mask-image:linear-gradient(to bottom, #000 calc(100% - 22px), transparent 100%); }
+  .sectionhdr{
+    position:sticky; top:0; z-index:2;
+    background:var(--bg);
+    color:var(--green-dim);
+    font-family:var(--font-body); font-size:17px; font-weight:normal;
+    letter-spacing:2.5px; text-transform:uppercase; text-shadow:none;
+    padding:14px 14px 5px; display:flex; align-items:center; gap:8px;
+  }
+  .sectionhdr:first-child{ padding-top:8px; }
+  .sectionhdr::before{ content:"»"; color:var(--green); }
+  .sectionhdr::after{ content:""; flex:1; height:0; border-top:1px dashed var(--green-faint); opacity:.7; }
+  .row{
+    padding:7px 14px; cursor:pointer; border-bottom:1px solid rgba(15,58,34,.5);
+    display:flex; flex-direction:column; gap:1px;
+  }
+  .row:hover{ background:var(--bg-panel-2); }
+  /* selected row: calm raised panel + green left-accent bar (was a loud full-green fill) */
+  .row.active{ background:var(--bg-panel-2); box-shadow:inset 3px 0 0 var(--green); }
+  .row.active .row-sub{ color:var(--green); opacity:1; }
+  .row-name{ color:var(--green-bright); }
+  .row.active .row-name{ color:var(--green-bright); }
+  .row-sub{ font-size:17px; color:var(--green-dim); }
+
+  .dossier{ overflow:auto; min-height:0; min-width:0; padding:30px 40px 84px; }   /* min-width:0 lets the grid track shrink below child min-content (no mobile overflow) */
+  /* small inline ＋ button used on section labels (Personal Log / Screenshots) */
+  .mini{ background:transparent; border:1px solid var(--green-faint); color:var(--green);
+    font-family:var(--font-body); font-size:17px; line-height:1; width:22px; height:22px;
+    padding:0; cursor:pointer; text-shadow:var(--glow); flex:0 0 auto; }
+  .mini:hover{ border-color:var(--green); color:var(--green-bright); background:var(--bg-panel-2); }
+
+  /* compact density (body.compact) */
+  body.compact .row{ padding:4px 14px; }
+  body.compact .row-sub{ font-size:17px; }
+  body.compact .sectionhdr{ padding:9px 14px 4px; }
+  body.compact .dossier{ padding:16px 22px 50px; }
+  body.compact .field{ margin:0 0 13px; }
+  body.compact .field > .label{ font-size:17px; }
+  body.compact .field .body, body.compact .logbody{ line-height:1.4; }
+  body.compact .idgrid{ gap:7px 18px; margin:16px 0 0; padding:14px 0 0; }
+  body.compact .doss-head{ padding:14px 0; margin-bottom:22px; }
+  body.compact .doss-head::before{ inset:-8px -18px; }   /* tighter bleed to stay within compact dossier padding (22px) */
+
+  /* cards view */
+  .cards{
+    height:100%; overflow:auto; min-height:0;
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(340px,1fr));
+    gap:16px; padding:18px; align-content:start;
+  }
+  .card{
+    border:1px solid var(--green-faint); background:var(--bg-panel);
+    padding:20px; cursor:pointer; position:relative;
+    transition:border-color .1s, background .1s, transform .06s;
+  }
+  .card:hover{ border-color:var(--green); background:var(--bg-panel-2); transform:translateY(-2px); }
+  /* player credit: a calm footer line (was an absolutely-positioned corner that
+     collided with long names) */
+  .card .cplayer{ margin-top:15px; padding-top:11px; border-top:1px dashed var(--green-faint);
+    font-size:17px; letter-spacing:1px; text-transform:uppercase; color:var(--green-dim); text-shadow:none; }
+  .card .card-top{ display:flex; gap:16px; align-items:flex-start; }
+  .card .card-id{ min-width:0; }
+  .card .cname{ font-family:var(--font-head); font-size:30px; line-height:1.08; color:var(--green-bright); }
+  .card .chon{ font-size:18px; color:var(--green); font-style:italic; margin-top:4px; }
+  .card .crole{ font-size:18px; color:var(--green-dim); margin-top:8px; line-height:1.45; }
+  .card .cmeta{ font-size:18px; color:var(--green-dim); margin-top:14px; line-height:1.55;
+    border-top:1px dashed var(--green-faint); padding-top:12px; }
+  .card .cmeta b{ color:var(--green); font-weight:normal; }
+  .card .capp{ font-size:18px; color:var(--green); margin-top:13px; line-height:1.7;
+    max-height:6.8em; overflow:hidden;
+    -webkit-mask-image:linear-gradient(180deg,#000 62%,transparent);
+    mask-image:linear-gradient(180deg,#000 62%,transparent); }
+
+  /* ---------- CRT portrait ---------- */
+  .portrait{
+    position:relative; flex:0 0 auto; overflow:hidden;
+    border:1px solid var(--green-faint); background:#020703;
+  }
+  .portrait.lg{ width:166px; height:166px; box-shadow:0 0 0 1px var(--green-faint), 0 6px 18px -8px rgba(0,0,0,.7); }
+  /* reticle corner ticks on the dossier portrait (terminal "scanned mugshot") */
+  .portrait.lg::before{ content:""; position:absolute; inset:0; z-index:3; pointer-events:none;
+    background:
+      linear-gradient(var(--green),var(--green)) 0 0/13px 2px,
+      linear-gradient(var(--green),var(--green)) 0 0/2px 13px,
+      linear-gradient(var(--green),var(--green)) 100% 0/13px 2px,
+      linear-gradient(var(--green),var(--green)) 100% 0/2px 13px,
+      linear-gradient(var(--green),var(--green)) 0 100%/13px 2px,
+      linear-gradient(var(--green),var(--green)) 0 100%/2px 13px,
+      linear-gradient(var(--green),var(--green)) 100% 100%/13px 2px,
+      linear-gradient(var(--green),var(--green)) 100% 100%/2px 13px;
+    background-repeat:no-repeat; }
+  .portrait.sm{ width:74px; height:74px; }
+  /* upload modal */
+  .uploadnote{ font-size:17px; color:var(--green-dim); margin:8px 0; }
+  .uploadslots{ display:flex; gap:16px; flex-wrap:wrap; }
+  .uslot{ display:flex; flex-direction:column; gap:8px; align-items:center; }
+  .uslot-frame .portrait{ width:150px; height:150px; }
+  .uslot-btn .opt{ color:var(--green-dim); text-transform:none; letter-spacing:0; }
+  .portrait img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    image-rendering:pixelated;                 /* keep pixel-art sprites crisp */
+    filter:grayscale(1) brightness(1.35) contrast(1.22);
+  }
+  .portrait .tint{                 /* green phosphor wash */
+    position:absolute; inset:0; background:var(--green);
+    mix-blend-mode:multiply; opacity:.5; pointer-events:none;
+  }
+  .portrait::after{                /* scanlines + vignette */
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:2;
+    background:
+      repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 1px, rgba(0,0,0,.3) 2px 3px),
+      radial-gradient(ellipse at center, transparent 62%, rgba(0,0,0,.42));
+  }
+  .portrait.noimg img, .portrait.noimg .tint{ display:none; }
+  .portrait .upbtn{
+    position:absolute; bottom:0; right:0; z-index:3;
+    background:rgba(5,10,6,.82); color:var(--green); border:0;
+    border-top:1px solid var(--green-faint); border-left:1px solid var(--green-faint);
+    font:inherit; font-size:17px; line-height:1; padding:3px 6px; cursor:pointer;
+    opacity:0; transition:opacity .1s; text-shadow:var(--glow);
+  }
+  .portrait:hover .upbtn{ opacity:1; }
+  .portrait .upbtn:hover{ color:var(--green-bright); background:rgba(5,10,6,.95); }
+
+  /* ---------- dossier content ---------- */
+  /* the whole top area (eyebrow, actions, portrait, name, key stats) is ONE dim
+     data-panel. No hard rim — the fill is a soft, feathered glow that fades out at
+     all four edges (a masked pseudo behind the content), so it reads as a pool of
+     light on the phosphor rather than a boxed-in panel. */
+  /* vertical-only padding so the eyebrow / portrait / stats line up on the SAME left
+     edge as the narrative fields below (the dossier's 40px content edge). */
+  .doss-head{ position:relative; isolation:isolate; padding:22px 0; margin-bottom:34px; }
+  /* the glow BLEEDS outward past the content (negative insets) and fades softly in
+     that margin — so the green reaches close to the sides and never stops abruptly,
+     while the text stays aligned to the content edge. */
+  .doss-head::before{
+    content:""; position:absolute; inset:-16px -40px; z-index:-1;
+    background:var(--bg-panel-2);
+    /* solid plateau fully covers the text AND extends a little further into the bleed
+       margin (smaller fade distance vs bigger bleed) so the green stays solid a few
+       extra px around the edges before melting to transparent. */
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%),
+      linear-gradient(to bottom, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%),
+      linear-gradient(to bottom, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+    mask-composite: intersect;
+  }
+  /* top row: now holds only the "More" overflow menu, aligned to the right */
+  .doss-toprow{ display:flex; justify-content:flex-end; align-items:flex-start; gap:16px; margin-bottom:10px; }
+  /* main row: portrait anchored beside the name block */
+  .doss-headmain{ display:flex; gap:26px; align-items:flex-start; }
+  .doss-headtext{ min-width:0; flex:1; }
+  .doss-actions{ display:flex; gap:8px; flex:0 0 auto; }
+  .doss-actions .btn{ min-width:86px; padding:5px 8px; font-size:17px; text-align:center;
+    display:inline-flex; align-items:center; justify-content:center; gap:4px; }
+  /* "More" overflow menu (decants Copy / Export / Edit) */
+  .morewrap{ position:relative; }
+  .moremenu{ display:none; position:absolute; right:0; top:calc(100% + 6px); z-index:30;
+    flex-direction:column; min-width:170px; padding:5px;
+    background:var(--bg-panel-2); border:1px solid var(--green-faint);
+    box-shadow:0 10px 26px -10px rgba(0,0,0,.85); }
+  .morewrap.open .moremenu{ display:flex; }
+  .moremenu .btn{ min-width:0; width:100%; text-align:left; justify-content:flex-start;
+    border:0; padding:8px 11px; gap:8px; }
+  .moremenu .btn:hover{ background:var(--bg-panel); color:var(--green-bright); }
+  .doss-name{ font-family:var(--font-head); font-size:52px; line-height:1.04;
+    color:var(--green-bright); text-shadow:0 0 10px rgba(182,255,206,.4); }
+  .doss-hon{ font-size:18px; color:var(--green); font-style:italic; margin-top:10px; }
+  /* role: a readable subtitle, NOT shouty all-caps (and consistent with the roster sub-line) */
+  .doss-role{ font-size:17px; color:var(--green-dim); margin-top:7px; letter-spacing:.3px;
+    text-shadow:none; }
+  .copied{ color:var(--bg)!important; background:var(--green)!important; text-shadow:none!important; }
+
+  /* ---------- edit mode ---------- */
+  .editbar{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+  .editnote{ font-size:17px; color:var(--green-dim); }
+  .editform{ display:grid; gap:14px; }
+  .efield{ display:flex; flex-direction:column; gap:3px; }
+  .elabel{ font-size:17px; text-transform:uppercase; letter-spacing:1.5px; color:var(--green-dim); }
+  .editform input, .editform textarea{
+    background:var(--bg-panel); border:1px solid var(--green-faint); color:var(--green-bright);
+    font:inherit; padding:7px 9px; text-shadow:var(--glow); resize:vertical; width:100%;
+  }
+  .editform input:focus, .editform textarea:focus{ outline:0; border-color:var(--green); }
+
+  /* identity facts share the head panel; a soft line that FADES at both ends
+     separates them from the name block above — consistent with the feathered
+     panel edge (no hard, full-width hairline). */
+  .idgrid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr));  /* wider cols → values read in full lines, no per-word hyphenation */
+    gap:16px 32px; margin:22px 0 0; padding:20px 0 0;
+    border-width:1px 0 0; border-style:solid;
+    border-image:linear-gradient(to right, transparent, var(--green-faint) 18%, var(--green-faint) 82%, transparent) 1;
+  }
+  .idcell .v{ margin-top:1px; line-height:1.35; }
+  .idcell .k{ font-size:17px; color:var(--green-dim); text-transform:uppercase; letter-spacing:1.5px; }
+  .idcell .v{ color:var(--green-bright); }
+  .idcell .v.secret{ color:var(--green-dim); font-style:italic; }
+
+  .field{ margin:0 0 40px; }                  /* more air between sections */
+  .field > .label{
+    font-family:var(--font-head); font-size:22px; letter-spacing:1px;
+    color:var(--green-bright); margin-bottom:14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .field > .label::before{ content:"▌"; color:var(--green); }
+  /* ASCII fill-line that runs the label out to the right edge (legibility + theme) */
+  .field > .label::after{ content:""; flex:1; height:0;
+    border-top:1px dashed var(--green-faint); opacity:.8; }
+  .field .body{ white-space:pre-wrap; color:var(--green); max-width:58ch; line-height:1.8; }   /* ~10-words/line measure + generous leading */
+  /* lead lists (Relationships / Key Plot Moments) — each entry is its own block.
+     With several entries (.lead-list--multi) they flow into up to 2 columns on wide
+     screens, each kept whole; a single long entry stays full-width (66ch) for reading. */
+  .field .body.lead-list{ white-space:normal; }
+  .field .body.lead-list--multi{ max-width:none; columns:300px 2; column-gap:40px; }
+  /* each entry: a faint left spine + content cleared past it; the description hangs
+     (indents) beneath the name lead for a clean glossary read. */
+  .lead-entry{ break-inside:avoid; margin:0 0 1.3em; white-space:pre-wrap;
+    padding-left:15px; border-left:2px solid var(--green-faint); }
+  .lead-entry:last-child{ margin-bottom:0; }
+  .lead-desc{ display:block; padding-left:12px; }   /* hanging indent under the name lead */
+
+  /* spirit animal: the animal name as a subheading, with the sigil glowing inline
+     just to the right of it (no medallion / frame — simple and lit). */
+  .spirit-name{ font-family:var(--font-head); font-size:22px; letter-spacing:.5px;
+    color:var(--green-bright); margin-bottom:8px;
+    display:flex; align-items:center; gap:.5em; }
+  .spirit-glyph{ display:inline-flex; align-items:center; color:var(--green); }
+  .spirit-glyph .ic{ width:1.15em; height:1.15em; stroke-width:1.1;
+    filter:drop-shadow(0 0 6px var(--green)); }
+  .spirit-name--notitle{ margin-bottom:10px; }   /* glyph alone (no name extracted) */
+  .spirit-body{ max-width:64ch; }
+
+  /* tags */
+  /* tag chips — small "data keys" with a soft green-tinted fill + a glowing status dot.
+     reads as a terminal readout rather than a plain outlined box. */
+  .tags{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .tag{ display:inline-flex; align-items:center; gap:7px; cursor:pointer;
+    font-family:var(--font-body); font-size:15px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--green-bright); padding:4px 11px 4px 9px;
+    background:linear-gradient(180deg, rgba(60,255,122,.11), rgba(60,255,122,.025));
+    border:1px solid var(--green-faint);
+    transition:background .12s ease, border-color .12s ease; }
+  .tag::before{ content:""; flex:0 0 auto; width:5px; height:5px; background:var(--green);
+    box-shadow:0 0 6px var(--green); }   /* glowing LED-style marker */
+  .tag:hover, .tag:focus-visible{ border-color:var(--green);
+    background:linear-gradient(180deg, rgba(60,255,122,.22), rgba(60,255,122,.07)); }
+  /* compact tag row inside roster cards (non-interactive — cards open on click) */
+  .card .tags{ margin-top:10px; gap:6px; }
+  .card .tag{ font-size:13px; padding:2px 8px 2px 7px; gap:6px; pointer-events:none; }
+  .card .tag::before{ width:4px; height:4px; box-shadow:0 0 5px var(--green); }
+
+  /* ---- keyboard-focus visibility (a11y) — only for keyboard users, not mouse clicks ---- */
+  :focus-visible{ outline:2px solid var(--green-bright); outline-offset:2px; border-radius:1px; }
+  .row:focus-visible, .card:focus-visible,
+  .list:focus-visible{ outline:2px solid var(--green-bright); outline-offset:-2px; }
+  .list:focus-visible{ outline-offset:-3px; }
+
+  /* relationships & plot: highlight the ALLCAPS lead token before a colon */
+  /* the ALLCAPS name lead sits on its own line as a mini sub-heading, with its
+     description beneath — chunks each entry clearly and adds breathing room. */
+  .lead{ display:block; margin-bottom:3px; color:var(--green-bright); font-weight:bold; letter-spacing:.5px; }
+  /* cross-link to another character's dossier */
+  .xref{ color:var(--green-bright); text-decoration:underline dotted; text-underline-offset:2px; cursor:pointer;
+    white-space:nowrap; }   /* keep a linked name whole — don't break "Walks-In-Fire" mid-token */
+  .xref:hover{ background:var(--green); color:var(--bg); text-shadow:none; }
+  /* connections chips */
+  .conn-row{ display:flex; gap:10px; align-items:baseline; margin:2px 0; }
+  .conn-k{ flex:0 0 96px; font-size:17px; text-transform:uppercase; letter-spacing:1.5px; color:var(--green-dim); }
+  .chip{ display:inline-block; margin:2px 4px 2px 0; padding:2px 8px; border:1px solid var(--green-faint);
+    text-decoration:none; cursor:pointer; }
+  .chip:hover{ border-color:var(--green); }
+  /* S.P.E.C.I.A.L stat block */
+  .specgrid{ display:grid; gap:5px; max-width:440px; }
+  .spec-row{ display:grid; grid-template-columns:118px 1fr 26px; align-items:center; gap:10px; }
+  .spec-k{ font-size:17px; letter-spacing:1.5px; color:var(--green-dim); text-transform:uppercase; }
+  .spec-bar{ position:relative; height:11px; background:var(--bg-panel); border:1px solid var(--green-faint); }
+  .spec-bar > span{ position:absolute; left:0; top:0; bottom:0; background:var(--green);
+    box-shadow:0 0 6px var(--green-faint); }
+  .spec-n{ text-align:right; color:var(--green-bright); }
+
+  /* ---------- personal log ---------- */
+  .loglist{ display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
+  .logentry{ border-left:2px solid var(--green-faint); padding:2px 0 2px 12px; }
+  .logmeta{ font-size:17px; letter-spacing:1.5px; color:var(--green-dim); text-transform:uppercase; }
+  .logbody{ white-space:pre-wrap; color:var(--green); max-width:74ch; }
+  .composer{ display:flex; flex-direction:column; gap:6px; max-width:74ch; }
+  .composer textarea{ background:var(--bg-panel); border:1px solid var(--green-faint);
+    color:var(--green-bright); font:inherit; padding:8px 10px; resize:vertical; text-shadow:var(--glow); }
+  .composer textarea:focus{ outline:0; border-color:var(--green); }
+  .composer-row{ display:flex; align-items:center; gap:10px; }
+  .composer-note{ font-size:17px; color:var(--green-dim); }
+
+  /* ---------- screenshots (in-screen CRT) ---------- */
+  .shotgrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; }
+  .screenshot{ position:relative; aspect-ratio:4/3; overflow:hidden; cursor:pointer;
+    border:1px solid var(--green-faint); background:#000; }
+  .screenshot img{ width:100%; height:100%; object-fit:cover; image-rendering:pixelated;
+    filter:saturate(1.05) contrast(1.03) brightness(1.02); }
+  .screenshot .scan, .screen .scan{ position:absolute; inset:0; pointer-events:none;
+    background:
+      repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.22) 3px 4px),
+      radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.4));
+    box-shadow:inset 0 0 18px rgba(0,0,0,.5); }
+  .screenshot::after{ content:""; position:absolute; inset:0; pointer-events:none;
+    border:1px solid var(--green-faint); mix-blend-mode:screen; opacity:.25; }
+  .screenshot:hover{ border-color:var(--green); }
+  .addshot{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    aspect-ratio:4/3; cursor:pointer; background:var(--bg-panel); color:var(--green-dim);
+    border:1px dashed var(--green-faint); font:inherit; font-size:26px; line-height:1; text-shadow:var(--glow); }
+  .addshot span{ font-size:17px; letter-spacing:1.5px; }
+  .addshot:hover{ border-color:var(--green); color:var(--green-bright); }
+  /* lightbox: a single big CRT "monitor" */
+  .shotmodal{ width:min(900px,100%); background:#000; border-color:var(--green); }
+  #shotview .screen{ position:relative; overflow:hidden; border:1px solid var(--green-faint);
+    box-shadow:0 0 30px rgba(0,0,0,.6); }
+  #shotview .screen img{ display:block; width:100%; height:auto; image-rendering:pixelated; }
+
+  /* reusable themed divider: ─────◆───── */
+  /* ── ⟨ FILE ⟩ ── : a bracketed, double-ruled divider.
+     LEGIBILITY FLOOR: anything that's actual text (not pure border/decor) uses at least
+     --green-dim (~4.6:1 on the deep phosphor bg, AA-clean). Reserve --green-faint for
+     hairline borders/box-shadows where contrast doesn't matter. */
+  .rule{ display:flex; align-items:center; gap:14px; margin:16px 0 30px; color:var(--green-dim); }
+  /* soft-edge language: each side is a single line that FADES toward the outer screen
+     edge (matching the feathered identity panel) instead of a hard full-width hairline. */
+  .rule::before, .rule::after{ content:""; flex:1; height:1px; }
+  .rule::before{ background:linear-gradient(to right, transparent, var(--green-faint)); }
+  .rule::after{ background:linear-gradient(to left, transparent, var(--green-faint)); }
+  .rule > span{ color:var(--green-dim); font-size:17px; letter-spacing:3px; text-shadow:none; }
+  .rule > span::before{ content:"⟨ "; color:var(--green-dim); }
+  .rule > span::after{ content:" ⟩"; color:var(--green-dim); }
+
+  /* ---------- states ---------- */
+  .state{
+    height:100%; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:14px; text-align:center; padding:30px;
+  }
+  .state h2{ font-family:var(--font-head); font-size:30px; color:var(--green-bright); margin:0; }
+  .state p{ color:var(--green-dim); max-width:520px; margin:0; }
+  .state code{ color:var(--green); background:var(--bg-panel); padding:2px 6px; border:1px solid var(--green-faint); }
+  .loader{ font-family:var(--font-head); font-size:24px; color:var(--green-bright); }
+  .empty-doss{ color:var(--green-dim); font-style:italic;
+    margin:48px auto 0; max-width:360px; padding:22px; text-align:center; }
+  /* friendly empty-state for the roster / cards (when filters or search return nothing) */
+  .empty-title{ font-family:var(--font-head); color:var(--green-bright);
+    font-size:18px; letter-spacing:1.5px; margin-bottom:8px; font-style:normal; }
+  .empty-sub{ color:var(--green-dim); font-style:normal; font-size:17px; margin:0; line-height:1.5; }
+  .empty-clear{ color:var(--green); border-bottom:1px dotted currentColor; text-decoration:none; }
+  .empty-clear:hover{ color:var(--green-bright); }
+  /* search-match highlight: a phosphor-on-dark inverse chip */
+  mark.hl{ background:var(--green); color:var(--bg); text-shadow:none;
+    padding:0 2px; border-radius:1px; font-weight:inherit; }
+  .row.active mark.hl{ background:var(--green-bright); color:var(--bg); }
+
+  /* reusable terminal box with corner ticks (⌜ ⌟) for framed/empty/loading areas */
+  .termbox{ position:relative; border:1px dashed var(--green-faint); }
+  .termbox::before, .termbox::after{ content:""; position:absolute; width:11px; height:11px;
+    border:2px solid var(--green); }
+  .termbox::before{ top:-2px; left:-2px; border-right:0; border-bottom:0; }
+  .termbox::after{ right:-2px; bottom:-2px; border-left:0; border-top:0; }
+
+  /* dossier "record" tag above the name */
+  .unit-tag{ font-family:var(--font-body); font-size:17px; letter-spacing:2.5px;
+    text-transform:uppercase; color:var(--green-dim); text-shadow:none; margin-bottom:5px; }
+  .state-box{ padding:28px 40px; display:flex; flex-direction:column; align-items:center; gap:12px;
+    max-width:560px; }
+
+  /* ---------- modal (card -> dossier) ---------- */
+  .modal-back{
+    position:fixed; inset:0; z-index:8000; background:rgba(0,0,0,.7);
+    display:none; align-items:flex-start; justify-content:center; padding:30px 16px;
+  }
+  .modal-back.open{ display:flex; }
+  .modal{
+    width:min(820px,100%); max-height:calc(100vh - 60px); overflow:auto;
+    background:var(--bg); border:1px solid var(--green); box-shadow:0 0 30px rgba(60,255,122,.25);
+    padding:22px 26px 40px; position:relative;
+  }
+  .modal .close{
+    position:sticky; top:0; float:right; margin:-8px -8px 0 0;
+  }
+
+  /* scrollbars */
+  ::-webkit-scrollbar{ width:12px; height:12px; }
+  ::-webkit-scrollbar-track{ background:var(--bg); }
+  ::-webkit-scrollbar-thumb{ background:var(--green-faint); border:3px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover{ background:var(--green-dim); }
+
+  /* responsive */
+  @media (max-width:760px){
+    :root{ --frame:16px; }   /* slimmer metal frame so it doesn't eat the small screen */
+    .roster{ grid-template-columns:1fr; grid-template-rows:minmax(120px,38%) 1fr; }
+    .listcol{ border-right:0; border-bottom:1px solid var(--green-faint); }
+    .brand{ font-size:26px; } .brand small{ font-size:17px; }
+    /* tame the big dossier headline so it doesn't wrap to 3 lines on a 375px column */
+    .doss-name{ font-size:34px; line-height:1.05; }
+    .field > .label, .spirit-name{ font-size:19px; }
+    /* Workbench title rules have higher specificity, so cap them on mobile too */
+    body[data-font="workbench"] .brand{ font-size:24px; }
+    body[data-font="workbench"] .doss-name{ font-size:32px; }
+    body[data-font="workbench"] .card .cname{ font-size:18px; }
+    /* header: eyebrow stacks above its actions; portrait shrinks beside the name */
+    .doss-toprow{ flex-wrap:wrap; }
+    .portrait.lg{ width:120px; height:120px; }
+    .dossier{ padding:18px 16px 60px; }
+    .doss-head{ padding:14px 0; }
+    .doss-head::before{ inset:-8px -12px; }   /* keep the glow within the 16px mobile gutter (no h-scroll) */
+    .idgrid{ margin-top:16px; padding-top:14px; }
+  }
+  .hidden{ display:none !important; }
+
+  /* ---------- print / export a single dossier (PDF) ---------- */
+  @media print{
+    .scanlines, .vignette, #boot, #toast, header, .listcol, #cards, #state,
+    .modal-back, .doss-actions, .upbtn, .iconbtn,
+    .composer, .addshot { display:none !important; }
+    html, body, .app, main, .roster, .dossier{
+      display:block !important; height:auto !important; overflow:visible !important;
+      border:0 !important; margin:0 !important; }
+    .roster{ grid-template-columns:1fr !important; }
+    .dossier{ padding:0 12mm !important; max-width:none !important; }
+    .field .body, .logbody{ max-width:none !important; }
+    /* keep the terminal look in the exported PDF */
+    body{ -webkit-print-color-adjust:exact; print-color-adjust:exact;
+          font-size:12px; line-height:1.5; }                    /* paper wants smaller body type */
+    .doss-name{ font-size:32px; }
+    .field > .label, .spirit-name{ font-size:15px; }
+    .card .cname{ font-size:20px; }
+    .doss-head{ break-inside:avoid; }
+    .field, .logentry, .screenshot{ break-inside:avoid; }
+  }
+
+  #toast{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(20px);
+    z-index:9500; background:var(--bg-panel); border:1px solid var(--amber); color:var(--amber);
+    padding:8px 16px; font:inherit; letter-spacing:1px; opacity:0; pointer-events:none; max-width:80vw;
+    text-shadow:0 0 4px rgba(255,210,74,.5); transition:opacity .2s, transform .2s; }
+  #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* boot sequence */
+  #boot{ position:fixed; inset:0; z-index:9700; background:var(--bg); display:none;
+    flex-direction:column; align-items:flex-start; justify-content:flex-start;
+    padding:8vh 8vw; gap:14px; cursor:pointer; transition:opacity .4s; }
+  #boot.run{ display:flex; }
+  #boot.done{ opacity:0; pointer-events:none; }
+  #boot-text{ margin:0; font-family:var(--font-head); font-size:24px; line-height:1.45;
+    color:var(--green-bright); white-space:pre-wrap; text-shadow:0 0 8px rgba(182,255,206,.5); }
+  #boot-skip{ font-size:17px; color:var(--green-dim); letter-spacing:1px; }
+
+  /* ---------- settings popover (theme / colour / background) ---------- */
+  .popwrap{ position:relative; }
+  .popover{
+    position:absolute; right:0; top:calc(100% + 6px); z-index:7000; width:300px;
+    background:var(--bg); border:1px solid var(--green); box-shadow:0 0 24px rgba(0,0,0,.6);
+    padding:14px; display:none;
+    /* cap to the viewport and scroll, so all sections stay reachable. ~150px clears the
+       popover's top offset (it opens under the ~150px header) + a bottom gap, so the
+       Reset button never falls below the fold (the page itself doesn't scroll). */
+    max-height:calc(100vh - 170px); overflow-y:auto;
+  }
+  .popover.open{ display:block; }
+  .popover h4{
+    font-family:var(--font-head); font-size:18px; letter-spacing:1px; margin:0 0 6px;
+    color:var(--green-bright); text-transform:uppercase;
+  }
+  .popover h4:not(:first-child){ margin-top:14px; }
+  /* collapsible groups: Type / Screen / Frame */
+  .popgrp{ border-top:1px solid var(--green-faint); padding:8px 0 6px; }
+  .popgrp:first-of-type{ border-top:0; padding-top:0; }
+  .popgrp > summary{
+    cursor:pointer; list-style:none;
+    font-family:var(--font-head); font-size:18px; letter-spacing:2px;
+    color:var(--green); text-transform:uppercase;
+    display:flex; align-items:center; gap:8px; padding:4px 0 8px;
+    user-select:none;
+  }
+  .popgrp > summary::-webkit-details-marker{ display:none; }
+  .popgrp > summary::before{
+    content:"▸"; display:inline-block; width:1em; color:var(--green-dim);
+    transition:transform .15s;
+  }
+  .popgrp[open] > summary::before{ transform:rotate(90deg); color:var(--green); }
+  .popgrp[open] > summary{ color:var(--green-bright); }
+  .popgrp > h4:first-of-type{ margin-top:2px; }      /* tighten first heading after the summary */
+  .popgrp h4{ font-size:17px; letter-spacing:1.5px; color:var(--green-dim); }   /* smaller within a group */
+  .popfoot{ margin-top:14px; padding-top:10px; border-top:1px solid var(--green-faint); display:flex; justify-content:flex-end; }
+  .popfoot .btn{ font-size:17px; padding:4px 10px; }
+  /* keyboard-shortcut list inside the Tips group */
+  .shortcuts{ margin:4px 0 2px; display:grid; grid-template-columns:auto 1fr; gap:6px 12px; font-size:17px; color:var(--green-dim); }
+  .shortcuts dt{ color:var(--green); white-space:nowrap; }
+  .shortcuts dd{ margin:0; }
+  .shortcuts kbd{
+    font-family:var(--font-head); font-size:17px; color:var(--green-bright);
+    border:1px solid var(--green-faint); padding:1px 5px; border-radius:2px; text-shadow:none;
+    background:rgba(15,58,34,.25);
+  }
+  .swatches{ display:flex; flex-wrap:wrap; gap:6px; }
+  .swatch{
+    display:flex; align-items:center; gap:6px; cursor:pointer; font:inherit; font-size:17px;
+    background:var(--bg-panel); color:var(--green); border:1px solid var(--green-faint);
+    padding:5px 8px; text-shadow:var(--glow); text-transform:uppercase; letter-spacing:.5px;
+  }
+  .swatch:hover{ border-color:var(--green); color:var(--green-bright); }
+  .swatch.active{ border-color:var(--green); background:var(--bg-panel-2); }
+  /* non-colour cue for the active swatch (helps low-vision / colour-blind users) */
+  .swatch.active::after{ content:"✓"; margin-left:5px; color:var(--green-bright); font-size:17px; }
+  .swatch .chip{ width:12px; height:12px; border-radius:50%; box-shadow:0 0 5px currentColor; }
+  .swatch.bg .chip{ border-radius:2px; box-shadow:none; border:1px solid rgba(255,255,255,.18); }
+
+  /* ---------- CRT icons / sigils ---------- */
+  .ic{ display:inline-block; width:1em; height:1em; vertical-align:-0.12em;
+    fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;
+    filter:drop-shadow(var(--glow)); }
+  .field > .label .ic{ width:.9em; height:.9em; }
+  .sigil{
+    position:absolute; inset:0; display:none; flex-direction:column; gap:9px;
+    align-items:center; justify-content:center; color:var(--green-dim); text-align:center;
+  }
+  .portrait.noimg .sigil{ display:flex; }
+  /* chosen-sigil (line icon) */
+  .sigil .ic:not(.figure){ width:44%; height:44%; stroke-width:1.1; opacity:.85; filter:drop-shadow(0 0 3px var(--green-faint)); }
+  /* spirit / chosen sigil rendered as an illuminated medallion (fills the empty portrait) */
+  .sig-emblem{
+    display:flex; align-items:center; justify-content:center;
+    width:66%; aspect-ratio:1/1; border-radius:50%;
+    background:radial-gradient(circle, color-mix(in srgb, var(--green) 16%, transparent) 0%, transparent 68%);
+    box-shadow:inset 0 0 0 1px var(--green-faint), 0 0 14px -2px var(--green-faint);
+  }
+  .sigil .sig-emblem .ic{ width:60%; height:60%; opacity:.95; stroke-width:1.1;
+    filter:drop-shadow(0 0 6px var(--green-faint)); }
+  .portrait.sm .sig-emblem{ width:80%; box-shadow:inset 0 0 0 1px var(--green-faint), 0 0 10px -2px var(--green-faint); }
+  /* "No Photo ID": dim silhouette + an ID-style stamped label */
+  .sigil .figure{ width:46%; height:46%; color:var(--green-dim); opacity:.5; filter:none; }
+  .noid{ display:flex; flex-direction:column; align-items:center; gap:1px; line-height:1; }
+  .noid b{ font-family:var(--font-head); font-weight:normal; font-size:17px; letter-spacing:2px;
+    text-transform:uppercase; color:var(--green-dim); }
+  .portrait.sm .sigil{ gap:0; }
+  .portrait.sm .sigil .figure{ width:52%; height:52%; }
+  .portrait.sm .noid{ display:none; }                 /* card thumbs: silhouette only, no text */
+  .portrait .iconbtn{
+    position:absolute; bottom:0; left:0; z-index:3;
+    background:rgba(5,10,6,.82); color:var(--green); border:0;
+    border-top:1px solid var(--green-faint); border-right:1px solid var(--green-faint);
+    font:inherit; font-size:17px; line-height:1; padding:3px 6px; cursor:pointer;
+    opacity:0; transition:opacity .1s; text-shadow:var(--glow);
+  }
+  .portrait:hover .iconbtn{ opacity:1; }
+  .portrait .iconbtn:hover{ color:var(--green-bright); background:rgba(5,10,6,.95); }
+
+  /* ---------- icon picker grid ---------- */
+  .iconpick{ display:grid; grid-template-columns:repeat(auto-fill,minmax(84px,1fr)); gap:8px; }
+  .iconopt{
+    display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer;
+    background:var(--bg-panel); border:1px solid var(--green-faint); padding:10px 4px;
+    color:var(--green); font-size:17px; text-align:center; letter-spacing:.5px; text-transform:uppercase;
+  }
+  .iconopt:hover{ border-color:var(--green); color:var(--green-bright); background:var(--bg-panel-2); }
+  .iconopt.active{ border-color:var(--green); background:var(--bg-panel-2); }
+  .iconopt .ic{ width:30px; height:30px; stroke-width:1.3; }

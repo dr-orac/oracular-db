@@ -1,0 +1,16 @@
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+
+*.log
+
+# dev/local tooling — not needed at the deployed site
+tools/__pycache__/
+.vscode/
+.idea/
+
+# local-only machine settings (.claude/launch.json IS tracked — documents the preview server)
+.claude/settings.local.json
+
+# the preview is rebuilt into /tmp by tools/preview.py — never part of the repo

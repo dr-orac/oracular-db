@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>YUMA TRIBE ROSTER // PIP-LINK</title>
+<meta name="description" content="Yuma Tribe character roster — a Fallout-style terminal dossier viewer." />
+<meta name="theme-color" content="#0a1a0f" />
+<!-- link-preview card (Discord / social) -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Yuma Tribe Roster // PIP-LINK" />
+<meta property="og:description" content="Character dossiers for the tribe — Pip-Boy terminal style." />
+<meta property="og:image" content="og-card.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="og-card.png" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="apple-touch-icon" href="og-card.png" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body class="crt">
+  <a class="skip-link" href="#list">Skip to roster</a>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+  <div class="glass"></div>   <!-- optional behind-glass sheen (off by default) -->
+
+  <!-- boot sequence overlay (skippable; shown once per session) -->
+  <div id="boot" aria-hidden="true"><pre id="boot-text"></pre><div id="boot-skip">[ click or press any key to skip ]</div></div>
+
+  <div class="app">
+    <header>
+      <div class="titlebar">
+        <div class="brand">YUMA TRIBE ROSTER <small>// PIP-LINK</small></div>
+      </div>
+      <div class="statusline">
+        <span aria-live="polite" aria-atomic="true"><span class="dot" id="linkdot">●</span> <span id="linkstatus">CONNECTING…</span></span>
+        <span id="countinfo">—</span>
+        <span id="syncinfo">SYNC —</span>
+      </div>
+      <div class="toolbar">
+        <label class="search">
+          <span class="prompt">&gt;</span>
+          <input id="search" type="text" placeholder="search names, roles, notes…" autocomplete="off" aria-label="Search the roster by name, role, or notes" />
+          <button id="search-clear" class="search-clear" type="button" aria-label="Clear search" title="Clear search (Esc)">✕</button>
+          <kbd class="kbd-hint" title="Press / to focus search">/</kbd>
+        </label>
+        <div class="seg" role="tablist" aria-label="view">
+          <button id="view-roster" class="active">Roster</button>
+          <button id="view-cards">Cards</button>
+        </div>
+        <button class="btn" id="refresh">⟳ Refresh</button>
+        <div class="popwrap">
+          <button class="btn" id="settings-btn" title="Display settings" aria-expanded="false">⚙ Theme</button>
+          <div class="popover" id="settings-pop">
+            <details class="popgrp" open>
+              <summary>Type</summary>
+              <h4>Font</h4>
+              <div class="swatches" id="font-swatches"></div>
+              <h4>Text Colour</h4>
+              <div class="swatches" id="color-swatches"></div>
+              <h4>Text Size</h4>
+              <div class="swatches" id="textsize-swatches"></div>
+            </details>
+            <details class="popgrp" open>
+              <summary>Screen</summary>
+              <h4>Background</h4>
+              <div class="swatches" id="bg-swatches"></div>
+              <h4>Density</h4>
+              <div class="swatches" id="density-swatches"></div>
+              <h4>CRT Effect</h4>
+              <div class="swatches">
+                <button class="swatch" id="crt-toggle" title="Toggle scanlines + glow flicker">Scanlines: ON</button>
+              </div>
+              <h4>Screen Glass</h4>
+              <div class="swatches" id="glass-swatches"></div>
+            </details>
+            <details class="popgrp">
+              <summary>Frame</summary>
+              <h4>Frame</h4>
+              <div class="swatches" id="frame-swatches"></div>
+              <h4>Frame Tint</h4>
+              <div class="swatches" id="frametint-swatches"></div>
+            </details>
+            <details class="popgrp">
+              <summary>Tips · Shortcuts</summary>
+              <dl class="shortcuts">
+                <dt><kbd>/</kbd></dt>     <dd>focus search</dd>
+                <dt><kbd>↑</kbd> <kbd>↓</kbd> · <kbd>j</kbd> <kbd>k</kbd></dt> <dd>step through the roster</dd>
+                <dt><kbd>Esc</kbd></dt>   <dd>clear search · close any open modal</dd>
+                <dt><kbd>Click</kbd> a name</dt> <dd>open dossier</dd>
+                <dt><kbd>Click</kbd> a chip</dt> <dd>filter by tag</dd>
+              </dl>
+            </details>
+            <div class="popfoot">
+              <button class="btn" id="reset-settings" title="Reset every Theme setting to defaults">↺ Reset settings</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- ROSTER VIEW -->
+      <section id="roster" class="roster hidden">
+        <div class="listcol">
+          <div class="listctl" id="listctl"></div>
+          <div class="list" id="list" role="listbox" tabindex="0" aria-label="Character roster"></div>
+        </div>
+        <div class="dossier" id="dossier">
+          <div class="empty-doss termbox">// SELECT A UNIT FROM THE ROSTER TO VIEW DOSSIER</div>
+        </div>
+      </section>
+
+      <!-- CARDS VIEW -->
+      <section id="cards" class="cards hidden"></section>
+
+      <!-- LOADING / ERROR -->
+      <section id="state" class="state" aria-live="polite" aria-atomic="true">
+        <div class="termbox state-box">
+          <div class="loader" id="loadermsg">ACCESSING PIP-LINK<span class="cursor">&nbsp;</span></div>
+          <p id="statesub">Establishing secure read-only link to the tribe archive…</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- hidden upload input (kept off-screen rather than display:none so it stays operable) -->
+  <input type="file" id="fileinput" accept="image/*" aria-label="Choose a character photo"
+         style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);" />
+
+  <!-- card -> dossier modal -->
+  <div class="modal-back" id="modalback" role="dialog" aria-modal="true" aria-label="Character dossier">
+    <div class="modal" id="modal">
+      <button class="btn close" id="modalclose">✕ Close</button>
+      <div id="modalbody"></div>
+    </div>
+  </div>
+
+  <!-- icon picker modal -->
+  <div class="modal-back" id="iconback" role="dialog" aria-modal="true" aria-label="Choose a sigil icon">
+    <div class="modal" id="iconmodal">
+      <button class="btn close" id="iconclose">✕ Close</button>
+      <div id="iconpickhead"></div>
+      <div class="iconpick" id="iconpickgrid"></div>
+    </div>
+  </div>
+
+  <!-- photo upload modal (single "front" photo) -->
+  <div class="modal-back" id="uploadback" role="dialog" aria-modal="true" aria-label="Upload a photo">
+    <div class="modal" id="uploadmodal">
+      <button class="btn close" id="uploadclose">✕ Close</button>
+      <div id="uploadhead"></div>
+      <p class="uploadnote">Upload a photo for this character's profile.</p>
+      <div class="uploadslots">
+        <div class="uslot"><div class="uslot-frame" id="uslot-front"></div>
+          <button class="btn uslot-btn" data-slot="front">＋ Choose photo</button></div>
+      </div>
+      <p class="uploadnote" id="uploaddest"></p>
+    </div>
+  </div>
+
+  <!-- screenshot lightbox (rendered "in-screen") -->
+  <div class="modal-back" id="shotback" role="dialog" aria-modal="true" aria-label="Screenshot viewer">
+    <div class="modal shotmodal" id="shotmodal">
+      <button class="btn close" id="shotclose">✕ Close</button>
+      <div id="shotview"></div>
+    </div>
+  </div>
+
+  <!-- transient status toast (announced to screen readers) -->
+  <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

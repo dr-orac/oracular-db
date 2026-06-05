@@ -1,0 +1,14 @@
+#!/bin/sh
+# Pre-commit guard: block commits that fail the integrity self-check, so a broken state
+# can never be snapshotted. Bypass in a genuine emergency with `git commit --no-verify`.
+#
+# This hook is version-controlled. It is active because the repo sets:
+#   git config core.hooksPath tools/git-hooks
+# (re-run that once after a fresh clone if hooks aren't firing.)
+
+root="$(git rev-parse --show-toplevel)"
+python3 "$root/tools/selfcheck.py" || {
+  echo ""
+  echo "✗ commit blocked: selfcheck failed (fix the errors above, or use --no-verify to override)."
+  exit 1
+}
