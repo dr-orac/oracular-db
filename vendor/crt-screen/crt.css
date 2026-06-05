@@ -1,0 +1,290 @@
+/* ==========================================================================
+   crt.css — A tunable CRT screen simulator (overlay system)
+   --------------------------------------------------------------------------
+   Wrap any content in <div class="crt" data-crt> ... </div> and load crt.js.
+   Every visual is driven by CSS custom properties so the sliders (or your
+   own code) can tune them live. Underlying content stays fully interactive:
+   all overlay layers use pointer-events:none.
+
+   Layer order (bottom -> top), inside .crt__screen which carries the
+   barrel-distortion filter so EVERYTHING curves together like real glass:
+     1. .crt__content    your interactive content (color/blur/CA/glow)
+     2. .crt__bloom      backdrop-blur halation (real bloom from any DOM)
+     3. .crt__tint       monochrome phosphor tint (optional)
+     4. .crt__mask       RGB aperture-grille / shadow mask
+     5. .crt__scanlines  rolling horizontal scanlines
+     6. .crt__noise      analog static
+     7. .crt__flicker    refresh flicker + slow rolling brightness bar
+     8. .crt__vignette   darkened curved edges
+     9. .crt__glare      soft glass reflection
+   ========================================================================== */
+
+:where(.crt) {
+  /* ---- Color / signal ---- */
+  --crt-brightness: 1.18;
+  --crt-contrast:   1.12;
+  --crt-saturate:   1.25;
+  --crt-blur:       0.55px;   /* phosphor softness */
+
+  /* ---- Glow & bloom ---- */
+  --crt-glow:        0.6;            /* drop-shadow phosphor glow (0..2) */
+  --crt-glow-color:  rgba(180, 235, 255, 0.55);
+  --crt-bloom:       0.45;           /* backdrop-blur halation (0..1) */
+  --crt-bloom-blur:  8px;
+
+  /* ---- Scanlines ---- */
+  --crt-scanline-opacity: 0.30;
+  --crt-scanline-height:  3px;       /* pitch of each scanline pair */
+  --crt-scanline-speed:   9s;        /* roll duration (0 = static)  */
+
+  /* ---- Aperture grille / shadow mask ---- */
+  --crt-mask-opacity: 0.18;
+  --crt-mask-size:    3px;           /* width of one RGB triad */
+
+  /* ---- Chromatic aberration (driven by JS into the SVG filter) ---- */
+  --crt-chromatic: 0.5;              /* px of R/B channel separation */
+
+  /* ---- Geometry ---- */
+  --crt-curvature: 0.18;             /* barrel distortion (0..1) */
+  --crt-radius:    1.6%;             /* rounded screen corners */
+  --crt-overscan:  1.02;             /* zoom to hide curved edge gaps */
+
+  /* ---- Motion / analog noise ---- */
+  --crt-flicker: 0.06;               /* refresh flicker depth (0..0.4) */
+  --crt-noise:   0.04;               /* static intensity (0..0.4) */
+  --crt-roll:    0.04;               /* rolling brightness bar depth */
+
+  /* ---- Edge darkening ---- */
+  --crt-vignette: 0.55;              /* 0..1 */
+
+  /* ---- Monochrome phosphor tint (off by default) ---- */
+  --crt-mono:       0;               /* 0 = full color, 1 = monochrome */
+  --crt-tint-color: #6cff7c;         /* phosphor color when mono */
+
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: #000;
+  isolation: isolate;                /* contain blend modes */
+  border-radius: var(--crt-radius);
+}
+
+/* The screen carries the curvature filter (set by JS to url(#crt-curve-N)). */
+.crt__screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--crt-radius);
+  transform: scale(var(--crt-overscan));
+  transform-origin: center;
+  will-change: filter, transform;
+}
+
+/* ---- 1. Interactive content -------------------------------------------- */
+.crt__content {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  /* Color grade + phosphor softness + glow. Chromatic aberration is the
+     url(#crt-chroma) filter injected by crt.js; it is prepended here. */
+  filter:
+    grayscale(var(--crt-mono))
+    saturate(var(--crt-saturate))
+    contrast(var(--crt-contrast))
+    brightness(var(--crt-brightness))
+    blur(var(--crt-blur))
+    drop-shadow(0 0 calc(var(--crt-glow) * 3px) var(--crt-glow-color));
+}
+
+/* Shared overlay base */
+.crt__bloom,
+.crt__halation,
+.crt__tint,
+.crt__mask,
+.crt__scanlines,
+.crt__noise,
+.crt__flicker,
+.crt__vignette,
+.crt__glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ---- 2. Bloom (tight, neutral halo from arbitrary DOM) ----------------- */
+.crt__bloom {
+  z-index: 1;
+  -webkit-backdrop-filter: blur(var(--crt-bloom-blur)) brightness(1.35);
+  backdrop-filter: blur(var(--crt-bloom-blur)) brightness(1.35);
+  mix-blend-mode: screen;
+  opacity: var(--crt-bloom);
+}
+
+/* ---- 2b. Halation (wide WARM scatter — light bleeding in the glass) ----- */
+/* Off by default; the .crt--halation class is toggled on by crt.js only when
+   the amount is > 0, so the extra backdrop-filter costs nothing when unused.
+   The sepia + hue-rotate push the blurred bright areas toward the reddish
+   orange of real phosphor halation. */
+.crt__halation { z-index: 1; }
+.crt--halation .crt__halation {
+  -webkit-backdrop-filter:
+    blur(calc(var(--crt-bloom-blur) * 2.4)) brightness(1.5) saturate(2.4) sepia(0.55) hue-rotate(-25deg);
+  backdrop-filter:
+    blur(calc(var(--crt-bloom-blur) * 2.4)) brightness(1.5) saturate(2.4) sepia(0.55) hue-rotate(-25deg);
+  mix-blend-mode: screen;
+  opacity: var(--crt-halation);
+}
+
+/* ---- 3. Monochrome phosphor tint --------------------------------------- */
+.crt__tint {
+  z-index: 2;
+  background: var(--crt-tint-color);
+  mix-blend-mode: multiply;
+  opacity: var(--crt-mono);
+}
+
+/* ---- 4. Aperture grille / shadow mask ---------------------------------- */
+.crt__mask {
+  z-index: 3;
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.85) 0 33.333%,
+    rgba(0, 255, 0, 0.85) 33.333% 66.666%,
+    rgba(0, 0, 255, 0.85) 66.666% 100%
+  );
+  background-size: var(--crt-mask-size) 100%;
+  mix-blend-mode: screen;
+  opacity: var(--crt-mask-opacity);
+}
+
+/* ---- 5. Scanlines (rolling) -------------------------------------------- */
+.crt__scanlines {
+  z-index: 4;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0 50%,
+    rgba(0, 0, 0, 1) 50% 100%
+  );
+  background-size: 100% var(--crt-scanline-height);
+  mix-blend-mode: multiply;
+  opacity: var(--crt-scanline-opacity);
+  animation: crt-scanroll var(--crt-scanline-speed) linear infinite;
+}
+@keyframes crt-scanroll {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 calc(var(--crt-scanline-height) * 40); }
+}
+
+/* ---- 6. Analog static --------------------------------------------------- */
+.crt__noise {
+  z-index: 5;
+  /* background-image (a generated noise tile) is set by crt.js */
+  background-repeat: repeat;
+  mix-blend-mode: overlay;
+  opacity: var(--crt-noise);
+  animation: crt-noise 0.6s steps(6) infinite;
+}
+@keyframes crt-noise {
+  0%   { background-position:   0   0; }
+  20%  { background-position: -18px  9px; }
+  40%  { background-position:  14px -22px; }
+  60%  { background-position: -25px  17px; }
+  80%  { background-position:  21px  12px; }
+  100% { background-position: -11px -19px; }
+}
+
+/* ---- 7. Flicker + slow rolling brightness bar -------------------------- */
+.crt__flicker {
+  z-index: 6;
+  background: rgba(255, 255, 255, 1);
+  mix-blend-mode: overlay;
+  opacity: var(--crt-flicker);
+  animation: crt-flicker 0.12s infinite steps(1);
+}
+@keyframes crt-flicker {
+  0%   { opacity: calc(var(--crt-flicker) * 0.3); }
+  10%  { opacity: calc(var(--crt-flicker) * 1.0); }
+  20%  { opacity: calc(var(--crt-flicker) * 0.5); }
+  30%  { opacity: calc(var(--crt-flicker) * 0.9); }
+  40%  { opacity: calc(var(--crt-flicker) * 0.2); }
+  50%  { opacity: calc(var(--crt-flicker) * 0.8); }
+  60%  { opacity: calc(var(--crt-flicker) * 0.4); }
+  70%  { opacity: calc(var(--crt-flicker) * 1.0); }
+  80%  { opacity: calc(var(--crt-flicker) * 0.3); }
+  90%  { opacity: calc(var(--crt-flicker) * 0.7); }
+  100% { opacity: calc(var(--crt-flicker) * 0.5); }
+}
+
+/* The slow refresh bar that drifts down the screen */
+.crt__flicker::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 35%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, calc(var(--crt-roll) * 4)) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  mix-blend-mode: overlay;
+  animation: crt-rollbar 7s linear infinite;
+}
+@keyframes crt-rollbar {
+  0%   { top: -40%; }
+  100% { top: 100%; }
+}
+
+/* ---- 8. Vignette -------------------------------------------------------- */
+.crt__vignette {
+  z-index: 7;
+  background: radial-gradient(
+    120% 120% at 50% 50%,
+    rgba(0, 0, 0, 0) 55%,
+    rgba(0, 0, 0, calc(var(--crt-vignette) * 0.9)) 88%,
+    rgba(0, 0, 0, var(--crt-vignette)) 100%
+  );
+  box-shadow:
+    inset 0 0 calc(var(--crt-vignette) * 40px) rgba(0, 0, 0, var(--crt-vignette)),
+    inset 0 0 12px rgba(0, 0, 0, 0.6);
+  border-radius: var(--crt-radius);
+}
+
+/* ---- 9. Glass glare ----------------------------------------------------- */
+.crt__glare {
+  z-index: 8;
+  background: radial-gradient(
+    60% 45% at 28% 18%,
+    rgba(255, 255, 255, 0.10) 0%,
+    rgba(255, 255, 255, 0.03) 35%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  mix-blend-mode: screen;
+}
+
+/* ---- Power on/off animations ------------------------------------------- */
+.crt--off .crt__screen { animation: crt-power-off 0.55s ease forwards; }
+.crt--on  .crt__screen { animation: crt-power-on  0.8s  ease forwards; }
+
+@keyframes crt-power-on {
+  0%   { transform: scale(var(--crt-overscan), 0.002); filter: brightness(8); opacity: 0; }
+  10%  { transform: scale(var(--crt-overscan), 0.002); filter: brightness(8); opacity: 1; }
+  35%  { transform: scale(var(--crt-overscan), 0.06);  filter: brightness(4); }
+  100% { transform: scale(var(--crt-overscan));        filter: brightness(1); opacity: 1; }
+}
+@keyframes crt-power-off {
+  0%   { transform: scale(var(--crt-overscan));        filter: brightness(1);   opacity: 1; }
+  60%  { transform: scale(var(--crt-overscan), 0.04);  filter: brightness(3);   opacity: 1; }
+  100% { transform: scale(1.4, 0.0015);                filter: brightness(18);  opacity: 0.9; }
+}
+
+/* Respect reduced-motion: kill the moving parts, keep the static look. */
+@media (prefers-reduced-motion: reduce) {
+  .crt__scanlines,
+  .crt__noise,
+  .crt__flicker,
+  .crt__flicker::after { animation: none; }
+}
