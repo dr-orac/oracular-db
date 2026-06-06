@@ -29,15 +29,17 @@
   var JS_SRC = "vendor/crt-screen/crt.js";
   var TARGET_SEL = ".app";                  // whole app (in-place; layout-safe)
 
-  // Subtle, legible tuning — adds what the native effect lacks (curvature,
-  // chromatic, RGB mask) without hurting small-text readability. Curvature kept
-  // low because in-place mode has no overscan (edges would otherwise clip).
+  // Legibility-first tuning. The roster list sits flush against the left edge,
+  // and in-place mode has no overscan, so curvature is kept tiny — just a hint
+  // of glass — to avoid clipping the first character of each name. The CRT look
+  // is carried by glow + phosphor mask + vignette + faint scanlines/chromatic,
+  // none of which distort geometry.
   var PRESET = {
-    curvature: 0.08, chromatic: 0.35,
+    curvature: 0.03, chromatic: 0.28,
     blur: 0.25, glow: 0.25, bloom: 0.25, halation: 0,
-    "scanline-opacity": 0.18, "scanline-height": 3, "scanline-speed": 0,
+    "scanline-opacity": 0.14, "scanline-height": 3, "scanline-speed": 0,
     "mask-opacity": 0.10, "mask-size": 3,
-    vignette: 0.45, flicker: 0, noise: 0, roll: 0,
+    vignette: 0.42, flicker: 0, noise: 0, roll: 0,
     saturate: 1.05, brightness: 1.08, contrast: 1.06, mono: 0,
   };
 

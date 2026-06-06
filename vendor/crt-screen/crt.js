@@ -40,6 +40,7 @@
     { group: "Scanlines", key: "scanline-speed",   label: "Scanline roll",  min: 0, max: 30, step: 0.5, unit: "s", def: 9, api: "scanlineSpeed" },
     { group: "Scanlines", key: "mask-opacity",     label: "RGB mask",       min: 0, max: 0.8, step: 0.01, unit: "", def: 0.18, api: "mask" },
     { group: "Scanlines", key: "mask-size",        label: "Mask pitch",     min: 2, max: 12, step: 0.5, unit: "px", def: 3, api: "maskSize" },
+    { group: "Scanlines", key: "mask-type",        label: "Mask type",      type: "select", options: ["aperture", "shadow"], def: "aperture" },
 
     { group: "Geometry", key: "curvature", label: "Curvature",  min: 0, max: 1,   step: 0.01, unit: "", def: 0.18, type: "svg" },
     { group: "Geometry", key: "chromatic", label: "Chromatic ab.", min: 0, max: 4, step: 0.05, unit: "", def: 0.5, type: "svg" },
@@ -105,6 +106,7 @@
     // Consumer shadow-mask TV: rounder tube, softer/coarser triads, warmer
     // glow, gentle wobble.
     "Shadow-mask TV": {
+      "mask-type": "shadow",
       curvature: 0.26, "scanline-opacity": 0.28, "scanline-height": 3,
       "mask-opacity": 0.28, "mask-size": 5, blur: 0.85, glow: 0.8,
       "glow-color": "rgba(255,220,180,0.5)", bloom: 0.6, halation: 0.35,
@@ -165,6 +167,32 @@
     ctx.putImageData(img, 0, 0);
     noiseDataURL = c.toDataURL("image/png");
     return noiseDataURL;
+  }
+
+  /* ---- Shadow-mask texture (RGB dot triad, offset rows) ----------------- */
+  // The default mask is a CSS aperture-grille gradient (vertical stripes). The
+  // "shadow" mask type swaps in this canvas tile of staggered RGB dots — the
+  // other real CRT family. One triad is 3u wide x 2u tall (aspect 2/3); the
+  // mask layer's background-size scales it from --crt-mask-size.
+  let shadowMaskURL = null;
+  function getShadowMaskURL() {
+    if (shadowMaskURL) return shadowMaskURL;
+    const u = 10, W = 3 * u, H = 2 * u;
+    const c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    const x = c.getContext("2d");
+    x.fillStyle = "#000"; x.fillRect(0, 0, W, H);
+    const r = u * 0.4;
+    function dot(cx, cy, color) {
+      x.fillStyle = color;
+      [-W, 0, W].forEach((ox) => [-H, 0, H].forEach((oy) => {
+        x.beginPath(); x.arc(cx + ox, cy + oy, r, 0, 7); x.fill();
+      }));
+    }
+    dot(0.5 * u, 0.5 * u, "#f00"); dot(1.5 * u, 0.5 * u, "#0f0"); dot(2.5 * u, 0.5 * u, "#00f");
+    dot(2.0 * u, 1.5 * u, "#f00"); dot(3.0 * u, 1.5 * u, "#0f0"); dot(1.0 * u, 1.5 * u, "#00f");
+    shadowMaskURL = c.toDataURL("image/png");
+    return shadowMaskURL;
   }
 
   /* ---- Build a radial displacement map for barrel distortion ------------ */
@@ -365,6 +393,11 @@
       if (!defer) this._refreshSVG();
       return this;
     }
+    // Enumerated options (not CSS vars) — e.g. mask-type swaps the mask texture.
+    if (p && p.type === "select") {
+      if (key === "mask-type") this._applyMaskType(value);
+      return this;
+    }
     // glow-color is a raw color string
     if (key === "tint-color" || key === "glow-color") {
       this.el.style.setProperty("--crt-" + key, value);
@@ -378,6 +411,22 @@
   };
 
   CRTScreen.prototype.get = function (key) { return this.values[key]; };
+
+  // Swap the RGB mask between the CSS aperture-grille gradient (default) and the
+  // canvas shadow-mask dot texture.
+  CRTScreen.prototype._applyMaskType = function (type) {
+    const mask = this.fx && this.fx.querySelector(".crt__mask");
+    if (!mask) return;
+    if (type === "shadow") {
+      mask.style.backgroundImage = "url(" + getShadowMaskURL() + ")";
+      // tile is 3:2, so scale height to 2/3 of the pitch to keep dots round
+      mask.style.backgroundSize =
+        "var(--crt-mask-size) calc(var(--crt-mask-size) * 0.667)";
+    } else {
+      mask.style.removeProperty("background-image"); // fall back to CSS aperture
+      mask.style.removeProperty("background-size");
+    }
+  };
 
   CRTScreen.prototype._sizeCurve = function () {
     const w = this.el.clientWidth || this.el.offsetWidth;
@@ -480,6 +529,7 @@
     PARAMS.forEach((p) => {
       let v = this.values[p.key];
       if (p.type === "color") { out += "  --crt-" + p.key + ": " + v + ";\n"; return; }
+      if (p.type === "select") { out += "  /* " + p.key + ": " + v + " (set via JS/panel) */\n"; return; }
       out += "  --crt-" + p.key + ": " + v + (p.unit || "") + ";\n";
     });
     out += "  --crt-glow-color: " + (this.values["glow-color"] || "rgba(180,235,255,0.55)") + ";\n";
@@ -520,6 +570,8 @@
 .crt-panel__row input[type=range]{width:100%;accent-color:#39d6ff;height:14px}
 .crt-panel__row input[type=color]{grid-column:2/4;width:100%;height:20px;
   background:none;border:1px solid #2a3a52;border-radius:5px;padding:0}
+.crt-panel__row select{grid-column:2/4;width:100%;background:#0d1420;color:#cfe;
+  border:1px solid #2a3a52;border-radius:5px;padding:2px 4px;font:inherit}
 .crt-panel__foot{display:flex;gap:6px;padding:8px 10px;border-top:1px solid #243348;
   background:#11192700}
 .crt-panel--collapsed .crt-panel__body,
@@ -575,6 +627,14 @@
           '<input type="color" value="' + p.def + '">';
         const input = row.querySelector("input");
         input.addEventListener("input", () => self.set(p.key, input.value));
+        this._controls[p.key] = { input };
+      } else if (p.type === "select") {
+        row.innerHTML = '<span>' + p.label + '</span><select>' +
+          p.options.map((o) => '<option value="' + o + '">' + o + '</option>').join("") +
+          '</select>';
+        const input = row.querySelector("select");
+        input.value = p.def;
+        input.addEventListener("change", () => self.set(p.key, input.value));
         this._controls[p.key] = { input };
       } else {
         row.innerHTML = '<span>' + p.label + '</span>' +
@@ -663,7 +723,7 @@
   /*  Public API                                                            */
   /* ====================================================================== */
   const CRT = {
-    version: "1.3.0",
+    version: "1.4.0",
     PARAMS, PRESETS,
     instances: [],
     capabilities,
