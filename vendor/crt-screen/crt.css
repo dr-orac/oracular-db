@@ -62,11 +62,33 @@
   --crt-tint-color: #6cff7c;         /* phosphor color when mono */
 
   position: relative;
+  isolation: isolate;                /* contain blend modes */
+}
+
+/* Structural defaults for the default "wrap" mode (a self-contained screen).
+   Excluded from in-place mode so they can't clobber a host app's layout. */
+:where(.crt:not(.crt--inplace)) {
   display: block;
   overflow: hidden;
   background: #000;
-  isolation: isolate;                /* contain blend modes */
   border-radius: var(--crt-radius);
+}
+
+/* ---- In-place mode -----------------------------------------------------
+   The effect is applied to the consumer's own element WITHOUT wrapping its
+   children (so flex/grid layouts survive). The colour/chroma/curve filter
+   chain goes on the element itself; all overlay layers live in .crt__fx, an
+   out-of-flow host that doesn't participate in the host's layout. */
+.crt--inplace {
+  overflow: hidden;                  /* clip the effect to the element's box */
+  background: transparent;           /* show the host's own content/background */
+}
+.crt__fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;                      /* sit above normal app content */
+  overflow: hidden;
 }
 
 /* The screen carries the curvature filter (set by JS to url(#crt-curve-N)). */

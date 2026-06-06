@@ -270,48 +270,71 @@
     this.id = ++uid;
     this.values = {};
     this._powered = true;
+    // 'wrap' (default): move children into a filtered screen, overlays above.
+    // 'inplace': filter the element itself, overlays in one out-of-flow host —
+    // for laying the effect over an existing app without breaking its layout.
+    this.mode = options.mode === "inplace" ? "inplace" : "wrap";
+    if (this.mode === "inplace") el.classList.add("crt--inplace");
 
-    // Wrap existing children into screen > content
-    const screen = document.createElement("div");
-    screen.className = "crt__screen";
-    const content = document.createElement("div");
-    content.className = "crt__content";
-    while (el.firstChild) content.appendChild(el.firstChild);
-    screen.appendChild(content);
-
-    // Overlay layers
-    ["bloom", "halation", "tint", "mask", "scanlines", "noise", "flicker", "vignette", "glare"]
-      .forEach((name) => {
-        const d = document.createElement("div");
+    var LAYERS = ["bloom", "halation", "tint", "mask", "scanlines", "noise",
+                  "flicker", "vignette", "glare"];
+    function addLayers(host) {
+      LAYERS.forEach(function (name) {
+        var d = document.createElement("div");
         d.className = "crt__" + name;
-        screen.appendChild(d);
+        host.appendChild(d);
       });
-    el.appendChild(screen);
+    }
 
-    this.screen = screen;
-    this.content = content;
-
-    // SVG filters
+    // SVG filters (per-instance)
     const f = buildSVGFilters(this.id);
     this.f = f;
     this.caR = f.chroma.querySelector(".crt-ca-r");
     this.caB = f.chroma.querySelector(".crt-ca-b");
 
-    // AIDEV-NOTE: keep var() refs live here — never freeze via getComputedStyle; that kills the colour/blur/glow sliders. Tested.
-    // Prepend the chromatic-aberration filter to the content's filter chain,
-    // and put curvature on the screen. We re-declare the chain here (instead
-    // of reading getComputedStyle) so the var() references stay live and the
-    // colour/blur/glow sliders keep working.
-    content.style.filter =
-      "url(#crt-chroma-" + this.id + ") " +
+    // AIDEV-NOTE: keep var() refs live in the filter chains — never freeze via getComputedStyle; that kills the colour/blur/glow sliders. Tested.
+    var GRADE =
       "grayscale(var(--crt-mono)) saturate(var(--crt-saturate)) " +
       "contrast(var(--crt-contrast)) brightness(var(--crt-brightness)) " +
       "blur(var(--crt-blur)) " +
       "drop-shadow(0 0 calc(var(--crt-glow) * 3px) var(--crt-glow-color))";
-    screen.style.filter = "url(#crt-curve-" + this.id + ")";
+    var CHROMA = "url(#crt-chroma-" + this.id + ")";
+    var CURVE = "url(#crt-curve-" + this.id + ")";
 
-    // Noise texture
-    screen.querySelector(".crt__noise").style.backgroundImage =
+    if (this.mode === "wrap") {
+      // Wrap children into screen > content; overlays are siblings above content.
+      const screen = document.createElement("div");
+      screen.className = "crt__screen";
+      const content = document.createElement("div");
+      content.className = "crt__content";
+      while (el.firstChild) content.appendChild(el.firstChild);
+      screen.appendChild(content);
+      addLayers(screen);
+      el.appendChild(screen);
+      this.screen = screen;
+      this.content = content;
+      this.fx = screen;
+      content.style.filter = CHROMA + " " + GRADE;
+      screen.style.filter = CURVE;
+    } else {
+      // AIDEV-NOTE: inplace must NOT restructure children — wrapping breaks flex/grid. Overlays go in one absolute host; the whole filter chain goes on el.
+      if (getComputedStyle(el).position === "static") {
+        el.style.position = "relative";
+        this._setPosition = true;
+      }
+      const fx = document.createElement("div");
+      fx.className = "crt__fx";
+      addLayers(fx);
+      el.appendChild(fx);
+      this.screen = el;
+      this.content = el;
+      this.fx = fx;
+      // One element carries the whole chain: grade -> chroma -> curve (outermost).
+      el.style.filter = GRADE + " " + CHROMA + " " + CURVE;
+    }
+
+    // Noise texture (in whichever host holds the overlay layers)
+    this.fx.querySelector(".crt__noise").style.backgroundImage =
       "url(" + getNoiseURL() + ")";
 
     // Keep the displacement map stretched to the element's pixel size.
@@ -431,12 +454,18 @@
     if (this.panel && this.panel.parentNode) this.panel.parentNode.removeChild(this.panel);
     this.panel = null;
     if (this.f && this.f.svg && this.f.svg.parentNode) this.f.svg.parentNode.removeChild(this.f.svg);
-    // Move the user's content back out, then drop our wrapper + overlays.
-    if (this.content && this.screen) {
-      while (this.content.firstChild) this.el.insertBefore(this.content.firstChild, this.screen);
+    if (this.mode === "wrap") {
+      // Move the user's content back out, then drop our wrapper + overlays.
+      if (this.content && this.screen) {
+        while (this.content.firstChild) this.el.insertBefore(this.content.firstChild, this.screen);
+      }
+      if (this.screen && this.screen.parentNode) this.screen.parentNode.removeChild(this.screen);
+    } else {
+      // inplace: children were never moved — just remove the overlay host.
+      if (this.fx && this.fx.parentNode) this.fx.parentNode.removeChild(this.fx);
+      if (this._setPosition) this.el.style.removeProperty("position");
     }
-    if (this.screen && this.screen.parentNode) this.screen.parentNode.removeChild(this.screen);
-    this.el.classList.remove("crt", "crt--on", "crt--off", "crt--no-bloom", "crt--no-svg", "crt--halation");
+    this.el.classList.remove("crt", "crt--on", "crt--off", "crt--no-bloom", "crt--no-svg", "crt--halation", "crt--inplace");
     PARAMS.forEach((p) => this.el.style.removeProperty("--crt-" + p.key));
     ["--crt-glow-color", "--crt-overscan"].forEach((v) => this.el.style.removeProperty(v));
     this.el.style.removeProperty("filter");
@@ -634,7 +663,7 @@
   /*  Public API                                                            */
   /* ====================================================================== */
   const CRT = {
-    version: "1.2.0",
+    version: "1.3.0",
     PARAMS, PRESETS,
     instances: [],
     capabilities,

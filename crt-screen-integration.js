@@ -10,8 +10,10 @@
  *   • Default = Native. Nothing here runs or loads until you switch to Enhanced.
  *   • crt-screen's CSS/JS are injected ONLY in Enhanced mode — so its `.crt`
  *     rules never touch the project's own `<body class="crt">` while Native.
- *   • Enhanced wraps <main> only (not the whole app) so the toolbar/settings
- *     popover and modals stay crisp and un-clipped.
+ *   • Enhanced applies crt-screen in 'inplace' mode to .app: it filters the
+ *     element WITHOUT restructuring its children, so the flex/grid layout
+ *     survives with no wrapper and no layout hacks. (Modals live outside .app
+ *     and stay crisp.) Requires vendored crt-screen >= 1.3.0.
  *   • Tuned for the project's legibility floor: low glow, no flicker, static
  *     scanlines, colour preserved (no monochrome override).
  *
@@ -25,12 +27,13 @@
   var KEY = "yuma-crt-engine";              // "native" | "enhanced"
   var CSS_HREF = "vendor/crt-screen/crt.css";
   var JS_SRC = "vendor/crt-screen/crt.js";
-  var TARGET_SEL = "main";                  // the "screen" we enhance
+  var TARGET_SEL = ".app";                  // whole app (in-place; layout-safe)
 
   // Subtle, legible tuning — adds what the native effect lacks (curvature,
-  // chromatic, RGB mask) without hurting small-text readability.
+  // chromatic, RGB mask) without hurting small-text readability. Curvature kept
+  // low because in-place mode has no overscan (edges would otherwise clip).
   var PRESET = {
-    curvature: 0.10, chromatic: 0.35,
+    curvature: 0.08, chromatic: 0.35,
     blur: 0.25, glow: 0.25, bloom: 0.25, halation: 0,
     "scanline-opacity": 0.18, "scanline-height": 3, "scanline-speed": 0,
     "mask-opacity": 0.10, "mask-size": 3,
@@ -41,16 +44,8 @@
   var instance = null;     // the crt-screen instance when Enhanced
   var jsLoading = null;    // promise while crt.js loads
 
-  function injectIntegrationCSS() {
-    if (document.getElementById("crtss-int-css")) return;
-    var s = document.createElement("style");
-    s.id = "crtss-int-css";
-    // Keep the app's layout + theming when crt-screen wraps <main>.
-    s.textContent =
-      "body.crt-enhanced " + TARGET_SEL + ".crt{background:transparent;border-radius:0;}" +
-      "body.crt-enhanced " + TARGET_SEL + ".crt .crt__content{height:100%;}";
-    document.head.appendChild(s);
-  }
+  // (No integration CSS needed: in-place mode keeps the host's layout and a
+  // transparent background by default — see crt-screen .crt--inplace.)
 
   function loadCRTScreen() {
     if (window.CRT) return Promise.resolve();
@@ -82,14 +77,13 @@
   }
 
   function enable() {
-    injectIntegrationCSS();
     addStylesheet();
     document.body.classList.add("crt-enhanced");
     document.body.classList.remove("crt");        // native off (no double-up)
     loadCRTScreen().then(function () {
       var target = document.querySelector(TARGET_SEL);
       if (!target || !window.CRT) return;
-      if (!instance) instance = window.CRT.apply(target, { values: PRESET });
+      if (!instance) instance = window.CRT.apply(target, { mode: "inplace", values: PRESET });
     }).catch(function (e) {
       // Fail safe: fall back to native if the vendored library can't load.
       console.warn("[crt-screen] " + e.message + " — staying on native.");
