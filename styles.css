@@ -144,7 +144,7 @@
   }
   .app{
     height:100vh; display:flex; flex-direction:column;
-    max-width:1400px; margin:0 auto; position:relative;
+    max-width:none; margin:0 auto; position:relative;   /* full-width (was 1400px cap); inner panels keep their own ch-measures */
     background:var(--bg);
     image-rendering:pixelated;
   }
