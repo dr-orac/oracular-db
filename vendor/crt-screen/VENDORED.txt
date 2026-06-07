@@ -1,10 +1,10 @@
-Vendored from crt-screen v1.4.0 (single source of truth: ~/crt-screen).
+Vendored from crt-screen v1.5.0 (single source of truth: ~/crt-screen).
 
 Do NOT edit crt.css / crt.js here — they are a snapshot. To upgrade, re-copy
 both files from the upstream repo and bump the version below.
 
   vendored: crt.css, crt.js
-  version:  1.4.0
+  version:  1.5.0
 
 Integration glue lives in ../../crt-screen-integration.js (project-specific;
 safe to edit). See that file and the "Enhanced CRT" toggle in Theme settings.

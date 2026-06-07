@@ -87,7 +87,13 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 100;                      /* sit above normal app content */
+  /* The CRT "glass surface" must sit ABOVE the host app's own content and any
+     framed panels/borders it draws (which may use high z-indexes), so the
+     scanlines/mask/vignette blanket the whole thing as ONE screen rather than
+     letting bordered panels read as separate sub-windows. It's pointer-events:
+     none, so a near-top z never blocks interaction. Lower --crt-fx-z if some
+     in-target UI must paint above the effect. */
+  z-index: var(--crt-fx-z, 2147483000);
   overflow: hidden;
 }
 

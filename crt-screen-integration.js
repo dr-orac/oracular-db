@@ -46,8 +46,21 @@
   var instance = null;     // the crt-screen instance when Enhanced
   var jsLoading = null;    // promise while crt.js loads
 
-  // (No integration CSS needed: in-place mode keeps the host's layout and a
-  // transparent background by default — see crt-screen .crt--inplace.)
+  // Enhanced flattens the app's INTERNAL panel chrome so the whole thing reads
+  // as one continuous screen under the CRT, not separate framed boxes. Only the
+  // outer .app frame (the single "window") is kept. All rules are gated to
+  // body.crt-enhanced, so Native is untouched.
+  function injectEnhancedCSS() {
+    if (document.getElementById("crtss-flatten")) return;
+    var s = document.createElement("style");
+    s.id = "crtss-flatten";
+    s.textContent = [
+      "body.crt-enhanced .doss-head::before{background:transparent;}", // dossier-head box
+      "body.crt-enhanced .listcol{border-right:0;}",                   // sidebar | dossier divider
+      "body.crt-enhanced header{border-bottom:0;box-shadow:none;}",    // header rule
+    ].join("");
+    document.head.appendChild(s);
+  }
 
   function loadCRTScreen() {
     if (window.CRT) return Promise.resolve();
@@ -141,6 +154,7 @@
   }
 
   function init() {
+    injectEnhancedCSS();
     mountUI();
     apply(localStorage.getItem(KEY) === "enhanced" ? "enhanced" : "native", false);
   }
