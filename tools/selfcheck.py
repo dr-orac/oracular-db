@@ -92,6 +92,14 @@ for asset in ["favicon.svg"]:
     if asset in html and not os.path.exists(p(asset)):
         warn(f'index.html references {asset} but it is missing')
 
+# orphan font files: shipped in fonts/ but referenced by no @font-face. Dead weight AND a
+# licensing risk (an unused personal-use font is still redistributed if it's in the repo).
+if os.path.isdir(p("fonts")):
+    referenced = set(re.findall(r'url\(["\']?fonts/([^"\')]+)["\']?\)', css))
+    for fn in sorted(os.listdir(p("fonts"))):
+        if fn.lower().endswith((".woff2", ".ttf", ".woff", ".otf")) and fn not in referenced:
+            warn(f'orphan font file fonts/{fn} — no @font-face references it (dead weight / license risk)')
+
 # ---------------------------------------------------------------- 6. JS structural sanity
 import shutil, subprocess
 def strip_js(src):
