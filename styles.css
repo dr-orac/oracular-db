@@ -44,6 +44,7 @@
   *{ box-sizing:border-box; }
 
   html,body{ height:100%; }
+  :root{ color-scheme:dark; }   /* native scrollbars / form controls render dark, not white */
   body{
     margin:0;
     background:var(--bg);
@@ -297,6 +298,10 @@
     text-decoration:none; transform:translateY(-200%); transition:transform .15s;
   }
   .skip-link:focus{ transform:translateY(0); outline:2px solid var(--bg); outline-offset:2px; }
+  /* graceful message when JavaScript is disabled (this is a live-data app) */
+  .noscript-msg{ margin:40px auto; max-width:520px; padding:20px 24px; text-align:center;
+    background:var(--bg-panel); border:1px solid var(--green-faint);
+    color:var(--green-dim); font-size:17px; letter-spacing:.5px; }
   /* small "/" hint chip — discoverability for keyboard nav; hidden when search has a value or focus */
   .search .kbd-hint{
     font-family:var(--font-head); font-size:17px; line-height:1;
