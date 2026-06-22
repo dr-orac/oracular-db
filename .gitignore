@@ -9,10 +9,6 @@ Thumbs.db
 tools/__pycache__/
 .vscode/
 .idea/
-.claude/
-
-# local operating notes (not part of the public project)
-CLAUDE.md
 
 # the preview is rebuilt into /tmp by tools/preview.py — never part of the repo
 
