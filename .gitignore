@@ -9,9 +9,10 @@ Thumbs.db
 tools/__pycache__/
 .vscode/
 .idea/
+.claude/
 
-# local-only machine settings (.claude/launch.json IS tracked — documents the preview server)
-.claude/settings.local.json
+# local operating notes (not part of the public project)
+CLAUDE.md
 
 # the preview is rebuilt into /tmp by tools/preview.py — never part of the repo
 

@@ -2,9 +2,9 @@
 """
 preview.py — rebuild the isolated preview from source, idempotently.
 
-The preview lives in /tmp/yuma-live and is served by /tmp/yuma-serve.py (port 4173, named
-"yuma-roster" in .claude/launch.json). Neighboring projects sharing /tmp periodically wipe
-both. This script restores everything in one safe-to-re-run command:
+The preview lives in /tmp/yuma-live and is served by /tmp/yuma-serve.py (a static server on
+port 4173). Other projects sharing /tmp periodically wipe both. This script restores
+everything in one safe-to-re-run command:
 
     python3 tools/preview.py                # sync, point preview at the public mirror sheet
     python3 tools/preview.py --sheet <id>   # use a different sheet for the preview

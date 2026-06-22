@@ -1,6 +1,6 @@
 # MAINTENANCE — how this project is built and how not to break it
 
-The durable, in-repo source of truth for anyone (human or AI) picking this up cold. If an
+The durable, in-repo source of truth for anyone picking this up cold. If an
 assistant's working memory is lost, **start here.** Last structural update: 2026-06-05.
 
 ---
@@ -81,9 +81,9 @@ the sheet.
 
 ## Preview workflow (isolated, repeatable)
 
-The preview is served from `/tmp/yuma-live` by `/tmp/yuma-serve.py` (port 4173, named
-`yuma-roster` in `.claude/launch.json`). **Neighbouring projects share `/tmp` and periodically
-wipe both** — so the whole preview is rebuildable in one command:
+The preview is served from `/tmp/yuma-live` by `/tmp/yuma-serve.py` (a static server on port
+4173). **Other projects on the same machine share `/tmp` and periodically wipe both** — so the
+whole preview is rebuildable in one command:
 
 ```bash
 python3 tools/preview.py            # rebuilds serve.py + /tmp/yuma-live from source
@@ -142,8 +142,8 @@ is committed; nothing sensitive lives in the repo.
 | Hand-editing sheet id on every sync (clobbered preview) | `?sheet=` URL override — source never edited |
 | Renamed element id / undefined token / missing asset | `tools/selfcheck.py` + pre-commit hook |
 | No history / no undo | local git repo + initial snapshot |
-| Knowledge lost on AI memory reset | this file (in repo, in git) |
-| Shared parent `.claude/launch.json` clobbered by neighbours | this subfolder has its own `.claude/launch.json` (yuma-roster only); open the subfolder as its own window to fully isolate |
+| Knowledge lost between sessions / contributors | this file (in repo, in git) |
+| Shared `/tmp` + run config clobbered by neighbouring projects | `tools/preview.py` rebuilds the server + live dir idempotently; work in this subfolder as its own project to isolate |
 | Design drift from the system | STYLE-GUIDE.md + selfcheck token-drift warning |
 
 ---
