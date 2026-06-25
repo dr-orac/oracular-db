@@ -266,6 +266,39 @@
     animation:blink 1.1s steps(1) infinite; }
   @keyframes blink{ 50%{ opacity:0; } }
 
+  /* ---------- top-level section nav (Roster + embedded docs) ---------- */
+  .topnav{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+  .navtab{
+    font-family:var(--font-head); font-size:20px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--green-dim); background:transparent; cursor:pointer;
+    border:1px solid var(--green-faint); border-bottom:0;
+    padding:8px 20px 7px; line-height:1; position:relative; top:1px;
+  }
+  .navtab:hover{ color:var(--green-bright); border-color:var(--green); }
+  .navtab.active{
+    color:var(--bg); background:var(--green); border-color:var(--green);
+    text-shadow:none; box-shadow:0 0 14px -2px rgba(var(--green-rgb),.6);
+  }
+  /* a baseline rule the tabs sit on, so they read as terminal tabs */
+  .topnav::after{ content:""; }
+  /* on a doc section, hide the roster-only chrome (search / view toggle / refresh / status) */
+  body[data-section]:not([data-section="roster"]) .statusline,
+  body[data-section]:not([data-section="roster"]) .toolbar .search,
+  body[data-section]:not([data-section="roster"]) .toolbar .seg,
+  body[data-section]:not([data-section="roster"]) #refresh{ display:none; }
+
+  /* ---------- embedded document view ---------- */
+  .docview{ display:flex; flex-direction:column; height:100%; min-height:0; padding:16px 20px 20px; gap:12px; }
+  .docbar{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex:0 0 auto; }
+  .doctitle{ font-family:var(--font-head); font-size:24px; letter-spacing:1px; color:var(--green-bright); text-transform:uppercase; }
+  .docframe{ position:relative; flex:1 1 auto; min-height:0;
+    border:1px solid var(--green-faint); box-shadow:inset 0 0 0 1px rgba(var(--green-rgb),.08), 0 0 22px -6px rgba(0,0,0,.7);
+    background:#fff; }
+  #dociframe{ position:relative; z-index:1; width:100%; height:100%; border:0; display:block; }
+  /* fallback note sits behind the iframe; visible only if the iframe fails to paint over it */
+  .docfallback{ position:absolute; inset:0; z-index:0; display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:30px; color:var(--green-dim); background:var(--bg-panel); }
+
   /* lightweight status readout — subdued chrome, the link dot is the only accent */
   .statusline{
     margin-top:5px; font-size:15px; color:var(--green-dim);
@@ -740,6 +773,10 @@
   /* responsive */
   @media (max-width:760px){
     :root{ --frame:16px; }   /* slimmer metal frame so it doesn't eat the small screen */
+    .navtab{ font-size:16px; padding:7px 14px 6px; letter-spacing:1px; }
+    .docview{ padding:12px 12px 14px; }
+    .doctitle{ font-size:19px; }
+    .doclink{ font-size:15px; }
     .roster{ grid-template-columns:1fr; grid-template-rows:minmax(120px,38%) 1fr; }
     .listcol{ border-right:0; border-bottom:1px solid var(--green-faint); }
     .brand{ font-size:26px; } .brand small{ font-size:17px; }

@@ -33,6 +33,7 @@
       <div class="titlebar">
         <div class="brand">YUMA TRIBE ROSTER <small>// PIP-LINK</small></div>
       </div>
+      <nav id="topnav" class="topnav" role="tablist" aria-label="Sections"></nav>
       <div class="statusline">
         <span aria-live="polite" aria-atomic="true"><span class="dot" id="linkdot">●</span> <span id="linkstatus">CONNECTING…</span></span>
         <span id="countinfo">—</span>
@@ -45,8 +46,8 @@
           <button id="search-clear" class="search-clear" type="button" aria-label="Clear search" title="Clear search (Esc)">✕</button>
           <kbd class="kbd-hint" title="Press / to focus search">/</kbd>
         </label>
-        <div class="seg" role="tablist" aria-label="view">
-          <button id="view-roster" class="active">Roster</button>
+        <div class="seg" role="tablist" aria-label="Roster layout">
+          <button id="view-roster" class="active">List</button>
           <button id="view-cards">Cards</button>
         </div>
         <button class="btn" id="refresh">⟳ Refresh</button>
@@ -114,6 +115,21 @@
 
       <!-- CARDS VIEW -->
       <section id="cards" class="cards hidden"></section>
+
+      <!-- DOC VIEW (embedded Google Docs, framed in the terminal) -->
+      <section id="docview" class="docview hidden" aria-label="Document">
+        <div class="docbar">
+          <span class="doctitle" id="doctitle"></span>
+          <a class="btn doclink" id="doclink" href="#" target="_blank" rel="noopener noreferrer">↗ Open in Google Docs</a>
+        </div>
+        <div class="docframe">
+          <iframe id="dociframe" title="Embedded document" loading="lazy" referrerpolicy="no-referrer"></iframe>
+          <div class="docfallback" id="docfallback">
+            If this stays blank, the document isn’t shared publicly yet — set it to
+            <b>“Anyone with the link → Viewer.”</b>
+          </div>
+        </div>
+      </section>
 
       <!-- LOADING / ERROR -->
       <section id="state" class="state" aria-live="polite" aria-atomic="true">
