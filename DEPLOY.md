@@ -23,11 +23,47 @@ c/              (per-character Discord embed stubs — see step 5a)
 
 ---
 
+## Fast path — GitHub Pages via the CLI  (recommended)
+
+The repo is already a clean git repo on `main`, paths are subpath-safe, and mobile +
+widescreen are verified. So the whole deploy is:
+
+```bash
+# 0. one-time: log in (interactive — run in your own terminal)
+gh auth login                       # GitHub.com · HTTPS · login with browser
+
+# 1. create the public repo from this folder and push main in one step
+gh repo create <repo-name> --public --source=. --remote=origin --push
+
+# 2. turn on Pages (branch main, root)
+gh api -X POST repos/{owner}/<repo-name>/pages -f 'source[branch]=main' -f 'source[path]=/' || \
+  echo "if that errors, enable it in the web UI: Settings → Pages → Deploy from a branch → main / root"
+
+# 3. stamp the live URL into the social-card tags (absolute og:image for Discord), then push
+python3 tools/set-deploy-url.py https://<owner>.github.io/<repo-name>/
+git commit -am "chore: set deploy URL for social cards" && git push
+```
+
+Site goes live at `https://<owner>.github.io/<repo-name>/` within a minute or two.
+
+**Before it shows data, do §1 (share the sheet).** If you've added Google Docs as nav
+tabs (the **Guide** tab etc.), each of those docs also needs **Anyone with the link →
+Viewer** or the tab shows a "not shared yet" message.
+
+The manual / no-git hosting options and the optional write-back + Discord pieces are
+detailed below.
+
+---
+
 ## 1 · Make the sheet readable  (required)
 
 The viewer reads the working copy sheet live. Open it → **Share** →
 **General access: Anyone with the link → Viewer** → Done. Read-only; the page never
 edits it directly — writes go through the Apps Script in step 3.
+
+> Same applies to any **Google Doc added as a nav tab** (the Guide tab, etc.): set each
+> to *Anyone with the link → Viewer*, or its tab shows a "not shared yet" message.
+> (Docs are configured in the `DOCS` array near the top of `app.js`.)
 
 > **Check** — visiting
 > `https://docs.google.com/spreadsheets/d/1649xQIHyrZtJWbVdTcg_ll7yS2ee_V9jGPtHLdgbyDQ/gviz/tq?tqx=out:csv`
