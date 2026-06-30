@@ -1380,9 +1380,9 @@ const DOC_OK = {h1:1,h2:1,h3:1,h4:1,h5:1,h6:1,p:1,ul:1,ol:1,li:1,a:1,hr:1,br:1,
   blockquote:1,strong:1,em:1,b:1,i:1,u:1,sub:1,sup:1,table:1,thead:1,tbody:1,tr:1,td:1,th:1,img:1};
 /* Google's HTML export expresses bold/italic via CSS CLASSES in a <style> block
    (e.g. .c5{font-weight:700}), not inline styles — parse those so we can detect emphasis. */
-let docBoldClasses=new Set(), docItalicClasses=new Set();
+let docBoldClasses=new Set(), docItalicClasses=new Set(), docTitleCount=0;
 function parseDocStyles(parsed){
-  docBoldClasses=new Set(); docItalicClasses=new Set();
+  docBoldClasses=new Set(); docItalicClasses=new Set(); docTitleCount=0;
   parsed.querySelectorAll("style").forEach(st=>{
     const re=/\.([\w-]+)\s*\{([^}]*)\}/g; let m;
     while((m=re.exec(st.textContent))){
@@ -1442,6 +1442,12 @@ function docClean(node){
     }
     if(tag==="p" && /^\s*>\s/.test(n.textContent)){      // a paragraph starting "> " → featured quote block
       out+=`<blockquote class="docquote">${inner.replace(/^(\s*)&gt;\s?/, "$1")}</blockquote>`;
+      return;
+    }
+    if(tag==="p" && n.classList.contains("title")){     // Google Docs "Title" paragraph style
+      docTitleCount++;
+      out += docTitleCount===1 ? `<h1 class="doc-title">${inner}</h1>`
+                               : `<p class="doc-subtitle">${inner}</p>`;
       return;
     }
     const id=n.getAttribute("id");                       // keep heading anchors so the TOC can jump

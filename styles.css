@@ -328,6 +328,18 @@
     font-family:"IBM Plex Mono", ui-monospace, "Share Tech Mono", monospace;
     font-size:17px; line-height:1.85; letter-spacing:.2px; color:var(--green); }
   .docreader > :first-child{ margin-top:0; }
+  /* Google Docs "Title" paragraph style — first becomes the doc masthead, rest become subtitles */
+  .docreader .doc-title{
+    font-family:"Gothic 821","Oswald",var(--font-head); font-size:2.6em;
+    text-align:center; text-transform:uppercase; letter-spacing:3px; line-height:1.1;
+    color:var(--green-bright); text-shadow:0 0 18px rgba(var(--green-rgb),.45);
+    margin:0 0 .25em; border:0;
+  }
+  .docreader .doc-subtitle{
+    font-family:var(--font-head); font-size:1.0em; letter-spacing:2.5px;
+    text-align:center; text-transform:uppercase;
+    color:var(--green-dim); margin:0 0 2.6em;
+  }
   /* heading hierarchy uses DISTINCT faces + space-above proportional to level:
      H1 = masthead gothic · H2 = pixel terminal · H3/H4 = emphasised reading face. */
   .docreader h1, .docreader h2, .docreader h3, .docreader h4{ color:var(--green-bright); line-height:1.15; text-shadow:none; scroll-margin-top:14px; }
