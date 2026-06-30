@@ -18,10 +18,10 @@
    ==================================================================== */
 
 const CONFIG = {
-  // WORKING COPY (in your Drive) — must be shared "Anyone with the link -> Viewer"
-  sheetId: "1649xQIHyrZtJWbVdTcg_ll7yS2ee_V9jGPtHLdgbyDQ",
-  // Original source-of-truth (do not point at this for editing):
-  //   10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY
+  // PUBLIC MIRROR (read-only, anyone with the link) — used by the deployed site
+  sheetId: "10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY",
+  // Private working copy (in Drive) — edit here, then sync to the mirror:
+  //   1649xQIHyrZtJWbVdTcg_ll7yS2ee_V9jGPtHLdgbyDQ
   gid: "",                 // optional: a specific tab's gid. "" = first sheet
   defaultSection: "The Tribe",
   // Paste the deployed Google Apps Script /exec URL here to enable image
