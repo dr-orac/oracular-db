@@ -27,11 +27,13 @@ Design language is documented in **STYLE-GUIDE.md**. Deploy steps in **DEPLOY.md
 | Region | What it does |
 |---|---|
 | `CONFIG` | sheet id, gid, defaultSection, webAppUrl |
+| `DOCS` | top-nav tabs that embed Google Docs (see "Doc reader" below) |
 | `EXTRA_CHARACTERS` | code-defined dossiers not in the sheet (visitors etc.) |
 | `FIELDS` / `ID_ORDER` / `BLOCK_ORDER` | the **data contract** (see below) |
 | data fetch | `effectiveSheetId()`, `sheetUrl()`, `parseCSV()`, model build |
 | render | `render()` (try/caught), `renderRoster()`, `renderCards()`, `dossierHTML()` |
 | dossier pieces | portrait, spirit, S.P.E.C.I.A.L, connections, log, shots |
+| section nav / doc reader | `renderNav()`, `setSection()`, `loadDoc()`, `docClean()`, `styleTOC()` (see below) |
 | delegated events | one document click handler dispatches all in-content buttons |
 | theme | `apply*()` setters, persisted in `localStorage` (`yuma-*`), Theme popover |
 | edit / upload | optional write-back paths (only active when `webAppUrl` set) |
@@ -59,6 +61,39 @@ or lightly renamed and still match. Key fields (see `FIELDS` for the full list +
 **If a character stops rendering a field:** check the sheet header still contains one of the
 `match` substrings for that field. Add a new alias to the `match` array rather than renaming
 the sheet.
+
+---
+
+## Doc reader (top-nav tabs that embed Google Docs)
+
+The top nav (`#topnav`) has a **Roster** tab plus one tab per entry in the `DOCS` array
+(`{ id, label, docId }` near the top of `app.js`). Clicking a doc tab opens `#docview` and
+renders the Google Doc **natively in the terminal theme** — not an iframe.
+
+How it works:
+- `loadDoc()` fetches `https://docs.google.com/document/d/<docId>/export?format=html`. That
+  endpoint is **CORS-readable** for a link-shared doc (returns `type:"cors"`), so the content
+  is fetchable client-side — no backend, no iframe.
+- `docClean()` rebuilds the doc from a **strict element whitelist**, dropping all of Google's
+  inline styles/classes (so our CSS themes it) — this is also the sanitiser (no scripts/styles
+  can pass). It preserves heading `id`s (for the TOC), converts `<span>` weight/italic to
+  `<strong>`/`<em>`, wraps `"…"` runs in `.dq`, turns `> ` paragraphs into `.docquote`
+  pull-quotes, allows `data:image/` srcs (Docs embeds diagrams as base64 PNGs), and wraps
+  tables for horizontal scroll.
+- `styleTOC()` runs after render: tags each Table-of-Contents entry (`p > a.docanchor`) with
+  its target heading's level (`toc-l1..4`) for indent + size.
+- `setSection()` toggles roster vs doc; `render()` is guarded by `currentSection` so a refresh
+  never clobbers the open doc. Roster-only chrome hides via `body[data-section]`.
+
+**Requirements / gotchas:**
+- A doc tab only renders once the doc is shared **Anyone-with-link → Viewer** (same as the
+  sheet). Until then `loadDoc()` shows a graceful "share the doc" message.
+- **Diagrams:** Google Docs rasterises *everything* to PNG on export (no SVG survives a Doc).
+  Diagrams render in `.docfig` on a light "schematic plate" so dark-ink-on-light Docs diagrams
+  stay legible on the dark theme. For seamless dark integration, author diagrams transparent-bg
+  with light/green strokes (then they can drop the plate).
+- **Authoring conventions:** start a paragraph with `> ` for a pull-quote; inline `"…"` is
+  auto-emphasised. To add a doc: append to `DOCS` and share the doc.
 
 ---
 

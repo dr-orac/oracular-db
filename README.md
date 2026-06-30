@@ -54,6 +54,7 @@ banners to jump around:
 - `CRT icon library` — inline SVG spirit sigils + the spirit-text → icon matcher
 - `data fetch / parseCSV / buildModel` — load and normalise the sheet
 - `rendering` — dossier, portrait, cards, roster, search highlight, empty state
+- `section nav / doc reader` — `DOCS` tabs that fetch + re-theme Google Docs (`docClean`/`styleTOC`)
 - `photo upload` / `personal log` / `screenshots` — the write-back UIs
 - `events / keyboard / load / init` — wiring and startup
 
@@ -65,6 +66,9 @@ banners to jump around:
   uses it as an override so the source file is never touched.
 - `CONFIG.webAppUrl` — paste the deployed Apps Script `/exec` URL here to enable
   write-back. Empty = read-only (uploads/edits persist only in the local browser).
+- `DOCS` — array of `{ id, label, docId }`; each adds a top-nav tab that fetches a Google Doc
+  and re-renders it in-theme. Each doc must be shared *Anyone with the link → Viewer*. In the
+  Doc, start a paragraph with `> ` for a pull-quote. (See MAINTENANCE.md → "Doc reader".)
 
 ## Regenerating assets
 

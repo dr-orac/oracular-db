@@ -1447,8 +1447,10 @@ async function loadDoc(doc){
   $("#docscroll").scrollTop=0;
   if(reader.dataset.docid===doc.id) return;                   // already rendered this doc
   reader.innerHTML=""; status.className="docstatus loading"; status.textContent="◌ Loading document…";
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(), 15000);            // don't hang on "Loading…" forever
   try{
-    const res=await fetch(`https://docs.google.com/document/d/${doc.docId}/export?format=html`);
+    const res=await fetch(`https://docs.google.com/document/d/${doc.docId}/export?format=html`, {signal:ctrl.signal});
     if(!res.ok) throw new Error("status "+res.status);
     const body=new DOMParser().parseFromString(await res.text(), "text/html").body;
     reader.innerHTML=docClean(body);
@@ -1457,9 +1459,11 @@ async function loadDoc(doc){
     status.className="docstatus"; status.textContent="";
   }catch(e){
     status.className="docstatus error";
-    status.innerHTML=`Couldn’t load this document. Make sure it’s shared <b>“Anyone with the link → Viewer,”</b> then reopen the tab. `+
+    const why = e.name==="AbortError" ? "The document took too long to load." :
+      "Couldn’t load this document. Make sure it’s shared <b>“Anyone with the link → Viewer.”</b>";
+    status.innerHTML=`${why} `+
       `<a href="${escAttr($("#doclink").href)}" target="_blank" rel="noopener noreferrer">Open in Google Docs ↗</a>`;
-  }
+  }finally{ clearTimeout(timer); }
 }
 function setSection(id){
   if(id!=="roster" && !DOCS.some(d=>d.id===id)) id="roster";
