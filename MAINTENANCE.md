@@ -82,8 +82,19 @@ How it works:
   tables for horizontal scroll.
 - `styleTOC()` runs after render: tags each Table-of-Contents entry (`p > a.docanchor`) with
   its target heading's level (`toc-l1..4`) for indent + size.
+- `buildDocSidebar()` builds the wide-screen outline sidebar (`#doctoc`) from the doc's H1/H2
+  (caches them in `docHeads`); `trackDocSection()` (one rAF-throttled `#docscroll` scroll
+  handler, shared with back-to-top) updates the sticky "current section" breadcrumb (`#docnow`)
+  and the sidebar's active highlight. Sidebar + breadcrumb are wide-screen-only.
 - `setSection()` toggles roster vs doc; `render()` is guarded by `currentSection` so a refresh
   never clobbers the open doc. Roster-only chrome hides via `body[data-section]`.
+
+**Fragility / future-proofing:** the reader depends on Google's `export?format=html` output
+shape — heading `id="h.…"` anchors (TOC jumps), `<span style="font-weight/font-style">` for
+bold/italic, base64 `data:` PNGs for images. If Google changes the export format and the doc
+renders wrong, that's where to look (`docClean`). The whole thing degrades gracefully: a fetch
+failure shows the "share the doc / open in Docs" fallback, so a format break can't white-screen
+the app — at worst a doc tab looks off and the roster is unaffected.
 
 **Requirements / gotchas:**
 - A doc tab only renders once the doc is shared **Anyone-with-link → Viewer** (same as the

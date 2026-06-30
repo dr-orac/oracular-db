@@ -200,6 +200,19 @@ for c in sorted(css_classes):
 for c in dead_classes:
     warn(f'CSS class ".{c}" is defined but never referenced in index.html or app.js (dead style?)')
 
+# ---------------------------------------------------------------- 8c. doc-reader sanitiser boundary
+# docClean() injects fetched HTML, so its DOC_OK whitelist is a security boundary: it must never
+# admit script-bearing or framing tags. Catch a regression that loosens it (XSS hole).
+m = re.search(r'\bDOC_OK\s*=\s*\{([^}]*)\}', js)
+if m:
+    ok_tags = set(re.findall(r'(\w+)\s*:', m.group(1)))
+    danger = ok_tags & {"script","style","iframe","object","embed","form","input","button",
+                        "link","meta","base","svg","math","template","portal"}
+    if danger:
+        err(f"doc sanitiser DOC_OK allows unsafe tag(s): {', '.join(sorted(danger))} — XSS / injection risk")
+elif "docClean" in js:
+    warn("DOC_OK whitelist not found but docClean() exists — verify the doc sanitiser is intact")
+
 # ---------------------------------------------------------------- report
 print("── Yuma Roster self-check ──")
 print(f"   ids: {len(ref_ids)} refs / {len(defined_ids)} defined   "
