@@ -251,36 +251,33 @@
     flex:0 0 auto;
   }
   .titlebar{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
-  /* masthead — "Gothic 821 Condensed" is the typeface the Fallout LOGO is built from;
-     used here as a fixed logo wordmark regardless of the chosen body font. It's condensed
-     (narrow), so it carries a larger size + tighter tracking than the pixel fonts. */
+  /* masthead — "Workbench" wide display face as a fixed logo wordmark (a techy "terminal
+     signage" look for the title, regardless of the chosen body font). */
   .brand{
-    font-family:"Gothic 821","Oswald",sans-serif;
-    font-size:46px; line-height:.9;
+    font-family:"Workbench","Gothic 821",sans-serif;
+    font-size:33px; line-height:1.02;
     color:var(--green-bright);
-    letter-spacing:1px;
-    text-shadow:0 0 10px rgba(182,255,206,.6);
+    letter-spacing:.5px;
+    text-shadow:0 0 5px rgba(182,255,206,.35);
   }
-  .brand small{ font-size:21px; color:var(--green-dim); letter-spacing:1.5px; }
+  .brand small{ font-family:var(--font-body); font-size:18px; color:var(--green-dim); letter-spacing:2px; }
   .cursor{ display:inline-block; width:.6ch; background:var(--green-bright);
     animation:blink 1.1s steps(1) infinite; }
   @keyframes blink{ 50%{ opacity:0; } }
 
   /* ---------- top-level section nav (Roster + embedded docs) ---------- */
-  .topnav{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+  .topnav{ display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
   .navtab{
-    font-family:var(--font-head); font-size:20px; letter-spacing:1.5px; text-transform:uppercase;
-    color:var(--green-dim); background:transparent; cursor:pointer;
-    border:1px solid var(--green-faint); border-bottom:0;
-    padding:8px 20px 7px; line-height:1; position:relative; top:1px;
+    font-family:var(--font-head); font-size:19px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--green-dim); background:var(--bg-panel); cursor:pointer;
+    border:1px solid var(--green-faint); padding:7px 22px; line-height:1;
+    transition:color .12s, background .12s, border-color .12s;
   }
-  .navtab:hover{ color:var(--green-bright); border-color:var(--green); }
+  .navtab:hover{ color:var(--green-bright); border-color:var(--green); background:var(--bg-panel-2); }
   .navtab.active{
-    color:var(--bg); background:var(--green); border-color:var(--green);
-    text-shadow:none; box-shadow:0 0 14px -2px rgba(var(--green-rgb),.6);
+    color:var(--bg); background:var(--green); border-color:var(--green); text-shadow:none;
+    box-shadow:0 0 16px -3px rgba(var(--green-rgb),.55);
   }
-  /* a baseline rule the tabs sit on, so they read as terminal tabs */
-  .topnav::after{ content:""; }
   /* on a doc section, hide the roster-only chrome (search / view toggle / refresh / status) */
   body[data-section]:not([data-section="roster"]) .statusline,
   body[data-section]:not([data-section="roster"]) .toolbar .search,
@@ -367,7 +364,7 @@
   .docreader a:hover{ text-decoration-color:var(--green); }
   .docreader a.docanchor{ color:var(--green); text-decoration:none; }
   .docreader a.docanchor:hover{ color:var(--green-bright); }
-  .docreader strong, .docreader b{ color:var(--green-bright); font-weight:400; }
+  .docreader strong, .docreader b{ color:var(--green-bright); font-weight:700; text-shadow:0 0 7px rgba(var(--green-rgb),.3); }
   .docreader em, .docreader i{ font-style:italic; color:var(--green-bright); }
   .docreader ul, .docreader ol{ margin:0 0 1.05em; padding-left:1.5em; }
   .docreader li{ margin:.5em 0; }

@@ -1,5 +1,5 @@
 /* ====================================================================
-   YUMA TRIBE ROSTER  —  live read-only viewer for a Google Sheet
+   THE TRIBE DATABASE  —  live read-only viewer for a Google Sheet
    --------------------------------------------------------------------
    Reads the public sheet via the gviz CSV endpoint (CORS-enabled for
    "anyone with link -> Viewer" sheets). No API key required to read.
@@ -23,7 +23,7 @@ const CONFIG = {
   // Original source-of-truth (do not point at this for editing):
   //   10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY
   gid: "",                 // optional: a specific tab's gid. "" = first sheet
-  defaultSection: "The Yuma Tribe",
+  defaultSection: "The Tribe",
   // Paste the deployed Google Apps Script /exec URL here to enable image
   // upload + write-back. Leave "" and the upload button explains how to set up.
   webAppUrl: "",
@@ -391,6 +391,10 @@ function mapColumns(headerRow){
 }
 
 /* turn raw rows into structured entries (sections + characters) */
+/* display rebrand: "the Yuma Tribe" → "the Tribe" everywhere it's shown (the underlying sheet
+   keeps its own wording; this only relabels for display). Scoped to the phrase, so place-name
+   "Yuma" on its own is left untouched. */
+const relabelTribe = s => (s||"").replace(/\bYuma Tribe\b/g, "Tribe");
 function buildModel(rows){
   // find header row: the one containing "discord" (or "use-name")
   let hIdx = rows.findIndex(r=>r.some(c=>{const x=norm(c);return x.includes("discord")||x.includes("use-name");}));
@@ -417,7 +421,7 @@ function buildModel(rows){
     if(filled<=1){
       const raw = useName || discord || r.map(clean).find(x=>x) || "";
       const name = raw.replace(/^[^A-Za-z0-9]+/,"").replace(/[^A-Za-z0-9]+$/,"").trim();
-      if(name){ current=name; if(!sections.includes(current)) sections.push(current); }
+      if(name){ current=relabelTribe(name); if(!sections.includes(current)) sections.push(current); }
       continue;
     }
 
@@ -425,7 +429,7 @@ function buildModel(rows){
     const fields={};
     for(const [key,col] of Object.entries(colmap)){
       const v=clean(r[col]);
-      if(v) fields[key]=v;
+      if(v) fields[key]=relabelTribe(v);
     }
     const displayName = fields.usename || fields.discord || "(unnamed)";
     characters.push({ name:displayName, section:current, fields, search:norm(r.join(" ")) });
@@ -433,8 +437,8 @@ function buildModel(rows){
 
   // merge in code-defined extra characters (visitors etc. not present in the sheet)
   for(const ex of (EXTRA_CHARACTERS||[])){
-    const fields=Object.assign({}, ex.fields);
-    const sec=ex.section||CONFIG.defaultSection;
+    const fields={}; for(const k in ex.fields) fields[k]=relabelTribe(ex.fields[k]);
+    const sec=relabelTribe(ex.section||CONFIG.defaultSection);
     characters.push({ name: ex.name||fields.usename||"(unnamed)", section:sec, fields,
       search: norm((ex.name||"")+" "+Object.values(fields).join(" ")) });
     if(!sections.includes(sec)) sections.push(sec);
@@ -1374,8 +1378,29 @@ function renderNav(){
    styles it. The whitelist walk also sanitises (no scripts/handlers/styles). */
 const DOC_OK = {h1:1,h2:1,h3:1,h4:1,h5:1,h6:1,p:1,ul:1,ol:1,li:1,a:1,hr:1,br:1,
   blockquote:1,strong:1,em:1,b:1,i:1,u:1,sub:1,sup:1,table:1,thead:1,tbody:1,tr:1,td:1,th:1,img:1};
-function docBold(el){ const w=el.style&&el.style.fontWeight; return w==="bold"||(parseInt(w,10)>=600); }
-function docItalic(el){ return el.style && el.style.fontStyle==="italic"; }
+/* Google's HTML export expresses bold/italic via CSS CLASSES in a <style> block
+   (e.g. .c5{font-weight:700}), not inline styles — parse those so we can detect emphasis. */
+let docBoldClasses=new Set(), docItalicClasses=new Set();
+function parseDocStyles(parsed){
+  docBoldClasses=new Set(); docItalicClasses=new Set();
+  parsed.querySelectorAll("style").forEach(st=>{
+    const re=/\.([\w-]+)\s*\{([^}]*)\}/g; let m;
+    while((m=re.exec(st.textContent))){
+      const cls=m[1], body=m[2];
+      const fw=(body.match(/font-weight:\s*(\w+)/)||[])[1];
+      if(fw==="bold" || parseInt(fw,10)>=600) docBoldClasses.add(cls);
+      if(/font-style:\s*italic/.test(body)) docItalicClasses.add(cls);
+    }
+  });
+}
+function docBold(el){
+  if(el.style && (el.style.fontWeight==="bold" || parseInt(el.style.fontWeight,10)>=600)) return true;
+  return [...el.classList].some(c=>docBoldClasses.has(c));
+}
+function docItalic(el){
+  if(el.style && el.style.fontStyle==="italic") return true;
+  return [...el.classList].some(c=>docItalicClasses.has(c));
+}
 /* escape text, and wrap "double-quoted" runs in a styled span so quoted speech stands out */
 function docText(raw){
   let out="", re=/[“"][^”"\n]{1,300}?[”"]/g, last=0, m;
@@ -1478,8 +1503,9 @@ async function loadDoc(doc){
   try{
     const res=await fetch(`https://docs.google.com/document/d/${doc.docId}/export?format=html`, {signal:ctrl.signal});
     if(!res.ok) throw new Error("status "+res.status);
-    const body=new DOMParser().parseFromString(await res.text(), "text/html").body;
-    reader.innerHTML=docClean(body);
+    const parsed=new DOMParser().parseFromString(await res.text(), "text/html");
+    parseDocStyles(parsed);                                  // learn which classes mean bold/italic
+    reader.innerHTML=docClean(parsed.body);
     styleTOC(reader);
     buildDocSidebar(reader);
     trackDocSection();
@@ -1695,7 +1721,7 @@ function runBoot(){
     "ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL",
     "INITIALIZING PIP-LINK . . .",
     "ESTABLISHING ARCHIVE LINK . . .",
-    "YUMA TRIBE ROSTER — ONLINE",
+    "THE TRIBE DATABASE — ONLINE",
   ];
   const el=$("#boot-text"); el.textContent="";
   boot.classList.add("run");
