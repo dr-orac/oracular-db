@@ -1414,6 +1414,10 @@ function docClean(node){
       if(!inner.trim()) return;                          // drop empty blocks (Docs spacers)
       if(/^Tab \d+$/.test(n.textContent.trim())) return; // drop Google Docs tab-name artifacts
     }
+    if(tag==="p" && /^\s*>\s/.test(n.textContent)){      // a paragraph starting "> " → featured quote block
+      out+=`<blockquote class="docquote">${inner.replace(/^(\s*)&gt;\s?/, "$1")}</blockquote>`;
+      return;
+    }
     const id=n.getAttribute("id");                       // keep heading anchors so the TOC can jump
     const attr=(id && /^[\w.:-]+$/.test(id) ? ` id="${escAttr(id)}"` : "")
       + (tag==="h1" && /^\s*part\b/i.test(n.textContent) ? ' class="part"' : "");
@@ -1480,6 +1484,9 @@ function setSection(id){
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
 });
+/* back-to-top button for long documents */
+$("#docscroll").addEventListener("scroll", ()=>{ $("#doctop").classList.toggle("show", $("#docscroll").scrollTop>500); });
+$("#doctop").addEventListener("click", ()=>$("#docscroll").scrollTo({top:0, behavior:"smooth"}));
 /* clicking a Table-of-Contents link scrolls within the rendered doc (no hash pollution) */
 $("#docreader").addEventListener("click", e=>{
   const a=e.target.closest("a.docanchor"); if(!a) return;

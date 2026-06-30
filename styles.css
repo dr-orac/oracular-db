@@ -288,7 +288,16 @@
   body[data-section]:not([data-section="roster"]) #refresh{ display:none; }
 
   /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */
-  .docview{ display:flex; flex-direction:column; height:100%; min-height:0; padding:14px 0 0; gap:10px; }
+  .docview{ position:relative; display:flex; flex-direction:column; height:100%; min-height:0; padding:14px 0 0; gap:10px; }
+  /* back-to-top (long docs) — fades in once you've scrolled down */
+  .doctop{ position:absolute; bottom:18px; right:22px; z-index:5;
+    font-family:var(--font-head); font-size:15px; letter-spacing:1px;
+    background:var(--bg-panel-2); color:var(--green); border:1px solid var(--green-faint);
+    padding:7px 13px; cursor:pointer; opacity:0; transform:translateY(8px);
+    transition:opacity .2s, transform .2s; pointer-events:none; }
+  .doctop.show{ opacity:.92; transform:none; pointer-events:auto; }
+  .doctop:hover{ color:var(--green-bright); border-color:var(--green); background:var(--bg-panel);
+    box-shadow:0 0 14px -3px rgba(var(--green-rgb),.5); }
   .docbar{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex:0 0 auto; padding:0 40px; }
   .doctitle{ font-family:var(--font-head); font-size:24px; letter-spacing:1px; color:var(--green-bright); text-transform:uppercase; }
   .docscroll{ flex:1 1 auto; min-height:0; overflow:auto; padding:8px 40px 80px;
@@ -299,9 +308,9 @@
   /* the re-rendered document — long-form reading: characterful display headings, a
      clean readable mono body (prose in the chunky pixel font is tiring), generous rhythm.
      Heading sizes are em-based so the hierarchy scales with the chosen text size. */
-  .docreader{ max-width:72ch; margin:0 auto;
+  .docreader{ max-width:74ch; margin:0 auto;
     font-family:"IBM Plex Mono", ui-monospace, "Share Tech Mono", monospace;
-    font-size:18px; line-height:1.85; letter-spacing:.2px; color:var(--green); }
+    font-size:17px; line-height:1.85; letter-spacing:.2px; color:var(--green); }
   .docreader > :first-child{ margin-top:0; }
   /* heading hierarchy uses DISTINCT faces + space-above proportional to level:
      H1 = masthead gothic · H2 = pixel terminal · H3/H4 = emphasised reading face. */
@@ -340,7 +349,7 @@
   .docreader strong, .docreader b{ color:var(--green-bright); font-weight:400; }
   .docreader em, .docreader i{ font-style:italic; color:var(--green-bright); }
   .docreader ul, .docreader ol{ margin:0 0 1.05em; padding-left:1.5em; }
-  .docreader li{ margin:.35em 0; }
+  .docreader li{ margin:.5em 0; }
   .docreader ul li{ list-style:none; position:relative; }
   .docreader ul li::before{ content:"▪"; color:var(--green-dim); position:absolute; left:-1.2em; top:-.02em; }
   .docreader ol{ padding-left:1.7em; }
@@ -350,6 +359,14 @@
     background:linear-gradient(to right, transparent, var(--green-faint) 20%, var(--green-faint) 80%, transparent); }
   .docreader blockquote{ margin:0 0 1.05em; padding:.3em 0 .3em 1.1em; border-left:2px solid var(--green-faint);
     color:var(--green-dim); font-style:italic; }
+  /* a deliberate QUOTE BLOCK (paragraph starting "> " or indented in the Doc) — a featured
+     pull-quote: inset, larger italic, accent bar + big quote mark. */
+  .docreader .docquote{ position:relative; margin:1.7em 0; padding:.5em 1.2em .5em 2.4em;
+    border-left:3px solid var(--green); color:var(--green-bright); font-style:italic;
+    font-size:1.12em; line-height:1.7; text-shadow:0 0 8px rgba(var(--green-rgb),.28); }
+  .docreader .docquote::before{ content:"\201C"; position:absolute; left:.45em; top:.05em;
+    font-family:var(--font-head); font-size:1.8em; line-height:1; color:var(--green-dim); font-style:normal; }
+  .docreader .docquote .dq{ text-shadow:none; }   /* don't double-glow inline quotes inside a quote block */
   /* diagrams (Docs exports them as embedded PNGs, drawn dark-ink-on-light) — mounted on a
      light "schematic plate" so their dark text/arrows stay readable on the dark theme. */
   .docreader .docfig{ margin:1.9em 0; padding:14px; border:1px solid var(--green-faint);
@@ -842,7 +859,7 @@
     .docview{ padding:12px 0 0; }
     .docbar{ padding:0 16px; }
     .docscroll{ padding:8px 16px 60px; }
-    .docreader{ font-size:17px; }
+    .docreader{ font-size:16px; }
     .docreader table{ min-width:460px; }   /* scroll horizontally in its wrapper, not cram */
     .doctitle{ font-size:19px; }
     .doclink{ font-size:15px; }
