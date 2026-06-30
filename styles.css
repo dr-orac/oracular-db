@@ -298,12 +298,33 @@
   .doctop.show{ opacity:.92; transform:none; pointer-events:auto; }
   .doctop:hover{ color:var(--green-bright); border-color:var(--green); background:var(--bg-panel);
     box-shadow:0 0 14px -3px rgba(var(--green-rgb),.5); }
-  .docbar{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex:0 0 auto; padding:0 40px; }
-  .doctitle{ font-family:var(--font-head); font-size:24px; letter-spacing:1px; color:var(--green-bright); text-transform:uppercase; }
-  .docscroll{ flex:1 1 auto; min-height:0; overflow:auto; padding:8px 40px 80px;
+  .docbar{ display:flex; align-items:baseline; justify-content:space-between; gap:14px; flex:0 0 auto; padding:0 40px; }
+  .docbar-left{ display:flex; align-items:baseline; gap:12px; min-width:0; }
+  .doctitle{ font-family:var(--font-head); font-size:24px; letter-spacing:1px; color:var(--green-bright); text-transform:uppercase; flex:0 0 auto; }
+  /* sticky "current section" breadcrumb — updates as you scroll */
+  .docnow{ color:var(--green-dim); font-size:16px; letter-spacing:.3px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+  .docbody{ flex:1 1 auto; min-height:0; display:flex; }
+  .docscroll{ flex:1 1 auto; min-height:0; min-width:0; overflow:auto; padding:8px 40px 80px;
     -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 14px); mask-image:linear-gradient(to bottom, transparent 0, #000 14px); }
   .docstatus{ color:var(--green-dim); padding:30px 0; font-size:17px; }
   .docstatus.error{ color:var(--amber); }
+  /* in-page outline sidebar — wide screens only; the in-doc TOC + section nav serve narrow ones */
+  .doctoc{ display:none; }
+  @media (min-width:1180px){
+    .doctoc{ display:block; flex:0 0 232px; min-height:0; overflow:auto; padding:10px 16px 60px 40px;
+      border-right:1px solid var(--green-faint);
+      -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 14px), transparent);
+      mask-image:linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 14px), transparent); }
+    .docscroll{ padding-left:34px; }
+  }
+  .doctoc a{ display:block; text-decoration:none; color:var(--green-dim); font-family:var(--font-body);
+    font-size:14px; line-height:1.3; padding:4px 0 4px 10px; border-left:2px solid transparent; }
+  .doctoc a:hover{ color:var(--green-bright); }
+  .doctoc a.tl1{ color:var(--green); letter-spacing:.5px; margin-top:.7em; }
+  .doctoc a.tl1:first-child{ margin-top:0; }
+  .doctoc a.tl2{ padding-left:22px; font-size:13px; }
+  .doctoc a.active{ color:var(--green-bright); border-left-color:var(--green); }
 
   /* the re-rendered document — long-form reading: characterful display headings, a
      clean readable mono body (prose in the chunky pixel font is tiring), generous rhythm.
@@ -858,6 +879,7 @@
     .navtab{ font-size:16px; padding:7px 14px 6px; letter-spacing:1px; }
     .docview{ padding:12px 0 0; }
     .docbar{ padding:0 16px; }
+    .docnow{ display:none; }          /* breadcrumb hidden on narrow screens (bar too tight) */
     .docscroll{ padding:8px 16px 60px; }
     .docreader{ font-size:16px; }
     .docreader table{ min-width:460px; }   /* scroll horizontally in its wrapper, not cram */

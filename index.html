@@ -119,12 +119,18 @@
       <!-- DOC VIEW (Google Doc fetched + re-rendered in the terminal theme) -->
       <section id="docview" class="docview hidden" aria-label="Document">
         <div class="docbar">
-          <span class="doctitle" id="doctitle"></span>
+          <div class="docbar-left">
+            <span class="doctitle" id="doctitle"></span>
+            <span class="docnow" id="docnow" aria-live="polite"></span>
+          </div>
           <a class="btn doclink" id="doclink" href="#" target="_blank" rel="noopener noreferrer">↗ Open in Google Docs</a>
         </div>
-        <div class="docscroll" id="docscroll">
-          <article class="docreader" id="docreader"></article>
-          <div class="docstatus" id="docstatus"></div>
+        <div class="docbody">
+          <nav class="doctoc" id="doctoc" aria-label="Document contents"></nav>
+          <div class="docscroll" id="docscroll">
+            <article class="docreader" id="docreader"></article>
+            <div class="docstatus" id="docstatus"></div>
+          </div>
         </div>
         <button id="doctop" class="doctop" type="button" title="Back to top" aria-label="Back to top">↑ Top</button>
       </section>

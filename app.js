@@ -1440,6 +1440,32 @@ function styleTOC(reader){
     p.classList.add("tocitem", cls);
   });
 }
+/* in-page outline sidebar (wide screens) — built from the doc's H1/H2 headings */
+let docHeads=[];
+function buildDocSidebar(reader){
+  const toc=$("#doctoc");
+  docHeads=[...reader.querySelectorAll("h1,h2")].filter(h=>h.textContent.trim());
+  if(docHeads.length<3){ toc.innerHTML=""; return; }            // too short to bother
+  toc.innerHTML = docHeads.map((h,i)=>{
+    if(!h.id) h.id="doch-"+i;                                   // ensure a jump target
+    return `<a href="#${escAttr(h.id)}" class="tl${h.tagName[1]}" data-h="${escAttr(h.id)}">${esc(h.textContent.trim())}</a>`;
+  }).join("");
+}
+/* update the sticky "current section" label + sidebar highlight as the doc scrolls */
+function trackDocSection(){
+  if(!docHeads.length){ $("#docnow").textContent=""; return; }
+  const scTop=$("#docscroll").getBoundingClientRect().top;
+  let cur=null;
+  for(const h of docHeads){ if(h.getBoundingClientRect().top - scTop <= 90) cur=h; else break; }
+  $("#docnow").textContent = cur ? "› "+cur.textContent.trim() : "";
+  const toc=$("#doctoc"); let act=null;
+  toc.querySelectorAll("a").forEach(a=>{ const on = cur && a.dataset.h===cur.id; a.classList.toggle("active", on); if(on) act=a; });
+  if(act) act.scrollIntoView({block:"nearest"});
+}
+$("#doctoc").addEventListener("click", e=>{
+  const a=e.target.closest("a"); if(!a) return; e.preventDefault();
+  const t=document.getElementById(a.dataset.h); if(t) t.scrollIntoView({behavior:"smooth", block:"start"});
+});
 async function loadDoc(doc){
   $("#doctitle").textContent = doc.label;
   $("#doclink").href = `https://docs.google.com/document/d/${doc.docId}/edit`;
@@ -1455,6 +1481,8 @@ async function loadDoc(doc){
     const body=new DOMParser().parseFromString(await res.text(), "text/html").body;
     reader.innerHTML=docClean(body);
     styleTOC(reader);
+    buildDocSidebar(reader);
+    trackDocSection();
     reader.dataset.docid=doc.id;
     status.className="docstatus"; status.textContent="";
   }catch(e){
@@ -1488,8 +1516,12 @@ function setSection(id){
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
 });
-/* back-to-top button for long documents */
-$("#docscroll").addEventListener("scroll", ()=>{ $("#doctop").classList.toggle("show", $("#docscroll").scrollTop>500); });
+/* on doc scroll: back-to-top visibility + sticky section / sidebar tracking (rAF-throttled) */
+let docScrollTick=false;
+$("#docscroll").addEventListener("scroll", ()=>{
+  $("#doctop").classList.toggle("show", $("#docscroll").scrollTop>500);
+  if(!docScrollTick){ docScrollTick=true; requestAnimationFrame(()=>{ trackDocSection(); docScrollTick=false; }); }
+});
 $("#doctop").addEventListener("click", ()=>$("#docscroll").scrollTo({top:0, behavior:"smooth"}));
 /* clicking a Table-of-Contents link scrolls within the rendered doc (no hash pollution) */
 $("#docreader").addEventListener("click", e=>{
