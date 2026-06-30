@@ -287,17 +287,44 @@
   body[data-section]:not([data-section="roster"]) .toolbar .seg,
   body[data-section]:not([data-section="roster"]) #refresh{ display:none; }
 
-  /* ---------- embedded document view ---------- */
-  .docview{ display:flex; flex-direction:column; height:100%; min-height:0; padding:16px 20px 20px; gap:12px; }
-  .docbar{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex:0 0 auto; }
+  /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */
+  .docview{ display:flex; flex-direction:column; height:100%; min-height:0; padding:14px 0 0; gap:10px; }
+  .docbar{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex:0 0 auto; padding:0 40px; }
   .doctitle{ font-family:var(--font-head); font-size:24px; letter-spacing:1px; color:var(--green-bright); text-transform:uppercase; }
-  .docframe{ position:relative; flex:1 1 auto; min-height:0;
-    border:1px solid var(--green-faint); box-shadow:inset 0 0 0 1px rgba(var(--green-rgb),.08), 0 0 22px -6px rgba(0,0,0,.7);
-    background:#fff; }
-  #dociframe{ position:relative; z-index:1; width:100%; height:100%; border:0; display:block; }
-  /* fallback note sits behind the iframe; visible only if the iframe fails to paint over it */
-  .docfallback{ position:absolute; inset:0; z-index:0; display:flex; align-items:center; justify-content:center;
-    text-align:center; padding:30px; color:var(--green-dim); background:var(--bg-panel); }
+  .docscroll{ flex:1 1 auto; min-height:0; overflow:auto; padding:8px 40px 80px;
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 14px); mask-image:linear-gradient(to bottom, transparent 0, #000 14px); }
+  .docstatus{ color:var(--green-dim); padding:30px 0; font-size:17px; }
+  .docstatus.error{ color:var(--amber); }
+
+  /* the re-rendered document: a comfortable reading column in the phosphor theme */
+  .docreader{ max-width:74ch; margin:0 auto; line-height:1.75; color:var(--green); }
+  .docreader > :first-child{ margin-top:0; }
+  .docreader h1, .docreader h2, .docreader h3, .docreader h4{
+    font-family:var(--font-head); color:var(--green-bright); line-height:1.2; text-shadow:none;
+    margin:1.7em 0 .5em; }
+  .docreader h1{ font-size:30px; letter-spacing:.5px; padding-bottom:.3em;
+    border-bottom:1px solid; border-image:linear-gradient(to right, var(--green-faint), transparent) 1; }
+  .docreader h2{ font-size:24px; color:var(--green); }
+  .docreader h2::before{ content:"» "; color:var(--green-dim); }
+  .docreader h3{ font-size:20px; color:var(--green-dim); letter-spacing:1px; text-transform:uppercase; }
+  .docreader h4{ font-size:18px; color:var(--green-dim); }
+  .docreader p{ margin:0 0 1.1em; max-width:70ch; }
+  .docreader a{ color:var(--green-bright); text-decoration:underline; text-decoration-color:var(--green-faint); text-underline-offset:3px; }
+  .docreader a:hover{ text-decoration-color:var(--green); }
+  .docreader strong{ color:var(--green-bright); }
+  .docreader em{ font-style:italic; }
+  .docreader ul, .docreader ol{ margin:0 0 1.1em; padding-left:1.4em; }
+  .docreader li{ margin:.3em 0; padding-left:.2em; }
+  .docreader ul li{ list-style:none; position:relative; }
+  .docreader ul li::before{ content:"▪"; color:var(--green-dim); position:absolute; left:-1.1em; }
+  .docreader ol li{ list-style:decimal; }
+  .docreader hr{ border:0; height:1px; margin:1.8em 0;
+    background:linear-gradient(to right, transparent, var(--green-faint) 20%, var(--green-faint) 80%, transparent); }
+  .docreader blockquote{ margin:0 0 1.1em; padding:.2em 0 .2em 1em; border-left:2px solid var(--green-faint); color:var(--green-dim); }
+  .docreader img{ max-width:100%; height:auto; display:block; margin:1.2em auto; border:1px solid var(--green-faint); filter:saturate(.85); }
+  .docreader table{ border-collapse:collapse; margin:0 0 1.2em; width:100%; font-size:.95em; }
+  .docreader th, .docreader td{ border:1px solid var(--green-faint); padding:6px 10px; text-align:left; vertical-align:top; }
+  .docreader th{ color:var(--green-bright); background:var(--bg-panel); }
 
   /* lightweight status readout — subdued chrome, the link dot is the only accent */
   .statusline{
@@ -774,7 +801,10 @@
   @media (max-width:760px){
     :root{ --frame:16px; }   /* slimmer metal frame so it doesn't eat the small screen */
     .navtab{ font-size:16px; padding:7px 14px 6px; letter-spacing:1px; }
-    .docview{ padding:12px 12px 14px; }
+    .docview{ padding:12px 0 0; }
+    .docbar{ padding:0 16px; }
+    .docscroll{ padding:8px 16px 60px; }
+    .docreader h1{ font-size:25px; } .docreader h2{ font-size:21px; }
     .doctitle{ font-size:19px; }
     .doclink{ font-size:15px; }
     .roster{ grid-template-columns:1fr; grid-template-rows:minmax(120px,38%) 1fr; }

@@ -1368,14 +1368,66 @@ function renderNav(){
     `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}">${esc(t.label)}</button>`).join("");
   nav.classList.toggle("hidden", tabs.length < 2);   // nothing to switch to → no nav
 }
-function loadDoc(doc){
-  const f=$("#dociframe");
-  if(f && f.dataset.docid!==doc.id){                 // lazy: only set src the first time a doc opens
-    f.src = `https://docs.google.com/document/d/${doc.docId}/preview`;
-    f.dataset.docid = doc.id;
-  }
+/* Re-render a Google Doc in the terminal theme. We fetch the doc's HTML export
+   (a CORS-readable endpoint for link-shared docs) and rebuild it from a strict
+   element whitelist — dropping all of Google's inline styles/classes so OUR CSS
+   styles it. The whitelist walk also sanitises (no scripts/handlers/styles). */
+const DOC_OK = {h1:1,h2:1,h3:1,h4:1,h5:1,h6:1,p:1,ul:1,ol:1,li:1,a:1,hr:1,br:1,
+  blockquote:1,strong:1,em:1,b:1,i:1,u:1,sub:1,sup:1,table:1,thead:1,tbody:1,tr:1,td:1,th:1,img:1};
+function docBold(el){ const w=el.style&&el.style.fontWeight; return w==="bold"||(parseInt(w,10)>=600); }
+function docItalic(el){ return el.style && el.style.fontStyle==="italic"; }
+function docClean(node){
+  let out="";
+  node.childNodes.forEach(n=>{
+    if(n.nodeType===3){ out+=esc(n.nodeValue); return; }      // text node
+    if(n.nodeType!==1) return;
+    const tag=n.tagName.toLowerCase();
+    if(tag==="span"){                                          // unwrap; preserve bold/italic
+      let inner=docClean(n);
+      if(inner){ if(docBold(n)) inner=`<strong>${inner}</strong>`; if(docItalic(n)) inner=`<em>${inner}</em>`; }
+      out+=inner; return;
+    }
+    if(!DOC_OK[tag]){ out+=docClean(n); return; }              // unknown tag → keep its children
+    if(tag==="br"||tag==="hr"){ out+=`<${tag}>`; return; }
+    if(tag==="a"){
+      const href=n.getAttribute("href")||"";
+      const inner=docClean(n);
+      out+= /^https?:/i.test(href) ? `<a href="${escAttr(href)}" target="_blank" rel="noopener noreferrer">${inner}</a>` : inner;
+      return;
+    }
+    if(tag==="img"){
+      const src=n.getAttribute("src")||"";
+      if(/^https?:/i.test(src)) out+=`<img src="${escAttr(src)}" alt="${escAttr(n.getAttribute("alt")||"")}" loading="lazy">`;
+      return;
+    }
+    const inner=docClean(n);
+    if(/^(p|h[1-6]|li|blockquote|td|th)$/.test(tag)){
+      if(!inner.trim()) return;                          // drop empty blocks (Docs spacers)
+      if(/^Tab \d+$/.test(n.textContent.trim())) return; // drop Google Docs tab-name artifacts
+    }
+    out+=`<${tag}>${inner}</${tag}>`;
+  });
+  return out;
+}
+async function loadDoc(doc){
   $("#doctitle").textContent = doc.label;
   $("#doclink").href = `https://docs.google.com/document/d/${doc.docId}/edit`;
+  const reader=$("#docreader"), status=$("#docstatus");
+  $("#docscroll").scrollTop=0;
+  if(reader.dataset.docid===doc.id) return;                   // already rendered this doc
+  reader.innerHTML=""; status.className="docstatus loading"; status.textContent="◌ Loading document…";
+  try{
+    const res=await fetch(`https://docs.google.com/document/d/${doc.docId}/export?format=html`);
+    if(!res.ok) throw new Error("status "+res.status);
+    const body=new DOMParser().parseFromString(await res.text(), "text/html").body;
+    reader.innerHTML=docClean(body);
+    reader.dataset.docid=doc.id;
+    status.className="docstatus"; status.textContent="";
+  }catch(e){
+    status.className="docstatus error";
+    status.innerHTML=`Couldn’t load this document. Make sure it’s shared <b>“Anyone with the link → Viewer,”</b> then reopen the tab. `+
+      `<a href="${escAttr($("#doclink").href)}" target="_blank" rel="noopener noreferrer">Open in Google Docs ↗</a>`;
+  }
 }
 function setSection(id){
   if(id!=="roster" && !DOCS.some(d=>d.id===id)) id="roster";

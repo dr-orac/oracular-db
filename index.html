@@ -116,18 +116,15 @@
       <!-- CARDS VIEW -->
       <section id="cards" class="cards hidden"></section>
 
-      <!-- DOC VIEW (embedded Google Docs, framed in the terminal) -->
+      <!-- DOC VIEW (Google Doc fetched + re-rendered in the terminal theme) -->
       <section id="docview" class="docview hidden" aria-label="Document">
         <div class="docbar">
           <span class="doctitle" id="doctitle"></span>
           <a class="btn doclink" id="doclink" href="#" target="_blank" rel="noopener noreferrer">↗ Open in Google Docs</a>
         </div>
-        <div class="docframe">
-          <iframe id="dociframe" title="Embedded document" loading="lazy" referrerpolicy="no-referrer"></iframe>
-          <div class="docfallback" id="docfallback">
-            If this stays blank, the document isn’t shared publicly yet — set it to
-            <b>“Anyone with the link → Viewer.”</b>
-          </div>
+        <div class="docscroll" id="docscroll">
+          <article class="docreader" id="docreader"></article>
+          <div class="docstatus" id="docstatus"></div>
         </div>
       </section>
 
