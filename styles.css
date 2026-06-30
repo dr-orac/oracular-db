@@ -250,7 +250,7 @@
     background:linear-gradient(180deg, rgba(var(--green-rgb),.05), rgba(0,0,0,0));
     flex:0 0 auto;
   }
-  .titlebar{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+  .titlebar{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:nowrap; }
   /* masthead — "Workbench" wide display face as a fixed logo wordmark (a techy "terminal
      signage" look for the title, regardless of the chosen body font). */
   .brand{
@@ -280,9 +280,7 @@
   }
   /* on a doc section, hide the roster-only chrome (search / view toggle / refresh / status) */
   body[data-section]:not([data-section="roster"]) .statusline,
-  body[data-section]:not([data-section="roster"]) .toolbar .search,
-  body[data-section]:not([data-section="roster"]) .toolbar .seg,
-  body[data-section]:not([data-section="roster"]) #refresh{ display:none; }
+  body[data-section]:not([data-section="roster"]) .toolbar{ display:none; }
 
   /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */
   .docview{ position:relative; display:flex; flex-direction:column; height:100%; min-height:0; padding:14px 0 0; gap:10px; }

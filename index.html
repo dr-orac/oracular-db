@@ -33,25 +33,6 @@
     <header>
       <div class="titlebar">
         <div class="brand">THE TRIBE DATABASE <small>// PIP-LINK</small></div>
-      </div>
-      <nav id="topnav" class="topnav" role="tablist" aria-label="Sections"></nav>
-      <div class="statusline">
-        <span aria-live="polite" aria-atomic="true"><span class="dot" id="linkdot">●</span> <span id="linkstatus">CONNECTING…</span></span>
-        <span id="countinfo">—</span>
-        <span id="syncinfo">SYNC —</span>
-      </div>
-      <div class="toolbar">
-        <label class="search">
-          <span class="prompt">&gt;</span>
-          <input id="search" type="text" placeholder="search names, roles, notes…" autocomplete="off" aria-label="Search the roster by name, role, or notes" />
-          <button id="search-clear" class="search-clear" type="button" aria-label="Clear search" title="Clear search (Esc)">✕</button>
-          <kbd class="kbd-hint" title="Press / to focus search">/</kbd>
-        </label>
-        <div class="seg" role="tablist" aria-label="Roster layout">
-          <button id="view-roster" class="active">List</button>
-          <button id="view-cards">Cards</button>
-        </div>
-        <button class="btn" id="refresh">⟳ Refresh</button>
         <div class="popwrap">
           <button class="btn" id="settings-btn" title="Display settings" aria-expanded="false">⚙ Theme</button>
           <div class="popover" id="settings-pop">
@@ -99,6 +80,25 @@
             </div>
           </div>
         </div>
+      </div>
+      <nav id="topnav" class="topnav" role="tablist" aria-label="Sections"></nav>
+      <div class="statusline">
+        <span aria-live="polite" aria-atomic="true"><span class="dot" id="linkdot">●</span> <span id="linkstatus">CONNECTING…</span></span>
+        <span id="countinfo">—</span>
+        <span id="syncinfo">SYNC —</span>
+      </div>
+      <div class="toolbar">
+        <label class="search">
+          <span class="prompt">&gt;</span>
+          <input id="search" type="text" placeholder="search names, roles, notes…" autocomplete="off" aria-label="Search the roster by name, role, or notes" />
+          <button id="search-clear" class="search-clear" type="button" aria-label="Clear search" title="Clear search (Esc)">✕</button>
+          <kbd class="kbd-hint" title="Press / to focus search">/</kbd>
+        </label>
+        <div class="seg" role="tablist" aria-label="Roster layout">
+          <button id="view-roster" class="active">List</button>
+          <button id="view-cards">Cards</button>
+        </div>
+        <button class="btn" id="refresh">⟳ Refresh</button>
       </div>
     </header>
 
