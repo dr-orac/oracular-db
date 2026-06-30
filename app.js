@@ -1392,7 +1392,9 @@ function docClean(node){
     if(tag==="a"){
       const href=n.getAttribute("href")||"";
       const inner=docClean(n);
-      out+= /^https?:/i.test(href) ? `<a href="${escAttr(href)}" target="_blank" rel="noopener noreferrer">${inner}</a>` : inner;
+      if(/^https?:/i.test(href)) out+=`<a href="${escAttr(href)}" target="_blank" rel="noopener noreferrer">${inner}</a>`;
+      else if(href.startsWith("#")) out+=`<a href="${escAttr(href)}" class="docanchor">${inner}</a>`;  // in-doc TOC link
+      else out+=inner;
       return;
     }
     if(tag==="img"){
@@ -1400,12 +1402,16 @@ function docClean(node){
       if(/^https?:/i.test(src)) out+=`<img src="${escAttr(src)}" alt="${escAttr(n.getAttribute("alt")||"")}" loading="lazy">`;
       return;
     }
+    if(tag==="table"){ out+=`<div class="doctable"><table>${docClean(n)}</table></div>`; return; }  // wrap → scrolls on narrow screens
     const inner=docClean(n);
     if(/^(p|h[1-6]|li|blockquote|td|th)$/.test(tag)){
       if(!inner.trim()) return;                          // drop empty blocks (Docs spacers)
       if(/^Tab \d+$/.test(n.textContent.trim())) return; // drop Google Docs tab-name artifacts
     }
-    out+=`<${tag}>${inner}</${tag}>`;
+    const id=n.getAttribute("id");                       // keep heading anchors so the TOC can jump
+    const attr=(id && /^[\w.:-]+$/.test(id) ? ` id="${escAttr(id)}"` : "")
+      + (tag==="h1" && /^\s*part\b/i.test(n.textContent) ? ' class="part"' : "");
+    out+=`<${tag}${attr}>${inner}</${tag}>`;
   });
   return out;
 }
@@ -1451,6 +1457,18 @@ function setSection(id){
 }
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
+});
+/* clicking a Table-of-Contents link scrolls within the rendered doc (no hash pollution) */
+$("#docreader").addEventListener("click", e=>{
+  const a=e.target.closest("a.docanchor"); if(!a) return;
+  e.preventDefault();
+  const frag=a.getAttribute("href").slice(1);
+  let target = frag && document.getElementById(frag);
+  if(!target){                                          // Docs sometimes exports a bare "#" — match heading by text
+    const txt=a.textContent.trim().toLowerCase();
+    target=[...$("#docreader").querySelectorAll("h1,h2,h3,h4")].find(h=>h.textContent.trim().toLowerCase()===txt);
+  }
+  if(target) target.scrollIntoView({behavior:"smooth", block:"start"});
 });
 
 $("#crt-toggle").addEventListener("click", ()=>{
