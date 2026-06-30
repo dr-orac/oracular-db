@@ -1376,10 +1376,16 @@ const DOC_OK = {h1:1,h2:1,h3:1,h4:1,h5:1,h6:1,p:1,ul:1,ol:1,li:1,a:1,hr:1,br:1,
   blockquote:1,strong:1,em:1,b:1,i:1,u:1,sub:1,sup:1,table:1,thead:1,tbody:1,tr:1,td:1,th:1,img:1};
 function docBold(el){ const w=el.style&&el.style.fontWeight; return w==="bold"||(parseInt(w,10)>=600); }
 function docItalic(el){ return el.style && el.style.fontStyle==="italic"; }
+/* escape text, and wrap "double-quoted" runs in a styled span so quoted speech stands out */
+function docText(raw){
+  let out="", re=/[“"][^”"\n]{1,300}?[”"]/g, last=0, m;
+  while((m=re.exec(raw))){ out+=esc(raw.slice(last, m.index))+`<span class="dq">${esc(m[0])}</span>`; last=re.lastIndex; }
+  return out + esc(raw.slice(last));
+}
 function docClean(node){
   let out="";
   node.childNodes.forEach(n=>{
-    if(n.nodeType===3){ out+=esc(n.nodeValue); return; }      // text node
+    if(n.nodeType===3){ out+=docText(n.nodeValue); return; }   // text node (quotes get styled)
     if(n.nodeType!==1) return;
     const tag=n.tagName.toLowerCase();
     if(tag==="span"){                                          // unwrap; preserve bold/italic
@@ -1398,8 +1404,8 @@ function docClean(node){
       return;
     }
     if(tag==="img"){
-      const src=n.getAttribute("src")||"";
-      if(/^https?:/i.test(src)) out+=`<img src="${escAttr(src)}" alt="${escAttr(n.getAttribute("alt")||"")}" loading="lazy">`;
+      const src=n.getAttribute("src")||"";                     // Docs embeds diagrams as base64 data: PNGs
+      if(/^(https?:|data:image\/)/i.test(src)) out+=`<figure class="docfig"><img src="${escAttr(src)}" alt="${escAttr(n.getAttribute("alt")||"")}" loading="lazy"></figure>`;
       return;
     }
     if(tag==="table"){ out+=`<div class="doctable"><table>${docClean(n)}</table></div>`; return; }  // wrap → scrolls on narrow screens
@@ -1415,6 +1421,21 @@ function docClean(node){
   });
   return out;
 }
+/* Tag Table-of-Contents entries (a paragraph that is just one in-doc link) with their
+   target heading's level, so the TOC shows real hierarchy via indent + size. */
+function styleTOC(reader){
+  reader.querySelectorAll("p > a.docanchor").forEach(a=>{
+    const p=a.parentElement;
+    if(p.children.length!==1 || p.textContent.trim()!==a.textContent.trim()) return;  // whole-line entry only
+    const frag=a.getAttribute("href").slice(1);
+    let tgt = frag && reader.querySelector("#"+(window.CSS&&CSS.escape?CSS.escape(frag):frag));
+    if(!tgt){ const t=a.textContent.trim().toLowerCase();
+      tgt=[...reader.querySelectorAll("h1,h2,h3,h4")].find(h=>h.textContent.trim().toLowerCase()===t); }
+    const lvl = tgt ? Math.min(parseInt(tgt.tagName[1],10), 4) : 1;
+    const cls = {1:"toc-l1", 2:"toc-l2", 3:"toc-l3", 4:"toc-l4"}[lvl];
+    p.classList.add("tocitem", cls);
+  });
+}
 async function loadDoc(doc){
   $("#doctitle").textContent = doc.label;
   $("#doclink").href = `https://docs.google.com/document/d/${doc.docId}/edit`;
@@ -1427,6 +1448,7 @@ async function loadDoc(doc){
     if(!res.ok) throw new Error("status "+res.status);
     const body=new DOMParser().parseFromString(await res.text(), "text/html").body;
     reader.innerHTML=docClean(body);
+    styleTOC(reader);
     reader.dataset.docid=doc.id;
     status.className="docstatus"; status.textContent="";
   }catch(e){
