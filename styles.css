@@ -884,7 +884,7 @@
     .doclink{ font-size:15px; }
     .roster{ grid-template-columns:1fr; grid-template-rows:minmax(120px,38%) 1fr; }
     .listcol{ border-right:0; border-bottom:1px solid var(--green-faint); }
-    .brand{ font-size:26px; } .brand small{ font-size:17px; }
+    .brand{ font-size:25px; white-space:nowrap; } .brand small{ display:none; }   /* drop the // PIP-LINK tag on narrow screens (it'd wrap) */
     /* tame the big dossier headline so it doesn't wrap to 3 lines on a 375px column */
     .doss-name{ font-size:34px; line-height:1.05; }
     .field > .label, .spirit-name{ font-size:19px; }

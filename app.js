@@ -898,7 +898,7 @@ function renderListControls(model){
   if(state.filterSection!=="all" && !model.sections.includes(state.filterSection)) state.filterSection="all";
   const secOpts = `<option value="all">All sections</option>` +
     model.sections.map(s=>`<option value="${escAttr(s)}"${s===state.filterSection?" selected":""}>${esc(sectionLabel(s))}</option>`).join("");
-  const sortOpts = [["rank","Rank (chiefs first)"],["sheet","Sheet order"],["name","Name A–Z"],["role","By role"]]
+  const sortOpts = [["rank","Chiefs first"],["sheet","Sheet order"],["name","Name A–Z"],["role","By role"]]
     .map(([v,l])=>`<option value="${v}"${v===state.sortBy?" selected":""}>${l}</option>`).join("");
   const ctl=$("#listctl");
   // only show the section filter when there's actually more than one section to pick
@@ -1403,6 +1403,7 @@ function docItalic(el){
 }
 /* escape text, and wrap "double-quoted" runs in a styled span so quoted speech stands out */
 function docText(raw){
+  raw=relabelTribe(raw);                                    // rebrand "the Yuma Tribe" → "the Tribe" in docs too
   let out="", re=/[“"][^”"\n]{1,300}?[”"]/g, last=0, m;
   while((m=re.exec(raw))){ out+=esc(raw.slice(last, m.index))+`<span class="dq">${esc(m[0])}</span>`; last=re.lastIndex; }
   return out + esc(raw.slice(last));
