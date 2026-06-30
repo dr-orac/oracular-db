@@ -251,6 +251,24 @@ Strip verbose labels; let format carry meaning. `DATA LINK: ONLINE → ● ONLIN
 `UNITS: 43 → 43 UNITS`, `LAST SYNC: 13:55:48 → SYNC 13:55`. Dim it (`opacity:.78`, 15px,
 tracked); the one live status **dot** is the only accent.
 
+### Long-form reading view — re-theme an external document, don't iframe it
+To show an external doc (e.g. a Google Doc) *in your theme*, don't iframe it (you can't
+restyle cross-origin content). Instead **fetch its HTML and rebuild it from a whitelist**:
+- Fetch the document's HTML export. (Google Docs' `…/export?format=html` is CORS-readable for
+  a link-shared doc — `fetch()` returns `type:"cors"`; no backend needed.)
+- Walk the parsed DOM and re-emit only allowed elements (`h1–h4, p, ul/ol/li, a, table, img,
+  strong/em…`), **dropping every inline style/class**. This both themes it (your CSS owns the
+  look) *and* sanitises it (no scripts/handlers survive). Escape all text; only allow
+  `http(s):`/`data:image/` URLs.
+- For reading comfort: **display headings in a characterful face, body in a clean readable
+  mono** (long prose in a chunky pixel font is tiring); em-based heading sizes; ~70–74ch
+  measure; space-above-headings proportional to level.
+- **Diagrams on a dark theme:** raster diagrams are usually drawn dark-ink-on-light, so they
+  vanish on a dark background. Mount them on a light "schematic plate" (`background:#e7e5da`)
+  so they stay legible — or, if you control them, author them transparent-bg with light/green
+  strokes and drop the plate. (Note: tools like Google Docs rasterise everything to PNG on
+  export — you can't get an SVG out of one.)
+
 ---
 
 ## 6. Layout & spacing
