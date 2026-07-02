@@ -63,20 +63,20 @@
   body[data-textsize="xlarge"]      { font-size:26px;   }
   /* Fallout pixel BODY breathes a bit more — the bitmap reads better with loose tracking.
      (Applies to "Fallout pure" AND the "Workbench" preset, which both use Fallout as body.) */
-  body[data-font="fallout"], body[data-font="workbench"]{ line-height:1.78; letter-spacing:.4px; }
-  body[data-font="fallout"] .row-sub, body[data-font="workbench"] .row-sub{ font-size:17px; }
+  body[data-font-body="fallout"]{ line-height:1.78; letter-spacing:.4px; }
+  body[data-font-body="fallout"] .row-sub{ font-size:17px; }
 
-  /* ---- "Workbench" preset ----
-     Everything is Fallout (set via the preset's head+body) EXCEPT the big character
-     NAME and the brand, which use the wide, heavy Workbench display face. Workbench is
-     airy and wide, so it gets near-zero tracking, tight line-height and a slightly
-     smaller px than the Fallout titles (so its visual mass matches). Section headings,
-     the spirit-animal name ("THE BRAHMIN"), etc. stay Fallout. */
-  body[data-font="workbench"] .brand{ font-family:"Workbench", monospace; font-size:30px; letter-spacing:0; line-height:1.05; }
-  body[data-font="workbench"] .brand small{ font-family:var(--font-body); }   /* keep "// PIP-LINK" in Fallout */
-  body[data-font="workbench"] .doss-name{ font-family:"Workbench", monospace; font-size:46px; letter-spacing:.5px; line-height:1.1; }
+  /* ---- "Workbench" headings pick ----
+     A curated name-plate treatment, not a global heading face: the big character NAME,
+     card names and the brand use the wide, heavy Workbench display face; every other
+     heading stays Fallout (--font-head is left on the Fallout stack — see FACES in
+     app.js). Workbench is airy and wide, so near-zero tracking, tight line-height and
+     a slightly smaller px than the Fallout titles (matching visual mass). */
+  body[data-font-head="workbench"] .brand{ font-family:"Workbench", monospace; font-size:30px; letter-spacing:0; line-height:1.05; }
+  body[data-font-head="workbench"] .brand small{ font-family:var(--font-body); }   /* keep "// PIP-LINK" in the body face */
+  body[data-font-head="workbench"] .doss-name{ font-family:"Workbench", monospace; font-size:46px; letter-spacing:.5px; line-height:1.1; }
   /* Workbench card titles: smaller + block caps so wide names fit the card tile cleanly */
-  body[data-font="workbench"] .card .cname{ font-family:"Workbench", monospace; font-size:19px; letter-spacing:.5px; line-height:1.2; text-transform:uppercase; }
+  body[data-font-head="workbench"] .card .cname{ font-family:"Workbench", monospace; font-size:19px; letter-spacing:.5px; line-height:1.2; text-transform:uppercase; }
   /* small / secondary text: drop the glow so it stays crisp and legible */
   .row-sub, .idcell .k, .conn-k, .spec-k, .logmeta, .composer-note, .uploadnote,
   .statusline, .editnote, .tag, .chip, .crole, .cmeta, .row-name, .elabel{ text-shadow:none; }
@@ -902,9 +902,9 @@
     .doss-name{ font-size:34px; line-height:1.05; }
     .field > .label, .spirit-name{ font-size:19px; }
     /* Workbench title rules have higher specificity, so cap them on mobile too */
-    body[data-font="workbench"] .brand{ font-size:24px; }
-    body[data-font="workbench"] .doss-name{ font-size:32px; }
-    body[data-font="workbench"] .card .cname{ font-size:18px; }
+    body[data-font-head="workbench"] .brand{ font-size:24px; }
+    body[data-font-head="workbench"] .doss-name{ font-size:32px; }
+    body[data-font-head="workbench"] .card .cname{ font-size:18px; }
     /* header: eyebrow stacks above its actions; portrait shrinks beside the name */
     .doss-toprow{ flex-wrap:wrap; }
     .portrait.lg{ width:120px; height:120px; }
@@ -1011,6 +1011,24 @@
   .swatch.active::after{ content:"✓"; margin-left:5px; color:var(--green-bright); font-size:17px; }
   .swatch .chip{ width:12px; height:12px; border-radius:50%; box-shadow:0 0 5px currentColor; }
   .swatch.bg .chip{ border-radius:2px; box-shadow:none; border:1px solid rgba(255,255,255,.18); }
+
+  /* ---- face pickers (Headings / Body) ----
+     One row per typeface; the option's NAME renders in that face (the name IS the
+     preview), with an optional right-aligned scope note ("name plates only"). */
+  .swatches.faces{ flex-direction:column; gap:5px; }
+  .faceopt{ width:100%; display:flex; align-items:baseline; justify-content:space-between;
+    gap:10px; padding:7px 10px; text-align:left; }
+  .faceopt .fname{ font-size:18px; line-height:1.15; }
+  .faceopt .fnote{ font-family:"IBM Plex Mono", monospace; font-size:11px; letter-spacing:.5px;
+    color:var(--green-dim); text-shadow:none; white-space:nowrap; }
+  /* scope caption under each picker heading ("section titles · field labels · …") */
+  .popnote{ margin:-4px 0 8px; font-family:"IBM Plex Mono", monospace; font-size:11px;
+    letter-spacing:.5px; color:var(--green-dim); text-shadow:none; }
+  /* collapsed-group value line: what's currently picked, readable without opening
+     the group (Apple Settings style). Filled by refreshCur() in app.js. */
+  .popcur{ margin-left:auto; font-family:"IBM Plex Mono", monospace; font-size:11px;
+    letter-spacing:.5px; color:var(--green-dim); text-transform:none; text-shadow:none;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:52%; }
 
   /* ---------- CRT icons / sigils ---------- */
   .ic{ display:inline-block; width:1em; height:1em; vertical-align:-0.12em;

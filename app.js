@@ -69,28 +69,40 @@ const BGS = {
   slate:   { name:"Slate",     bg:"#15171c", panel:"#1c1f26", panel2:"#262a33" },
 };
 const BG_ORDER = ["phosphor","warm","cool","black","slate"];
-/* each preset: head = title font, body = legible smaller text. */
+/* Typeface catalogue. Headings and body text are picked SEPARATELY (two radio groups
+   in the Theme popover), so the picker states exactly what each choice affects —
+   replacing the old fixed head+body preset pairs.
+   `css` = the applied font-family stack. `preview` (optional) = stack used to render
+   the option's own name in the picker when it differs from `css`. */
 const LEGIBLE='"IBM Plex Mono", ui-monospace, monospace';
-const FONTS = {
+const FACES = {
   /* default — "Fallouty": a clean, even Fallout pixel face whose glyphs fill ~58% of the
-     em (vs the old "Fallout" 44%), so it reads bigger without the heavy/irregular look of
-     the chunkier JH face. Old "Fallout" stays as a fallback. */
-  fallout:  { name:"Fallout 1·2",   head:'"Fallouty", "Fallout", "VT323", monospace', body:'"Fallouty", "Fallout", "VT323", monospace' },
-  /* paired alternative — Fallout pixel headings + IBM Plex Mono body for max paragraph legibility. */
-  falloutplex: { name:"Fallout + Plex", head:'"Fallouty", "Fallout", "VT323", monospace', body:LEGIBLE },
-  fixedsys: { name:"Fixedsys",  head:'"Fixedsys Excelsior", monospace',  body:'"Fixedsys Excelsior", monospace' },
-  monofonto:{ name:"Monofonto", head:'"Monofonto", monospace',           body:LEGIBLE },
-  terminal: { name:"Terminal",  head:'"VT323", monospace',               body:'"Share Tech Mono", ui-monospace, monospace' },
-  plex:     { name:"Plex",      head:'"IBM Plex Mono", monospace',        body:LEGIBLE },
-  ticker:   { name:"Ticker",    head:'"DotGothic16", monospace',          body:LEGIBLE },
-  /* "Workbench" = Fallout everywhere, EXCEPT the big character name + brand which use
-     the Workbench display face (applied directly in CSS — see body[data-font="workbench"]). */
-  workbench:{ name:"Workbench", head:'"Fallouty", "Fallout", "VT323", monospace',     body:'"Fallouty", "Fallout", "VT323", monospace' },
-  overseer: { name:"Overseer",  head:'"Overseer", "VT323", monospace',    body:'"Share Tech Mono", ui-monospace, monospace' },
-  typewriter:{name:"Typewriter",head:'"Special Elite", monospace',        body:'"Special Elite", monospace' },
-  block:    { name:"Block",     head:'"Pixelify Sans", monospace',        body:'"Pixelify Sans", monospace' },
+     em, so it reads bigger without the heavy/irregular look of the chunkier JH face. */
+  fallout:   { name:"Fallout 1·2", css:'"Fallouty", "Fallout", "VT323", monospace' },
+  /* Workbench is a wide display face: as a HEADINGS pick it styles the brand + character
+     name plates only (via body[data-font-head="workbench"] CSS); other headings stay
+     Fallout. Too loud for every label — this is the curated behaviour it always had. */
+  workbench: { name:"Workbench",   css:'"Fallouty", "Fallout", "VT323", monospace',
+               preview:'"Workbench", monospace', note:"name plates only" },
+  overseer:  { name:"Overseer",   css:'"Overseer", "VT323", monospace' },
+  monofonto: { name:"Monofonto",  css:'"Monofonto", monospace' },
+  terminal:  { name:"Terminal",   css:'"VT323", monospace' },
+  fixedsys:  { name:"Fixedsys",   css:'"Fixedsys Excelsior", monospace' },
+  plex:      { name:"Plex",       css:LEGIBLE },
+  sharetech: { name:"Share Tech", css:'"Share Tech Mono", ui-monospace, monospace' },
+  ticker:    { name:"Ticker",     css:'"DotGothic16", monospace' },
+  typewriter:{ name:"Typewriter", css:'"Special Elite", monospace' },
+  block:     { name:"Block",      css:'"Pixelify Sans", monospace' },
 };
-const FONT_ORDER = ["fallout","falloutplex","fixedsys","monofonto","terminal","plex","ticker","workbench","overseer","typewriter","block"];
+const HEAD_ORDER = ["fallout","workbench","overseer","monofonto","terminal","fixedsys","plex","ticker","typewriter","block"];
+const BODY_ORDER = ["fallout","plex","sharetech","monofonto","terminal","fixedsys","typewriter","block"];
+/* legacy single-preset key (pre-rebuild "yuma-font") → [head, body] migration */
+const PRESET_MIGRATE = {
+  fallout:["fallout","fallout"], falloutplex:["fallout","plex"], fixedsys:["fixedsys","fixedsys"],
+  monofonto:["monofonto","plex"], terminal:["terminal","sharetech"], plex:["plex","plex"],
+  ticker:["ticker","plex"], workbench:["workbench","fallout"], overseer:["overseer","sharetech"],
+  typewriter:["typewriter","typewriter"], block:["block","block"],
+};
 
 /* "#3cff7a" -> "60,255,122" so rgba(var(--green-rgb), a) tracks the active preset. */
 function hexToRgbTriplet(hex){
@@ -116,14 +128,21 @@ function applyBg(key){
   /* keep the browser chrome (mobile tab bar, PWA splash) in sync with the picked background */
   const tc = document.querySelector('meta[name="theme-color"]'); if(tc) tc.setAttribute("content", b.bg);
 }
-function applyFont(key){
-  const f=FONTS[key]||FONTS.terminal, r=document.documentElement.style;
-  r.setProperty("--font-body", f.body); r.setProperty("--font-head", f.head);
-  document.body.dataset.font=key;          // lets CSS tune size/spacing per font (e.g. the tiny Fallout bitmap)
-  localStorage.setItem("yuma-font", key);
-  document.querySelectorAll("#font-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
-  // if the user hasn't explicitly chosen a text size, derive it from the font
-  // (pixel fonts → large) so small bitmap faces stay legible by default.
+function applyFontHead(key){
+  const f=FACES[key]||FACES.fallout;
+  document.documentElement.style.setProperty("--font-head", f.css);
+  document.body.dataset.fontHead=key;      // CSS hook: body[data-font-head="workbench"] name plates
+  localStorage.setItem("yuma-font-head", key);
+  document.querySelectorAll("#fonthead-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
+}
+function applyFontBody(key){
+  const f=FACES[key]||FACES.fallout;
+  document.documentElement.style.setProperty("--font-body", f.css);
+  document.body.dataset.fontBody=key;      // CSS hook: body[data-font-body="fallout"] line-height tuning
+  localStorage.setItem("yuma-font-body", key);
+  document.querySelectorAll("#fontbody-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
+  // if the user hasn't explicitly chosen a text size, derive it from the BODY face
+  // (small pixel faces → large) so bitmap fonts stay legible by default.
   if(!localStorage.getItem("yuma-textsize")) setTextSizeAttr(defaultSizeForFont(key));
 }
 function applyDensity(key){
@@ -149,14 +168,11 @@ function applyGlass(key){
   localStorage.setItem("yuma-sheen", key);
   document.querySelectorAll("#glass-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
-/* Pixel/bitmap fonts render small per px, so they default to a larger text size.
-   (The user can still override via the Text Size control — that choice is persisted
-   and wins over this per-font default.) */
-/* fonts whose glyphs render small per-px → default to the "large" text size.
-   NOTE: "fallout"/"workbench" use the JH Fallout face (fills ~88% of the em), so they're
-   NOT here — they read large already at the "comfortable" default. */
-const SMALL_FONTS = new Set(["fixedsys","terminal","ticker","block","overseer"]);
-function defaultSizeForFont(fontKey){ return SMALL_FONTS.has(fontKey) ? "large" : "comfortable"; }
+/* BODY faces whose glyphs render small per-px → default to the "large" text size.
+   (The user's explicit Text Size choice is persisted and wins over this default.
+   Fallouty fills most of the em, so it reads large already at "comfortable".) */
+const SMALL_FONTS = new Set(["fixedsys","terminal","sharetech","ticker","block"]);
+function defaultSizeForFont(faceKey){ return SMALL_FONTS.has(faceKey) ? "large" : "comfortable"; }
 
 /* set the size attribute + swatch state WITHOUT persisting (used for font-derived defaults) */
 function setTextSizeAttr(key){
@@ -171,9 +187,19 @@ function applyTextSize(key){
   localStorage.setItem("yuma-textsize", document.body.dataset.textsize);
 }
 function buildSettings(){
-  document.querySelector("#font-swatches").innerHTML = FONT_ORDER.map(k=>
-    `<button class="swatch" data-key="${k}">${FONTS[k].name}</button>`).join("");
-  document.querySelector("#font-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyFont(b.dataset.key); });
+  // face pickers: each option's name renders IN its own typeface (the name is the
+  // preview), with an optional scope note. All values are trusted constants.
+  const faceBtn = k => {
+    const f=FACES[k];
+    return `<button class="swatch faceopt" data-key="${k}" role="radio">`+
+      `<span class="fname" style='font-family:${f.preview||f.css}'>${f.name}</span>`+
+      (f.note?`<span class="fnote">${f.note}</span>`:"")+
+      `</button>`;
+  };
+  document.querySelector("#fonthead-swatches").innerHTML = HEAD_ORDER.map(faceBtn).join("");
+  document.querySelector("#fonthead-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyFontHead(b.dataset.key); });
+  document.querySelector("#fontbody-swatches").innerHTML = BODY_ORDER.map(faceBtn).join("");
+  document.querySelector("#fontbody-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyFontBody(b.dataset.key); });
   document.querySelector("#density-swatches").innerHTML =
     [["comfortable","Comfortable"],["compact","Compact"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#density-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDensity(b.dataset.key); });
@@ -196,6 +222,28 @@ function buildSettings(){
     `<button class="swatch bg" data-key="${k}"><span class="chip" style="background:${BGS[k].bg}"></span>${BGS[k].name}</button>`).join("");
   document.querySelector("#color-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyColor(b.dataset.key); });
   document.querySelector("#bg-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyBg(b.dataset.key); });
+  // after ANY click in the popover, refresh the collapsed-group value lines + radio a11y
+  // state. Synchronous is safe: this listener is on an ANCESTOR, so the per-group apply
+  // handler (on the swatch container) has already run by the time the event bubbles here.
+  // (Not rAF — rAF callbacks are suspended in hidden tabs.)
+  document.querySelector("#settings-pop").addEventListener("click", refreshCur);
+}
+
+/* Collapsed-group summaries show their CURRENT values (Apple Settings style), so the
+   popover communicates state without opening every group. Also syncs aria-checked. */
+function refreshCur(){
+  const headK=document.body.dataset.fontHead||"fallout", bodyK=document.body.dataset.fontBody||"fallout";
+  const colorK=localStorage.getItem("yuma-color")||"green", bgK=localStorage.getItem("yuma-bg")||"phosphor";
+  const t=document.querySelector("#cur-type"), s=document.querySelector("#cur-screen"), f=document.querySelector("#cur-frame");
+  if(t) t.textContent = (FACES[headK]||FACES.fallout).name
+        + (bodyK!==headK ? " / "+(FACES[bodyK]||FACES.fallout).name : "")
+        + " · " + (THEMES[colorK]||THEMES.green).name;
+  if(s) s.textContent = (BGS[bgK]||BGS.phosphor).name
+        + " · CRT " + (document.body.classList.contains("crt")?"on":"off");
+  if(f) f.textContent = (document.body.dataset.frame==="border"?"Metal":"Screen")
+        + (document.body.dataset.frametint==="theme"?" · tinted":"");
+  document.querySelectorAll("#settings-pop .swatch[role=radio]")
+    .forEach(b=>b.setAttribute("aria-checked", b.classList.contains("active")));
 }
 
 /* ------------------------ CRT icon library ------------------------ */
@@ -1598,15 +1646,16 @@ $("#refresh").addEventListener("click", ()=>load(true));
 /* Reset all Theme-popover settings to defaults (font, colour, bg, density, text size,
    frame, frame tint, screen glass, CRT). Doesn't touch character data / icons / photos. */
 $("#reset-settings").addEventListener("click", ()=>{
-  ["yuma-font","yuma-color","yuma-bg","yuma-density","yuma-textsize",
-   "yuma-frame","yuma-frametint","yuma-sheen","yuma-crt"
+  ["yuma-font","yuma-font-head","yuma-font-body","yuma-color","yuma-bg","yuma-density",
+   "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt"
   ].forEach(k=>localStorage.removeItem(k));
-  applyFont("fallout");                 // also sets the font-derived text size (Large for Fallout) since yuma-textsize was just cleared
+  applyFontHead("fallout"); applyFontBody("fallout");   // body apply also restores the font-derived text size since yuma-textsize was just cleared
   applyColor("green"); applyBg("phosphor"); applyDensity("comfortable");
   applyFrame("screen"); applyFrameTint("olive"); applyGlass("off");
   document.body.classList.add("crt");
   $("#crt-toggle").textContent="Scanlines: ON"; $("#crt-toggle").classList.add("active");
   localStorage.setItem("yuma-crt","1");
+  refreshCur();
   toast("Theme settings reset to defaults.");
 });
 
@@ -1778,7 +1827,15 @@ function runBoot(){
 (function init(){
   runBoot();
   buildSettings();
-  applyFont(localStorage.getItem("yuma-font") || "fallout");      /* Fallout pure is the default; applyFont sets a font-derived size if none stored */
+  /* one-time migration: old single-preset "yuma-font" key → separate head/body faces */
+  const legacyFont = localStorage.getItem("yuma-font");
+  if(legacyFont && !localStorage.getItem("yuma-font-head")){
+    const [mh,mb] = PRESET_MIGRATE[legacyFont] || ["fallout","fallout"];
+    localStorage.setItem("yuma-font-head", mh); localStorage.setItem("yuma-font-body", mb);
+  }
+  localStorage.removeItem("yuma-font");
+  applyFontHead(localStorage.getItem("yuma-font-head") || "fallout");
+  applyFontBody(localStorage.getItem("yuma-font-body") || "fallout");  /* sets a font-derived size if none stored */
   const storedSize = localStorage.getItem("yuma-textsize");
   if(storedSize) applyTextSize(storedSize);                       /* explicit choice wins over the per-font default */
   applyColor(localStorage.getItem("yuma-color") || "green");
@@ -1792,6 +1849,7 @@ function runBoot(){
   $("#crt-toggle").textContent = "Scanlines: " + (crtOn ? "ON" : "OFF");
   $("#crt-toggle").classList.toggle("active", crtOn);
   const v=localStorage.getItem("yuma-view"); if(v) setView(v);
+  refreshCur();                      // fill the popover's collapsed-group value lines
   renderNav();                       // build the Roster + docs section tabs
   load(false);
 })();

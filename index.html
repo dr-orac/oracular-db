@@ -37,16 +37,20 @@
           <button class="btn" id="settings-btn" title="Display settings" aria-expanded="false">⚙ Theme</button>
           <div class="popover" id="settings-pop">
             <details class="popgrp" open>
-              <summary>Type</summary>
-              <h4>Font</h4>
-              <div class="swatches" id="font-swatches"></div>
+              <summary>Type <span class="popcur" id="cur-type"></span></summary>
+              <h4>Headings Font</h4>
+              <p class="popnote">section titles · field labels · name plates</p>
+              <div class="swatches faces" id="fonthead-swatches" role="radiogroup" aria-label="Headings font"></div>
+              <h4>Body Font</h4>
+              <p class="popnote">paragraphs · lists · roster rows</p>
+              <div class="swatches faces" id="fontbody-swatches" role="radiogroup" aria-label="Body font"></div>
               <h4>Text Colour</h4>
               <div class="swatches" id="color-swatches"></div>
               <h4>Text Size</h4>
               <div class="swatches" id="textsize-swatches"></div>
             </details>
             <details class="popgrp" open>
-              <summary>Screen</summary>
+              <summary>Screen <span class="popcur" id="cur-screen"></span></summary>
               <h4>Background</h4>
               <div class="swatches" id="bg-swatches"></div>
               <h4>Density</h4>
@@ -59,7 +63,7 @@
               <div class="swatches" id="glass-swatches"></div>
             </details>
             <details class="popgrp">
-              <summary>Frame</summary>
+              <summary>Frame <span class="popcur" id="cur-frame"></span></summary>
               <h4>Frame</h4>
               <div class="swatches" id="frame-swatches"></div>
               <h4>Frame Tint</h4>
