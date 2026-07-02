@@ -480,7 +480,10 @@
   main{ flex:1 1 auto; min-height:0; position:relative; }
 
   /* roster view: list + dossier */
-  .roster{ display:grid; grid-template-columns:300px 1fr; height:100%; min-height:0; }
+  /* list rail scales with the viewport: never narrower than today's 300px (no regression on
+     small screens), grows on widescreen so names/roles stop wrapping, capped so the dossier
+     always keeps the lion's share. */
+  .roster{ display:grid; grid-template-columns:clamp(300px, 24vw, 400px) 1fr; height:100%; min-height:0; }
   .listcol{ display:flex; flex-direction:column; min-height:0; min-width:0; border-right:1px solid var(--green-faint); }
   .listctl{ flex:0 0 auto; display:flex; gap:6px; padding:8px 10px; border-bottom:1px solid var(--green-faint);
     background:linear-gradient(180deg, rgba(255,255,255,.02), transparent); }
