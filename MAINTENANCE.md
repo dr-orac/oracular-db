@@ -1,20 +1,30 @@
 # MAINTENANCE — how this project is built and how not to break it
 
 The durable, in-repo source of truth for anyone picking this up cold. If an
-assistant's working memory is lost, **start here.** Last structural update: 2026-06-05.
+assistant's working memory is lost, **start here.** Last structural update: 2026-07-02.
 
 ---
 
 ## What this is
 
-A **Fallout-1 / Pip-Boy themed roster viewer** for an SS14 RP tribe. It reads a Google Sheet
-live and renders one dossier per character. Pure static site:
+A **Fallout-1 / Pip-Boy themed roster viewer** for an SS14 RP tribe (presents as
+**"The Tribe Database"**). It reads a Google Sheet live and renders one dossier per
+character. Pure static site:
 
 - **No build step, no framework, no CDN, no dependencies.** Just `index.html` + `styles.css`
   + `app.js` + self-hosted `fonts/`. Open the file, it runs.
 - Reads the sheet **read-only** via the gviz CSV endpoint. It never writes to the sheet
   unless an (optional, undeployed) Apps Script `webAppUrl` is configured.
-- Deploys to any static host (GitHub Pages / Netlify).
+- **LIVE at https://dr-orac.github.io/oracular-db/** — GitHub Pages, repo
+  `dr-orac/oracular-db`, serves `main` branch root, redeploys on every push (~1 min).
+
+**Data flow (two sheets — don't confuse them):** the deployed site reads the tribe's
+**ORIGINAL sheet** (`10n4T…`, `CONFIG.sheetId`) read-only — the community edits it and
+changes appear on the site on next load, no sync involved. **Never write to the
+original** (by hand, tool, or script — standing user directive). A private
+experimental **working copy** (`1649x…`) exists from the write-back spike; it is
+stale, nothing reads it, and it only matters if write-back is ever deployed (see
+"Open / future work" — that needs a data-flow decision first).
 
 Design language is documented in **STYLE-GUIDE.md**. Deploy steps in **DEPLOY.md**.
 Security posture: **docs/AUDIT-2026-07-02.md** — full audit of every innerHTML sink and
@@ -39,7 +49,7 @@ remote-data path, what was fixed, what was deferred and why. Read it before touc
 | dossier pieces | portrait, spirit, S.P.E.C.I.A.L, connections, log, shots |
 | section nav / doc reader | `renderNav()`, `setSection()`, `loadDoc()`, `docClean()`, `styleTOC()` (see below) |
 | delegated events | one document click handler dispatches all in-content buttons |
-| theme | `apply*()` setters, persisted in `localStorage` (`yuma-*`), Theme popover |
+| theme | `apply*()` setters, persisted in `localStorage` (`yuma-*`), Theme popover. Fonts: `FACES` catalogue, **headings + body picked separately** (`applyFontHead`/`applyFontBody`, `data-font-head`/`data-font-body`); legacy `yuma-font` preset key migrates once via `PRESET_MIGRATE` |
 | edit / upload | optional write-back paths (only active when `webAppUrl` set) |
 | boot | RobCo type-on intro, skippable, reduced-motion aware, hard timeout |
 
@@ -114,8 +124,11 @@ the app — at worst a doc tab looks off and the roster is unaffected.
 
 ## Invariants — do not break these
 
-1. **Read-only by default.** Never point `CONFIG.sheetId` at the original source-of-truth for
-   editing. The app reads; it does not write (unless `webAppUrl` is set, which is opt-in).
+1. **Read-only, absolutely.** `CONFIG.sheetId` points at the tribe's original
+   source-of-truth sheet, which must NEVER be written to — not by the app, not by
+   Apps Script (`syncToMirror` must never target it), not by hand. The app only reads.
+   Don't repoint it at the private working copy either (not world-readable; the site
+   would show "could not reach the sheet").
 2. **Legibility floor.** Min text size 17px for prose/labels (short uppercase chip labels
    like tags are an allowed ~15px exception). `--green-dim` is the darkest any *text* may be
    (AA-contrast); `--green-faint` is borders only, never text. No glow on small text.
@@ -140,14 +153,15 @@ python3 tools/preview.py            # rebuilds serve.py + /tmp/yuma-live from so
 # then (re)start the 'yuma-roster' preview server and open  /  (no query needed)
 ```
 
-**Why it just works:** the live working-copy sheet is private; the preview uses a public
-**mirror** sheet. `preview.py` injects `window.YUMA_SHEET_OVERRIDE="<mirror id>"` into the
-**served** `index.html` only (the `/tmp` copy — the source is never touched), and
-`effectiveSheetId()` honors it. So the preview reads the mirror at **any** URL, including a bare
-reload. Precedence in `effectiveSheetId()`: `?sheet=<id>` URL param → `window.YUMA_SHEET_OVERRIDE`
-→ `localStorage.yuma-sheet-override` → `CONFIG.sheetId`. (Historically we hand-edited the sheet
-id on every sync and clobbered the preview; that footgun is gone — and a bare preview reload no
-longer falls back to the private sheet.)
+**Why it just works:** `preview.py` injects `window.YUMA_SHEET_OVERRIDE="<mirror id>"` into
+the **served** `index.html` only (the `/tmp` copy — the source is never touched), and
+`effectiveSheetId()` honors it. So the preview reads the mirror at **any** URL, including a
+bare reload. Precedence in `effectiveSheetId()`: `window.YUMA_SHEET_OVERRIDE` →
+(**localhost only:** `?sheet=<id>` URL param → `localStorage.yuma-sheet-override`) →
+`CONFIG.sheetId`. The localhost gate is a security measure — on the deployed site a crafted
+`?sheet=` link would render an arbitrary spreadsheet under our URL (see the audit doc); in
+production only `CONFIG.sheetId` applies. (Historically we hand-edited the sheet id on every
+sync and clobbered the preview; that footgun is gone.)
 
 The server sends `Cache-Control: no-store` (no stale assets) and routes any foreign path back
 to our `index.html` (no neighbour-demo leakage).
@@ -200,8 +214,17 @@ is committed; nothing sensitive lives in the repo.
 
 ## Open / future work (needs a human)
 
-- **Deploy** (DEPLOY.md): share the sheet, host on Pages/Netlify, optionally paste the Apps
-  Script `/exec` URL into `CONFIG.webAppUrl` to enable upload + write-back.
+- **Write-back is PARKED on a data-flow decision.** The script (`apps-script.gs`,
+  audited + hardened 2026-07-02 — see docs/AUDIT-2026-07-02.md, don't revert it) is
+  designed to bind to the private working copy, but the site reads the ORIGINAL sheet —
+  so deployed as-is, edits would never appear on the site. The two coherent options,
+  both needing the user's call: (a) the group blesses write-back into the original
+  (revokes the read-only directive — their sheet, their call), script binds there; or
+  (b) the site switches to reading a copy that the working copy syncs to
+  (`syncToMirror` exists, dormant, for exactly this). Until decided, uploads/edits
+  persist per-browser only, which is safe.
+- **Discord per-character cards** (DEPLOY.md §5a): regenerate `c/` stubs with
+  `--base-url "https://dr-orac.github.io/oracular-db/"` for per-character unfurls.
 - **Scratchy's portrait**: a code-defined character with no image yet — drop a file in `media/`.
 - **Astro port** (sibling `../Yuma Roster - Astro POC/`): only if first-class Discord
   link-unfurl embeds become a priority. Parked.

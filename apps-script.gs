@@ -33,20 +33,29 @@
    Adding `Content-Type: application/json` on the client would trigger a
    preflight that Apps Script does not answer, and every write would fail.
 
-   MIRROR SYNC (optional, recommended): the deployed site reads a PUBLIC MIRROR
-   sheet, while edits land in this private working copy. To keep them in step:
-   set MIRROR_SHEET_ID below, then in the Apps Script editor add a trigger
-   (Triggers -> Add Trigger): function `syncToMirror`, time-driven, hourly.
-   You can also run syncToMirror manually after a burst of edits.
+   ⚠ ARCHITECTURE NOTE (read before deploying): the live site reads the tribe's
+   ORIGINAL sheet directly; this script is designed to bind to the private
+   WORKING COPY. Deploying write-back as-is means edits land in the working copy
+   and would NOT appear on the site. Resolve the data-flow decision first (see
+   MAINTENANCE.md -> "Open / future work") — do not "fix" it by binding this
+   script to the original sheet without the group's sign-off; the original is
+   read-only by standing directive.
+
+   MIRROR SYNC (dormant): syncToMirror() copies this sheet's first tab over
+   MIRROR_SHEET_ID's first tab. Only relevant in a copy-based architecture;
+   MIRROR_SHEET_ID ships empty and the function throws until it is set.
 
    To test without the page: Run -> selfTest (check the Execution log).
    ============================================================================ */
 
 // The sheet this script writes to. "" = the sheet this script is bound to.
 var SHEET_ID = "";
-// PUBLIC MIRROR sheet id (the one CONFIG.sheetId in app.js points at).
-// "" disables syncToMirror. Values-only copy of the first tab.
-var MIRROR_SHEET_ID = "10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY";
+// syncToMirror TARGET — LEAVE "" unless the architecture ever becomes copy-based
+// (site reading a disposable copy that this working copy overwrites).
+// ⚠ NEVER set this to 10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY — that is the
+// tribe's ORIGINAL source-of-truth sheet, which the live site reads directly and
+// which must never be written to. syncToMirror REPLACES the target's first tab.
+var MIRROR_SHEET_ID = "";
 // Drive folder where uploaded portraits are stored (created if missing).
 var IMAGE_FOLDER = "Yuma Roster Portraits";
 // Header text to use if the sheet has no image column yet.

@@ -1,10 +1,13 @@
-# Yuma Tribe Roster
+# Yuma Tribe Roster — "The Tribe Database"
 
 A Fallout-style ("Pip-Boy" terminal) web viewer for an RP character roster. It reads a
 Google Sheet **live and read-only** and renders each character as a CRT dossier, with
 optional write-back (uploads / edits) via a Google Apps Script.
 
 No framework, no build step — three static files plus assets.
+
+**Live:** https://dr-orac.github.io/oracular-db/ (GitHub Pages, repo `dr-orac/oracular-db`,
+deploys automatically on push to `main`).
 
 ---
 
@@ -36,7 +39,8 @@ c/                per-character Open-Graph stubs for rich Discord embeds (genera
 tools/            dev scripts — selfcheck.py (integrity linter), preview.py (rebuild
                   the local preview), regenerate c/ stubs / OG card / roster dump,
                   git-hooks/ (pre-commit guard)
-docs/             project-agnostic reference: CRT theme guide + portable crt-theme.css
+docs/             CRT theme guide + portable crt-theme.css + AUDIT-2026-07-02.md
+                  (security audit: every innerHTML sink + the Apps Script backend)
 
 CONTRIBUTING.md   house rules — self-review, anti-entropy, run selfcheck, conventions
 MAINTENANCE.md    how it's built + how not to break it (read this first when resuming)
@@ -60,10 +64,12 @@ banners to jump around:
 
 ## Key config (top of `app.js`)
 
-- `CONFIG.sheetId` — the **working-copy** sheet (private). Don't repoint this at the
-  original source-of-truth sheet. For previewing against a public mirror, **don't edit this** —
-  pass `?sheet=<id>` in the URL (or set `localStorage.yuma-sheet-override`); `effectiveSheetId()`
-  uses it as an override so the source file is never touched.
+- `CONFIG.sheetId` — the tribe's **original sheet** (their source of truth, shared
+  anyone-with-link → Viewer). The site reads it live; community edits appear on next
+  load. **Never write to it** by any means. Don't edit this id to preview against
+  another sheet — pass `?sheet=<id>` in the URL instead (`effectiveSheetId()` honours
+  it on **localhost only**; in production it's ignored so a crafted link can't render
+  a foreign sheet under our URL).
 - `CONFIG.webAppUrl` — paste the deployed Apps Script `/exec` URL here to enable
   write-back. Empty = read-only (uploads/edits persist only in the local browser).
 - `DOCS` — array of `{ id, label, docId }`; each adds a top-nav tab that fetches a Google Doc
@@ -94,5 +100,6 @@ commit; `--no-verify` to override). Full maintenance notes live in **MAINTENANCE
 - **Legibility floor:** any real text uses at least `--green-dim` (≈4.6:1 contrast).
   `--green-faint` is for borders/box-shadows only, never type.
 - **Frame modes** are driven by `body[data-frame]` (`screen` default, `border` experimental);
-  text size by `body[data-textsize]`; font by `body[data-font]`.
+  text size by `body[data-textsize]`; fonts by `body[data-font-head]` + `body[data-font-body]`
+  (headings and body faces are picked separately in the Theme popover — see `FACES` in app.js).
 - Reads never write. All mutations go through `CONFIG.webAppUrl`.

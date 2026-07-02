@@ -1,5 +1,24 @@
 # Go-Live Checklist — Yuma Tribe Roster
 
+## ✅ CURRENT LIVE STATE (deployed 2026-07-02)
+
+- **Live URL:** https://dr-orac.github.io/oracular-db/
+- **Repo:** `dr-orac/oracular-db` (public) · Pages serves `main` branch root ·
+  every `git push` redeploys in ~1 min. `og:url`/`og:image` already stamped
+  (`tools/set-deploy-url.py` has been run — only re-run if the URL ever changes).
+- **Data:** the site reads the tribe's **ORIGINAL sheet** (`CONFIG.sheetId` = `10n4T…`)
+  read-only — community edits appear on next load automatically, no sync involved.
+  **Never write to that sheet** (standing directive). The private working copy
+  (`1649x…`) is a parked write-back sandbox; nothing reads it.
+- **Not yet done:** §3 write-back — PARKED on a data-flow decision (see MAINTENANCE.md
+  → "Open / future work"); uploads/edits persist per-browser only · §5a per-character
+  Discord stubs with the real base URL · §5b webhook.
+
+The sections below are the reference procedure — for a redeploy elsewhere, or to finish
+the unchecked steps.
+
+---
+
 Steps 1–2 make the roster **public and viewable**. Step 3 turns on **write-back** so
 uploads/logs/edits persist for everyone (not just one browser). Steps 4–5 are optional
 Discord polish.
@@ -57,16 +76,15 @@ detailed below.
 
 ## 1 · Make the sheet readable  (required)
 
-The viewer reads the working copy sheet live. Open it → **Share** →
-**General access: Anyone with the link → Viewer** → Done. Read-only; the page never
-edits it directly — writes go through the Apps Script in step 3.
+The deployed viewer reads the tribe's **original sheet** (`CONFIG.sheetId`) read-only.
+It must be shared **Anyone with the link → Viewer** (it already is). Never write to it.
 
 > Same applies to any **Google Doc added as a nav tab** (the Guide tab, etc.): set each
 > to *Anyone with the link → Viewer*, or its tab shows a "not shared yet" message.
 > (Docs are configured in the `DOCS` array near the top of `app.js`.)
 
 > **Check** — visiting
-> `https://docs.google.com/spreadsheets/d/1649xQIHyrZtJWbVdTcg_ll7yS2ee_V9jGPtHLdgbyDQ/gviz/tq?tqx=out:csv`
+> `https://docs.google.com/spreadsheets/d/10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY/gviz/tq?tqx=out:csv`
 > should download a CSV (not an HTML login page).
 
 ## 2 · Host it  (required)  — pick one
@@ -83,23 +101,33 @@ At this point the roster is **live and readable**. Themes/font/density/permalink
 sharing all work. Uploads & edits work too but persist only in each visitor's browser
 until step 3.
 
-## 3 · Turn on write-back  (recommended)
+## 3 · Turn on write-back  (⚠ PARKED — read this first)
 
-Without this, every visitor sees only their own uploads. With it, the working-copy
-sheet becomes the shared source of truth.
+**Do not deploy this yet.** The script binds to the private working copy, but the live
+site reads the tribe's ORIGINAL sheet — deployed as-is, edits would never appear on
+the site. It needs a data-flow decision first (options in MAINTENANCE.md → "Open /
+future work"). The steps below are the reference procedure for once that's decided.
+
+Without write-back, every visitor sees only their own uploads (per-browser), which is
+safe and is the current live behaviour.
 
 1. Open the working-copy sheet → **Extensions → Apps Script**.
 2. Delete the sample, paste in **`apps-script.gs`** (the whole file), Save.
-3. **Deploy → New deployment → Web app:**
+3. **Set the edit passphrase FIRST** — **Project Settings → Script Properties** →
+   add `WRITE_PASSPHRASE` = a word your group shares. The script **fails closed**:
+   until this exists, every write is rejected (that's deliberate — see
+   docs/AUDIT-2026-07-02.md).
+4. **Deploy → New deployment → Web app:**
    - **Execute as:** *Me*
    - **Who has access:** *Anyone*  ← critical; without this you'll see a CORS error.
    - Deploy, authorise when Google warns "unverified" (it's your own script).
-4. Copy the **/exec URL** Google shows.
-5. **Set the edit passphrase** — Apps Script → **Project Settings → Script Properties** →
-   add `WRITE_PASSPHRASE` = a word your group shares. (Keeps the secret out of the
-   public page; viewers are prompted on first write.)
+5. Copy the **/exec URL** Google shows.
 6. Paste the **/exec URL** into **`CONFIG.webAppUrl`** near the top of `app.js`,
-   re-deploy `app.js`.
+   commit + push (Pages redeploys).
+7. **Only in a copy-based architecture** (site reading a disposable copy): set
+   `MIRROR_SHEET_ID` in the script to that copy and add a trigger — Triggers → Add
+   Trigger → function `syncToMirror`, time-driven, hourly. **Never point it at the
+   original sheet** — `syncToMirror` REPLACES the target's first tab.
 
 Now uploads (portraits + screenshots), icon picks, log entries, and dossier edits
 write back to the sheet (creating the columns `Image`, `Image Side`, `Icon`,
@@ -162,7 +190,7 @@ Post a one-line note to a Discord channel after every successful edit/upload.
   Refresh, not instantly.
 - **Fonts:** if `fonts/` is missing entirely, the page falls back to system mono — it
   still works, just loses the in-game look.
-- **Sheet ID is fixed in the source.** `CONFIG.sheetId` already points at the working
-  copy — don't change it. (The original source sheet is never touched.)
+- **Sheet ID is fixed in the source.** `CONFIG.sheetId` points at the tribe's
+  **original sheet** — don't change it, and never write to that sheet by any means.
 - **Regenerating the OG card:** if you change the title/tagline, run
   `python3 tools/make-og-card.py` from this folder to rebuild `og-card.png`.

@@ -30,8 +30,9 @@ review effort for design and trade-offs.
 
 ## Project conventions
 
-- **Data is read-only.** Don't point `CONFIG.sheetId` at the original source-of-truth sheet.
-  For previewing a public mirror, don't edit the source — `preview.py` injects an override.
+- **Data is read-only.** `CONFIG.sheetId` points at the tribe's original source-of-truth
+  sheet — the site reads it and nothing may ever write to it. Don't repoint the id.
+  For previewing, don't edit the source — `preview.py` injects an override (localhost only).
 - **Legibility floor 17px** for prose/labels (short uppercase chips ~15px are an allowed
   exception). `--green-dim` is the darkest any *text* may be; `--green-faint` is borders only;
   no glow on small text.

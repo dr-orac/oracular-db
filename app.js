@@ -18,9 +18,11 @@
    ==================================================================== */
 
 const CONFIG = {
-  // PUBLIC MIRROR (read-only, anyone with the link) — used by the deployed site
+  // The tribe's ORIGINAL sheet — the community's source of truth, shared
+  // "anyone with the link → Viewer". The site READS it; never write to it
+  // (by hand, tool, or script — standing directive).
   sheetId: "10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY",
-  // Private working copy (in Drive) — edit here, then sync to the mirror:
+  // Parked private working copy (only relevant if write-back is ever deployed):
   //   1649xQIHyrZtJWbVdTcg_ll7yS2ee_V9jGPtHLdgbyDQ
   gid: "",                 // optional: a specific tab's gid. "" = first sheet
   defaultSection: "The Tribe",
