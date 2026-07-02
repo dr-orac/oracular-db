@@ -520,6 +520,12 @@
   .row-sub{ font-size:17px; color:var(--green-dim); }
 
   .dossier{ overflow:auto; min-height:0; min-width:0; padding:30px 40px 84px; }   /* min-width:0 lets the grid track shrink below child min-content (no mobile overflow) */
+  /* On a wide screen the dossier column can get very wide; without a cap the identity
+     grid sprays into 5 sparse columns while the prose sits in a narrow left strip — an
+     incoherent width mismatch. Cap the content to one measure (left-aligned, terminal
+     style) so identity + narrative share a column and read as one block. No effect below
+     the cap (mobile/tablet), so nothing else changes. */
+  .dossier > *{ max-width:1080px; }
   /* small inline ＋ button used on section labels (Personal Log / Screenshots) */
   .mini{ background:transparent; border:1px solid var(--green-faint); color:var(--green);
     font-family:var(--font-body); font-size:17px; line-height:1; width:22px; height:22px;
