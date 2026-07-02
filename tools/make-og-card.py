@@ -46,17 +46,17 @@ def main():
         l, t, r, b = d.textbbox((0, 0), text, font=font)
         return r - l, b - t
 
-    tw1, th1 = measure("YUMA TRIBE", title)
-    tw2, th2 = measure("ROSTER",    title)
+    tw1, th1 = measure("THE TRIBE", title)
+    tw2, th2 = measure("DATABASE",  title)
     sw,  sh  = measure("// PIP-LINK · ROBCO ARCHIVE", subtitle)
     pw,  ph  = measure("dossiers · spirits · screenshots", tagline)
 
     block_h = th1 + th2 + sh + ph + 30 + 24 + 18
     y = (H - block_h) // 2
 
-    d.text(((W - tw1) // 2, y),                     "YUMA TRIBE", font=title, fill=BRIGHT)
+    d.text(((W - tw1) // 2, y),                     "THE TRIBE", font=title, fill=BRIGHT)
     y += th1 + 6
-    d.text(((W - tw2) // 2, y),                     "ROSTER",     font=title, fill=BRIGHT)
+    d.text(((W - tw2) // 2, y),                     "DATABASE",  font=title, fill=BRIGHT)
     y += th2 + 30
     d.text(((W - sw)  // 2, y), "// PIP-LINK · ROBCO ARCHIVE",   font=subtitle, fill=GREEN)
     y += sh + 24

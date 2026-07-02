@@ -30,6 +30,11 @@ OPTIONS
 """
 import argparse, html, json, os, re, sys
 
+def relabel(s):
+    # display rebrand, mirroring app.js relabelTribe(): "…Yuma Tribe…" → "…Tribe…".
+    # Applied here too so a dump taken before the rebrand still yields clean cards.
+    return re.sub(r"\bYuma Tribe\b", "Tribe", s or "")
+
 def clip(s, n):
     s = re.sub(r"\s+", " ", (s or "").strip())
     return s if len(s) <= n else s[:n - 1].rstrip() + "…"
@@ -42,17 +47,17 @@ def describe(c):
     app = (c.get("appearance") or "").strip()
     if app:
         line = (line + " — " + app) if line else app
-    return clip(line, 190) or "A member of the Yuma Tribe."
+    return clip(line, 190) or "A member of the Tribe."
 
 STUB = """<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{name} // Yuma Tribe Roster</title>
+<title>{name} // The Tribe Database</title>
 <meta name="description" content="{desc}">
 <meta property="og:type" content="profile">
-<meta property="og:site_name" content="Yuma Tribe Roster">
-<meta property="og:title" content="{name} — Yuma Tribe Roster">
+<meta property="og:site_name" content="The Tribe Database">
+<meta property="og:title" content="{name} — The Tribe Database">
 <meta property="og:description" content="{desc}">
 <meta property="og:image" content="{image}">
 <meta property="og:url" content="{ogurl}">
@@ -87,8 +92,8 @@ def main():
     n = 0
     for c in chars:
         slug = c["slug"]
-        name = c["name"]
-        desc = c.get("desc") or describe(c)   # prefer the app-built description
+        name = relabel(c["name"])
+        desc = relabel(c.get("desc") or describe(c))   # prefer the app-built description
         # human redirect target — relative so it works on any host
         appurl = (base + "index.html#c=" + slug) if base else ("../index.html#c=" + slug)
         ogurl  = (base + a.out + "/" + slug + ".html") if base else (slug + ".html")
