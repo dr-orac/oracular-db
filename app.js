@@ -275,7 +275,7 @@ function portraitSigil(ch){
 }
 /* per-character icon: explicit (sheet Icon column or local pick) else spirit-derived */
 function localIcons(){ try{ return JSON.parse(localStorage.getItem("yuma-icons")||"{}"); }catch{ return {}; } }
-function setLocalIcon(slug,key){ const m=localIcons(); m[slug]=key; localStorage.setItem("yuma-icons", JSON.stringify(m)); }
+function setLocalIcon(slug,key){ const m=localIcons(); m[slug]=key; lsSetData("yuma-icons", JSON.stringify(m)); }
 function iconForChar(ch){
   return explicitIcon(ch) || spiritIconKey(ch.fields.spirit||"");
 }
@@ -331,11 +331,17 @@ const EDIT_FIELDS = [
 function effectiveSheetId(){
   const ok = v => typeof v === "string" && /^[A-Za-z0-9_-]{20,}$/.test(v);
   try{
-    const p = new URLSearchParams(location.search).get("sheet");
-    if(ok(p)) return p;                                  // explicit per-load override
-    if(ok(window.YUMA_SHEET_OVERRIDE)) return window.YUMA_SHEET_OVERRIDE;  // env (preview injects this)
-    const ls = localStorage.getItem("yuma-sheet-override");
-    if(ok(ls)) return ls;
+    // injected by tools/preview.py into the SERVED copy only — never present in the repo file
+    if(ok(window.YUMA_SHEET_OVERRIDE)) return window.YUMA_SHEET_OVERRIDE;
+    // ?sheet= / localStorage overrides are DEV-ONLY. Honouring them on the deployed site would
+    // let a crafted link render an arbitrary spreadsheet under this site's own URL (content
+    // spoofing on a trusted origin), so they only apply when served from localhost.
+    if(/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)){
+      const p = new URLSearchParams(location.search).get("sheet");
+      if(ok(p)) return p;                                // explicit per-load override
+      const ls = localStorage.getItem("yuma-sheet-override");
+      if(ok(ls)) return ls;
+    }
   }catch(e){ /* sandboxed / no storage — fall through to the configured id */ }
   return CONFIG.sheetId;
 }
@@ -479,23 +485,30 @@ function buildModel(rows){
 }
 
 /* locally-saved additions (used when there's no write-back backend configured) */
+/* quota-safe write: image data URLs are big, and localStorage is ~5MB — a full store throws
+   QuotaExceededError mid-save. Catch it and TELL the user (the on-screen copy already shows
+   optimistically, so without this the save silently evaporates on reload). */
+function lsSetData(key, val){
+  try{ localStorage.setItem(key, val); return true; }
+  catch(e){ toast("⚠ Device storage is full — this won't survive a reload. Remove some saved photos/screenshots first."); return false; }
+}
 function localPhotos(){ try{ return JSON.parse(localStorage.getItem("yuma-photos")||"{}"); }catch{ return {}; } }
 function setLocalPhoto(slug, slot, src){
   const m=localPhotos(); (m[slug]=m[slug]||{})[slot]=src;
-  localStorage.setItem("yuma-photos", JSON.stringify(m));
+  lsSetData("yuma-photos", JSON.stringify(m));
 }
 function clearLocalPhoto(slug, slot){            // after a successful sheet write, the sheet is canonical
-  const m=localPhotos(); if(m[slug]){ delete m[slug][slot]; localStorage.setItem("yuma-photos", JSON.stringify(m)); }
+  const m=localPhotos(); if(m[slug]){ delete m[slug][slot]; lsSetData("yuma-photos", JSON.stringify(m)); }
 }
 function localLogs(){ try{ return JSON.parse(localStorage.getItem("yuma-logs")||"{}"); }catch{ return {}; } }
 function addLocalLog(slug, entry){
   const m=localLogs(); (m[slug]=m[slug]||[]).push(entry);
-  localStorage.setItem("yuma-logs", JSON.stringify(m));
+  lsSetData("yuma-logs", JSON.stringify(m));
 }
 function localShots(){ try{ return JSON.parse(localStorage.getItem("yuma-shots")||"{}"); }catch{ return {}; } }
 function addLocalShot(slug, src){
   const m=localShots(); (m[slug]=m[slug]||[]).push(src);
-  localStorage.setItem("yuma-shots", JSON.stringify(m));
+  lsSetData("yuma-shots", JSON.stringify(m));
 }
 
 /* ------------------------ rendering ------------------------ */
@@ -1270,7 +1283,7 @@ function openFromHash(){
   const m=(location.hash||"").match(/#c=([^&]+)/)
        || (location.search||"").match(/[?&]c=([^&]+)/);   // crawler-friendly ?c= (used by OG stubs)
   if(!m) return false;
-  const slug=decodeURIComponent(m[1]);
+  let slug; try{ slug=decodeURIComponent(m[1]); }catch{ return false; }   // malformed %-escape in a shared link
   const idx=state.model.characters.findIndex(c=>c.slug===slug);
   if(idx<0) return false;
   if(state.view!=="roster") setView("roster");
@@ -1444,10 +1457,14 @@ function docClean(node){
       out+=`<blockquote class="docquote">${inner.replace(/^(\s*)&gt;\s?/, "$1")}</blockquote>`;
       return;
     }
-    if(tag==="p" && n.classList.contains("title")){     // Google Docs "Title" paragraph style
+    if(tag==="p" && (n.classList.contains("title") || n.classList.contains("subtitle"))){
+      // Google Docs "Title" / "Subtitle" paragraph styles → masthead + subtitle.
+      // The FIRST Title is the masthead; any later Title (docs sometimes style two
+      // lines as Title) and every Subtitle render as the small-caps subtitle.
       docTitleCount++;
-      out += docTitleCount===1 ? `<h1 class="doc-title">${inner}</h1>`
-                               : `<p class="doc-subtitle">${inner}</p>`;
+      out += (n.classList.contains("title") && docTitleCount===1)
+        ? `<h1 class="doc-title">${inner}</h1>`
+        : `<p class="doc-subtitle">${inner}</p>`;
       return;
     }
     const id=n.getAttribute("id");                       // keep heading anchors so the TOC can jump
@@ -1712,6 +1729,9 @@ async function load(isRefresh){
     if(!isRefresh) openFromHash();        // honour a permalink on first load
   }catch(err){
     setLink("OFFLINE", true);
+    // a failed REFRESH keeps the last good roster on screen (don't blank working data
+    // over a transient network error) — the full error state is for first load only
+    if(isRefresh && state.model){ toast("Refresh failed ("+err.message+") — showing the last good data."); return; }
     showState("", `Could not read the sheet (<code>${esc(err.message)}</code>).<br><br>
       Make sure the Google Sheet is shared <b>“Anyone with the link → Viewer”</b>.
       Then hit <b>⟳ Refresh</b>. Nothing is ever written back to the sheet.`, true);

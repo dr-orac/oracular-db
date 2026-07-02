@@ -17,6 +17,10 @@ live and renders one dossier per character. Pure static site:
 - Deploys to any static host (GitHub Pages / Netlify).
 
 Design language is documented in **STYLE-GUIDE.md**. Deploy steps in **DEPLOY.md**.
+Security posture: **docs/AUDIT-2026-07-02.md** — full audit of every innerHTML sink and
+remote-data path, what was fixed, what was deferred and why. Read it before touching
+`docClean`, `effectiveSheetId`, or the local-storage save paths, and re-audit
+`apps-script.gs` before ever setting `CONFIG.webAppUrl` on the deployed site.
 
 ---
 
