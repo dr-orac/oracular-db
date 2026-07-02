@@ -212,19 +212,31 @@ is committed; nothing sensitive lives in the repo.
 
 ---
 
+## Settled decisions (don't re-litigate without new input)
+
+- **Write-back stays OFF.** `CONFIG.webAppUrl=""`; uploads/edits/logs persist per-browser
+  only, which is safe and is the intended default. Enabling it is NOT a code task — it
+  needs a human decision about the community's data, because the script binds to the
+  private working copy while the site reads the ORIGINAL sheet, so deployed as-is edits
+  would never appear. The only two coherent ways to turn it on, either of which the
+  tribe must choose deliberately: (a) the group blesses writes into the original sheet
+  (revokes the read-only directive — their sheet, their call), script binds there; or
+  (b) the site switches to reading a disposable copy that the working copy syncs to
+  (`syncToMirror` exists, dormant, disarmed, for exactly this). The script itself is
+  audited + hardened (fail-closed passphrase, size caps, rate limit, lock — see
+  docs/AUDIT-2026-07-02.md); don't revert it. **Decision: leave off until the tribe asks.**
+- **Ultra-wide dossier stays single-column.** A 2-column narrative on very wide screens
+  was considered and declined: the width cap (`.dossier > *{max-width:1080px}`) already
+  makes the layout read as intentional, and 2-col would risk the tuned prose measure /
+  reading flow and the lead-lists' own internal columns for marginal gain above ~1600px.
+  Revisit only if a user specifically wants the void filled.
+
 ## Open / future work (needs a human)
 
-- **Write-back is PARKED on a data-flow decision.** The script (`apps-script.gs`,
-  audited + hardened 2026-07-02 — see docs/AUDIT-2026-07-02.md, don't revert it) is
-  designed to bind to the private working copy, but the site reads the ORIGINAL sheet —
-  so deployed as-is, edits would never appear on the site. The two coherent options,
-  both needing the user's call: (a) the group blesses write-back into the original
-  (revokes the read-only directive — their sheet, their call), script binds there; or
-  (b) the site switches to reading a copy that the working copy syncs to
-  (`syncToMirror` exists, dormant, for exactly this). Until decided, uploads/edits
-  persist per-browser only, which is safe.
-- **Discord per-character cards** (DEPLOY.md §5a): regenerate `c/` stubs with
-  `--base-url "https://dr-orac.github.io/oracular-db/"` for per-character unfurls.
-- **Scratchy's portrait**: a code-defined character with no image yet — drop a file in `media/`.
+- **Scratchy's portrait**: a code-defined character with no image yet — drop a file in
+  `media/` and add it to the `MEDIA` map in app.js.
 - **Astro port** (sibling `../Yuma Roster - Astro POC/`): only if first-class Discord
   link-unfurl embeds become a priority. Parked.
+- *(Done 2026-07-02: deploy to GitHub Pages, security audit, backend hardening, Theme
+  font-picker rebuild, widescreen dossier cap, and the Discord per-character cards +
+  OG-card rebrand — all live.)*
