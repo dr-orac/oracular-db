@@ -36,8 +36,8 @@ const CONFIG = {
    To add another: append { id, label, docId } (docId = the long string in the doc URL,
    .../document/d/<docId>/edit). `label` is what shows on the nav tab. */
 const DOCS = [
-  { id: "lore",     label: "Lore",     docId: "1N_gne2LAWEJpjp6CfLhtvuHHD8bm97d64V0dHoXnlIE" },
-  { id: "roleplay", label: "Roleplay", docId: "1lQrOZ-UPOR8-FP58l8ZFMvSPOyYDb5BYvvkwg0dR1oU" },
+  { id: "lore",     label: "Tribe Lore",     docId: "1N_gne2LAWEJpjp6CfLhtvuHHD8bm97d64V0dHoXnlIE" },
+  { id: "roleplay", label: "Roleplay Guide", docId: "1lQrOZ-UPOR8-FP58l8ZFMvSPOyYDb5BYvvkwg0dR1oU" },
 ];
 
 /* Code-defined entries that aren't rows in the sheet (e.g. visiting characters).
