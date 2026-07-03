@@ -1565,34 +1565,147 @@ $("#doctoc").addEventListener("click", e=>{
   const a=e.target.closest("a"); if(!a) return; e.preventDefault();
   const t=document.getElementById(a.dataset.h); if(t) t.scrollIntoView({behavior:"smooth", block:"start"});
 });
+/* ---- doc fetch+clean cache + background prefetch (makes the first open feel instant) ----
+   A background prefetch not only fetches each doc's export HTML during idle time but also
+   PARSES + docCleans it up front, caching the finished terminal-theme HTML. So the heavy
+   work (Google's fetch + the recursive docClean of a large export) happens while the user
+   is reading the roster, and clicking a doc tab is just an innerHTML assignment. */
+const _docCache = new Map();                                  // docId -> cleaned terminal HTML
+async function prepareDoc(docId, signal){
+  if(_docCache.has(docId)) return _docCache.get(docId);
+  const res = await fetch(`https://docs.google.com/document/d/${docId}/export?format=html`, signal ? {signal} : {});
+  if(!res.ok) throw new Error("status "+res.status);
+  const parsed = new DOMParser().parseFromString(await res.text(), "text/html");
+  parseDocStyles(parsed);                                     // learn which classes mean bold/italic
+  const clean = docClean(parsed.body);                        // the expensive recursive walk, done off the open path
+  _docCache.set(docId, clean);
+  return clean;
+}
+function prefetchDocs(){
+  const warm = () => DOCS.forEach(d => { if(!_docCache.has(d.docId)) prepareDoc(d.docId).catch(()=>{}); });
+  if("requestIdleCallback" in window) requestIdleCallback(warm, {timeout:3000}); else setTimeout(warm, 1200);
+}
+
+/* ---- fancy ASCII loader (only shown for a cold/uncached fetch; prefetched opens skip it) ----
+   A RobCo archive readout: a ping-pong "comet" sweeping a shade bar, cycling status line, and a
+   blinking block cursor. Glyphs are limited to block elements (░▒▓█) + a forced mono font so no
+   pixel-font tofu. One interval, cleared the moment the fetch settles. */
+const _LOADMSG = ["establishing archive link", "retrieving document", "decoding transmission", "rendering dossier"];
+let _docLoaderTimer = null;
+function startDocLoader(status){
+  stopDocLoader();
+  status.className = "docstatus loading";
+  const W = 28; let f = 0;
+  const frame = () => {
+    const span = W*2 - 2, ph = f % span, p = ph < W ? ph : span - ph;   // ping-pong head position
+    let bar = ""; for(let i=0;i<W;i++){ const d = Math.abs(i-p); bar += d===0?"█":d===1?"▓":d===2?"▒":"░"; }
+    const msg = _LOADMSG[Math.floor(f/18) % _LOADMSG.length];
+    const cur = (f % 8) < 4 ? "█" : " ";
+    status.innerHTML =
+      `<pre class="docload" aria-hidden="true">▶ ACCESSING PIP-LINK ARCHIVE\n  ${msg}…\n  [${bar}] ${cur}</pre>`+
+      `<span class="sr-only">Loading document…</span>`;
+    f++;
+  };
+  frame();
+  _docLoaderTimer = setInterval(frame, 85);
+}
+function stopDocLoader(){ if(_docLoaderTimer){ clearInterval(_docLoaderTimer); _docLoaderTimer = null; } }
+
+/* inject already-cleaned doc HTML into the reader (shared by the cold + cached paths) */
+function renderPreparedDoc(reader, cleanHtml, doc){
+  reader.innerHTML = cleanHtml;                               // already docCleaned in prepareDoc
+  styleTOC(reader);
+  buildDocSidebar(reader);
+  trackDocSection();
+  reader.dataset.docid = doc.id;
+  resetDocFind();                                             // fresh doc → clear any stale find state
+}
+function docLoadError(status, e){
+  stopDocLoader();
+  status.className = "docstatus error";
+  const why = e && e.name==="AbortError" ? "The document took too long to load." :
+    "Couldn’t load this document. Make sure it’s shared <b>“Anyone with the link → Viewer.”</b>";
+  status.innerHTML = `${why} `+
+    `<a href="${escAttr($("#doclink").href)}" target="_blank" rel="noopener noreferrer">Open in Google Docs ↗</a>`;
+}
 async function loadDoc(doc){
   $("#doctitle").textContent = doc.label;
   $("#doclink").href = `https://docs.google.com/document/d/${doc.docId}/edit`;
   const reader=$("#docreader"), status=$("#docstatus");
   $("#docscroll").scrollTop=0;
   if(reader.dataset.docid===doc.id) return;                   // already rendered this doc
-  reader.innerHTML=""; status.className="docstatus loading"; status.textContent="◌ Loading document…";
+  // prepared (prefetched + cleaned) → inject immediately, no loader flash
+  if(_docCache.has(doc.docId)){
+    try{ renderPreparedDoc(reader, _docCache.get(doc.docId), doc); status.className="docstatus"; status.textContent=""; }
+    catch(e){ docLoadError(status, e); }
+    return;
+  }
+  // cold path → animated ASCII loader while we fetch + clean
+  reader.innerHTML="";
+  startDocLoader(status);
   const ctrl=new AbortController();
-  const timer=setTimeout(()=>ctrl.abort(), 15000);            // don't hang on "Loading…" forever
+  const timer=setTimeout(()=>ctrl.abort(), 15000);            // don't hang on the loader forever
   try{
-    const res=await fetch(`https://docs.google.com/document/d/${doc.docId}/export?format=html`, {signal:ctrl.signal});
-    if(!res.ok) throw new Error("status "+res.status);
-    const parsed=new DOMParser().parseFromString(await res.text(), "text/html");
-    parseDocStyles(parsed);                                  // learn which classes mean bold/italic
-    reader.innerHTML=docClean(parsed.body);
-    styleTOC(reader);
-    buildDocSidebar(reader);
-    trackDocSection();
-    reader.dataset.docid=doc.id;
+    const clean=await prepareDoc(doc.docId, ctrl.signal);
+    renderPreparedDoc(reader, clean, doc);
     status.className="docstatus"; status.textContent="";
-  }catch(e){
-    status.className="docstatus error";
-    const why = e.name==="AbortError" ? "The document took too long to load." :
-      "Couldn’t load this document. Make sure it’s shared <b>“Anyone with the link → Viewer.”</b>";
-    status.innerHTML=`${why} `+
-      `<a href="${escAttr($("#doclink").href)}" target="_blank" rel="noopener noreferrer">Open in Google Docs ↗</a>`;
-  }finally{ clearTimeout(timer); }
+  }catch(e){ docLoadError(status, e); }
+  finally{ stopDocLoader(); clearTimeout(timer); }
 }
+
+/* ---- in-document find: highlight matches, step through them ---- */
+let _docFindMatches=[], _docFindIdx=-1;
+function clearDocFindMarks(){
+  const reader=$("#docreader"); if(!reader) return;
+  const marks=reader.querySelectorAll("mark.docfind");
+  marks.forEach(m=>m.replaceWith(document.createTextNode(m.textContent)));
+  if(marks.length) reader.normalize();                        // merge the split text nodes back
+  _docFindMatches=[]; _docFindIdx=-1;
+}
+function resetDocFind(){                                      // called after (re)rendering a doc
+  clearDocFindMarks();
+  const box=$("#docfind"); if(box) box.value="";
+  const wrap=$("#docfind-wrap"); if(wrap) wrap.classList.remove("has-value","no-match");
+  const c=$("#docfind-count"); if(c) c.textContent="";
+}
+function runDocFind(q){
+  clearDocFindMarks();
+  const wrap=$("#docfind-wrap"), c=$("#docfind-count");
+  q=(q||"").trim();
+  if(wrap) wrap.classList.toggle("has-value", !!q);
+  if(!q){ if(c) c.textContent=""; if(wrap) wrap.classList.remove("no-match"); return; }
+  const reader=$("#docreader");
+  const walker=document.createTreeWalker(reader, NodeFilter.SHOW_TEXT,
+    { acceptNode:n => n.nodeValue && n.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT });
+  const nodes=[]; let tn; while((tn=walker.nextNode())) nodes.push(tn);
+  const ql=q.toLowerCase();
+  for(const node of nodes){
+    const text=node.nodeValue, lower=text.toLowerCase();
+    if(!lower.includes(ql)) continue;
+    const frag=document.createDocumentFragment();
+    let last=0, idx=lower.indexOf(ql);
+    while(idx>=0){
+      if(idx>last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
+      const mk=document.createElement("mark"); mk.className="docfind"; mk.textContent=text.slice(idx, idx+q.length);
+      frag.appendChild(mk); _docFindMatches.push(mk);
+      last=idx+q.length; idx=lower.indexOf(ql, last);
+    }
+    if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+    node.replaceWith(frag);
+  }
+  if(wrap) wrap.classList.toggle("no-match", _docFindMatches.length===0);
+  if(_docFindMatches.length) focusDocFind(0);
+  else if(c) c.textContent="0/0";
+}
+function focusDocFind(i){
+  if(!_docFindMatches.length) return;
+  _docFindMatches.forEach(m=>m.classList.remove("cur"));
+  _docFindIdx=(i+_docFindMatches.length)%_docFindMatches.length;
+  const m=_docFindMatches[_docFindIdx]; m.classList.add("cur");
+  m.scrollIntoView({block:"center", behavior:"smooth"});
+  const c=$("#docfind-count"); if(c) c.textContent=`${_docFindIdx+1}/${_docFindMatches.length}`;
+}
+function stepDocFind(dir){ if(_docFindMatches.length) focusDocFind(_docFindIdx+dir); }
 function setSection(id){
   if(id!=="roster" && !DOCS.some(d=>d.id===id)) id="roster";
   currentSection = id;
@@ -1636,6 +1749,19 @@ $("#docreader").addEventListener("click", e=>{
   if(target) target.scrollIntoView({behavior:"smooth", block:"start"});
 });
 
+/* in-document find: debounced highlight on type; Enter / Shift+Enter step matches; Esc clears */
+(function docFindWiring(){
+  const box=$("#docfind"); if(!box) return;
+  let t=null;
+  box.addEventListener("input", ()=>{ clearTimeout(t); t=setTimeout(()=>runDocFind(box.value), 130); });
+  box.addEventListener("keydown", e=>{
+    if(e.key==="Enter"){ e.preventDefault(); if(_docFindMatches.length) stepDocFind(e.shiftKey?-1:1); else runDocFind(box.value); }
+    else if(e.key==="Escape"){ e.preventDefault(); box.value=""; runDocFind(""); box.blur(); }
+  });
+  $("#docfind-next").addEventListener("click", ()=>stepDocFind(1));
+  $("#docfind-prev").addEventListener("click", ()=>stepDocFind(-1));
+})();
+
 $("#crt-toggle").addEventListener("click", ()=>{
   const on=document.body.classList.toggle("crt");
   $("#crt-toggle").textContent="Scanlines: "+(on?"ON":"OFF");
@@ -1668,7 +1794,12 @@ document.addEventListener("keydown", e=>{
   // ignore global shortcuts while a modal is open (focus stays trapped inside it)
   const modalOpen=["#modalback","#iconback","#uploadback","#shotback"].some(id=>$(id).classList.contains("open"));
   if(modalOpen) return;
-  if(e.key==="/" && !typing){ e.preventDefault(); $("#search").focus(); $("#settings-pop").classList.remove("open"); return; }
+  if(e.key==="/" && !typing){
+    e.preventDefault(); $("#settings-pop").classList.remove("open");
+    // focus whichever search is in view: the doc find on a doc tab, else the roster search
+    (currentSection!=="roster" ? $("#docfind") : $("#search")).focus();
+    return;
+  }
   if(typing || !state.model || state.view!=="roster") return;
   const down=e.key==="ArrowDown"||e.key==="j", up=e.key==="ArrowUp"||e.key==="k";
   if(!down && !up) return;
@@ -1854,4 +1985,5 @@ function runBoot(){
   refreshCur();                      // fill the popover's collapsed-group value lines
   renderNav();                       // build the Roster + docs section tabs
   load(false);
+  prefetchDocs();                    // warm the doc cache during idle so a doc tab opens instantly
 })();

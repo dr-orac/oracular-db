@@ -293,17 +293,42 @@
   .doctop.show{ opacity:.92; transform:none; pointer-events:auto; }
   .doctop:hover{ color:var(--green-bright); border-color:var(--green); background:var(--bg-panel);
     box-shadow:0 0 14px -3px rgba(var(--green-rgb),.5); }
-  .docbar{ display:flex; align-items:baseline; justify-content:space-between; gap:14px; flex:0 0 auto; padding:0 40px; }
-  .docbar-left{ display:flex; align-items:baseline; gap:12px; min-width:0; }
+  .docbar{ display:flex; align-items:center; justify-content:space-between; gap:10px 18px; flex:0 0 auto; padding:0 40px; flex-wrap:wrap; }
+  .docbar-left{ display:flex; align-items:baseline; gap:12px; min-width:0; flex:1 1 auto; }
   .doctitle{ font-family:var(--font-head); font-size:24px; letter-spacing:1px; color:var(--green-bright); text-transform:uppercase; flex:0 0 auto; }
   /* sticky "current section" breadcrumb — updates as you scroll */
   .docnow{ color:var(--green-dim); font-size:16px; letter-spacing:.3px;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+  /* in-document find box */
+  .docfind-wrap{ display:flex; align-items:center; gap:4px; flex:0 1 300px; min-width:170px;
+    background:var(--bg-panel); border:1px solid var(--green-faint); padding:3px 8px; }
+  .docfind-wrap:focus-within{ border-color:var(--green); }
+  .docfind-wrap.no-match{ border-color:var(--amber); }
+  .docfind-ico{ color:var(--green-dim); font-size:16px; flex:0 0 auto; }
+  #docfind{ flex:1; min-width:0; background:transparent; border:0; outline:0; color:var(--green-bright);
+    font:inherit; font-size:16px; text-shadow:var(--glow); }
+  #docfind::placeholder{ color:var(--green-dim); }
+  .docfind-count{ color:var(--green-dim); font-size:13px; letter-spacing:.5px; white-space:nowrap;
+    font-family:"IBM Plex Mono", ui-monospace, monospace; flex:0 0 auto; }
+  .docfind-wrap.no-match .docfind-count{ color:var(--amber); }
+  .docfind-btn{ background:transparent; border:0; color:var(--green-dim); cursor:pointer;
+    font-size:12px; line-height:1; padding:2px 2px; flex:0 0 auto; text-shadow:none; }
+  .docfind-btn:hover{ color:var(--green-bright); }
+  /* the count + step buttons only mean anything once something's typed */
+  .docfind-wrap:not(.has-value) .docfind-count,
+  .docfind-wrap:not(.has-value) .docfind-btn{ display:none; }
   .docbody{ flex:1 1 auto; min-height:0; display:flex; }
   .docscroll{ flex:1 1 auto; min-height:0; min-width:0; overflow:auto; padding:8px 40px 80px;
     -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 14px); mask-image:linear-gradient(to bottom, transparent 0, #000 14px); }
   .docstatus{ color:var(--green-dim); padding:30px 0; font-size:17px; }
   .docstatus.error{ color:var(--amber); }
+  /* fancy ASCII "archive retrieval" loader (JS-animated; only shown on a cold fetch).
+     Forced to a mono with full block-glyph coverage so it never tofus under a pixel font. */
+  .docload{ margin:0; font-family:"IBM Plex Mono", ui-monospace, monospace; font-size:16px;
+    line-height:1.75; letter-spacing:1px; white-space:pre; color:var(--green);
+    text-shadow:0 0 6px rgba(var(--green-rgb),.4); }
+  .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+    clip:rect(0 0 0 0); white-space:nowrap; border:0; }
   /* in-page outline sidebar — wide screens only; the in-doc TOC + section nav serve narrow ones */
   .doctoc{ display:none; }
   @media (min-width:1180px){
@@ -370,6 +395,11 @@
   .docreader .toc-l4{ padding-left:4.9em; font-size:.8em; }
   /* quoted speech / phrases stand out as special text */
   .docreader .dq{ color:var(--green-bright); font-style:italic; text-shadow:0 0 6px rgba(var(--green-rgb),.35); }
+  /* in-document find matches: soft highlight for all, bright inverse for the current one */
+  .docreader mark.docfind{ background:rgba(var(--green-rgb),.22); color:var(--green-bright);
+    text-shadow:none; border-radius:1px; scroll-margin:40vh 0; }
+  .docreader mark.docfind.cur{ background:var(--green); color:var(--bg);
+    box-shadow:0 0 10px -1px rgba(var(--green-rgb),.7); }
   .docreader a{ color:var(--green-bright); text-decoration:underline; text-decoration-color:var(--green-faint); text-underline-offset:3px; }
   .docreader a:hover{ text-decoration-color:var(--green); }
   .docreader a.docanchor{ color:var(--green); text-decoration:none; }
