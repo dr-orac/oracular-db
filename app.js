@@ -709,6 +709,26 @@ function fieldBlock(key, value, selfSlug){
   return `<div class="field"><div class="label">${labelIcon}${esc(def.label)}</div><div class="${bodyCls}">${body}</div></div>`;
 }
 
+/* dossier narrative blocks in BLOCK_ORDER, with ONE special case: "At The Fire"
+   (tastes) and "Off-Duty" (activities) are short blocks that each ate a full-width
+   row for a couple of lines — paired side-by-side on very wide screens only (see
+   .field-pair; narrow/normal screens are byte-for-byte the same markup+spacing as
+   before pairing). Deliberately not generalised to any other block pair. */
+function narrativeBlocksHTML(ch){
+  const f=ch.fields, out=[];
+  for(const k of BLOCK_ORDER){
+    if(k==="activities") continue;                 // emitted paired with "tastes" below
+    if(k==="tastes"){
+      const tastes=fieldBlock("tastes", f.tastes, ch.slug);
+      const activities=fieldBlock("activities", f.activities, ch.slug);
+      out.push(tastes && activities ? `<div class="field-pair">${tastes}${activities}</div>` : tastes+activities);
+      continue;
+    }
+    out.push(k==="spirit" ? spiritSectionHTML(ch) : fieldBlock(k, f[k], ch.slug));
+  }
+  return out.join("");
+}
+
 /* turn a sheet cell (full URL, Drive link, or bare Drive id) into an <img> src */
 function imageSrc(val){
   if(!val) return "";
@@ -917,8 +937,7 @@ function dossierHTML(ch){
 
   // block fields — the identity data-panel's own (feathered) edge already separates
   // the at-a-glance record from the narrative, so no extra "FILE" divider is needed.
-  const blocks = BLOCK_ORDER.map(k=> k==="spirit" ? spiritSectionHTML(ch) : fieldBlock(k, f[k], ch.slug)).join("");
-  html+=blocks;
+  html+=narrativeBlocksHTML(ch);
   html+=connectionsSectionHTML(ch);    // labels carry the sections now — no extra dividers
   html+=logSectionHTML(ch);
   html+=shotsSectionHTML(ch);

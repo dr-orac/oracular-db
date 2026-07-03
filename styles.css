@@ -866,6 +866,16 @@
   .idcell .v.secret{ color:var(--green-dim); font-style:italic; }
 
   .field{ margin:0 0 40px; }                  /* more air between sections */
+  /* "At The Fire" + "Off-Duty" only (see narrativeBlocksHTML): display:contents makes
+     the wrapper invisible to layout at normal widths, so the two .field children stack
+     with their own ordinary margins — identical to unpaired. Only on very wide screens
+     (dossier content ≥~1100px, empirically ~1560px viewport) does it become a 2-col
+     grid; each .field keeps its own bottom margin so the pair's trailing space matches
+     a normal field's. Deliberately not generalised to any other block. */
+  .field-pair{ display:contents; }
+  @media (min-width:1560px){
+    .field-pair{ display:grid; grid-template-columns:1fr 1fr; gap:0 40px; align-items:start; }
+  }
   .field > .label{
     font-family:var(--font-head); font-size:22px; letter-spacing:1px;
     color:var(--green-bright); margin-bottom:14px;
