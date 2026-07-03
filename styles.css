@@ -1082,6 +1082,9 @@
     body[data-font-head="workbench"] .brand{ font-size:24px; }
     body[data-font-head="workbench"] .doss-name{ font-size:32px; }
     body[data-font-head="workbench"] .card .cname{ font-size:18px; }
+    /* same specificity problem for Chassis mode's embossed "// PIP-LINK" tape strip —
+       it overrides the display:none above and overflows off a 375px screen */
+    body[data-frame="border"] .brand small{ display:none; }
     /* header: eyebrow stacks above its actions; portrait shrinks beside the name */
     .doss-toprow{ flex-wrap:wrap; }
     .portrait.lg{ width:120px; height:120px; }
