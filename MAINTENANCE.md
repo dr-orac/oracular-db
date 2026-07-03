@@ -240,7 +240,11 @@ is committed; nothing sensitive lives in the repo.
   reading flow and the lead-lists' own internal columns for marginal gain above ~1600px.
   Revisit only if a user specifically wants the void filled.
 
-## Open / future work (needs a human)
+## Open / future work
+
+**The active engineering backlog lives in [TASKS.md](TASKS.md)** — specced tasks with
+ground rules and acceptance criteria; work from there. Items below need a *human*
+decision or asset first and are parked, not specced:
 
 - **Scratchy's portrait**: a code-defined character with no image yet — drop a file in
   `media/` and add it to the `MEDIA` map in app.js.
