@@ -2061,22 +2061,27 @@ async function load(isRefresh){
 }
 
 /* ------------------------ boot sequence ------------------------ */
+/* RobCo boot sequence: type-on branding -> a brief deterministic self-test readout
+   -> a one-shot block-glyph sweep bar (same visual language as the doc loader's sweep
+   in startDocLoader, but linear 0->100% once, not ping-pong) -> type-on "ONLINE" ->
+   fade. No live data (the sheet hasn't loaded yet at this point in init(), and keeping
+   the sequence self-contained keeps its ~3.3s timing deterministic regardless of
+   network conditions). Generic RobCo-terminal styling only — no Vault-Tec/Vault-Boy
+   art, this ships on a public site. Skippable (click/any key) at every step; a hard
+   safety timeout guarantees it can never trap the user even if a step's logic stalls. */
 function runBoot(){
   const boot=$("#boot"); if(!boot) return;
   const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   if(reduce || sessionStorage.getItem("yuma-booted")) return;   // once per session, never if reduced-motion
   sessionStorage.setItem("yuma-booted","1");
-  const lines=[
-    "ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL",
-    "INITIALIZING PIP-LINK . . .",
-    "ESTABLISHING ARCHIVE LINK . . .",
-    "THE TRIBE DATABASE — ONLINE",
-  ];
-  const el=$("#boot-text"); el.textContent="";
+  const el=$("#boot-text"); el.innerHTML="";
   boot.classList.add("run");
-  let done=false;
+  let done=false, timers=[], sweepTimer=null;
+  const later=(fn,ms)=>{ const t=setTimeout(()=>{ if(!done) fn(); }, ms); timers.push(t); return t; };
   function finish(){
     if(done) return; done=true;
+    timers.forEach(clearTimeout); timers=[];
+    if(sweepTimer){ clearInterval(sweepTimer); sweepTimer=null; }
     window.removeEventListener("keydown", onKey);
     boot.classList.add("done");
     setTimeout(()=>boot.classList.remove("run","done"), 450);
@@ -2084,16 +2089,79 @@ function runBoot(){
   const onKey=()=>finish();
   boot.addEventListener("click", finish, {once:true});
   window.addEventListener("keydown", onKey);
-  let li=0, ci=0;
-  (function tick(){
+
+  const CHECKS=["MEMORY CHECK".padEnd(20,".")+"OK","ARCHIVE LINK".padEnd(20,".")+"OK","SUBSYSTEMS".padEnd(20,".")+"OK"];
+  // three ordered zones, each rendered in its own typeface: preLines (branding, plain
+  // --font-head) -> monoLines (self-test + sweep bar, forced true monospace — same
+  // reasoning .docload forces a real monospace rather than trusting --font-head, which
+  // can be an uneven pixel face) -> postLines ("ONLINE", plain again). monoLines is
+  // frozen once the sweep completes, so it never re-flows/snaps once typing resumes.
+  const preLines=[], monoLines=[], postLines=[];
+  function render(partial, partialIsMono){
+    let html=preLines.map(esc).join("\n");
+    const mono=partialIsMono && partial!=null ? [...monoLines, partial] : monoLines;
+    if(mono.length) html += (html?"\n":"") + `<span class="bootmono">${mono.map(esc).join("\n")}</span>`;
+    if(postLines.length) html += (html?"\n":"") + postLines.map(esc).join("\n");
+    if(!partialIsMono && partial!=null) html += (html?"\n":"") + esc(partial);
+    el.innerHTML=html;
+  }
+
+  // step 1: type the branding line
+  const brand="ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL";
+  let ci=0;
+  (function typeBrand(){
     if(done) return;
-    if(li>=lines.length){ setTimeout(finish, 600); return; }
-    const line=lines[li], completed=lines.slice(0,li).join("\n");
-    el.textContent = completed + (li>0?"\n":"") + line.slice(0,ci);
-    if(ci<line.length){ ci++; setTimeout(tick, 18); }
-    else { li++; ci=0; setTimeout(tick, 240); }
+    render(brand.slice(0,ci));
+    if(ci<brand.length){ ci++; later(typeBrand,16); }
+    else { preLines.push(brand); render(); later(selfTest,260); }
   })();
-  setTimeout(finish, 4500);            // hard safety: never trap the user
+
+  // step 2: a quick self-test readout, lines revealed with a short stagger (a POST
+  // screen doesn't type each character — it blips lines in) rather than typed
+  function selfTest(){
+    let i=0;
+    (function next(){
+      if(done) return;
+      if(i>=CHECKS.length){ later(sweep,220); return; }
+      monoLines.push(CHECKS[i]); render(); i++;
+      later(next,150);
+    })();
+  }
+
+  // step 3: one-shot sweep bar, linear 0->100%. Narrower on phones — #boot's 8vw side
+  // padding plus a 30-char bar doesn't fit a 375px viewport (verified: wraps the "]100%"
+  // onto its own line). 20 chars comfortably fits down to 375px with margin.
+  function sweep(){
+    const narrow = window.matchMedia && matchMedia("(max-width:760px)").matches;
+    const W=narrow?20:30, steps=24, stepMs=24;
+    let s=0;
+    sweepTimer=setInterval(()=>{
+      if(done) return;
+      s++;
+      const filled=Math.min(W, Math.round((s/steps)*W));
+      const pct=Math.min(100, Math.round((s/steps)*100));
+      render("["+"█".repeat(filled)+"░".repeat(W-filled)+"] "+pct+"%", true);
+      if(s>=steps){
+        clearInterval(sweepTimer); sweepTimer=null;
+        monoLines.push("["+"█".repeat(W)+"] 100%");
+        render(); later(finalLine,200);
+      }
+    }, stepMs);
+  }
+
+  // step 4: type the final "online" line, brief pause, then fade
+  function finalLine(){
+    const text="THE TRIBE DATABASE — ONLINE";
+    let ci2=0;
+    (function typeFinal(){
+      if(done) return;
+      render(text.slice(0,ci2));
+      if(ci2<text.length){ ci2++; later(typeFinal,16); }
+      else { postLines.push(text); render(); later(finish,500); }
+    })();
+  }
+
+  setTimeout(finish, 5000);            // hard safety: never trap the user
 }
 
 /* restore prefs + go */

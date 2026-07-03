@@ -1127,6 +1127,9 @@
   #boot.done{ opacity:0; pointer-events:none; }
   #boot-text{ margin:0; font-family:var(--font-head); font-size:24px; line-height:1.45;
     color:var(--green-bright); white-space:pre-wrap; text-shadow:0 0 8px rgba(182,255,206,.5); }
+  /* self-test readout + sweep bar: forced true monospace (same stack as .docload) so
+     the dotted alignment and block-glyph bar stay even under any --font-head choice */
+  .bootmono{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-size:.72em; letter-spacing:.5px; }
   #boot-skip{ font-size:17px; color:var(--green-dim); letter-spacing:1px; }
 
   /* ---------- settings popover (theme / colour / background) ---------- */
