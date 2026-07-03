@@ -211,7 +211,7 @@ function buildSettings(){
       .map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#textsize-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyTextSize(b.dataset.key); });
   document.querySelector("#frame-swatches").innerHTML =
-    [["screen","Screen only"],["border","Metal border"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
+    [["screen","Screen only"],["border","Chassis"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#frame-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyFrame(b.dataset.key); });
   document.querySelector("#frametint-swatches").innerHTML =
     [["olive","Olive"],["theme","Theme tint"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
@@ -243,7 +243,7 @@ function refreshCur(){
         + " · " + (THEMES[colorK]||THEMES.green).name;
   if(s) s.textContent = (BGS[bgK]||BGS.phosphor).name
         + " · CRT " + (document.body.classList.contains("crt")?"on":"off");
-  if(f) f.textContent = (document.body.dataset.frame==="border"?"Metal":"Screen")
+  if(f) f.textContent = (document.body.dataset.frame==="border"?"Chassis":"Screen")
         + (document.body.dataset.frametint==="theme"?" · tinted":"");
   document.querySelectorAll("#settings-pop .swatch[role=radio]")
     .forEach(b=>b.setAttribute("aria-checked", b.classList.contains("active")));

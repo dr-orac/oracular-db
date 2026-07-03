@@ -242,6 +242,77 @@
       inset 0 0 44px rgba(0,0,0,.40);              /* overall screen recess */
   }
 
+  /* ---------- CHASSIS (the second surface) ----------
+     Fallout-1 material logic: the device is raised METAL; data lives on SCREENS inset
+     into it. In the Chassis frame mode the masthead (brand + nav) becomes the metal
+     plate — so its type is ENGRAVED (dark, light catch below, no phosphor glow), the
+     nav tabs are physical buttons with indicator lamps, and the "// PIP-LINK" tag is
+     a punched label-tape strip stuck on the panel. Everything below the plate stays
+     screen. Doctrine in STYLE-GUIDE.md. (Emboss/tape are original implementations.) */
+  body[data-frame="border"] .masthead{
+    /* METAL sits IN FRONT of the glass: above the scanline/vignette overlays (9000/9001),
+       below modals (raised to 9100 in this mode), boot (9700) and toast (9500). */
+    position:relative; z-index:9042;
+    margin:-10px -16px 10px;                       /* bleed over the header padding (10px 16px 8px) */
+    padding:12px 16px 12px;
+    /* lit from above: bright catch at the top edge, mid face, falling to shadow at the base */
+    background:linear-gradient(180deg, var(--panel-hi) 0, var(--panel-mid) 8%, var(--panel) 70%, var(--panel-lo) 100%);
+    border-bottom:2px solid var(--panel-lo);
+    box-shadow: inset 0 1px 0 var(--rivet-hi), inset 0 -1px 0 var(--panel-lo),
+      0 1px 0 var(--panel-ink), 0 4px 10px -3px rgba(0,0,0,.65);
+  }
+  /* brand: engraved into the plate (letterpress), not glowing */
+  body[data-frame="border"] .brand{
+    color:var(--panel-ink);
+    text-shadow:0 1px 0 color-mix(in srgb, var(--panel-hi) 85%, transparent);
+  }
+  /* "// PIP-LINK" → embossed label-tape strip punched and stuck on the metal */
+  body[data-frame="border"] .brand small{
+    font-family:"Share Tech Mono", ui-monospace, monospace;
+    font-size:13px; letter-spacing:.22em; color:#f2f2ee; line-height:1;
+    background:linear-gradient(180deg, #1d1d1d, #060606 45%, #151515 78%, #0a0a0a);
+    padding:5px 10px 4px 12px; margin-left:14px; border-radius:2px;
+    display:inline-block; transform:rotate(-1.6deg) translateY(-4px);
+    text-shadow:0 1px 1px #000, 0 -1px 1px rgba(255,255,255,.40);   /* raised-plastic emboss */
+    box-shadow:0 2px 3px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  /* nav tabs + Theme button: raised physical buttons — beveled face, engraved caption,
+     and an indicator LAMP (the one lawful glow on metal: it's a light, not phosphor) */
+  body[data-frame="border"] .navtab,
+  body[data-frame="border"] .titlebar .popwrap > .btn{
+    background:linear-gradient(180deg, var(--panel-hi), var(--panel-mid) 45%, var(--panel));
+    border:1px solid var(--panel-ink);
+    color:var(--panel-ink);
+    text-shadow:0 1px 0 color-mix(in srgb, var(--panel-hi) 85%, transparent);
+    box-shadow: inset 0 1px 0 var(--panel-hi), inset 1px 0 0 var(--panel-hi),
+      inset 0 -2px 0 var(--panel-lo), inset -1px 0 0 var(--panel-lo),
+      0 2px 0 var(--panel-ink), 0 3px 5px rgba(0,0,0,.5);
+  }
+  body[data-frame="border"] .navtab:hover,
+  body[data-frame="border"] .titlebar .popwrap > .btn:hover{
+    background:linear-gradient(180deg, var(--rivet-hi), var(--panel-hi) 42%, var(--panel));
+    color:var(--panel-ink);
+  }
+  body[data-frame="border"] .navtab::before{
+    content:""; display:inline-block; width:7px; height:7px; border-radius:50%;
+    margin-right:9px; vertical-align:1px;
+    background:#20201a; box-shadow:inset 0 1px 2px #000, 0 1px 0 var(--panel-hi);  /* unlit lamp */
+  }
+  body[data-frame="border"] .navtab.active{
+    background:linear-gradient(180deg, var(--panel-lo), var(--panel) 55%, var(--panel-mid));
+    border-color:var(--panel-ink);
+    color:var(--panel-ink);
+    text-shadow:0 1px 0 color-mix(in srgb, var(--panel-hi) 60%, transparent);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,.55), inset 0 1px 0 var(--panel-ink), 0 1px 0 var(--panel-hi);
+    transform:translateY(1px);                     /* pressed in */
+  }
+  body[data-frame="border"] .navtab.active::before{
+    background:var(--green);
+    box-shadow:0 0 7px var(--green), inset 0 0 1px rgba(0,0,0,.35);                /* lamp lit */
+  }
+  /* modals must still cover the (now-raised) metal — lift them above it in this mode */
+  body[data-frame="border"] .modal-back{ z-index:9100; }
+
   /* ---------- header ---------- */
   header{
     border-bottom:1px solid var(--green-faint);

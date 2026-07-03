@@ -1,0 +1,23 @@
+# Credits & third-party notices
+
+How external work enters this codebase, and the record of what did.
+
+**Policy.** When an effect is *reimplemented from scratch* after studying how someone
+else achieved it (a technique — techniques aren't copyrightable), no licence applies and
+it's listed under *Technique inspiration* below as a courtesy. When code is *adapted*
+(substantial portions ported), the source licence applies — for MIT that means an entry
+under *Adapted code* with the author, source URL, and licence, plus a one-line comment
+above the adapted block in the source file. Attribution lives in this repo, not in the UI.
+
+Fonts have their own licence files in `fonts/`.
+
+## Adapted code (licence obligations)
+
+*(none yet)*
+
+## Technique inspiration (no obligation — listed as a courtesy)
+
+- **Embossed label-tape text** — effect studied from "Dymo style embossed text" by
+  gillesv (codepen.io/gillesv/pen/WbeZXyb) and "Punch Label Dymo Effect" by getwestfall
+  (codepen.io/getwestfall/pen/WNyzZOL); implemented from scratch with our own shadow
+  stack and tokens (`.brand small` in the Chassis frame mode, styles.css).

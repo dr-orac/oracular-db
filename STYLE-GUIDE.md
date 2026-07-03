@@ -25,6 +25,19 @@ components you can read top to bottom.
    a "data readout" aesthetic.
 5. **Tokens, then components, then state.** Define custom properties once; build components
    from them; switch whole themes by flipping `data-*` attributes on `<body>`.
+6. **Two surfaces — SCREEN and METAL (the Fallout-1 material law).** Everything rendered
+   belongs to one of two physical materials, and each forbids the other's effects:
+   - **SCREEN** — phosphor text *behind glass*, inset into the device. Glow, scanlines,
+     terminal faces, data, cursors. Nothing physical can be "inside" it: no paper, no
+     tape, no typewriter ink, ever.
+   - **METAL** — the raised housing (`--panel-*`/`--rivet-*` tokens; the Chassis frame
+     mode). Bevels, rivets, engraved type (dark, light catch — **never** glowing),
+     physical controls (buttons, toggles, lamps), and *stuck-on artifacts*: label tape,
+     taped paper, stamps. Typewriter/embossed faces exist only here.
+   - The one lawful glow on metal is an **indicator lamp** — it is a light source, not
+     phosphor text.
+   When adding any effect, first ask *which material is this?* — that decides its
+   tokens, its typography, and where it may appear.
 
 ---
 

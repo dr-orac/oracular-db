@@ -31,6 +31,10 @@
 
   <div class="app">
     <header>
+      <!-- masthead = the CHASSIS zone (titlebar + nav). In the "Chassis" frame mode this
+           renders as the raised METAL panel of the device (see the two-surface doctrine in
+           STYLE-GUIDE.md); everything below it is screen. Unstyled in the default mode. -->
+      <div class="masthead">
       <div class="titlebar">
         <div class="brand">THE TRIBE DATABASE <small>// PIP-LINK</small></div>
         <div class="popwrap">
@@ -86,6 +90,7 @@
         </div>
       </div>
       <nav id="topnav" class="topnav" role="tablist" aria-label="Sections"></nav>
+      </div><!-- /masthead -->
       <div class="statusline">
         <span aria-live="polite" aria-atomic="true"><span class="dot" id="linkdot">●</span> <span id="linkstatus">CONNECTING…</span></span>
         <span id="countinfo">—</span>
