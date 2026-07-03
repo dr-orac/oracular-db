@@ -122,12 +122,16 @@ the app — at worst a doc tab looks off and the roster is unaffected.
 **Requirements / gotchas:**
 - A doc tab only renders once the doc is shared **Anyone-with-link → Viewer** (same as the
   sheet). Until then `loadDoc()` shows a graceful "share the doc" message.
-- **Diagrams:** Google Docs rasterises *everything* to PNG on export (no SVG survives a Doc).
-  Diagrams render in `.docfig` on a light "schematic plate" so dark-ink-on-light Docs diagrams
-  stay legible on the dark theme. For seamless dark integration, author diagrams transparent-bg
-  with light/green strokes (then they can drop the plate).
+- **Images/diagrams:** Google Docs rasterises *everything* to PNG on export (no SVG survives a
+  Doc), at the image's original uploaded resolution regardless of how it's resized on the page
+  — this is why oversized source images bloat the export (see the performance model above).
+  `.docfig` renders each image as a terminal "screen": a phosphor bezel + corner reticle ticks
+  + a subtle scanline overlay (fades on hover), full colour, with the image's alt text (if set)
+  shown as a mono caption underneath.
 - **Authoring conventions:** start a paragraph with `> ` for a pull-quote; inline `"…"` is
-  auto-emphasised. To add a doc: append to `DOCS` and share the doc.
+  auto-emphasised; Title/Subtitle paragraph styles become the masthead. To add a doc: append
+  to `DOCS` and share the doc. Full authoring guidance for non-technical editors (image sizing,
+  headings, pull-quotes) is in **[docs/DOC-AUTHORING.md](docs/DOC-AUTHORING.md)**.
 
 ---
 

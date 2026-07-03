@@ -496,8 +496,6 @@
   .docreader .docquote::before{ content:"\201C"; position:absolute; left:.45em; top:.05em;
     font-family:var(--font-head); font-size:1.8em; line-height:1; color:var(--green-dim); font-style:normal; }
   .docreader .docquote .dq{ text-shadow:none; }   /* don't double-glow inline quotes inside a quote block */
-  /* diagrams (Docs exports them as embedded PNGs, drawn dark-ink-on-light) — mounted on a
-     light "schematic plate" so their dark text/arrows stay readable on the dark theme. */
   /* doc images as terminal "screens": a phosphor bezel + subtle scanline overlay + a mono
      caption. The image itself stays FULL COLOUR (legibility first — the frame carries the
      RobCo feel, not a heavy tint). Hovering fades the scanlines for an unobstructed look. */
