@@ -548,8 +548,38 @@
     letter-spacing:1px; opacity:.78;
     display:flex; gap:16px; flex-wrap:wrap; align-items:center;
   }
-  .dot{ color:var(--green); }
+  .dot{ position:relative; color:var(--green); }
   .dot.warn{ color:var(--amber); text-shadow:0 0 4px rgba(255,210,74,.6); }
+  /* ---------- activity indicators (busy link / background doc sync) ----------
+     A single-element CSS "signal ping": a ring expands off the dot and fades — reads as
+     a transmitted pulse, fitting the PIP-LINK language. Pure CSS, currentColor + tokens
+     only (so it follows the dot's colour under every preset — green normally, amber for
+     .warn), no layout shift (absolutely positioned over the existing glyph). */
+  .dot.busy::after{
+    content:""; position:absolute; inset:-2px; border-radius:50%;
+    border:1px solid currentColor; opacity:0; pointer-events:none;
+    animation:sigping 1.4s ease-out infinite;
+  }
+  @keyframes sigping{
+    0%{ transform:scale(.6); opacity:.9; }
+    70%{ transform:scale(2.4); opacity:0; }
+    100%{ opacity:0; }
+  }
+  /* small background-sync blip near SYNC — a quieter version of the same ping, shown
+     while a stale cached doc is silently re-fetching (see prepareDoc in app.js) */
+  .bgsync{
+    position:relative; display:inline-block; width:6px; height:6px; border-radius:50%;
+    background:var(--green-dim); opacity:0; transition:opacity .2s;
+  }
+  .bgsync.show{ opacity:1; }
+  .bgsync.show::after{
+    content:""; position:absolute; inset:-2px; border-radius:50%;
+    border:1px solid var(--green-dim); opacity:0; pointer-events:none;
+    animation:sigping 1.6s ease-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .dot.busy::after, .bgsync.show::after{ animation:none; opacity:.5; transform:scale(1.5); }
+  }
 
   /* ---------- toolbar ---------- */
   .toolbar{

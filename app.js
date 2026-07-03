@@ -1614,7 +1614,10 @@ async function prepareDoc(docId, signal){
   const stored = await idbGet("doc:"+docId);                  // device cache: skip the network entirely
   if(stored && stored.html){
     _docCache.set(docId, stored);
-    if(Date.now()-(stored.t||0) > DOC_STALE_MS) fetchAndPrepare_(docId).catch(()=>{}); // refresh behind the scenes
+    if(Date.now()-(stored.t||0) > DOC_STALE_MS){                // refresh behind the scenes
+      bgSyncStart();
+      fetchAndPrepare_(docId).catch(()=>{}).finally(bgSyncEnd);
+    }
     return stored;
   }
   return fetchAndPrepare_(docId, signal);
@@ -1988,8 +1991,17 @@ async function setCharacterIcon(slug, key){
 /* ------------------------ load ------------------------ */
 function setLink(status, warn){
   $("#linkstatus").textContent=status;
-  $("#linkdot").className = "dot"+(warn?" warn":"");
+  // every in-progress status (CONNECTING…/RE-SYNCING…/SAVING…/UPLOADING…) ends in "…" by
+  // convention — inferred rather than passed explicitly so existing call sites don't need
+  // touching. Terminal states (ONLINE/OFFLINE) never end in "…".
+  const busy = !warn && /…$/.test(status);
+  $("#linkdot").className = "dot"+(warn?" warn":"")+(busy?" busy":"");
 }
+/* tiny background-sync blip near #syncinfo: shown while a stale cached doc is silently
+   re-fetching (see prepareDoc). Reference-counted since both docs could go stale at once. */
+let _bgSyncCount=0;
+function bgSyncStart(){ _bgSyncCount++; const el=$("#bgsync"); if(el) el.classList.add("show"); }
+function bgSyncEnd(){ _bgSyncCount=Math.max(0,_bgSyncCount-1); if(_bgSyncCount===0){ const el=$("#bgsync"); if(el) el.classList.remove("show"); } }
 function showState(title, sub, isError){
   $("#roster").classList.add("hidden");
   $("#cards").classList.add("hidden");
