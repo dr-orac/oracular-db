@@ -120,8 +120,38 @@ URLs; the HTML drops from multi-MB to tens of KB, making even first visits fast)
   doc-reader features verified; export path still works as fallback (test by
   breaking the pubUrl deliberately).
 
+## T8 · Fix doc-tab race: switching mid-load can render the wrong doc — MEDIUM
+
+Found + confirmed during T6's regression sweep (reproduced twice, screenshotted).
+Touches `loadDoc()`/`prepareDoc()` — doc-reader-adjacent to audited code, so this
+was reported rather than fixed on the spot per the scope fuse (rule 7).
+
+**Repro:** clear the doc cache (`indexedDB.deleteDatabase('yuma-docdb')` +
+`_docCache.clear()`), click "Tribe Lore" (starts a cold ~14MB fetch), within
+~100ms click "Roleplay Guide" (starts its own cold ~7MB fetch) before Lore
+finishes, then wait for both to settle. **Result:** the nav tab and doc header
+both correctly read "Roleplay Guide", but `#docreader`'s actual rendered content
+is the Lore doc (`reader.dataset.docid === "lore"`) — a real, user-visible
+title/content mismatch.
+
+**Root cause:** whichever cold fetch resolves *last* wins and calls
+`renderPreparedDoc()`, overwriting the reader regardless of which tab is
+currently active. Neither `loadDoc()` nor `fetchAndPrepare_()` checks that the
+resolving request still matches the currently-selected section before
+rendering.
+
+**Fix direction** (propose in full before implementing, per the scope fuse):
+a "is this still the active doc?" guard — e.g. stamp the section id active at
+request time, compare it to `currentSection` immediately before the
+`renderPreparedDoc()` call in `loadDoc()`'s cold-fetch path, and no-op if a
+newer switch has since occurred. Verify: the repro above no longer mismatches;
+rapid tab-flapping (3+ switches in quick succession) always lands on whichever
+doc is active when everything settles; existing single-switch loads unaffected.
+
 ---
 
 *Done recently (context for the above): doc split into Lore/Roleplay tabs;
 find-in-doc; IndexedDB doc cache + lazy image hydration; Chassis frame mode
-(two-surface system); per-character Discord cards. See git log.*
+(two-surface system); per-character Discord cards; boot sequence self-test +
+sweep bar; T6 regression sweep (fixed Chassis mobile overflow; found T8). See
+git log.*
