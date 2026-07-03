@@ -1494,10 +1494,16 @@ function docClean(node){
       return;
     }
     if(tag==="img"){
-      const src=n.getAttribute("src")||"";                     // Docs embeds diagrams as base64 data: PNGs
+      const src=n.getAttribute("src")||"";                     // Docs embeds images as base64 data: PNGs
       if(/^(https?:|data:image\/)/i.test(src)){
         const alt=n.getAttribute("alt")||"";
-        out+=`<figure class="docfig"><div class="docfig-screen"><img src="${escAttr(src)}" alt="${escAttr(alt)}" loading="lazy" decoding="async"></div>`+
+        // base64 images are extracted into the prepared doc's side-table and hydrated
+        // lazily on scroll (see hydrateDocImages) — they're ~99% of the export's bytes,
+        // and inlining them all makes first paint wait on every image at once.
+        const srcAttr = (_docImgSink && /^data:/i.test(src))
+          ? ` data-docimg="${_docImgSink.push(src)-1}"`
+          : ` src="${escAttr(src)}"`;
+        out+=`<figure class="docfig"><div class="docfig-screen pending"><img${srcAttr} alt="${escAttr(alt)}" loading="lazy" decoding="async"></div>`+
              (alt?`<figcaption class="docfig-cap">${esc(alt)}</figcaption>`:"")+`</figure>`;
       }
       return;
@@ -1570,21 +1576,108 @@ $("#doctoc").addEventListener("click", e=>{
   const a=e.target.closest("a"); if(!a) return; e.preventDefault();
   const t=document.getElementById(a.dataset.h); if(t) t.scrollIntoView({behavior:"smooth", block:"start"});
 });
-/* ---- doc fetch+clean cache + background prefetch (makes the first open feel instant) ----
-   A background prefetch not only fetches each doc's export HTML during idle time but also
-   PARSES + docCleans it up front, caching the finished terminal-theme HTML. So the heavy
-   work (Google's fetch + the recursive docClean of a large export) happens while the user
-   is reading the roster, and clicking a doc tab is just an innerHTML assignment. */
-const _docCache = new Map();                                  // docId -> cleaned terminal HTML
+/* ---- doc cache (memory + IndexedDB) + lazy image hydration ----
+   Google's export inlines every image as base64 — measured: ~99% of the payload is
+   images, the actual text is under 100KB. Two-part strategy:
+   1. PERSIST the prepared doc in IndexedDB, so the multi-MB download happens once per
+      device — every later open (even after a browser restart) is served locally, with a
+      background re-fetch when the copy is stale so content stays fresh.
+   2. STRIP the base64 images out of the rendered HTML into a side-table and hydrate each
+      one only as it scrolls near (IntersectionObserver). Text paints immediately; image
+      decode never blocks reading.
+   Prepared shape: { html, images:[dataURL…], t:epoch }. */
+const _docCache = new Map();                                  // docId -> prepared doc
+const DOC_STALE_MS = 15*60*1000;                              // background-refresh IDB copies older than this
+let _docImgSink = null;                                       // collects extracted images during docClean
+
+/* minimal IndexedDB k/v — never throws, resolves null / no-ops when unavailable */
+function idbGet(key){ return new Promise(res=>{ try{
+  const r=indexedDB.open("yuma-docdb",1);
+  r.onupgradeneeded=()=>r.result.createObjectStore("kv");
+  r.onerror=()=>res(null);
+  r.onsuccess=()=>{ const db=r.result; try{
+    const g=db.transaction("kv").objectStore("kv").get(key);
+    g.onsuccess=()=>{ res(g.result||null); db.close(); };
+    g.onerror =()=>{ res(null); db.close(); };
+  }catch(e){ res(null); db.close(); } };
+}catch(e){ res(null); } }); }
+function idbSet(key,val){ try{
+  const r=indexedDB.open("yuma-docdb",1);
+  r.onupgradeneeded=()=>r.result.createObjectStore("kv");
+  r.onsuccess=()=>{ const db=r.result;
+    try{ db.transaction("kv","readwrite").objectStore("kv").put(val,key); }catch(e){}
+    setTimeout(()=>db.close(), 1500); };
+}catch(e){} }
+
 async function prepareDoc(docId, signal){
   if(_docCache.has(docId)) return _docCache.get(docId);
+  const stored = await idbGet("doc:"+docId);                  // device cache: skip the network entirely
+  if(stored && stored.html){
+    _docCache.set(docId, stored);
+    if(Date.now()-(stored.t||0) > DOC_STALE_MS) fetchAndPrepare_(docId).catch(()=>{}); // refresh behind the scenes
+    return stored;
+  }
+  return fetchAndPrepare_(docId, signal);
+}
+async function fetchAndPrepare_(docId, signal){
   const res = await fetch(`https://docs.google.com/document/d/${docId}/export?format=html`, signal ? {signal} : {});
   if(!res.ok) throw new Error("status "+res.status);
   const parsed = new DOMParser().parseFromString(await res.text(), "text/html");
   parseDocStyles(parsed);                                     // learn which classes mean bold/italic
-  const clean = docClean(parsed.body);                        // the expensive recursive walk, done off the open path
-  _docCache.set(docId, clean);
-  return clean;
+  _docImgSink = [];
+  const html = docClean(parsed.body);                         // the expensive recursive walk, off the open path
+  const prepared = { html, images:_docImgSink, t:Date.now() };
+  _docImgSink = null;
+  _docCache.set(docId, prepared);
+  idbSet("doc:"+docId, prepared);                             // persist for next session (fire-and-forget)
+  return prepared;
+}
+
+/* attach lazy loading: placeholder imgs get their base64 src only when scrolled near;
+   the "RECEIVING IMAGE" skeleton (CSS .pending) clears once each image has painted.
+   Two mechanisms, belt + braces:
+   - IntersectionObserver (primary; efficient) — but IO callbacks are SUSPENDED in
+     hidden documents (background tabs, prerender), so it can't be the only path.
+   - a synchronous rect-check pass at render time + on throttled doc scroll — plain
+     events + getBoundingClientRect, which work everywhere. Also gives above-the-fold
+     images an instant start instead of waiting for IO's async callback. */
+let _docImgIO = null, _docHydrateCtx = null;
+const _figDone = img => { const s=img.closest(".docfig-screen"); if(s) s.classList.remove("pending"); };
+const _figArm  = img => { img.addEventListener("load", ()=>_figDone(img), {once:true});
+                          img.addEventListener("error", ()=>_figDone(img), {once:true}); };
+function _figSet(img, images){
+  if(img.getAttribute("src")) return;                        // already hydrated
+  const i=img.dataset.docimg;
+  if(i!=null && images[i]){ _figArm(img); img.src=images[i]; }
+  else _figDone(img);
+}
+function runHydratePass(margin){
+  const ctx=_docHydrateCtx; if(!ctx) return;
+  const m = margin==null ? 900 : margin;
+  ctx.reader.querySelectorAll(".docfig-screen.pending img[data-docimg]:not([src])").forEach(img=>{
+    const r=(img.closest(".docfig-screen")||img).getBoundingClientRect();
+    if(r.bottom >= -m && r.top <= window.innerHeight+m) _figSet(img, ctx.images);
+  });
+}
+function hydrateDocImages(reader, images){
+  if(_docImgIO){ _docImgIO.disconnect(); _docImgIO=null; }
+  _docHydrateCtx = { reader, images };
+  const imgs=[...reader.querySelectorAll(".docfig img")];
+  if("IntersectionObserver" in window){
+    // observe the framed WRAPPER, not the img — a src-less img has zero height and a
+    // zero-area target doesn't reliably intersect; the wrapper has a min-height.
+    _docImgIO = new IntersectionObserver(ents=>{
+      ents.forEach(en=>{
+        if(!en.isIntersecting) return;
+        _docImgIO.unobserve(en.target);
+        const img=en.target.querySelector("img"); if(img) _figSet(img, images);
+      });
+    }, {rootMargin:"900px 0px"});                             // start decoding well before it's on screen
+    imgs.forEach(img=>{ if(img.dataset.docimg!=null) _docImgIO.observe(img.closest(".docfig-screen")||img); });
+  }
+  // direct http(s) images already have src — just clear their skeleton once painted
+  imgs.forEach(img=>{ if(img.dataset.docimg==null){ if(img.complete) _figDone(img); else _figArm(img); } });
+  runHydratePass();                                           // hydrate what's already in/near view now
 }
 /* Warm ONE doc's cache on intent (tab hover / keyboard focus) rather than blanket-fetching
    every doc on load. The exports are image-heavy (multi-MB — Google inlines images as
@@ -1617,9 +1710,10 @@ function startDocLoader(status){
 }
 function stopDocLoader(){ if(_docLoaderTimer){ clearInterval(_docLoaderTimer); _docLoaderTimer = null; } }
 
-/* inject already-cleaned doc HTML into the reader (shared by the cold + cached paths) */
-function renderPreparedDoc(reader, cleanHtml, doc){
-  reader.innerHTML = cleanHtml;                               // already docCleaned in prepareDoc
+/* inject a prepared doc into the reader (shared by the cold + cached paths) */
+function renderPreparedDoc(reader, prepared, doc){
+  reader.innerHTML = prepared.html;                           // text-only markup — paints fast
+  hydrateDocImages(reader, prepared.images||[]);              // images stream in on approach
   styleTOC(reader);
   buildDocSidebar(reader);
   trackDocSection();
@@ -1652,8 +1746,8 @@ async function loadDoc(doc){
   const ctrl=new AbortController();
   const timer=setTimeout(()=>ctrl.abort(), 15000);            // don't hang on the loader forever
   try{
-    const clean=await prepareDoc(doc.docId, ctrl.signal);
-    renderPreparedDoc(reader, clean, doc);
+    const prepared=await prepareDoc(doc.docId, ctrl.signal);
+    renderPreparedDoc(reader, prepared, doc);
     status.className="docstatus"; status.textContent="";
   }catch(e){ docLoadError(status, e); }
   finally{ stopDocLoader(); clearTimeout(timer); }
@@ -1740,11 +1834,15 @@ $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(!b) return;
   const doc=DOCS.find(d=>d.id===b.dataset.section); if(doc) prefetchDoc(doc.docId);
 }));
-/* on doc scroll: back-to-top visibility + sticky section / sidebar tracking (rAF-throttled) */
-let docScrollTick=false;
+/* on doc scroll: back-to-top visibility + sticky section / sidebar tracking (rAF-throttled)
+   + the image-hydration fallback pass (timestamp-throttled — NOT rAF, which is suspended
+   in hidden tabs; scroll events still fire there) */
+let docScrollTick=false, _hydLast=0;
 $("#docscroll").addEventListener("scroll", ()=>{
   $("#doctop").classList.toggle("show", $("#docscroll").scrollTop>500);
   if(!docScrollTick){ docScrollTick=true; requestAnimationFrame(()=>{ trackDocSection(); docScrollTick=false; }); }
+  const now=Date.now();
+  if(now-_hydLast>120){ _hydLast=now; runHydratePass(); }
 });
 $("#doctop").addEventListener("click", ()=>$("#docscroll").scrollTo({top:0, behavior:"smooth"}));
 /* clicking a Table-of-Contents link scrolls within the rendered doc (no hash pollution) */

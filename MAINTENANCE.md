@@ -88,6 +88,15 @@ How it works:
 - `loadDoc()` fetches `https://docs.google.com/document/d/<docId>/export?format=html`. That
   endpoint is **CORS-readable** for a link-shared doc (returns `type:"cors"`), so the content
   is fetchable client-side — no backend, no iframe.
+- **Performance model** (the export inlines images as base64 — measured ~99% of the bytes;
+  the text is <100KB): `prepareDoc()` caches the parsed+cleaned doc in memory AND
+  **IndexedDB** (`yuma-docdb`), so the multi-MB download happens once per device; later
+  opens are local with a background re-fetch when >15 min stale. Base64 images are
+  **stripped into a side-table** and lazily hydrated as they scroll near
+  (`hydrateDocImages` — IntersectionObserver primary + a rect-check pass on render/scroll,
+  because IO/rAF are suspended in hidden tabs). Pending frames show a "RECEIVING IMAGE"
+  skeleton. Tab hover/focus prefetches that doc (`prefetchDoc`); there is deliberately no
+  blanket prefetch (mobile bandwidth).
 - `docClean()` rebuilds the doc from a **strict element whitelist**, dropping all of Google's
   inline styles/classes (so our CSS themes it) — this is also the sanitiser (no scripts/styles
   can pass). It preserves heading `id`s (for the TOC), converts `<span>` weight/italic to
