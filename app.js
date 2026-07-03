@@ -36,7 +36,8 @@ const CONFIG = {
    To add another: append { id, label, docId } (docId = the long string in the doc URL,
    .../document/d/<docId>/edit). `label` is what shows on the nav tab. */
 const DOCS = [
-  { id: "guide", label: "Guide", docId: "1N_gne2LAWEJpjp6CfLhtvuHHD8bm97d64V0dHoXnlIE" },
+  { id: "lore",     label: "Lore",     docId: "1N_gne2LAWEJpjp6CfLhtvuHHD8bm97d64V0dHoXnlIE" },
+  { id: "roleplay", label: "Roleplay", docId: "1lQrOZ-UPOR8-FP58l8ZFMvSPOyYDb5BYvvkwg0dR1oU" },
 ];
 
 /* Code-defined entries that aren't rows in the sheet (e.g. visiting characters).
@@ -1494,7 +1495,11 @@ function docClean(node){
     }
     if(tag==="img"){
       const src=n.getAttribute("src")||"";                     // Docs embeds diagrams as base64 data: PNGs
-      if(/^(https?:|data:image\/)/i.test(src)) out+=`<figure class="docfig"><img src="${escAttr(src)}" alt="${escAttr(n.getAttribute("alt")||"")}" loading="lazy"></figure>`;
+      if(/^(https?:|data:image\/)/i.test(src)){
+        const alt=n.getAttribute("alt")||"";
+        out+=`<figure class="docfig"><div class="docfig-screen"><img src="${escAttr(src)}" alt="${escAttr(alt)}" loading="lazy" decoding="async"></div>`+
+             (alt?`<figcaption class="docfig-cap">${esc(alt)}</figcaption>`:"")+`</figure>`;
+      }
       return;
     }
     if(tag==="table"){ out+=`<div class="doctable"><table>${docClean(n)}</table></div>`; return; }  // wrap → scrolls on narrow screens
@@ -1581,10 +1586,11 @@ async function prepareDoc(docId, signal){
   _docCache.set(docId, clean);
   return clean;
 }
-function prefetchDocs(){
-  const warm = () => DOCS.forEach(d => { if(!_docCache.has(d.docId)) prepareDoc(d.docId).catch(()=>{}); });
-  if("requestIdleCallback" in window) requestIdleCallback(warm, {timeout:3000}); else setTimeout(warm, 1200);
-}
+/* Warm ONE doc's cache on intent (tab hover / keyboard focus) rather than blanket-fetching
+   every doc on load. The exports are image-heavy (multi-MB — Google inlines images as
+   base64), so speculatively downloading them all would waste bandwidth, especially on
+   mobile. Hover/focus = the user is about to open it, so the head start is well spent. */
+function prefetchDoc(docId){ if(docId && !_docCache.has(docId)) prepareDoc(docId).catch(()=>{}); }
 
 /* ---- fancy ASCII loader (only shown for a cold/uncached fetch; prefetched opens skip it) ----
    A RobCo archive readout: a ping-pong "comet" sweeping a shade bar, cycling status line, and a
@@ -1729,6 +1735,11 @@ function setSection(id){
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
 });
+/* prefetch a doc the moment its tab is hovered or focused (just-in-time cache warming) */
+["pointerover","focusin"].forEach(ev => $("#topnav").addEventListener(ev, e=>{
+  const b=e.target.closest(".navtab"); if(!b) return;
+  const doc=DOCS.find(d=>d.id===b.dataset.section); if(doc) prefetchDoc(doc.docId);
+}));
 /* on doc scroll: back-to-top visibility + sticky section / sidebar tracking (rAF-throttled) */
 let docScrollTick=false;
 $("#docscroll").addEventListener("scroll", ()=>{
@@ -1984,6 +1995,5 @@ function runBoot(){
   const v=localStorage.getItem("yuma-view"); if(v) setView(v);
   refreshCur();                      // fill the popover's collapsed-group value lines
   renderNav();                       // build the Roster + docs section tabs
-  load(false);
-  prefetchDocs();                    // warm the doc cache during idle so a doc tab opens instantly
+  load(false);                       // docs warm on tab hover/focus (see prefetchDoc) — not blanket-prefetched
 })();
