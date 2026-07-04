@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark light" />
+<title>prefs.js — demo</title>
+<link rel="stylesheet" href="prefs.css" />
+<style>
+  /* ---- demo page (the "host" app). Settings write to these vars/attrs live. ---- */
+  :root{
+    --demo-accent:#3cff7a; --demo-font:"IBM Plex Mono",ui-monospace,monospace; --demo-size:16px;
+    --bg:#050a06; --fg:#cfefd8; --muted:#6f9a7f; --panel:#0a1d11; --border:#12351f;
+  }
+  body[data-theme="light"]{ --bg:#f4f6f4; --fg:#1b241d; --muted:#5a6b5f; --panel:#fff; --border:#d5ddd7; }
+  body[data-theme="slate"]{ --bg:#15171c; --fg:#dfe4ea; --muted:#8a93a0; --panel:#1c2028; --border:#2a3039; }
+  body[data-density="cozy"] .demo-card{ padding:18px; } body[data-density="compact"] .demo-card{ padding:10px; }
+  html,body{ margin:0; height:100%; }
+  body{ background:var(--bg); color:var(--fg); font-family:var(--demo-font); font-size:var(--demo-size);
+        transition:background .2s, color .2s; display:grid; grid-template-columns:1fr 320px; min-height:100%; }
+  body[data-glow="on"] .demo-stage{ text-shadow:0 0 7px color-mix(in srgb, var(--demo-accent) 60%, transparent); }
+  body[data-scan="on"] .demo-stage::after{ content:""; position:fixed; inset:0; pointer-events:none;
+    background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.10) 3px 4px); }
+  .demo-stage{ padding:6vh 6vw; position:relative; }
+  .demo-eyebrow{ letter-spacing:.3em; text-transform:uppercase; color:var(--muted); font-size:.72em; }
+  .demo-stage h1{ margin:.2em 0 .1em; color:var(--demo-accent); font-family:var(--demo-font); }
+  .demo-card{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px; margin:18px 0; max-width:60ch; }
+  .demo-btn{ font:inherit; cursor:pointer; padding:7px 14px; border-radius:6px; margin:2px 6px 2px 0;
+    background:transparent; color:var(--demo-accent); border:1px solid var(--demo-accent); }
+  .demo-btn.solid{ background:var(--demo-accent); color:var(--bg); }
+  a{ color:var(--demo-accent); }
+  /* the settings rail — themed by overriding the --prefs-* surface with our demo vars */
+  .rail{ border-left:1px solid var(--border); background:color-mix(in srgb, var(--panel) 55%, var(--bg)); padding:16px; overflow:auto; }
+  .rail h2{ margin:.2em 0 .8em; font-size:1em; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); }
+  #settings{
+    --prefs-font:var(--demo-font); --prefs-fg:var(--fg); --prefs-muted:var(--muted);
+    --prefs-panel:transparent; --prefs-border:var(--border);
+    --prefs-accent:var(--demo-accent); --prefs-accent-bg:color-mix(in srgb, var(--demo-accent) 16%, transparent);
+    --prefs-accent-fg:var(--fg); --prefs-accent-ink:var(--bg); --prefs-opt-bg:color-mix(in srgb, var(--panel) 60%, transparent);
+    --prefs-radius:8px; --prefs-opt-radius:5px;
+  }
+  .reset{ margin-top:10px; font:inherit; cursor:pointer; width:100%; padding:8px; border-radius:6px;
+    background:transparent; color:var(--muted); border:1px dashed var(--border); }
+  @media (max-width:820px){ body{ grid-template-columns:1fr; } .rail{ border-left:0; border-top:1px solid var(--border); } }
+</style>
+</head>
+<body>
+  <main class="demo-stage">
+    <p class="demo-eyebrow">prefs.js demo · a reusable preferences window</p>
+    <h1>The quick brown fox</h1>
+    <p>Change anything in the panel on the right — the accent, font, size, theme, glow and
+       scanlines all update this page <strong>live</strong>. Reload and your choices persist
+       (localStorage, namespace <code>demo-</code>). Hover the font options to <em>preview</em>
+       them without committing.</p>
+    <div class="demo-card">
+      <p>A sample panel. <a href="#">A link</a> in the accent colour.</p>
+      <button class="demo-btn solid">Primary</button>
+      <button class="demo-btn">Secondary</button>
+    </div>
+    <p class="demo-eyebrow">Everything here is driven by one schema + <code>Prefs({…})</code>.</p>
+  </main>
+
+  <aside class="rail">
+    <h2>Settings</h2>
+    <div id="settings"></div>
+    <button class="reset" id="reset">↺ Reset all</button>
+  </aside>
+
+<script src="prefs.js"></script>
+<script>
+  var FONTS = {
+    mono:  '"IBM Plex Mono", ui-monospace, monospace',
+    sans:  'system-ui, "Segoe UI", Roboto, sans-serif',
+    serif: 'Georgia, "Times New Roman", serif',
+    round: '"Comic Sans MS", "Chalkboard", system-ui, sans-serif'
+  };
+  var ACCENTS = { green:"#3cff7a", amber:"#ffb642", blue:"#5db4ff", magenta:"#ff6cc0", white:"#dbe3df" };
+
+  var prefs = Prefs({
+    prefix: "demo-",
+    mount: "#settings",
+    schema: [
+      { title:"Appearance", open:true, summary:true, fields:[
+        { id:"theme", type:"select", label:"Theme", default:"phosphor", attr:"data-theme",
+          options:[{value:"phosphor",label:"Phosphor",summary:"Phosphor"},{value:"slate",label:"Slate"},{value:"light",label:"Light"}] },
+        { id:"accent", type:"select", label:"Accent", default:"green", cssVar:"--demo-accent",
+          valueToCss:function(v){ return ACCENTS[v]; },
+          options:Object.keys(ACCENTS).map(function(k){
+            return { value:k, label:k[0].toUpperCase()+k.slice(1),
+                     swatch:'<i class="prefs-chip" style="background:'+ACCENTS[k]+'"></i>'+k[0].toUpperCase()+k.slice(1) };
+          }) },
+        { id:"density", type:"select", label:"Density", default:"cozy", attr:"data-density",
+          options:[{value:"cozy",label:"Cozy"},{value:"compact",label:"Compact"}] }
+      ]},
+      { title:"Text", open:true, summary:true, fields:[
+        { id:"font", type:"select", label:"Font", default:"mono", cssVar:"--demo-font", preview:true,
+          valueToCss:function(v){ return FONTS[v]; },
+          options:Object.keys(FONTS).map(function(k){
+            return { value:k, label:k[0].toUpperCase()+k.slice(1), previewCss:FONTS[k] };
+          }) },
+        { id:"size", type:"select", label:"Size", default:"16", cssVar:"--demo-size", valueToCss:function(v){ return v+"px"; },
+          options:[{value:"14",label:"S",summary:"14px"},{value:"16",label:"M",summary:"16px"},{value:"19",label:"L",summary:"19px"},{value:"22",label:"XL",summary:"22px"}] }
+      ]},
+      { title:"Effects", open:true, summary:true, fields:[
+        { id:"glow", type:"toggle", label:"Glow", default:"on", attr:"data-glow", onLabel:"On", offLabel:"Off" },
+        { id:"scan", type:"toggle", label:"Scanlines", default:"off", attr:"data-scan", onLabel:"On", offLabel:"Off" }
+      ]}
+    ],
+    onChange: function(id, value){ /* hook: e.g. analytics, side effects */ }
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){ prefs.reset(); });
+</script>
+</body>
+</html>
