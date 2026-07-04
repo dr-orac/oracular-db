@@ -12,10 +12,13 @@ Work top-to-bottom unless told otherwise. **One task = one commit.**
 - ✅ **T8 done** — the doc-tab stale-render race is fixed (`loadDoc()` bails when the user
   switched away before its cold fetch settled; guarded on both success and error).
 - ⛔ **T7 blocked** — needs the two Publish-to-web URLs from the doc owners.
-- 🔜 **Batch 2 queued (T9–T17)** — fonts/selection/chassis/resources brainstorm.
-  T9 (CRT vignette) ✅ done. Ready next: T10 (text selection), T11 (font system).
-  Needs your input: T13 (red-button placement), T14 (Vault-Tec IP OK on public site?),
-  T16 (map scope). Blocked: T17 (download the wbarahona + timeless888 zips).
+- ✅ **Batch 2: T9, T10, T11 done** — T9 CRT vignette softened · T10 selective text
+  selection · T11 editable doc fonts + clearer scoping. ❌ T14 cancelled (Vault-Tec
+  trademark).
+- 🔜 **Taste-gated next:** T12 (make the chassis metal beautiful/authentic FO1-2) and
+  T18 (visual alignment & harmony pass) — both build-then-show-before/after.
+- **Needs your input:** T13 (red-button placement/function), T16 (map scope).
+  **Blocked:** T17 (download the wbarahona + timeless888 zips). **T7 blocked** (pub URLs).
 - *(Ad-hoc, shipped alongside: jet-black CRT bezel + brushed-metal upgrade to the Chassis
   frame mode — see git log + CREDITS.md.)*
 
@@ -286,6 +289,26 @@ the ZIPs and extract into `…/Claude Resources/Codepen Downloads/` (same as the
 Then: add both to `CODEPEN-INDEX.md`, assess each, and spin off concrete follow-up tasks
 (the KMYybE effect; the map technique). Until downloaded, T16's map technique + any KMYybE
 use are blocked.
+
+## T18 · Visual alignment & harmony pass — DESIGN / TASTE-GATED
+Goal (user): key on-screen elements should *line up* and the layout should feel
+harmonious/proportional. **On golden ratio vs rule of thirds:** be honest — neither is a
+magic bullet for a data UI. Rule of thirds is a photo-composition heuristic; golden ratio
+is fine for a *couple* of proportion choices (e.g. sidebar:content) but chasing 1.618
+everywhere is cargo-cult. What genuinely reads as "harmonious" in UI is: (a) a **consistent
+spacing scale** (pick a base unit; make gutters/margins/gaps multiples of it), (b) **strong
+edge alignment** — shared left edges and baselines down each column, consistent gutters,
+(c) **consistent rhythm** (repeated vertical spacing between sections), (d) a **sensible
+proportion** for the big split (the roster rail : dossier — golden-ish ~38/62 is a
+reasonable target and close to today's clamp). Use proportion where it helps, alignment +
+a spacing scale as the backbone.
+
+Do this as: **audit first, then fix.** Screenshot the roster + dossier + cards + doc at a
+couple widths, mark where edges/baselines/gutters DON'T line up or spacing is ad-hoc
+(there are many one-off px values in styles.css), propose a small spacing scale + the
+alignment fixes, then apply. Taste-gated — present the before/after and the proposed scale
+for a verdict before committing. Respect the legibility floor + two-surface law. Sequence
+after T11 + T12 (all touch styles.css / layout — avoid overlapping edits).
 
 ---
 
