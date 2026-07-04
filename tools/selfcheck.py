@@ -213,6 +213,45 @@ if m:
 elif "docClean" in js:
     warn("DOC_OK whitelist not found but docClean() exists — verify the doc sanitiser is intact")
 
+# ---------------------------------------------------------------- 8d. css comment balance
+# selfcheck.py is not a CSS parser, so a comment whose body contains a stray "*/" (e.g. the
+# text "--panel-*/--rivet-*") silently closes the comment early, turning the rest of the
+# intended comment into live (garbage) CSS and breaking every rule after it. Detect this by
+# stripping real comments with the SAME semantics a CSS parser uses — re.sub with a non-greedy
+# `.*?` matches each "/*" to its FIRST following "*/", exactly like a parser would — then
+# checking what's left over: a leftover "*/" is a stray premature closer; a leftover "/*" is
+# an unterminated comment. Offsets are tracked through the substitution so line numbers in the
+# error point at the ORIGINAL file, not the stripped text.
+def check_css_comment_balance(css):
+    stripped_parts, orig_offsets = [], []   # parallel: stripped-text chunk -> its start offset in css
+    pos = 0
+    for m in re.finditer(r'/\*.*?\*/', css, flags=re.DOTALL):
+        stripped_parts.append(css[pos:m.start()]); orig_offsets.append(pos)
+        pos = m.end()
+    stripped_parts.append(css[pos:]); orig_offsets.append(pos)
+
+    def to_original_offset(stripped_pos):
+        """Map an offset in the concatenated stripped text back to an offset in css."""
+        running = 0
+        for chunk, orig_off in zip(stripped_parts, orig_offsets):
+            if stripped_pos < running + len(chunk):
+                return orig_off + (stripped_pos - running)
+            running += len(chunk)
+        return orig_offsets[-1] + len(stripped_parts[-1])
+
+    stripped = "".join(stripped_parts)
+    for m in re.finditer(r'\*/', stripped):
+        orig_pos = to_original_offset(m.start())
+        line = css.count('\n', 0, orig_pos) + 1
+        err(f'stray "*/" at styles.css:{line} — a comment body probably contains "*/" '
+            f'(e.g. "--panel-*/"), which closes the comment early')
+    for m in re.finditer(r'/\*', stripped):
+        orig_pos = to_original_offset(m.start())
+        line = css.count('\n', 0, orig_pos) + 1
+        err(f'unterminated "/*" comment starting at styles.css:{line} — a "/*" is never closed')
+
+check_css_comment_balance(css)
+
 # ---------------------------------------------------------------- report
 print("── Yuma Roster self-check ──")
 print(f"   ids: {len(ref_ids)} refs / {len(defined_ids)} defined   "
