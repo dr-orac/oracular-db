@@ -43,6 +43,14 @@
        setting; these two govern chrome text so nothing functional is ever illegibly tiny. */
     --fs-hint:      13px;   /* tertiary: supplementary popover scope notes — the absolute minimum */
     --fs-note:      14px;   /* secondary: captions, tags, counts, TOC entries, small buttons */
+    /* spacing scale (4-point grid) — the entropy-proof backbone for margins + padding.
+       Prefer these over ad-hoc px so alignment stays automatic, not hand-tuned. */
+    --sp-1: 4px;   --sp-2: 8px;   --sp-3: 12px;  --sp-4: 16px;
+    --sp-5: 24px;  --sp-6: 32px;  --sp-7: 40px;  --sp-8: 48px;
+    /* responsive negative space — the breathing margin from the bezel to the content.
+       Generous on large displays, proportionally tighter on mobile. (Screen mode; the
+       Chassis frame supplies its own metal inset.) */
+    --edge: clamp(12px, 4.2vw, 84px);
   }
 
   *{ box-sizing:border-box; }
@@ -419,6 +427,13 @@
     background:linear-gradient(180deg, rgba(var(--green-rgb),.05), rgba(0,0,0,0));
     flex:0 0 auto;
   }
+  /* Responsive negative space (screen mode only — Chassis keeps its metal inset). The header
+     content and the roster/main content inset from the bezel by --edge; the header carries an
+     extra --sp-2 so the brand/nav/search line up exactly with the rail's text column (the rail
+     panel sits at --edge, its rows are padded --sp-2). One clean left edge, breathing wider on
+     big screens. */
+  body:not([data-frame="border"]) header{ padding-left:calc(var(--edge) + var(--sp-2)); padding-right:calc(var(--edge) + var(--sp-2)); }
+  body:not([data-frame="border"]) main{ padding-left:var(--edge); padding-right:var(--edge); }
   .titlebar{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:nowrap; }
   /* masthead — "Workbench" wide display face as a fixed logo wordmark (a techy "terminal
      signage" look for the title, regardless of the chosen body font). */
@@ -747,7 +762,7 @@
      always keeps the lion's share. */
   .roster{ display:grid; grid-template-columns:clamp(312px, 26vw, 432px) 1fr; height:100%; min-height:0; }
   .listcol{ display:flex; flex-direction:column; min-height:0; min-width:0; border-right:1px solid var(--green-faint); }
-  .listctl{ flex:0 0 auto; display:flex; gap:6px; padding:8px 10px; border-bottom:1px solid var(--green-faint);
+  .listctl{ flex:0 0 auto; display:flex; gap:6px; padding:8px 10px 8px var(--sp-2); border-bottom:1px solid var(--green-faint);
     background:linear-gradient(180deg, rgba(255,255,255,.02), transparent); }
   .listctl select{ flex:1; min-width:0; background:var(--bg-panel); color:var(--green);
     border:1px solid var(--green-faint); font:inherit; font-size:17px; padding:4px 6px; text-shadow:var(--glow); }
@@ -764,13 +779,13 @@
     color:var(--green-dim);
     font-family:var(--font-body); font-size:17px; font-weight:normal;
     letter-spacing:2.5px; text-transform:uppercase; text-shadow:none;
-    padding:16px 16px 4px; display:flex; align-items:center; gap:8px;   /* 16px gutter = header gutter (T18) */
+    padding:16px 16px 4px var(--sp-2); display:flex; align-items:center; gap:8px;   /* left pad = --sp-2 so rail text aligns with the brand column (A) */
   }
   .sectionhdr:first-child{ padding-top:8px; }
   .sectionhdr::before{ content:"»"; color:var(--green); }
   .sectionhdr::after{ content:""; flex:1; height:0; border-top:1px dashed var(--green-faint); opacity:.7; }
   .row{
-    padding:8px 16px; cursor:pointer; border-bottom:1px solid rgba(15,58,34,.5);
+    padding:8px 16px 8px var(--sp-2); cursor:pointer; border-bottom:1px solid rgba(15,58,34,.5);
     display:flex; flex-direction:column; gap:1px;
   }
   .row:hover{ background:var(--bg-panel-2); }
@@ -781,7 +796,7 @@
   .row.active .row-name{ color:var(--green-bright); }
   .row-sub{ font-size:17px; color:var(--green-dim); }
 
-  .dossier{ overflow:auto; min-height:0; min-width:0; padding:32px 40px 84px; }   /* min-width:0 lets the grid track shrink below child min-content (no mobile overflow) */
+  .dossier{ overflow:auto; min-height:0; min-width:0; padding:clamp(28px, 3vw, 52px) var(--sp-7) 84px; }   /* generous, viewport-scaled top breathing; min-width:0 lets the track shrink below child min-content */
   /* On a wide screen the dossier column can get very wide; without a cap the identity
      grid sprays into 5 sparse columns while the prose sits in a narrow left strip — an
      incoherent width mismatch. Cap the content to one measure (left-aligned, terminal
