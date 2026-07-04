@@ -1388,3 +1388,27 @@
   .iconopt:hover{ border-color:var(--green); color:var(--green-bright); background:var(--bg-panel-2); }
   .iconopt.active{ border-color:var(--green); background:var(--bg-panel-2); }
   .iconopt .ic{ width:30px; height:30px; stroke-width:1.3; }
+
+  /* ================= CRT HOVER BLOOM =================
+     Interactive controls light up with phosphor glow on hover — the glow swells in (eased),
+     so the UI feels alive and tactile, like a real terminal. Built on the theme vars, so it
+     tracks every colour preset. Placed last so its transitions win by source order; metal
+     chassis chrome is naturally exempt (its base rules are more specific than a bare :hover). */
+  .btn, .seg button, .navtab, .tag, .chip, .card, .swatch, .mini, .row, .docreader a, .doctoc a{
+    transition:color .14s ease, background .14s ease, border-color .14s ease,
+               text-shadow .14s ease, box-shadow .14s ease, transform .1s ease;
+  }
+  .btn:hover, .seg button:hover, .navtab:hover, .tag:hover, .tag:focus-visible,
+  .chip:hover, .swatch:hover, .mini:hover, .docreader a:hover, .doctoc a:hover,
+  .row:hover .row-name{
+    text-shadow:0 0 6px rgba(var(--green-rgb),.7), 0 0 13px rgba(var(--green-rgb),.35);
+  }
+  .btn:hover, .seg button:hover, .navtab:hover, .tag:hover, .tag:focus-visible,
+  .chip:hover, .card:hover, .swatch:hover, .mini:hover{
+    box-shadow:0 0 12px -3px rgba(var(--green-rgb),.5), inset 0 0 10px -7px rgba(var(--green-rgb),.5);
+  }
+  /* a control already filled solid (active List/Cards, active tab) reads as lit — no glow smear on its dark text */
+  .seg button.active:hover, .navtab.active:hover{ text-shadow:none; }
+  @media (prefers-reduced-motion: reduce){
+    .btn, .seg button, .navtab, .tag, .chip, .card, .swatch, .mini, .row, .docreader a, .doctoc a{ transition:none; }
+  }
