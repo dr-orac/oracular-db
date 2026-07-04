@@ -220,6 +220,20 @@
   }
   input, textarea{ cursor:text; }
 
+  /* Selection reads as the LIVE phosphor colour (tracks the theme preset — green stays green,
+     magenta stays magenta) and glows, like highlighting on a CRT rather than browser blue.
+     ::selection and ::-moz-selection must be separate rules (a combined list is dropped). */
+  ::selection{
+    background:rgba(var(--green-rgb), .32);
+    color:var(--green-bright);
+    text-shadow:0 0 5px rgba(var(--green-rgb), .95), 0 0 11px rgba(var(--green-rgb), .5);
+  }
+  ::-moz-selection{
+    background:rgba(var(--green-rgb), .32);
+    color:var(--green-bright);
+    text-shadow:0 0 5px rgba(var(--green-rgb), .95), 0 0 11px rgba(var(--green-rgb), .5);
+  }
+
   /* =======================================================================
      FRAME MODES — switched by body[data-frame]; default is the clean screen.
      "screen"  → a subtle, theme-aware screen edge + gentle inset vignette.
