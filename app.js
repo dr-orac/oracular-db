@@ -1769,10 +1769,23 @@ async function loadDoc(doc){
   const timer=setTimeout(()=>ctrl.abort(), 15000);            // don't hang on the loader forever
   try{
     const prepared=await prepareDoc(doc.docId, ctrl.signal);
+    // stale-load guard: if the user switched to another section (or back to roster) while
+    // this cold fetch was in flight, a newer loadDoc() call now owns the reader/status/
+    // loader — bail out silently instead of clobbering it. Applies to BOTH outcomes:
+    // a late success must not overwrite the newer doc, and a late failure must not paint
+    // this doc's error over it.
+    if(currentSection!==doc.id) return;
     renderPreparedDoc(reader, prepared, doc);
     status.className="docstatus"; status.textContent="";
-  }catch(e){ docLoadError(status, e); }
-  finally{ stopDocLoader(); clearTimeout(timer); }
+  }catch(e){
+    if(currentSection!==doc.id) return;
+    docLoadError(status, e);
+  }finally{
+    // only stop the loader if we're still the current doc — startDocLoader shares one
+    // module-level timer, so an unconditional stop here would freeze a newer doc's loader.
+    if(currentSection===doc.id) stopDocLoader();
+    clearTimeout(timer);
+  }
 }
 
 /* ---- in-document find: highlight matches, step through them ---- */
