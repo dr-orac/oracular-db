@@ -221,15 +221,31 @@ Two coupled parts (one task, since they touch the same UI and CSS).
 - Scope note: touches the doc reader's CSS but **not `docClean()`** — stay out of the
   sanitiser per the scope fuse.
 
-## T12 · Simplify the chassis metal toward "simple + elegant" — DESIGN / TASTE-GATED
-User feels the spacecraft-panel metal (skeuomorphic-spacecraft-control-panel, local) is
-*more simple and elegant* than our current chassis, which now stacks rivets + top tab +
-brushed grain + sheen + gradient border-image and may read busy. Reconsider toward
-restraint: study the pen's console-shell recipe (one clean directional base gradient +
-a subtle brush + concentric machined edge rings + minimal furniture) and pare ours back to
-match, keeping our olive `--panel-*` palette and the two-surface law. Likely: dial down or
-drop some rivets/tab, simplify the border treatment. **Taste-gated:** implement, screenshot
-before/after, present for a verdict before committing. Credit stays as-is (CREDITS.md).
+## T12 · Make the chassis metal beautiful + authentically Fallout-1/2 — DESIGN / TASTE-GATED
+Goal (user): plated metal that's *beautiful and skeuomorphic like the Fallout 1 & 2 UI* —
+worn industrial olive-drab panels, not clean sci-fi. **Finding from surveying the CSS
+references** (skeuomorphic-spacecraft-control-panel + the fallout-4-pip-boy / pip-boy-screen
+/ nv-pip-boy pens, all local): the beautiful ones win through **restraint + coherence**, not
+more layers — a clean directional base gradient, ONE strong catch-light edge, soft depth
+shadows, rounded/molded corners, and (spacecraft) subtle brush + machined concentric rings +
+dimensional screws. Ours currently stacks rivets + top tab + brushed grain + sheen + gradient
+border-image and reads busier without reading better.
+
+Direction to implement (then screenshot before/after and present — TASTE-GATED, no commit
+until verdict):
+1. **One coherent light direction** across frame, masthead, buttons, rivets (top-left).
+2. **Refined bevel** on the frame — replace the flat faceted border with a proper multi-stop
+   metallic edge: strong bright catch on the top/left, soft dark on bottom/right, a crisp
+   inner keyline. (The pip-boy pens get depth from a single bright edge + soft shadow.)
+3. **Fewer, better rivets** — dimensional domed screws, less regular/dense; drop the centred
+   top "tab" unless it earns its place.
+4. **The missing Fallout ingredient: WEAR.** FO1/2 metal is *aged* — subtle grime settled in
+   the crevices/recesses, faint edge scratches, uneven worn highlights. Add this at very low
+   opacity (a soft dark inner grime, a sparse scratch texture) — this is what reads as
+   "Fallout" vs "generic brushed metal", and is likely what's missing more than "simplicity".
+5. Keep the olive `--panel-*` palette, the two-surface law, and legibility. Tune the brush
+   down (it may be too visible); consider a small corner radius for a "molded panel" feel.
+Credit stays as-is (CREDITS.md). Do this AFTER T11 (both touch styles.css — avoid overlap).
 
 ## T13 · Iconic Fallout red HUD button — NEEDS-INPUT (placement/function), then SMALL
 Adapt the spacecraft pen's launch button (already red: `radial-gradient(circle at 40% 30%,
@@ -240,14 +256,12 @@ user before building:** what does it *do* and where does it live? Candidates: th
 action restyled; a chassis-mounted power/CRT toggle; or a decorative HUD accent. It's a
 METAL-surface control (two-surface law), so it belongs on the chassis, not the screen.
 
-## T14 · Vault-Tec logo on the loading/boot screen — NEEDS-INPUT (IP), then SMALL
-Adapt the pure-CSS Vault-Tec logo (css3-only-vault-tec-logo, local; @kevingimbel) into the
-boot/loading sequence. ⚠ **IP caveat — reconciles a prior decision:** T5's boot spec said
-"no Vault-Tec / Vault Boy art" because this is a *public* deployed site and Vault-Tec is
-Bethesda IP. The user has now explicitly asked for it. This is a fan, non-commercial use;
-the risk is low but non-zero. **Confirm the user still wants it on the public site with
-that understanding before building**, and if yes, record the reversal in STYLE-GUIDE + the
-boot code comment so it doesn't read as an accident later.
+## T14 · Vault-Tec logo on the boot screen — ❌ CANCELLED (2026-07-04)
+Decision (user): do NOT use the Vault-Tec logo — it's a distinctive Bethesda trademark and
+this is a public site. The standing rule holds: **no specific Fallout trademarked art/logos**
+(Vault-Tec seal, Vault Boy, etc.). The general *genre* aesthetic — worn olive metal, phosphor
+terminal, RobCo-flavoured text — is fine and stays. (This reaffirms T5's original caution.)
+The `css3-only-vault-tec-logo` pen stays in the library but is not for this project.
 
 ## T15 · Layout ideas from the NV Pip-Boy pen — REPORT-FIRST, then maybe SMALL
 `working-fallout-new-vegas-pip-boy-bootstrap` (local; @carterfromsl) — assess whether its
