@@ -5,10 +5,12 @@ Work top-to-bottom unless told otherwise. **One task = one commit.**
 
 ## Status
 
-- ✅ **T1–T5 done** (activity indicators · CRT comparison report · dossier niceties ·
-  doc-authoring guide · boot sequence). See git log.
-- ✅ **T6 done** — regression sweep; two bugs found + fixed (doc tab-switch race; the
-  chassis-mobile PIP-LINK overflow was already resolved). Report: `docs/T6-REGRESSION-SWEEP.md`.
+- ✅ **T1–T6 done** (activity indicators · CRT comparison report · dossier niceties ·
+  doc-authoring guide · boot sequence · regression sweep). See git log. T6 fixed the
+  chassis-mobile overflow and deferred the doc-tab race it found to T8; fuller sweep
+  notes in `docs/T6-REGRESSION-SWEEP.md`.
+- ✅ **T8 done** — the doc-tab stale-render race is fixed (`loadDoc()` bails when the user
+  switched away before its cold fetch settled; guarded on both success and error).
 - ⛔ **T7 blocked** — needs the two Publish-to-web URLs from the doc owners.
 - *(Ad-hoc, shipped alongside: jet-black CRT bezel + brushed-metal upgrade to the Chassis
   frame mode — see git log + CREDITS.md.)*
@@ -132,7 +134,12 @@ URLs; the HTML drops from multi-MB to tens of KB, making even first visits fast)
   doc-reader features verified; export path still works as fallback (test by
   breaking the pubUrl deliberately).
 
-## T8 · Fix doc-tab race: switching mid-load can render the wrong doc — MEDIUM
+## T8 · Fix doc-tab race: switching mid-load can render the wrong doc — ✅ DONE
+
+**Done** — fixed as specified below; `loadDoc()`'s cold path now no-ops if
+`currentSection !== doc.id` when its fetch settles (guarded on success AND error, and
+the shared loader timer is only stopped when still current). Verified against the exact
+repro; single-switch loads unaffected. Spec retained below for the record.
 
 Found + confirmed during T6's regression sweep (reproduced twice, screenshotted).
 Touches `loadDoc()`/`prepareDoc()` — doc-reader-adjacent to audited code, so this
