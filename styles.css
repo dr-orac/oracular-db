@@ -908,32 +908,28 @@
      light on the phosphor rather than a boxed-in panel. */
   /* vertical-only padding so the eyebrow / portrait / stats line up on the SAME left
      edge as the narrative fields below (the dossier's 40px content edge). */
-  .doss-head{ position:relative; isolation:isolate; padding:24px 0; margin-bottom:32px; }
-  /* the glow BLEEDS outward past the content (negative insets) and fades softly in
-     that margin — so the green reaches close to the sides and never stops abruptly,
-     while the text stays aligned to the content edge. */
+  .doss-head{ position:relative; isolation:isolate; padding:var(--sp-6) 0; margin-bottom:var(--sp-6); }
+  /* a soft, feathered POOL OF LIGHT behind the header — subtle, no hard rim. It bleeds
+     outward (negative insets) and melts to transparent well before the edges, reading as a
+     gentle lift on the phosphor rather than a boxed panel. Toggleable off in Settings. */
   .doss-head::before{
     content:""; position:absolute; inset:-16px -40px; z-index:-1;
-    background:var(--bg-panel-2);
-    /* solid plateau fully covers the text AND extends a little further into the bleed
-       margin (smaller fade distance vs bigger bleed) so the green stays solid a few
-       extra px around the edges before melting to transparent. */
+    background:rgba(var(--green-rgb),.075);          /* gentle green lift — a soft pool, far subtler than the old solid fill */
     -webkit-mask-image:
-      linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%),
-      linear-gradient(to bottom, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+      linear-gradient(to right, transparent 0, #000 44px, #000 calc(100% - 44px), transparent 100%),
+      linear-gradient(to bottom, transparent 0, #000 30px, #000 calc(100% - 30px), transparent 100%);
     -webkit-mask-composite: source-in;
     mask-image:
-      linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%),
-      linear-gradient(to bottom, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+      linear-gradient(to right, transparent 0, #000 44px, #000 calc(100% - 44px), transparent 100%),
+      linear-gradient(to bottom, transparent 0, #000 30px, #000 calc(100% - 30px), transparent 100%);
     mask-composite: intersect;
   }
-  /* top row: now holds only the "More" overflow menu, aligned to the right */
-  .doss-toprow{ display:flex; justify-content:flex-end; align-items:flex-start; gap:16px; margin-bottom:10px; }
-  /* main row: portrait anchored beside the name block */
+  body[data-dosspanel="off"] .doss-head::before{ display:none; }   /* Settings → Dossier Panel: off = pure flat screen */
+  /* main row: portrait beside the name; the "More" menu tucks to the top-right of this row */
   .doss-headmain{ display:flex; gap:26px; align-items:flex-start; }
   .doss-headtext{ min-width:0; flex:1; }
-  .doss-actions{ display:flex; gap:8px; flex:0 0 auto; }
-  .doss-actions .btn{ min-width:86px; padding:5px 8px; font-size:17px; text-align:center;
+  .doss-actions{ display:flex; gap:8px; flex:0 0 auto; margin-left:auto; }   /* push "More" to the right edge of the name row */
+  .doss-actions .btn{ min-width:0; padding:5px 10px; font-size:17px; text-align:center;
     display:inline-flex; align-items:center; justify-content:center; gap:4px; }
   /* "More" overflow menu (decants Copy / Export / Edit) */
   .morewrap{ position:relative; }
@@ -1201,8 +1197,7 @@
     /* same specificity problem for Chassis mode's embossed "// PIP-LINK" tape strip —
        it overrides the display:none above and overflows off a 375px screen */
     body[data-frame="border"] .brand small{ display:none; }   /* @chassis-module (out-of-band stray) */
-    /* header: eyebrow stacks above its actions; portrait shrinks beside the name */
-    .doss-toprow{ flex-wrap:wrap; }
+    /* header: portrait shrinks beside the name */
     .portrait.lg{ width:120px; height:120px; }
     .dossier{ padding:18px 16px 60px; }
     .doss-head{ padding:14px 0; }

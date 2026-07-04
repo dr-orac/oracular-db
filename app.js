@@ -197,6 +197,14 @@ function applyGlass(key){
   localStorage.setItem("yuma-sheen", key);
   document.querySelectorAll("#glass-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
+/* dossier "focus panel" — the soft pool of light behind the dossier header. On by default;
+   off gives a pure flat screen (body[data-dosspanel="off"] hides the .doss-head::before). */
+function applyDossPanel(key){
+  if(key!=="off") key="on";
+  document.body.dataset.dosspanel = key;
+  localStorage.setItem("yuma-dosspanel", key);
+  document.querySelectorAll("#dosspanel-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
+}
 /* BODY faces whose glyphs render small per-px → default to the "large" text size.
    (The user's explicit Text Size choice is persisted and wins over this default.
    Fallouty fills most of the em, so it reads large already at "comfortable".) */
@@ -251,6 +259,9 @@ function buildSettings(){
   document.querySelector("#glass-swatches").innerHTML =
     [["off","Off"],["on","Subtle"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#glass-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyGlass(b.dataset.key); });
+  document.querySelector("#dosspanel-swatches").innerHTML =
+    [["on","On"],["off","Off"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
+  document.querySelector("#dosspanel-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDossPanel(b.dataset.key); });
   document.querySelector("#color-swatches").innerHTML = COLOR_ORDER.map(k=>
     `<button class="swatch" data-key="${k}"><span class="chip" style="background:${THEMES[k].primary};color:${THEMES[k].primary}"></span>${THEMES[k].name}</button>`).join("");
   document.querySelector("#bg-swatches").innerHTML = BG_ORDER.map(k=>
@@ -928,19 +939,9 @@ function dossierHTML(ch){
   const f=ch.fields;
   let html="";
   html+=`<div class="doss-head">`;
-  // top row: rarely-used actions decanted into a single "More" overflow menu, kept top-right.
-  // (the old "Unit Dossier · <section>" eyebrow was redundant — the affiliation already
-  //  shows in the role line below and in the roster's section grouping.)
-  html+=`<div class="doss-toprow">`;
-  html+=`<div class="doss-actions"><div class="morewrap">`+
-        `<button class="btn morebtn" aria-haspopup="true" aria-expanded="false" title="More actions">⋯ More</button>`+
-        `<div class="moremenu" role="menu">`+
-          `<button class="btn linkbtn" role="menuitem" data-slug="${esc(ch.slug)}" title="Copy a direct link to this dossier">⧉ Copy link</button>`+
-          `<button class="btn exportbtn" role="menuitem" data-slug="${esc(ch.slug)}" title="Print / export this dossier (PDF)">⎙ Export PDF</button>`+
-          (CONFIG.webAppUrl?`<button class="btn editbtn" role="menuitem" data-slug="${esc(ch.slug)}" title="Edit this dossier and save to the sheet">✎ Edit</button>`:"")+
-        `</div></div></div>`;
-  html+=`</div>`;
-  // main row: portrait anchored beside the name block
+  // portrait beside the name block; the "More" overflow menu tucks into the top-right of THIS
+  // row (not a floating row of its own). The old "Unit Dossier · <section>" eyebrow was dropped
+  // as redundant — affiliation shows in the role line + the roster's section grouping.
   html+=`<div class="doss-headmain">`;
   html+=portraitHTML(ch, "lg");        // single portrait (front photo, or spirit sigil if none)
   html+=`<div class="doss-headtext">`;
@@ -950,7 +951,16 @@ function dossierHTML(ch){
   html+=`<div class="doss-role">${esc(sr || sectionLabel(ch.section))}</div>`;
   const tags=getTags(ch);
   if(tags.length) html+=`<div class="tags">${tags.map(t=>`<span class="tag" role="button" tabindex="0" data-tag="${escAttr(t)}" aria-label="Filter by ${escAttr(t)}">${esc(t)}</span>`).join("")}</div>`;
-  html+=`</div></div>`;  // close headtext, headmain (still inside doss-head panel)
+  html+=`</div>`;  // close headtext
+  // "More" overflow menu — top-right of the name row, aligned with the portrait/name top
+  html+=`<div class="doss-actions"><div class="morewrap">`+
+        `<button class="btn morebtn" aria-haspopup="true" aria-expanded="false" title="More actions">⋯ More</button>`+
+        `<div class="moremenu" role="menu">`+
+          `<button class="btn linkbtn" role="menuitem" data-slug="${esc(ch.slug)}" title="Copy a direct link to this dossier">⧉ Copy link</button>`+
+          `<button class="btn exportbtn" role="menuitem" data-slug="${esc(ch.slug)}" title="Print / export this dossier (PDF)">⎙ Export PDF</button>`+
+          (CONFIG.webAppUrl?`<button class="btn editbtn" role="menuitem" data-slug="${esc(ch.slug)}" title="Edit this dossier and save to the sheet">✎ Edit</button>`:"")+
+        `</div></div></div>`;   // close moremenu, morewrap, doss-actions
+  html+=`</div>`;  // close headmain (still inside doss-head panel)
 
   // identity grid — lives INSIDE the head panel so the whole top area shares one dim
   // background; a single hairline (CSS) separates the stat grid from the name block.
@@ -1956,12 +1966,12 @@ $("#refresh").addEventListener("click", ()=>load(true));
 $("#reset-settings").addEventListener("click", ()=>{
   ["yuma-font","yuma-font-head","yuma-font-body","yuma-docfont-title","yuma-docfont-head",
    "yuma-docfont-body","yuma-color","yuma-bg","yuma-density",
-   "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt"
+   "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel"
   ].forEach(k=>localStorage.removeItem(k));
   applyFontHead("fallout"); applyFontBody("fallout");   // body apply also restores the font-derived text size since yuma-textsize was just cleared
   ["title","head","body"].forEach(kind=>applyDocFont(kind, DOC_FONT_DEFAULT[kind]));
   applyColor("green"); applyBg("phosphor"); applyDensity("comfortable");
-  applyFrame("screen"); applyFrameTint("olive"); applyGlass("off");
+  applyFrame("screen"); applyFrameTint("olive"); applyGlass("off"); applyDossPanel("on");
   document.body.classList.add("crt");
   $("#crt-toggle").textContent="Scanlines: ON"; $("#crt-toggle").classList.add("active");
   localStorage.setItem("yuma-crt","1");
@@ -2238,6 +2248,7 @@ function runBoot(){
   applyFrame(localStorage.getItem("yuma-frame") || "screen");
   applyFrameTint(localStorage.getItem("yuma-frametint") || "olive");
   applyGlass(localStorage.getItem("yuma-sheen") || "off");
+  applyDossPanel(localStorage.getItem("yuma-dosspanel") || "on");
   const crtOn = localStorage.getItem("yuma-crt") !== "0";
   document.body.classList.toggle("crt", crtOn);
   $("#crt-toggle").textContent = "Scanlines: " + (crtOn ? "ON" : "OFF");
