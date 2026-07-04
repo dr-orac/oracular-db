@@ -225,6 +225,14 @@ function applyCards(key){
   localStorage.setItem("yuma-cards", key);
   document.querySelectorAll("#cards-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
+/* Image colour — "screen" (default: green-phosphor monochrome, matching the terminal) or
+   "original" (true colour). Applies to doc images + character portraits. */
+function applyImgColor(key){
+  if(key!=="original") key="screen";
+  document.body.dataset.imgcolor = key;
+  localStorage.setItem("yuma-imgcolor", key);
+  document.querySelectorAll("#imgcolor-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
+}
 /* BODY faces whose glyphs render small per-px → default to the "large" text size.
    (The user's explicit Text Size choice is persisted and wins over this default.
    Fallouty fills most of the em, so it reads large already at "comfortable".) */
@@ -288,6 +296,9 @@ function buildSettings(){
   document.querySelector("#cards-swatches").innerHTML =
     [["auto","Auto"],["2","2"],["3","3"],["4","4"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#cards-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyCards(b.dataset.key); });
+  document.querySelector("#imgcolor-swatches").innerHTML =
+    [["screen","Screen"],["original","Original"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
+  document.querySelector("#imgcolor-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyImgColor(b.dataset.key); });
   document.querySelector("#color-swatches").innerHTML = COLOR_ORDER.map(k=>
     `<button class="swatch" data-key="${k}"><span class="chip" style="background:${THEMES[k].primary};color:${THEMES[k].primary}"></span>${THEMES[k].name}</button>`).join("");
   document.querySelector("#bg-swatches").innerHTML = BG_ORDER.map(k=>
@@ -1992,12 +2003,13 @@ $("#refresh").addEventListener("click", ()=>load(true));
 $("#reset-settings").addEventListener("click", ()=>{
   ["yuma-font","yuma-font-head","yuma-font-body","yuma-docfont-title","yuma-docfont-head",
    "yuma-docfont-body","yuma-color","yuma-bg","yuma-density",
-   "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel","yuma-cards"
+   "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel","yuma-cards","yuma-imgcolor"
   ].forEach(k=>localStorage.removeItem(k));
   applyFontHead("fallout"); applyFontBody("fallout");   // body apply also restores the font-derived text size since yuma-textsize was just cleared
   ["title","head","body"].forEach(kind=>applyDocFont(kind, DOC_FONT_DEFAULT[kind]));
   applyColor("green"); applyBg("phosphor"); applyDensity("comfortable");
   applyFrame("screen"); applyFrameTint("olive"); applyGlass("off"); applyDossPanel("on");
+  applyCards("auto"); applyImgColor("screen");
   document.body.classList.add("crt");
   $("#crt-toggle").textContent="Scanlines: ON"; $("#crt-toggle").classList.add("active");
   localStorage.setItem("yuma-crt","1");
@@ -2276,6 +2288,7 @@ function runBoot(){
   applyGlass(localStorage.getItem("yuma-sheen") || "off");
   applyDossPanel(localStorage.getItem("yuma-dosspanel") || "on");
   applyCards(localStorage.getItem("yuma-cards") || "auto");
+  applyImgColor(localStorage.getItem("yuma-imgcolor") || "screen");
   const crtOn = localStorage.getItem("yuma-crt") !== "0";
   document.body.classList.toggle("crt", crtOn);
   $("#crt-toggle").textContent = "Scanlines: " + (crtOn ? "ON" : "OFF");
