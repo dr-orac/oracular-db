@@ -620,11 +620,15 @@
     color:var(--green-dim); font-style:italic; }
   /* a deliberate QUOTE BLOCK (paragraph starting "> " or indented in the Doc) — a featured
      pull-quote: inset, larger italic, accent bar + big quote mark. */
-  .docreader .docquote{ position:relative; margin:1.7em 0; padding:.5em 1.2em .5em 2.4em;
-    border-left:3px solid var(--green); color:var(--green-bright); font-style:italic;
-    font-size:1.12em; line-height:1.7; text-shadow:0 0 8px rgba(var(--green-rgb),.28); }
-  .docreader .docquote::before{ content:"\201C"; position:absolute; left:.45em; top:.05em;
-    font-family:var(--font-head); font-size:1.8em; line-height:1; color:var(--green-dim); font-style:normal; }
+  .docreader .docquote{ position:relative; margin:2em 0; padding:1em 1.4em 1em 2.6em;
+    border-left:3px solid var(--green);
+    background:linear-gradient(90deg, rgba(var(--green-rgb),.07), rgba(var(--green-rgb),.02) 60%, transparent);
+    border-radius:0 4px 4px 0;
+    color:var(--green-bright); font-style:italic;
+    font-size:1.14em; line-height:1.75; text-shadow:0 0 8px rgba(var(--green-rgb),.28); }
+  .docreader .docquote::before{ content:"\201C"; position:absolute; left:.3em; top:.24em;
+    font-family:"IBM Plex Mono", ui-monospace, monospace; font-size:2.6em; line-height:1;
+    color:rgba(var(--green-rgb),.45); font-style:normal; text-shadow:0 0 10px rgba(var(--green-rgb),.4); }
   .docreader .docquote .dq{ text-shadow:none; }   /* don't double-glow inline quotes inside a quote block */
   /* doc images as terminal "screens": a phosphor bezel + subtle scanline overlay + a mono
      caption. The image itself stays FULL COLOUR (legibility first — the frame carries the
