@@ -174,6 +174,18 @@ function applyDocFont(kind, key){
   const wrap=document.getElementById(DOC_FONT_WRAP[kind]);
   if(wrap) wrap.querySelectorAll(".swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
+/* Live hover-preview for the font pickers: hovering a swatch applies that face immediately
+   (WITHOUT persisting); leaving the group restores the committed face (the .active swatch);
+   clicking commits via the existing click handler. So you SEE each face in place before
+   choosing — and it reveals exactly which text a category controls. */
+function wireFontPreview(wrap, cssVar, dataAttr){
+  if(!wrap) return;
+  const show=key=>{ const f=FACES[key]; if(!f) return;
+    document.documentElement.style.setProperty(cssVar, f.css);
+    if(dataAttr) document.body.dataset[dataAttr]=key; };
+  wrap.addEventListener("mouseover", e=>{ const b=e.target.closest(".swatch"); if(b) show(b.dataset.key); });
+  wrap.addEventListener("mouseleave", ()=>{ const a=wrap.querySelector(".swatch.active"); if(a) show(a.dataset.key); });
+}
 function applyDensity(key){
   document.body.classList.toggle("compact", key==="compact");
   localStorage.setItem("yuma-density", key);
@@ -235,13 +247,16 @@ function buildSettings(){
   };
   document.querySelector("#fonthead-swatches").innerHTML = HEAD_ORDER.map(faceBtn).join("");
   document.querySelector("#fonthead-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyFontHead(b.dataset.key); });
+  wireFontPreview(document.querySelector("#fonthead-swatches"), "--font-head", "fontHead");
   document.querySelector("#fontbody-swatches").innerHTML = BODY_ORDER.map(faceBtn).join("");
   document.querySelector("#fontbody-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyFontBody(b.dataset.key); });
+  wireFontPreview(document.querySelector("#fontbody-swatches"), "--font-body", "fontBody");
   // doc-reader font pickers (title / head / body)
   ["title","head","body"].forEach(kind=>{
     const wrap=document.getElementById(DOC_FONT_WRAP[kind]); if(!wrap) return;
     wrap.innerHTML = DOC_FONT_ORDERS[kind].map(faceBtn).join("");
     wrap.addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDocFont(kind, b.dataset.key); });
+    wireFontPreview(wrap, "--doc-font-"+kind, null);
   });
   document.querySelector("#density-swatches").innerHTML =
     [["comfortable","Comfortable"],["compact","Compact"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
