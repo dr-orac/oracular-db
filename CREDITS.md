@@ -21,3 +21,10 @@ Fonts have their own licence files in `fonts/`.
   gillesv (codepen.io/gillesv/pen/WbeZXyb) and "Punch Label Dymo Effect" by getwestfall
   (codepen.io/getwestfall/pen/WNyzZOL); implemented from scratch with our own shadow
   stack and tokens (`.brand small` in the Chassis frame mode, styles.css).
+- **Brushed-metal surface treatment** — the metal panels in the Chassis frame mode
+  (masthead, nav buttons, frame) use a brushed-grain `repeating-linear-gradient` overlay +
+  raking sheen + off-centre-lit dimensional screws. Techniques studied from "Skeuomorphic
+  Spacecraft Control Panel" by Margarita-the-solid
+  (codepen.io/Margarita-the-solid/pen/qENzBWN); reimplemented from scratch in our own olive
+  `--panel-*` token palette (`--metal-brush`/`--metal-sheen` and the `--rv` stud in
+  styles.css).

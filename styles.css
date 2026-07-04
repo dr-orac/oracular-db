@@ -136,7 +136,17 @@
     --rivet-hi:     #b9b079;   /* rivet dome highlight */
     --rivet-lo:     #181505;   /* rivet shadow ring */
     --frame:        clamp(18px, 2.1vw, 34px);   /* plate width — scales with the window */
-    --lip:          6px;       /* the canted lip that overhangs the screen */
+    --bezel:        clamp(15px, 1.7vw, 24px);   /* jet-black matte surround between metal + glass */
+    /* fine brushed-metal grain: alternating faint dark + warm-light vertical hairlines,
+       layered over a base metal gradient to lift the panels off "flat olive". Technique
+       adapted clean-room from a skeuomorphic-console pen — see CREDITS.md. */
+    --metal-brush: repeating-linear-gradient(90deg,
+       rgba(0,0,0,.05) 0 1px, rgba(0,0,0,0) 1px 2px,
+       rgba(255,248,224,.045) 2px 3px, rgba(0,0,0,0) 3px 5px);
+    /* broad raking sheen — light catches the plate from the top-left, falls to shade */
+    --metal-sheen: linear-gradient(118deg,
+       rgba(255,250,232,.10) 0%, rgba(255,250,232,.02) 22%,
+       rgba(0,0,0,0) 46%, rgba(0,0,0,.05) 78%, rgba(0,0,0,.12) 100%);
   }
   /* dark olive surround behind the centred panel, with a faint vignette */
   body{
@@ -185,12 +195,16 @@
        .app::after   = the CANTED LIP — a chamfered rim that overhangs the screen
                        and casts a shadow down onto the glass.                          */
   body[data-frame="border"] .app{
-    /* flat olive plate with a hard, directional pixel bevel (light top-left) */
+    /* olive plate. The faceted border-colors are the fallback bevel; a metallic gradient
+       border-image (lit top-left → shaded bottom-right) gives it a rolled-metal sheen so
+       it doesn't read as flat next to the brushed masthead. */
     border:var(--frame) solid var(--panel);
     border-top-color:var(--panel-hi);
     border-left-color:var(--panel-hi);
     border-right-color:var(--panel-lo);
     border-bottom-color:var(--panel-lo);
+    border-image:linear-gradient(135deg,
+      var(--panel-hi) 0%, var(--panel-mid) 30%, var(--panel) 55%, var(--panel-lo) 88%, var(--panel-ink) 100%) 1;
     box-shadow:
       inset 0 0 0 1px var(--panel-mid),        /* breaks the flat plate edge */
       0 0 0 1px var(--panel-ink),              /* crisp outer keyline */
@@ -202,9 +216,11 @@
     content:""; position:absolute; z-index:6000; pointer-events:none;
     inset:calc(var(--frame) * -1);
     --mid: calc(var(--frame) * 0.5);
-    /* a subtle stud: faint dome + thin shadow ring, barely above the plate */
-    --rv: radial-gradient(circle 2.5px at center,
-            var(--panel-hi) 0 1px, var(--panel-lo) 1.5px 2.5px, transparent 2.5px);
+    /* a dimensional stud: off-centre catch-light (lit top-left) → mid dome → shadow ring,
+       so it reads as a domed screw head rather than a flat dot */
+    --rv: radial-gradient(circle 3.2px at 38% 34%,
+            var(--rivet-hi) 0 1px, var(--panel-mid) 1.4px 2px,
+            var(--panel-lo) 2.4px 3.2px, transparent 3.2px);
     /* the centred top tab — a small raised boss (lit top, dark bottom) with a keyline */
     --tab: linear-gradient(180deg,
             var(--panel-ink) 0 1px, var(--panel-hi) 1px 35%,
@@ -225,22 +241,28 @@
       left var(--mid), right var(--mid),
       top center;
   }
-  /* ::after = the canted lip: a chamfered metal rim sitting on the screen's edge,
-     lit on the top/left faces and dark on the bottom/right, casting a shadow inward. */
+  /* ::after = the JET-BLACK BEZEL: a matte black surround between the metal housing and
+     the recessed glass, the way a real CRT reads. It draws as a border band at the app's
+     inner perimeter; the screen content is inset to match (main padding + header's own
+     padding), so the band sits in a gutter and never covers content. The masthead (higher
+     z) covers the band's TOP run — the masthead's own black bottom border is the top of
+     the bezel (see below), so the screen is ringed on all four sides. */
   body[data-frame="border"] .app::after{
     content:""; position:absolute; inset:0; z-index:5998; pointer-events:none;
-    border:var(--lip) solid var(--panel-mid);
-    border-top-color:var(--panel-hi);
-    border-left-color:var(--panel-hi);
-    border-right-color:var(--panel-lo);
-    border-bottom-color:var(--panel-lo);
+    border:var(--bezel) solid #0a0a0a;               /* the matte bezel band */
     box-shadow:
-      0 0 0 1px var(--panel-ink),                  /* keyline where the lip meets the plate */
-      inset 0 0 0 1px var(--panel-ink),            /* crisp dark edge against the glass */
-      inset 0 8px 12px -5px rgba(0,0,0,.80),       /* lip shadow cast DOWN onto the screen */
-      inset 7px 0 14px -8px rgba(0,0,0,.45),       /* a little from the left lip too */
-      inset 0 0 44px rgba(0,0,0,.40);              /* overall screen recess */
+      0 0 0 1px rgba(0,0,0,.6),                      /* keyline: metal housing meets the bezel */
+      inset 0 0 0 1px rgba(214,220,208,.07),         /* the bezel's inner chamfer catches a little light */
+      inset 0 5px 9px -2px rgba(0,0,0,.92),          /* glass sits RECESSED below the top of the bezel */
+      inset 4px 0 9px -4px rgba(0,0,0,.55),          /* …and a little from the left */
+      inset -4px 0 9px -4px rgba(0,0,0,.55),         /* …and the right */
+      inset 0 0 30px 3px rgba(0,0,0,.5);             /* soft overall recess into the surround */
   }
+  /* inset the screen (main = roster / cards / docs) so the bezel band sits in a gutter and
+     never overlaps content. Left/right/bottom get the surround; the top meets the status
+     strip (roster) or the masthead's own black bezel border (docs) — both already black —
+     so main needs no top inset. The statusline/toolbar are already inset by header's 16px. */
+  body[data-frame="border"] main{ padding:0 var(--bezel) var(--bezel); }
 
   /* ---------- CHASSIS (the second surface) ----------
      Fallout-1 material logic: the device is raised METAL; data lives on SCREENS inset
@@ -253,12 +275,18 @@
     /* METAL sits IN FRONT of the glass: above the scanline/vignette overlays (9000/9001),
        below modals (raised to 9100 in this mode), boot (9700) and toast (9500). */
     position:relative; z-index:9042;
-    margin:-10px -16px 10px;                       /* bleed over the header padding (10px 16px 8px) */
+    margin:-10px -16px 0;                          /* bleed over the header padding (10px 16px 8px) */
     padding:12px 16px 12px;
-    /* lit from above: bright catch at the top edge, mid face, falling to shadow at the base */
-    background:linear-gradient(180deg, var(--panel-hi) 0, var(--panel-mid) 8%, var(--panel) 70%, var(--panel-lo) 100%);
-    border-bottom:2px solid var(--panel-lo);
-    box-shadow: inset 0 1px 0 var(--rivet-hi), inset 0 -1px 0 var(--panel-lo),
+    /* brushed grain + raking sheen layered over the lit-from-above base gradient */
+    background:
+      var(--metal-brush),
+      var(--metal-sheen),
+      linear-gradient(180deg, var(--panel-hi) 0, var(--panel-mid) 8%, var(--panel) 70%, var(--panel-lo) 100%);
+    /* the metal plate's own dark bottom lip, then the black bezel band = the TOP run of the
+       screen surround (the ::after bezel covers left/right/bottom; this covers the top) */
+    border-bottom:var(--bezel) solid #0b0b0b;
+    box-shadow: inset 0 1px 0 var(--rivet-hi), inset 0 -2px 0 var(--panel-lo),
+      inset 0 -3px 5px -2px rgba(0,0,0,.7),         /* glass recessed just below the black band */
       0 1px 0 var(--panel-ink), 0 4px 10px -3px rgba(0,0,0,.65);
   }
   /* brand: engraved into the plate (letterpress), not glowing */
@@ -280,7 +308,9 @@
      and an indicator LAMP (the one lawful glow on metal: it's a light, not phosphor) */
   body[data-frame="border"] .navtab,
   body[data-frame="border"] .titlebar .popwrap > .btn{
-    background:linear-gradient(180deg, var(--panel-hi), var(--panel-mid) 45%, var(--panel));
+    background:
+      var(--metal-brush),
+      linear-gradient(180deg, var(--panel-hi), var(--panel-mid) 45%, var(--panel));
     border:1px solid var(--panel-ink);
     color:var(--panel-ink);
     text-shadow:0 1px 0 color-mix(in srgb, var(--panel-hi) 85%, transparent);
