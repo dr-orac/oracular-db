@@ -162,10 +162,7 @@
       <!-- DOC VIEW (Google Doc fetched + re-rendered in the terminal theme) -->
       <section id="docview" class="docview hidden" aria-label="Document">
         <div class="docbar">
-          <div class="docbar-left">
-            <span class="doctitle" id="doctitle"></span>
-            <span class="docnow" id="docnow" aria-live="polite"></span>
-          </div>
+          <!-- find = the primary control, placed left like the roster search (one command-bar shape) -->
           <label class="docfind-wrap" id="docfind-wrap">
             <span class="docfind-ico" aria-hidden="true">⌕</span>
             <input id="docfind" type="text" placeholder="find in document…" autocomplete="off" aria-label="Find in this document" />
@@ -173,7 +170,9 @@
             <button class="docfind-btn" id="docfind-prev" type="button" title="Previous match (Shift+Enter)" aria-label="Previous match">▲</button>
             <button class="docfind-btn" id="docfind-next" type="button" title="Next match (Enter)" aria-label="Next match">▼</button>
           </label>
-          <a class="btn doclink" id="doclink" href="#" target="_blank" rel="noopener noreferrer">↗ Open in Google Docs</a>
+          <span class="doctitle" id="doctitle" hidden></span><!-- redundant with the active nav tab; kept for JS -->
+          <span class="docnow" id="docnow" aria-live="polite"></span>
+          <a class="doclink" id="doclink" href="#" target="_blank" rel="noopener noreferrer" title="Open this document in Google Docs" aria-label="Open in Google Docs">↗ Docs</a>
         </div>
         <div class="docbody">
           <nav class="doctoc" id="doctoc" aria-label="Document contents"></nav>
