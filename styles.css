@@ -469,26 +469,29 @@
   /* the re-rendered document — long-form reading: characterful display headings, a
      clean readable mono body (prose in the chunky pixel font is tiring), generous rhythm.
      Heading sizes are em-based so the hierarchy scales with the chosen text size. */
+  /* doc fonts are user-specifiable (Theme → Document): --doc-font-title (masthead + h1),
+     --doc-font-head (subtitle + h2), --doc-font-body (prose + h3/h4). Fallbacks below
+     reproduce the default look if JS hasn't set the vars. */
   .docreader{ max-width:74ch; margin:0 auto;
-    font-family:"IBM Plex Mono", ui-monospace, "Share Tech Mono", monospace;
+    font-family:var(--doc-font-body, "IBM Plex Mono", ui-monospace, "Share Tech Mono", monospace);
     font-size:17px; line-height:1.85; letter-spacing:.2px; color:var(--green); }
   .docreader > :first-child{ margin-top:0; }
   /* Google Docs "Title" paragraph style — first becomes the doc masthead, rest become subtitles */
   .docreader .doc-title{
-    font-family:"Gothic 821","Oswald",var(--font-head); font-size:2.6em;
+    font-family:var(--doc-font-title, "Gothic 821","Oswald",sans-serif); font-size:2.6em;
     text-align:center; text-transform:uppercase; letter-spacing:3px; line-height:1.1;
     color:var(--green-bright); text-shadow:0 0 18px rgba(var(--green-rgb),.45);
     margin:0 0 .25em; border:0;
   }
   .docreader .doc-subtitle{
-    font-family:var(--font-head); font-size:1.0em; letter-spacing:2.5px;
+    font-family:var(--doc-font-head, var(--font-head)); font-size:1.0em; letter-spacing:2.5px;
     text-align:center; text-transform:uppercase;
     color:var(--green-dim); margin:0 0 2.6em;
   }
   /* heading hierarchy uses DISTINCT faces + space-above proportional to level:
      H1 = masthead gothic · H2 = pixel terminal · H3/H4 = emphasised reading face. */
   .docreader h1, .docreader h2, .docreader h3, .docreader h4{ color:var(--green-bright); line-height:1.15; text-shadow:none; scroll-margin-top:14px; }
-  .docreader h1{ font-family:"Gothic 821","Oswald",var(--font-head); font-size:2.1em; letter-spacing:.5px;
+  .docreader h1{ font-family:var(--doc-font-title, "Gothic 821","Oswald",sans-serif); font-size:2.1em; letter-spacing:.5px;
     margin:2.7em 0 .55em; padding-bottom:.25em;
     border-bottom:1px solid; border-image:linear-gradient(to right, var(--green), var(--green-faint) 60%, transparent) 1; }
   /* "PART ONE/TWO …" read as centered chapter breaks — the most space of all */
@@ -496,7 +499,7 @@
     text-shadow:0 0 16px rgba(var(--green-rgb),.45); }
   .docreader h1.part::before, .docreader h1.part::after{ content:"⸻"; display:block; color:var(--green-faint);
     font-size:.4em; letter-spacing:0; margin:.3em 0; }
-  .docreader h2{ font-family:var(--font-head); font-size:1.5em; color:var(--green); margin:2.2em 0 .5em; }
+  .docreader h2{ font-family:var(--doc-font-head, var(--font-head)); font-size:1.5em; color:var(--green); margin:2.2em 0 .5em; }
   .docreader h2::before{ content:"» "; color:var(--green-dim); }
   .docreader h3{ font-size:1.06em; color:var(--green-bright); font-weight:400; letter-spacing:1.5px; text-transform:uppercase; margin:1.8em 0 .4em; }
   .docreader h4{ font-size:.95em; color:var(--green-dim); letter-spacing:1.5px; text-transform:uppercase; margin:1.45em 0 .3em; }

@@ -96,9 +96,22 @@ const FACES = {
   ticker:    { name:"Ticker",     css:'"DotGothic16", monospace' },
   typewriter:{ name:"Typewriter", css:'"Special Elite", monospace' },
   block:     { name:"Block",      css:'"Pixelify Sans", monospace' },
+  gothic:    { name:"Gothic 821", css:'"Gothic 821", "Oswald", sans-serif' },   // condensed display face (the brand wordmark); great for doc titles
 };
 const HEAD_ORDER = ["fallout","workbench","overseer","monofonto","terminal","fixedsys","plex","ticker","typewriter","block"];
 const BODY_ORDER = ["fallout","plex","sharetech","monofonto","terminal","fixedsys","typewriter","block"];
+/* Doc-reader fonts are picked separately from the app's (a Google Doc reads differently
+   from the roster chrome). Three tiers → CSS vars --doc-font-title/head/body. Defaults
+   reproduce today's look exactly (Gothic masthead · Fallout section headings · Plex prose).
+   'workbench' is excluded — its css is just Fallouty (an app name-plate special), misleading
+   in a doc picker. */
+const DOC_HEAD_FACES = ["gothic","fallout","overseer","monofonto","terminal","fixedsys","block","ticker"];
+const DOC_BODY_FACES = ["plex","sharetech","fallout","monofonto","terminal","fixedsys","typewriter","block"];
+const DOC_FONT_ORDERS = { title:DOC_HEAD_FACES, head:DOC_HEAD_FACES, body:DOC_BODY_FACES };
+const DOC_FONT_DEFAULT = { title:"gothic", head:"fallout", body:"plex" };
+/* full swatch-container ids (kept as complete literals so tools/selfcheck.py can verify
+   them, and so no partial "#docfont-" string trips its id-reference check) */
+const DOC_FONT_WRAP = { title:"docfont-title-swatches", head:"docfont-head-swatches", body:"docfont-body-swatches" };
 /* legacy single-preset key (pre-rebuild "yuma-font") → [head, body] migration */
 const PRESET_MIGRATE = {
   fallout:["fallout","fallout"], falloutplex:["fallout","plex"], fixedsys:["fixedsys","fixedsys"],
@@ -147,6 +160,15 @@ function applyFontBody(key){
   // if the user hasn't explicitly chosen a text size, derive it from the BODY face
   // (small pixel faces → large) so bitmap fonts stay legible by default.
   if(!localStorage.getItem("yuma-textsize")) setTextSizeAttr(defaultSizeForFont(key));
+}
+/* doc-reader fonts: kind ∈ {title, head, body} → sets --doc-font-<kind>, which the
+   .docreader CSS reads (title = masthead + h1; head = subtitle + h2; body = prose + h3/h4). */
+function applyDocFont(kind, key){
+  const f=FACES[key]||FACES[DOC_FONT_DEFAULT[kind]];
+  document.documentElement.style.setProperty("--doc-font-"+kind, f.css);
+  localStorage.setItem("yuma-docfont-"+kind, key);
+  const wrap=document.getElementById(DOC_FONT_WRAP[kind]);
+  if(wrap) wrap.querySelectorAll(".swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 function applyDensity(key){
   document.body.classList.toggle("compact", key==="compact");
@@ -203,6 +225,12 @@ function buildSettings(){
   document.querySelector("#fonthead-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyFontHead(b.dataset.key); });
   document.querySelector("#fontbody-swatches").innerHTML = BODY_ORDER.map(faceBtn).join("");
   document.querySelector("#fontbody-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyFontBody(b.dataset.key); });
+  // doc-reader font pickers (title / head / body)
+  ["title","head","body"].forEach(kind=>{
+    const wrap=document.getElementById(DOC_FONT_WRAP[kind]); if(!wrap) return;
+    wrap.innerHTML = DOC_FONT_ORDERS[kind].map(faceBtn).join("");
+    wrap.addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDocFont(kind, b.dataset.key); });
+  });
   document.querySelector("#density-swatches").innerHTML =
     [["comfortable","Comfortable"],["compact","Compact"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#density-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDensity(b.dataset.key); });
@@ -245,6 +273,10 @@ function refreshCur(){
         + " · CRT " + (document.body.classList.contains("crt")?"on":"off");
   if(f) f.textContent = (document.body.dataset.frame==="border"?"Chassis":"Screen")
         + (document.body.dataset.frametint==="theme"?" · tinted":"");
+  const df=document.querySelector("#cur-docfont");
+  if(df){ const t=localStorage.getItem("yuma-docfont-title")||DOC_FONT_DEFAULT.title,
+              b=localStorage.getItem("yuma-docfont-body")||DOC_FONT_DEFAULT.body;
+    df.textContent = (FACES[t]||FACES.gothic).name + " / " + (FACES[b]||FACES.plex).name; }
   document.querySelectorAll("#settings-pop .swatch[role=radio]")
     .forEach(b=>b.setAttribute("aria-checked", b.classList.contains("active")));
 }
@@ -1918,10 +1950,12 @@ $("#refresh").addEventListener("click", ()=>load(true));
 /* Reset all Theme-popover settings to defaults (font, colour, bg, density, text size,
    frame, frame tint, screen glass, CRT). Doesn't touch character data / icons / photos. */
 $("#reset-settings").addEventListener("click", ()=>{
-  ["yuma-font","yuma-font-head","yuma-font-body","yuma-color","yuma-bg","yuma-density",
+  ["yuma-font","yuma-font-head","yuma-font-body","yuma-docfont-title","yuma-docfont-head",
+   "yuma-docfont-body","yuma-color","yuma-bg","yuma-density",
    "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt"
   ].forEach(k=>localStorage.removeItem(k));
   applyFontHead("fallout"); applyFontBody("fallout");   // body apply also restores the font-derived text size since yuma-textsize was just cleared
+  ["title","head","body"].forEach(kind=>applyDocFont(kind, DOC_FONT_DEFAULT[kind]));
   applyColor("green"); applyBg("phosphor"); applyDensity("comfortable");
   applyFrame("screen"); applyFrameTint("olive"); applyGlass("off");
   document.body.classList.add("crt");
@@ -2190,6 +2224,8 @@ function runBoot(){
   localStorage.removeItem("yuma-font");
   applyFontHead(localStorage.getItem("yuma-font-head") || "fallout");
   applyFontBody(localStorage.getItem("yuma-font-body") || "fallout");  /* sets a font-derived size if none stored */
+  ["title","head","body"].forEach(kind=>
+    applyDocFont(kind, localStorage.getItem("yuma-docfont-"+kind) || DOC_FONT_DEFAULT[kind]));
   const storedSize = localStorage.getItem("yuma-textsize");
   if(storedSize) applyTextSize(storedSize);                       /* explicit choice wins over the per-font default */
   applyColor(localStorage.getItem("yuma-color") || "green");
