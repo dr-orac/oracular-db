@@ -836,7 +836,7 @@ function portraitHTML(ch, cls){
   return `<div class="portrait ${cls||''} ${src?'':'noimg'}">
       ${img}<span class="tint"></span>
       <span class="sigil">${portraitSigil(ch)}</span>
-      <button class="upbtn" data-slug="${esc(ch.slug)}" title="Upload / change image">▲</button>
+      <button class="upbtn" data-slug="${esc(ch.slug)}" title="Add / change photo" aria-label="Add or change photo">＋</button>
       <button class="iconbtn" data-slug="${esc(ch.slug)}" title="Choose a sigil icon">◈</button>
     </div>`;
 }
