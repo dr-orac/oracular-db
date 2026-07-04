@@ -160,7 +160,24 @@
     max-width:none; margin:0 auto; position:relative;   /* full-width (was 1400px cap); inner panels keep their own ch-measures */
     background:var(--bg);
     image-rendering:pixelated;
+    -webkit-user-select:none; user-select:none;   /* chrome by default (T10); re-enabled below on copy-worthy content */
   }
+
+  /* ---------- T10: selective text selection ----------
+     .app is non-selectable by default (chrome: nav, toolbar, statusline, buttons,
+     section/field LABELS, roster row chrome, the masthead). Re-enable selection only
+     on copy-worthy CONTENT: the doc reader, dossier/card field values, and form fields. */
+  .docreader,
+  .field .body,
+  .idcell .v,
+  .doss-name, .doss-hon, .doss-role,
+  .spirit-name, .spirit-body,
+  .logbody,
+  .cname, .chon, .crole, .cmeta, .capp,
+  input, textarea{
+    -webkit-user-select:text; user-select:text;
+  }
+  input, textarea{ cursor:text; }
 
   /* =======================================================================
      FRAME MODES — switched by body[data-frame]; default is the clean screen.
