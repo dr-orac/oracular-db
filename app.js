@@ -217,6 +217,14 @@ function applyDossPanel(key){
   localStorage.setItem("yuma-dosspanel", key);
   document.querySelectorAll("#dosspanel-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
+/* Cards view — how many cards per row. "auto" = responsive fill; 2/3/4 = fixed (wide screens
+   only, see the @media guard in styles.css so phones never get tiny cards). */
+function applyCards(key){
+  if(!["auto","2","3","4"].includes(key)) key="auto";
+  document.body.dataset.cards = key;
+  localStorage.setItem("yuma-cards", key);
+  document.querySelectorAll("#cards-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
+}
 /* BODY faces whose glyphs render small per-px → default to the "large" text size.
    (The user's explicit Text Size choice is persisted and wins over this default.
    Fallouty fills most of the em, so it reads large already at "comfortable".) */
@@ -277,6 +285,9 @@ function buildSettings(){
   document.querySelector("#dosspanel-swatches").innerHTML =
     [["on","On"],["off","Off"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#dosspanel-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDossPanel(b.dataset.key); });
+  document.querySelector("#cards-swatches").innerHTML =
+    [["auto","Auto"],["2","2"],["3","3"],["4","4"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
+  document.querySelector("#cards-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyCards(b.dataset.key); });
   document.querySelector("#color-swatches").innerHTML = COLOR_ORDER.map(k=>
     `<button class="swatch" data-key="${k}"><span class="chip" style="background:${THEMES[k].primary};color:${THEMES[k].primary}"></span>${THEMES[k].name}</button>`).join("");
   document.querySelector("#bg-swatches").innerHTML = BG_ORDER.map(k=>
@@ -1981,7 +1992,7 @@ $("#refresh").addEventListener("click", ()=>load(true));
 $("#reset-settings").addEventListener("click", ()=>{
   ["yuma-font","yuma-font-head","yuma-font-body","yuma-docfont-title","yuma-docfont-head",
    "yuma-docfont-body","yuma-color","yuma-bg","yuma-density",
-   "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel"
+   "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel","yuma-cards"
   ].forEach(k=>localStorage.removeItem(k));
   applyFontHead("fallout"); applyFontBody("fallout");   // body apply also restores the font-derived text size since yuma-textsize was just cleared
   ["title","head","body"].forEach(kind=>applyDocFont(kind, DOC_FONT_DEFAULT[kind]));
@@ -2264,6 +2275,7 @@ function runBoot(){
   applyFrameTint(localStorage.getItem("yuma-frametint") || "olive");
   applyGlass(localStorage.getItem("yuma-sheen") || "off");
   applyDossPanel(localStorage.getItem("yuma-dosspanel") || "on");
+  applyCards(localStorage.getItem("yuma-cards") || "auto");
   const crtOn = localStorage.getItem("yuma-crt") !== "0";
   document.body.classList.toggle("crt", crtOn);
   $("#crt-toggle").textContent = "Scanlines: " + (crtOn ? "ON" : "OFF");

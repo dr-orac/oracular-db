@@ -841,6 +841,14 @@
     display:grid; grid-template-columns:repeat(auto-fill, minmax(340px,1fr));
     gap:16px; padding:18px; align-content:start;
   }
+  /* Cards-per-row (Settings). "Auto" = the responsive fill above. Fixed counts apply only on
+     wider viewports so a chosen 4-up never squeezes into tiny cards on a phone (there it falls
+     back to the responsive fill). */
+  @media (min-width:820px){
+    body[data-cards="2"] .cards{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    body[data-cards="3"] .cards{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+    body[data-cards="4"] .cards{ grid-template-columns:repeat(4, minmax(0,1fr)); }
+  }
   .card{
     border:1px solid var(--green-faint); background:var(--bg-panel);
     padding:20px; cursor:pointer; position:relative;
