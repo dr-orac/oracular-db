@@ -51,6 +51,7 @@
        Generous on large displays, proportionally tighter on mobile. (Screen mode; the
        Chassis frame supplies its own metal inset.) */
     --edge: clamp(12px, 4.2vw, 84px);
+    --rail: clamp(312px, 26vw, 432px);   /* the left index column (roster rail) — the search sits over it */
   }
 
   *{ box-sizing:border-box; }
@@ -737,7 +738,7 @@
     margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;
   }
   .search{
-    flex:0 1 360px; min-width:160px; display:flex; align-items:center; gap:8px;   /* capped — no need to span the bar */
+    flex:0 0 calc(var(--rail) - var(--sp-2)); min-width:160px; display:flex; align-items:center; gap:8px;   /* sits over the rail: right edge meets the divider */
     background:var(--bg-panel); border:1px solid var(--green-faint);
     padding:6px 10px;
   }
@@ -806,7 +807,7 @@
   /* list rail scales with the viewport: never narrower than today's 300px (no regression on
      small screens), grows on widescreen so names/roles stop wrapping, capped so the dossier
      always keeps the lion's share. */
-  .roster{ display:grid; grid-template-columns:clamp(312px, 26vw, 432px) 1fr; height:100%; min-height:0; }
+  .roster{ display:grid; grid-template-columns:var(--rail) 1fr; height:100%; min-height:0; }
   .listcol{ display:flex; flex-direction:column; min-height:0; min-width:0; border-right:1px solid var(--green-faint); }
   .listctl{ flex:0 0 auto; display:flex; gap:6px; padding:8px 10px 8px var(--sp-2); border-bottom:1px solid var(--green-faint);
     background:linear-gradient(180deg, rgba(255,255,255,.02), transparent); }
@@ -1243,6 +1244,7 @@
     .navrow{ align-items:flex-start; }
     #settings-btn .sb-label{ display:none; }
     #settings-btn{ font-size:20px; padding:6px 11px; flex:0 0 auto; }
+    .search{ flex:1 1 auto; }   /* rail is full-width on mobile → let the search fill too */
     .docview{ padding:12px 0 0; }
     .docbar{ padding:0 16px; }
     .docnow{ display:none; }          /* breadcrumb hidden on narrow screens (bar too tight) */
