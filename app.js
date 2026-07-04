@@ -1966,7 +1966,7 @@ $("#reset-settings").addEventListener("click", ()=>{
   $("#crt-toggle").textContent="Scanlines: ON"; $("#crt-toggle").classList.add("active");
   localStorage.setItem("yuma-crt","1");
   refreshCur();
-  toast("Theme settings reset to defaults.");
+  toast("Settings reset to defaults.");
 });
 
 /* keyboard navigation: '/' focuses search; ↑/↓ or j/k step through the roster */

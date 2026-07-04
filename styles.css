@@ -44,10 +44,15 @@
   *{ box-sizing:border-box; }
 
   html,body{ height:100%; }
+  html{ background:#000; }        /* jet-black behind the screen, so the rounded corners read black */
   :root{ color-scheme:dark; }   /* native scrollbars / form controls render dark, not white */
   body{
     margin:0;
-    background:var(--bg);
+    /* a faint phosphor pool rising from the bottom lifts the fill off flat black —
+       greenish but kept much darker than a real CRT (deep terminal black-green). */
+    background:
+      radial-gradient(130% 90% at 50% 100%, rgba(var(--green-rgb),.05), transparent 55%),
+      var(--bg);
     color:var(--green);
     font-family:var(--font-body);
     font-size:18px;                  /* default body — sized for the pixel font, bigger for legibility */
@@ -125,6 +130,28 @@
   @media (prefers-reduced-motion: reduce){
     body.crt .app{ animation:none; }
     .cursor{ animation:none; }
+  }
+
+  /* ---------- screen glass + jet-black monitor bezel (ALWAYS ON, independent of the .crt toggle) ----------
+     Frames the phosphor like a real CRT: a soft top reflection suggests curved glass, and a
+     jet-black rounded border tidies the edges so content reads as ONE neat screen, not a
+     page bleeding off all four sides. Screen mode only — the Chassis frame supplies its own
+     metal bezel. Glass/curvature techniques reimplemented (not copied) from 32bitkid's
+     "Fallout 3 Terminal" pen — technique credit in CREDITS.md (MIT). */
+  body:not([data-frame="border"]){ border-radius:22px; }   /* rounded screen corners (body already clips overflow) */
+  body:not([data-frame="border"])::before{     /* curved-glass reflection: faint light catch along the top */
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:9198;
+    background:
+      radial-gradient(120% 15% at 50% -3%, rgba(255,255,255,.05), transparent 60%),
+      radial-gradient(64% 8% at 50% -1%, rgba(var(--green-rgb),.05), transparent 55%);
+  }
+  body:not([data-frame="border"])::after{      /* jet-black bezel + gentle edge curvature */
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:9200;
+    border-radius:22px;
+    box-shadow:
+      inset 0 0 0 12px #000,                    /* the jet-black screen border */
+      inset 0 0 3px 12px rgba(0,0,0,.9),        /* crisp inner lip where border meets glass */
+      inset 0 0 95px 26px rgba(0,0,0,.26);      /* soft corner shade → hint of curvature */
   }
 
   /* ---------- layout shell ---------- */

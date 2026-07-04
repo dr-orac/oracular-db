@@ -28,3 +28,9 @@ Fonts have their own licence files in `fonts/`.
   (codepen.io/Margarita-the-solid/pen/qENzBWN); reimplemented from scratch in our own olive
   `--panel-*` token palette (`--metal-brush`/`--metal-sheen` and the `--rv` stud in
   styles.css).
+- **CRT screen glass (reflection + curvature)** — the always-on screen treatment: a faint
+  top reflection suggesting curved glass and soft edge-curvature shading inside the jet-black
+  bezel. Techniques studied from "Fallout 3 Terminal" by 32bitkid
+  (codepen.io/32bitkid/pen/DrXOVg); reimplemented from scratch with our own tokens (the
+  `body::before`/`body::after` screen layers in styles.css). Our fill stays far darker than
+  the pen's `#131`.
