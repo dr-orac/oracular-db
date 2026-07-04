@@ -3,6 +3,18 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## Status
+
+- ✅ **T1–T5 done** (activity indicators · CRT comparison report · dossier niceties ·
+  doc-authoring guide · boot sequence). See git log.
+- ✅ **T6 done** — regression sweep; two bugs found + fixed (doc tab-switch race; the
+  chassis-mobile PIP-LINK overflow was already resolved). Report: `docs/T6-REGRESSION-SWEEP.md`.
+- ⛔ **T7 blocked** — needs the two Publish-to-web URLs from the doc owners.
+- *(Ad-hoc, shipped alongside: jet-black CRT bezel + brushed-metal upgrade to the Chassis
+  frame mode — see git log + CREDITS.md.)*
+
+The specs below remain as the record of what each task covered.
+
 ## Ground rules (apply to every task)
 
 1. **Read first:** `MAINTENANCE.md` (architecture, invariants, preview workflow) and
