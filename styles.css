@@ -464,7 +464,10 @@
   @keyframes blink{ 50%{ opacity:0; } }
 
   /* ---------- top-level section nav (Roster + embedded docs) ---------- */
-  .topnav{ display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  /* nav row: section tabs on the left, Settings on the right (shared across every view) */
+  .navrow{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; }
+  .topnav{ display:flex; gap:8px; flex-wrap:wrap; }
+  .navrow > #settings-btn{ flex:0 0 auto; }
   .navtab{
     font-family:var(--font-head); font-size:19px; letter-spacing:1.5px; text-transform:uppercase;
     color:var(--green-dim); background:var(--bg-panel); cursor:pointer;
@@ -495,10 +498,10 @@
      quiet actions on the right. */
   .docbar{ display:flex; align-items:center; gap:8px 16px; flex:0 0 auto; padding:10px 40px; flex-wrap:wrap; }
   /* find = the primary control, placed left + grows like the roster search box */
-  .docfind-wrap{ display:flex; align-items:center; gap:6px; flex:1 1 240px; min-width:170px;
+  .docfind-wrap{ display:flex; align-items:center; gap:6px; flex:0 1 360px; min-width:170px;
     background:var(--bg-panel); border:1px solid var(--green-faint); padding:4px 10px; }
-  /* sticky "current section" breadcrumb — updates as you scroll; secondary */
-  .docnow{ color:var(--green-dim); font-size:15px; letter-spacing:.3px; flex:0 1 auto;
+  /* sticky "current section" breadcrumb — updates as you scroll; secondary, pushed right */
+  .docnow{ color:var(--green-dim); font-size:15px; letter-spacing:.3px; flex:0 1 auto; margin-left:auto;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
   /* "open in Google Docs" — a quiet de-emphasised link, not a loud button */
   .doclink{ flex:0 0 auto; font-size:15px; color:var(--green-dim); text-decoration:none; letter-spacing:.5px;
@@ -731,7 +734,7 @@
     margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;
   }
   .search{
-    flex:1 1 240px; min-width:160px; display:flex; align-items:center; gap:8px;
+    flex:0 1 360px; min-width:160px; display:flex; align-items:center; gap:8px;   /* capped — no need to span the bar */
     background:var(--bg-panel); border:1px solid var(--green-faint);
     padding:6px 10px;
   }
@@ -771,18 +774,27 @@
   .search .search-clear:hover{ color:var(--green-bright); }
   .search.has-value .search-clear{ display:inline-block; }
 
-  .seg{ display:flex; border:1px solid var(--green-faint); }
+  /* List/Cards = a sliding pill toggle: a thumb glides under the active option */
+  .seg{ position:relative; margin-left:auto; display:inline-flex; padding:3px; gap:0;
+    background:var(--bg-panel); border:1px solid var(--green-faint); border-radius:999px; }
+  .seg::before{ content:""; position:absolute; top:3px; bottom:3px; left:3px; width:calc(50% - 3px);
+    border-radius:999px; background:var(--green); box-shadow:0 0 9px -1px rgba(var(--green-rgb),.6);
+    transition:transform .22s cubic-bezier(.4,0,.2,1); z-index:0; }
+  .seg:has(#view-cards.active)::before{ transform:translateX(100%); }
   .btn, .seg button{
     background:var(--bg-panel); color:var(--green);
     border:1px solid var(--green-faint); font:inherit; text-shadow:var(--glow);
     padding:6px 12px; cursor:pointer; letter-spacing:1px; text-transform:uppercase;
     transition:background .08s, color .08s;
   }
-  .seg button{ border:0; border-right:1px solid var(--green-faint); }
-  .seg button:last-child{ border-right:0; }
-  .btn:hover, .seg button:hover{ background:var(--bg-panel-2); color:var(--green-bright); }
-  .seg button.active{ background:var(--green); color:var(--bg); text-shadow:none; font-weight:bold; }
+  .btn:hover{ background:var(--bg-panel-2); color:var(--green-bright); }
   .btn:active{ transform:translateY(1px); }
+  /* seg pill-button overrides — AFTER the shared base so they win (transparent, thumb shows through) */
+  .seg button{ position:relative; z-index:1; flex:1 1 0; min-width:62px; text-align:center;
+    border:0; border-radius:999px; background:transparent; color:var(--green-dim); padding:5px 14px; }
+  .seg button.active{ color:var(--bg); font-weight:bold; text-shadow:none; }
+  .seg button:hover{ color:var(--green-bright); background:transparent; }
+  .seg button.active:hover{ color:var(--bg); }
 
   /* ---------- main scroll area ---------- */
   main{ flex:1 1 auto; min-height:0; position:relative; }

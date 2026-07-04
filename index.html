@@ -38,7 +38,6 @@
       <div class="titlebar">
         <div class="brand">THE TRIBE DATABASE <small>// PIP-LINK</small></div>
         <div class="popwrap">
-          <button class="btn" id="settings-btn" title="Display settings" aria-expanded="false">⚙ Settings</button>
           <div class="settings-back" id="settings-back" aria-hidden="true"></div>
           <aside class="settings-drawer" id="settings-pop" role="dialog" aria-modal="false" aria-label="Settings" aria-hidden="true">
             <header class="sd-head">
@@ -121,7 +120,10 @@
           </aside>
         </div>
       </div>
-      <nav id="topnav" class="topnav" role="tablist" aria-label="Sections"></nav>
+      <div class="navrow">
+        <nav id="topnav" class="topnav" role="tablist" aria-label="Sections"></nav>
+        <button class="btn" id="settings-btn" title="Display settings" aria-expanded="false" aria-haspopup="dialog">⚙ Settings</button>
+      </div>
       </div><!-- /masthead -->
       <div class="statusline">
         <span aria-live="polite" aria-atomic="true"><span class="dot" id="linkdot">●</span> <span id="linkstatus">CONNECTING…</span></span>
