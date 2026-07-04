@@ -165,6 +165,9 @@
       inset 0 0 3px 12px rgba(0,0,0,.9),        /* crisp inner lip where border meets glass */
       inset 0 0 95px 26px rgba(0,0,0,.26);      /* soft corner shade → hint of curvature */
   }
+  /* Settings → Screen Bezel: OFF removes the jet-black border + rounding + reflection */
+  body[data-bezel="off"]{ border-radius:0; }
+  body[data-bezel="off"]::before, body[data-bezel="off"]::after{ display:none; }
 
   /* ---------- layout shell ---------- */
   /* ---- Fallout-1 style olive panel surround (heavy beveled "metal" frame) ---- */
@@ -564,7 +567,7 @@
   .docreader > :first-child{ margin-top:0; }
   /* Google Docs "Title" paragraph style — first becomes the doc masthead, rest become subtitles */
   .docreader .doc-title{
-    font-family:var(--doc-font-title, "Overseer","VT323",monospace); font-size:2.6em;
+    font-family:var(--doc-font-title, "Pixelify Sans",monospace); font-size:2.6em;
     text-align:center; text-transform:uppercase; letter-spacing:3px; line-height:1.1;
     color:var(--green-bright); text-shadow:0 0 18px rgba(var(--green-rgb),.45);
     margin:0 0 .25em; border:0;
@@ -577,7 +580,7 @@
   /* heading hierarchy uses DISTINCT faces + space-above proportional to level:
      H1 = masthead gothic · H2 = pixel terminal · H3/H4 = emphasised reading face. */
   .docreader h1, .docreader h2, .docreader h3, .docreader h4{ color:var(--green-bright); line-height:1.15; text-shadow:none; scroll-margin-top:14px; }
-  .docreader h1{ font-family:var(--doc-font-title, "Overseer","VT323",monospace); font-size:2.1em; letter-spacing:.5px;
+  .docreader h1{ font-family:var(--doc-font-title, "Pixelify Sans",monospace); font-size:2.1em; letter-spacing:.5px;
     margin:2.7em 0 .55em; padding-bottom:.25em;
     border-bottom:1px solid; border-image:linear-gradient(to right, var(--green), var(--green-faint) 60%, transparent) 1; }
   /* "PART ONE/TWO …" read as centered chapter breaks — the most space of all */

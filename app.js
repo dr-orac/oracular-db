@@ -98,18 +98,20 @@ const FACES = {
   block:     { name:"Block",      css:'"Pixelify Sans", monospace' },
   gothic:    { name:"Gothic 821", css:'"Gothic 821", "Oswald", sans-serif' },   // METALWORK ONLY — the faded-yellow FO1 chassis signage (body[data-frame="border"] .brand). Deliberately not in any picker order: it is a metal face, never a screen/phosphor one.
 };
-const HEAD_ORDER = ["fallout","workbench","overseer","monofonto","terminal","fixedsys","plex","ticker","typewriter","block"];
-const BODY_ORDER = ["fallout","plex","sharetech","monofonto","terminal","fixedsys","typewriter","block"];
+/* "typewriter" (paper sections) and "overseer" (metalwork) are reserved for surfaces not built
+   yet — kept in FACES but out of the pickers for now. */
+const HEAD_ORDER = ["fallout","workbench","monofonto","terminal","fixedsys","plex","ticker","block"];
+const BODY_ORDER = ["fallout","plex","sharetech","monofonto","terminal","fixedsys","block"];
 /* Doc-reader fonts are picked separately from the app's (a Google Doc reads differently
    from the roster chrome). Three tiers → CSS vars --doc-font-title/head/body. Defaults:
    Overseer masthead · Fallout section headings · Plex prose — all phosphor-screen faces.
    'gothic' and 'workbench' are excluded on purpose: Gothic 821 is metalwork-only (the FO1
    chassis signage), and workbench's css is just Fallouty (an app name-plate special) —
    both misleading in a doc picker, which sets a SCREEN surface. */
-const DOC_HEAD_FACES = ["fallout","overseer","monofonto","terminal","fixedsys","block","ticker"];
-const DOC_BODY_FACES = ["plex","sharetech","fallout","monofonto","terminal","fixedsys","typewriter","block"];
+const DOC_HEAD_FACES = ["fallout","monofonto","terminal","fixedsys","block","ticker"];
+const DOC_BODY_FACES = ["plex","sharetech","fallout","monofonto","terminal","fixedsys","block"];
 const DOC_FONT_ORDERS = { title:DOC_HEAD_FACES, head:DOC_HEAD_FACES, body:DOC_BODY_FACES };
-const DOC_FONT_DEFAULT = { title:"overseer", head:"fallout", body:"plex" };
+const DOC_FONT_DEFAULT = { title:"block", head:"fallout", body:"plex" };
 /* full swatch-container ids (kept as complete literals so tools/selfcheck.py can verify
    them, and so no partial "#docfont-" string trips its id-reference check) */
 const DOC_FONT_WRAP = { title:"docfont-title-swatches", head:"docfont-head-swatches", body:"docfont-body-swatches" };
@@ -233,6 +235,13 @@ function applyImgColor(key){
   localStorage.setItem("yuma-imgcolor", key);
   document.querySelectorAll("#imgcolor-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
+/* the always-on jet-black monitor bezel (screen mode) — toggleable off for a flush, borderless screen. */
+function applyBezel(key){
+  if(key!=="off") key="on";
+  document.body.dataset.bezel = key;
+  localStorage.setItem("yuma-bezel", key);
+  document.querySelectorAll("#bezel-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
+}
 /* BODY faces whose glyphs render small per-px → default to the "large" text size.
    (The user's explicit Text Size choice is persisted and wins over this default.
    Fallouty fills most of the em, so it reads large already at "comfortable".) */
@@ -306,6 +315,9 @@ function buildSettings(){
   document.querySelector("#imgcolor-swatches").innerHTML =
     [["screen","Screen"],["original","Original"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#imgcolor-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyImgColor(b.dataset.key); });
+  document.querySelector("#bezel-swatches").innerHTML =
+    [["on","On"],["off","Off"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
+  document.querySelector("#bezel-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyBezel(b.dataset.key); });
   document.querySelector("#color-swatches").innerHTML = COLOR_ORDER.map(k=>
     `<button class="swatch" data-key="${k}"><span class="chip" style="background:${THEMES[k].primary};color:${THEMES[k].primary}"></span>${THEMES[k].name}</button>`).join("");
   document.querySelector("#bg-swatches").innerHTML = BG_ORDER.map(k=>
@@ -2004,14 +2016,14 @@ $("#refresh").addEventListener("click", ()=>load(true));
 $("#reset-settings").addEventListener("click", ()=>{
   ["yuma-font","yuma-font-head","yuma-font-body","yuma-docfont-title","yuma-docfont-head",
    "yuma-docfont-body","yuma-color","yuma-bg","yuma-density",
-   "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel","yuma-cards","yuma-imgcolor"
+   "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel","yuma-cards","yuma-imgcolor","yuma-bezel"
   ].forEach(k=>localStorage.removeItem(k));
   applyFontHead("fallout"); applyFontBody("fallout");
   applyTextSize("auto");                                 // size follows the font again
   ["title","head","body"].forEach(kind=>applyDocFont(kind, DOC_FONT_DEFAULT[kind]));
   applyColor("green"); applyBg("phosphor"); applyDensity("comfortable");
   applyFrame("screen"); applyFrameTint("olive"); applyGlass("off"); applyDossPanel("on");
-  applyCards("auto"); applyImgColor("screen");
+  applyCards("auto"); applyImgColor("screen"); applyBezel("on");
   document.body.classList.add("crt");
   $("#crt-toggle").textContent="Scanlines: ON"; $("#crt-toggle").classList.add("active");
   localStorage.setItem("yuma-crt","1");
@@ -2297,6 +2309,7 @@ function runBoot(){
   applyDossPanel(localStorage.getItem("yuma-dosspanel") || "on");
   applyCards(localStorage.getItem("yuma-cards") || "auto");
   applyImgColor(localStorage.getItem("yuma-imgcolor") || "screen");
+  applyBezel(localStorage.getItem("yuma-bezel") || "on");
   const crtOn = localStorage.getItem("yuma-crt") !== "0";
   document.body.classList.toggle("crt", crtOn);
   $("#crt-toggle").textContent = "Scanlines: " + (crtOn ? "ON" : "OFF");
