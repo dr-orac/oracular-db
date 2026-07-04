@@ -39,76 +39,86 @@
         <div class="brand">THE TRIBE DATABASE <small>// PIP-LINK</small></div>
         <div class="popwrap">
           <button class="btn" id="settings-btn" title="Display settings" aria-expanded="false">⚙ Settings</button>
-          <div class="popover" id="settings-pop">
-            <details class="popgrp" open>
-              <summary>Type <span class="popcur" id="cur-type"></span></summary>
-              <h4>App · Headings Font</h4>
-              <p class="popnote">roster + dossier: section titles · field labels · name plates</p>
-              <div class="swatches faces" id="fonthead-swatches" role="radiogroup" aria-label="App headings font"></div>
-              <h4>App · Body Font</h4>
-              <p class="popnote">roster + dossier: paragraphs · lists · rows · values</p>
-              <div class="swatches faces" id="fontbody-swatches" role="radiogroup" aria-label="App body font"></div>
-              <h4>Text Colour</h4>
-              <div class="swatches" id="color-swatches"></div>
-              <h4>Text Size</h4>
-              <div class="swatches" id="textsize-swatches"></div>
-            </details>
-            <details class="popgrp">
-              <summary>Document Fonts <span class="popcur" id="cur-docfont"></span></summary>
-              <p class="popnote">fonts for the Lore / Roleplay documents only — not the roster.</p>
-              <h4>Doc · Title</h4>
-              <p class="popnote">the document masthead + top heading</p>
-              <div class="swatches faces" id="docfont-title-swatches" role="radiogroup" aria-label="Document title font"></div>
-              <h4>Doc · Headings</h4>
-              <p class="popnote">section headings inside the document</p>
-              <div class="swatches faces" id="docfont-head-swatches" role="radiogroup" aria-label="Document headings font"></div>
-              <h4>Doc · Body</h4>
-              <p class="popnote">the document's prose + lists</p>
-              <div class="swatches faces" id="docfont-body-swatches" role="radiogroup" aria-label="Document body font"></div>
-            </details>
-            <details class="popgrp" open>
-              <summary>Screen <span class="popcur" id="cur-screen"></span></summary>
-              <h4>Background</h4>
-              <div class="swatches" id="bg-swatches"></div>
-              <h4>Density</h4>
-              <div class="swatches" id="density-swatches"></div>
-              <h4>CRT Effect</h4>
-              <div class="swatches">
-                <button class="swatch" id="crt-toggle" title="Toggle scanlines + glow flicker">Scanlines: ON</button>
-              </div>
-              <h4>Screen Glass</h4>
-              <div class="swatches" id="glass-swatches"></div>
-              <h4>Dossier Panel</h4>
-              <p class="popnote">the soft pool of light behind a dossier's header</p>
-              <div class="swatches" id="dosspanel-swatches"></div>
-              <h4>Cards Per Row</h4>
-              <p class="popnote">columns in the Cards view — Auto fits to the window</p>
-              <div class="swatches" id="cards-swatches"></div>
-              <h4>Image Colour</h4>
-              <p class="popnote">portraits + doc images: screen-tinted, or their original colours</p>
-              <div class="swatches" id="imgcolor-swatches"></div>
-            </details>
-            <details class="popgrp">
-              <summary>Frame <span class="popcur" id="cur-frame"></span></summary>
-              <h4>Frame</h4>
-              <div class="swatches" id="frame-swatches"></div>
-              <h4>Frame Tint</h4>
-              <div class="swatches" id="frametint-swatches"></div>
-            </details>
-            <details class="popgrp">
-              <summary>Tips · Shortcuts</summary>
-              <dl class="shortcuts">
-                <dt><kbd>/</kbd></dt>     <dd>focus search</dd>
-                <dt><kbd>↑</kbd> <kbd>↓</kbd> · <kbd>j</kbd> <kbd>k</kbd></dt> <dd>step through the roster</dd>
-                <dt><kbd>Esc</kbd></dt>   <dd>clear search · close any open modal</dd>
-                <dt><kbd>Click</kbd> a name</dt> <dd>open dossier</dd>
-                <dt><kbd>Click</kbd> a chip</dt> <dd>filter by tag</dd>
-              </dl>
-            </details>
-            <div class="popfoot">
-              <button class="btn" id="reset-settings" title="Reset every setting to defaults">↺ Reset settings</button>
+          <div class="settings-back" id="settings-back" aria-hidden="true"></div>
+          <aside class="settings-drawer" id="settings-pop" role="dialog" aria-modal="false" aria-label="Settings" aria-hidden="true">
+            <header class="sd-head">
+              <h2 class="sd-title">⚙ Settings</h2>
+              <button class="btn sd-close" id="settings-close" type="button" aria-label="Close settings">✕</button>
+            </header>
+            <div class="sd-body">
+
+              <details class="popgrp" open>
+                <summary>Typography <span class="popcur" id="cur-type"></span></summary>
+                <h4>App · Headings</h4>
+                <p class="popnote">section titles · field labels · name plates</p>
+                <div class="swatches faces" id="fonthead-swatches" role="radiogroup" aria-label="App headings font"></div>
+                <h4>App · Body</h4>
+                <p class="popnote">paragraphs · lists · rows · values</p>
+                <div class="swatches faces" id="fontbody-swatches" role="radiogroup" aria-label="App body font"></div>
+                <h4>Text Size</h4>
+                <p class="popnote">Auto follows the font — pixel faces read small, so they size up</p>
+                <div class="swatches" id="textsize-swatches"></div>
+                <div class="sd-sub">Documents <span>Lore / Roleplay — not the roster</span></div>
+                <h4>Doc · Title</h4>
+                <div class="swatches faces" id="docfont-title-swatches" role="radiogroup" aria-label="Document title font"></div>
+                <h4>Doc · Headings</h4>
+                <div class="swatches faces" id="docfont-head-swatches" role="radiogroup" aria-label="Document headings font"></div>
+                <h4>Doc · Body</h4>
+                <div class="swatches faces" id="docfont-body-swatches" role="radiogroup" aria-label="Document body font"></div>
+              </details>
+
+              <details class="popgrp" open>
+                <summary>Colour <span class="popcur" id="cur-colour"></span></summary>
+                <h4>Text Colour</h4>
+                <div class="swatches" id="color-swatches"></div>
+                <h4>Background</h4>
+                <div class="swatches" id="bg-swatches"></div>
+              </details>
+
+              <details class="popgrp" open>
+                <summary>Screen <span class="popcur" id="cur-screen"></span></summary>
+                <h4>Density</h4>
+                <div class="swatches" id="density-swatches"></div>
+                <h4>CRT Scanlines</h4>
+                <div class="swatches">
+                  <button class="swatch" id="crt-toggle" title="Toggle scanlines + glow flicker">Scanlines: ON</button>
+                </div>
+                <h4>Screen Glass</h4>
+                <div class="swatches" id="glass-swatches"></div>
+                <h4>Dossier Panel</h4>
+                <p class="popnote">the soft pool of light behind a dossier's header</p>
+                <div class="swatches" id="dosspanel-swatches"></div>
+                <h4>Image Colour</h4>
+                <p class="popnote">portraits + doc images: screen-tinted, or original</p>
+                <div class="swatches" id="imgcolor-swatches"></div>
+              </details>
+
+              <details class="popgrp">
+                <summary>Layout <span class="popcur" id="cur-layout"></span></summary>
+                <h4>Cards Per Row</h4>
+                <p class="popnote">columns in the Cards view — Auto fits to the window</p>
+                <div class="swatches" id="cards-swatches"></div>
+                <h4>Frame</h4>
+                <div class="swatches" id="frame-swatches"></div>
+                <h4>Frame Tint</h4>
+                <div class="swatches" id="frametint-swatches"></div>
+              </details>
+
+              <details class="popgrp">
+                <summary>Tips · Shortcuts</summary>
+                <dl class="shortcuts">
+                  <dt><kbd>/</kbd></dt>     <dd>focus search</dd>
+                  <dt><kbd>↑</kbd> <kbd>↓</kbd> · <kbd>j</kbd> <kbd>k</kbd></dt> <dd>step through the roster</dd>
+                  <dt><kbd>Esc</kbd></dt>   <dd>clear search · close settings / modals</dd>
+                  <dt><kbd>Click</kbd> a name</dt> <dd>open dossier</dd>
+                  <dt><kbd>Click</kbd> a chip</dt> <dd>filter by tag</dd>
+                </dl>
+              </details>
             </div>
-          </div>
+            <div class="sd-foot">
+              <button class="btn" id="reset-settings" type="button" title="Reset every setting to defaults">↺ Reset all</button>
+            </div>
+          </aside>
         </div>
       </div>
       <nav id="topnav" class="topnav" role="tablist" aria-label="Sections"></nav>

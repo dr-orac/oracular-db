@@ -160,7 +160,7 @@ function applyFontBody(key){
   document.querySelectorAll("#fontbody-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
   // if the user hasn't explicitly chosen a text size, derive it from the BODY face
   // (small pixel faces → large) so bitmap fonts stay legible by default.
-  if(!localStorage.getItem("yuma-textsize")) setTextSizeAttr(defaultSizeForFont(key));
+  const _ts=localStorage.getItem("yuma-textsize"); if(!_ts || _ts==="auto") setTextSizeAttr(defaultSizeForFont(key));
 }
 /* doc-reader fonts: kind ∈ {title, head, body} → sets --doc-font-<kind>, which the
    .docreader CSS reads (title = masthead + h1; head = subtitle + h2; body = prose + h3/h4). */
@@ -239,17 +239,24 @@ function applyImgColor(key){
 const SMALL_FONTS = new Set(["fixedsys","terminal","sharetech","ticker","block"]);
 function defaultSizeForFont(faceKey){ return SMALL_FONTS.has(faceKey) ? "large" : "comfortable"; }
 
-/* set the size attribute + swatch state WITHOUT persisting (used for font-derived defaults) */
+/* set the RENDERED size attribute only (no persist, no swatch) — used by font-derived Auto. */
 function setTextSizeAttr(key){
   const ok = ["cozy","comfortable","large","xlarge"];
   if(!ok.includes(key)) key = "comfortable";
   document.body.dataset.textsize = key;
-  document.querySelectorAll("#textsize-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
-/* explicit user choice (Text Size control / init from storage) — persists. */
-function applyTextSize(key){
-  setTextSizeAttr(key);
-  localStorage.setItem("yuma-textsize", document.body.dataset.textsize);
+function bodyFontKey(){ return localStorage.getItem("yuma-font-body") || "fallout"; }
+function markTextSizeSwatch(choice){
+  document.querySelectorAll("#textsize-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===choice));
+}
+/* explicit user choice. "auto" = the size follows the chosen body font (pixel faces read
+   small, so they size up); a manual size overrides. Persists the CHOICE (incl. "auto"). */
+function applyTextSize(choice){
+  const choices = ["auto","cozy","comfortable","large","xlarge"];
+  if(!choices.includes(choice)) choice = "auto";
+  localStorage.setItem("yuma-textsize", choice);
+  markTextSizeSwatch(choice);
+  setTextSizeAttr(choice === "auto" ? defaultSizeForFont(bodyFontKey()) : choice);
 }
 function buildSettings(){
   // face pickers: each option's name renders IN its own typeface (the name is the
@@ -278,7 +285,7 @@ function buildSettings(){
     [["comfortable","Comfortable"],["compact","Compact"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#density-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDensity(b.dataset.key); });
   document.querySelector("#textsize-swatches").innerHTML =
-    [["cozy","Cozy"],["comfortable","Comfortable"],["large","Large"],["xlarge","X-Large"]]
+    [["auto","Auto"],["cozy","Cozy"],["comfortable","Comfortable"],["large","Large"],["xlarge","X-Large"]]
       .map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#textsize-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyTextSize(b.dataset.key); });
   document.querySelector("#frame-swatches").innerHTML =
@@ -317,18 +324,12 @@ function buildSettings(){
 function refreshCur(){
   const headK=document.body.dataset.fontHead||"fallout", bodyK=document.body.dataset.fontBody||"fallout";
   const colorK=localStorage.getItem("yuma-color")||"green", bgK=localStorage.getItem("yuma-bg")||"phosphor";
-  const t=document.querySelector("#cur-type"), s=document.querySelector("#cur-screen"), f=document.querySelector("#cur-frame");
-  if(t) t.textContent = (FACES[headK]||FACES.fallout).name
-        + (bodyK!==headK ? " / "+(FACES[bodyK]||FACES.fallout).name : "")
-        + " · " + (THEMES[colorK]||THEMES.green).name;
-  if(s) s.textContent = (BGS[bgK]||BGS.phosphor).name
-        + " · CRT " + (document.body.classList.contains("crt")?"on":"off");
-  if(f) f.textContent = (document.body.dataset.frame==="border"?"Chassis":"Screen")
-        + (document.body.dataset.frametint==="theme"?" · tinted":"");
-  const df=document.querySelector("#cur-docfont");
-  if(df){ const t=localStorage.getItem("yuma-docfont-title")||DOC_FONT_DEFAULT.title,
-              b=localStorage.getItem("yuma-docfont-body")||DOC_FONT_DEFAULT.body;
-    df.textContent = (FACES[t]||FACES.overseer).name + " / " + (FACES[b]||FACES.plex).name; }
+  const set=(id,txt)=>{ const el=document.querySelector(id); if(el) el.textContent=txt; };
+  set("#cur-type", (FACES[headK]||FACES.fallout).name + (bodyK!==headK ? " / "+(FACES[bodyK]||FACES.fallout).name : ""));
+  set("#cur-colour", (THEMES[colorK]||THEMES.green).name + " · " + (BGS[bgK]||BGS.phosphor).name);
+  set("#cur-screen", "CRT " + (document.body.classList.contains("crt") ? "on" : "off"));
+  set("#cur-layout", (document.body.dataset.frame==="border" ? "Chassis" : "Screen")
+        + (document.body.dataset.frametint==="theme" ? " · tinted" : ""));
   document.querySelectorAll("#settings-pop .swatch[role=radio]")
     .forEach(b=>b.setAttribute("aria-checked", b.classList.contains("active")));
 }
@@ -1457,7 +1458,7 @@ document.addEventListener("keydown", e=>{
   ["#modalback","#iconback","#uploadback","#shotback"].forEach(id=>{
     const el=$(id); if(el && el.classList.contains("open")){ el.classList.remove("open"); closed=true; }
   });
-  if($("#settings-pop").classList.contains("open")){ $("#settings-pop").classList.remove("open"); closed=true; }
+  if($("#settings-pop").classList.contains("open")){ setSettingsOpen(false); closed=true; }
   if(closed && document.activeElement===s) s.blur();
 });
 
@@ -2005,7 +2006,8 @@ $("#reset-settings").addEventListener("click", ()=>{
    "yuma-docfont-body","yuma-color","yuma-bg","yuma-density",
    "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel","yuma-cards","yuma-imgcolor"
   ].forEach(k=>localStorage.removeItem(k));
-  applyFontHead("fallout"); applyFontBody("fallout");   // body apply also restores the font-derived text size since yuma-textsize was just cleared
+  applyFontHead("fallout"); applyFontBody("fallout");
+  applyTextSize("auto");                                 // size follows the font again
   ["title","head","body"].forEach(kind=>applyDocFont(kind, DOC_FONT_DEFAULT[kind]));
   applyColor("green"); applyBg("phosphor"); applyDensity("comfortable");
   applyFrame("screen"); applyFrameTint("olive"); applyGlass("off"); applyDossPanel("on");
@@ -2025,7 +2027,7 @@ document.addEventListener("keydown", e=>{
   const modalOpen=["#modalback","#iconback","#uploadback","#shotback"].some(id=>$(id).classList.contains("open"));
   if(modalOpen) return;
   if(e.key==="/" && !typing){
-    e.preventDefault(); $("#settings-pop").classList.remove("open");
+    e.preventDefault(); setSettingsOpen(false);
     // focus whichever search is in view: the doc find on a doc tab, else the roster search
     (currentSection!=="roster" ? $("#docfind") : $("#search")).focus();
     return;
@@ -2043,12 +2045,19 @@ document.addEventListener("keydown", e=>{
 });
 
 /* settings popover */
-$("#settings-btn").addEventListener("click", ()=>{
-  const open=$("#settings-pop").classList.toggle("open");
-  $("#settings-btn").setAttribute("aria-expanded", open);
-});
+/* settings drawer (right-hand sidebar) open/close */
+function setSettingsOpen(open){
+  $("#settings-pop").classList.toggle("open", open);
+  $("#settings-back").classList.toggle("open", open);
+  $("#settings-pop").setAttribute("aria-hidden", open ? "false" : "true");
+  $("#settings-back").setAttribute("aria-hidden", open ? "false" : "true");
+  $("#settings-btn").setAttribute("aria-expanded", open ? "true" : "false");
+  if(open) $("#settings-close").focus();
+}
+$("#settings-btn").addEventListener("click", ()=> setSettingsOpen(!$("#settings-pop").classList.contains("open")));
+$("#settings-close").addEventListener("click", ()=> setSettingsOpen(false));
+$("#settings-back").addEventListener("click", ()=> setSettingsOpen(false));
 document.addEventListener("click", e=>{
-  if(!e.target.closest(".popwrap")) $("#settings-pop").classList.remove("open");
   if(!e.target.closest(".morewrap")) closeMoreMenus();   // click outside any dossier "More" menu closes it
 });
 document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeMoreMenus(); });
@@ -2278,8 +2287,7 @@ function runBoot(){
   applyFontBody(localStorage.getItem("yuma-font-body") || "fallout");  /* sets a font-derived size if none stored */
   ["title","head","body"].forEach(kind=>
     applyDocFont(kind, localStorage.getItem("yuma-docfont-"+kind) || DOC_FONT_DEFAULT[kind]));
-  const storedSize = localStorage.getItem("yuma-textsize");
-  if(storedSize) applyTextSize(storedSize);                       /* explicit choice wins over the per-font default */
+  applyTextSize(localStorage.getItem("yuma-textsize") || "auto");  /* "auto" follows the body font; a stored manual size wins */
   applyColor(localStorage.getItem("yuma-color") || "green");
   applyBg(localStorage.getItem("yuma-bg") || "phosphor");
   applyDensity(localStorage.getItem("yuma-density") || "comfortable");
