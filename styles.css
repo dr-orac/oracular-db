@@ -129,6 +129,8 @@
 
   /* ---------- layout shell ---------- */
   /* ---- Fallout-1 style olive panel surround (heavy beveled "metal" frame) ---- */
+  /* @chassis-module — metal palette + dimensions. Used ONLY by the Chassis frame mode;
+     removable with the rest of the module (see MAINTENANCE.md § Chassis). */
   :root{
     --panel:        #565033;   /* olive panel face */
     --panel-hi:     #9a9160;   /* raised bevel highlight (top-left catch-light) */
@@ -207,6 +209,13 @@
     --rivet-lo:  color-mix(in srgb, var(--green-dim) 20%,    #0c0c08);
   }
 
+  /* ╔═══════════════════════════════════════════════════════════════════════════════╗
+     ║ CHASSIS MODULE — BEGIN.  The entire metal-frame feature (the "Chassis" frame    ║
+     ║ mode). Opt-in only; the default "Screen only" mode never touches any of this.   ║
+     ║ Every rule below is scoped to body[data-frame="border"] / [data-frametint=…].   ║
+     ║ To remove the module cleanly and keep just the plain screen, follow the recipe  ║
+     ║ in MAINTENANCE.md § "Chassis frame — an isolated, removable module".            ║
+     ╚═══════════════════════════════════════════════════════════════════════════════╝ */
   /* ---- experimental pixel-art Fallout-1 bezel ----
      Built in three crisp layers (no soft gradients on the metal, so it reads pixel-art):
        .app          = the flat stamped plate, raised with a directional bevel
@@ -309,9 +318,14 @@
       0 1px 0 var(--panel-ink), 0 4px 10px -3px rgba(0,0,0,.65);
   }
   /* brand: engraved into the plate (letterpress), not glowing */
+  /* Brand on metal = FO1 panel signage: Gothic 821 condensed, stamped in faded yellow.
+     Gothic 821 lives ONLY here — it is the metalwork face, never a screen/phosphor one. */
   body[data-frame="border"] .brand{
-    color:var(--panel-ink);
-    text-shadow:0 1px 0 color-mix(in srgb, var(--panel-hi) 85%, transparent);
+    font-family:"Gothic 821","Oswald",sans-serif;
+    font-size:38px; letter-spacing:1.5px; line-height:1;
+    color:#c9b268;                                              /* faded goldenrod — worn FO1 stencil */
+    text-shadow:0 1px 0 rgba(0,0,0,.55), 0 0 2px rgba(0,0,0,.35);/* pressed into the plate, no phosphor glow */
+    opacity:.93;                                                /* a little faded */
   }
   /* "// PIP-LINK" → embossed label-tape strip punched and stuck on the metal */
   body[data-frame="border"] .brand small{
@@ -361,6 +375,10 @@
   }
   /* modals must still cover the (now-raised) metal — lift them above it in this mode */
   body[data-frame="border"] .modal-back{ z-index:9100; }
+  /* ╚══ CHASSIS MODULE — END. (Two out-of-band bits remain, both tagged @chassis-module:
+        the metal --panel-*/--rivet-*/--frame/--bezel/--metal-* vars up in :root, and the
+        one `body[data-frame="border"] .brand small{display:none}` in the ≤760px media
+        query. Grep "@chassis-module" or [data-frame= to find every piece.) ══╝ */
 
   /* ---------- header ---------- */
   header{
@@ -478,7 +496,7 @@
   .docreader > :first-child{ margin-top:0; }
   /* Google Docs "Title" paragraph style — first becomes the doc masthead, rest become subtitles */
   .docreader .doc-title{
-    font-family:var(--doc-font-title, "Gothic 821","Oswald",sans-serif); font-size:2.6em;
+    font-family:var(--doc-font-title, "Overseer","VT323",monospace); font-size:2.6em;
     text-align:center; text-transform:uppercase; letter-spacing:3px; line-height:1.1;
     color:var(--green-bright); text-shadow:0 0 18px rgba(var(--green-rgb),.45);
     margin:0 0 .25em; border:0;
@@ -491,7 +509,7 @@
   /* heading hierarchy uses DISTINCT faces + space-above proportional to level:
      H1 = masthead gothic · H2 = pixel terminal · H3/H4 = emphasised reading face. */
   .docreader h1, .docreader h2, .docreader h3, .docreader h4{ color:var(--green-bright); line-height:1.15; text-shadow:none; scroll-margin-top:14px; }
-  .docreader h1{ font-family:var(--doc-font-title, "Gothic 821","Oswald",sans-serif); font-size:2.1em; letter-spacing:.5px;
+  .docreader h1{ font-family:var(--doc-font-title, "Overseer","VT323",monospace); font-size:2.1em; letter-spacing:.5px;
     margin:2.7em 0 .55em; padding-bottom:.25em;
     border-bottom:1px solid; border-image:linear-gradient(to right, var(--green), var(--green-faint) 60%, transparent) 1; }
   /* "PART ONE/TWO …" read as centered chapter breaks — the most space of all */
@@ -1136,7 +1154,7 @@
     body[data-font-head="workbench"] .card .cname{ font-size:18px; }
     /* same specificity problem for Chassis mode's embossed "// PIP-LINK" tape strip —
        it overrides the display:none above and overflows off a 375px screen */
-    body[data-frame="border"] .brand small{ display:none; }
+    body[data-frame="border"] .brand small{ display:none; }   /* @chassis-module (out-of-band stray) */
     /* header: eyebrow stacks above its actions; portrait shrinks beside the name */
     .doss-toprow{ flex-wrap:wrap; }
     .portrait.lg{ width:120px; height:120px; }

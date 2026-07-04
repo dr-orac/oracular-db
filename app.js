@@ -96,19 +96,20 @@ const FACES = {
   ticker:    { name:"Ticker",     css:'"DotGothic16", monospace' },
   typewriter:{ name:"Typewriter", css:'"Special Elite", monospace' },
   block:     { name:"Block",      css:'"Pixelify Sans", monospace' },
-  gothic:    { name:"Gothic 821", css:'"Gothic 821", "Oswald", sans-serif' },   // condensed display face (the brand wordmark); great for doc titles
+  gothic:    { name:"Gothic 821", css:'"Gothic 821", "Oswald", sans-serif' },   // METALWORK ONLY — the faded-yellow FO1 chassis signage (body[data-frame="border"] .brand). Deliberately not in any picker order: it is a metal face, never a screen/phosphor one.
 };
 const HEAD_ORDER = ["fallout","workbench","overseer","monofonto","terminal","fixedsys","plex","ticker","typewriter","block"];
 const BODY_ORDER = ["fallout","plex","sharetech","monofonto","terminal","fixedsys","typewriter","block"];
 /* Doc-reader fonts are picked separately from the app's (a Google Doc reads differently
-   from the roster chrome). Three tiers → CSS vars --doc-font-title/head/body. Defaults
-   reproduce today's look exactly (Gothic masthead · Fallout section headings · Plex prose).
-   'workbench' is excluded — its css is just Fallouty (an app name-plate special), misleading
-   in a doc picker. */
-const DOC_HEAD_FACES = ["gothic","fallout","overseer","monofonto","terminal","fixedsys","block","ticker"];
+   from the roster chrome). Three tiers → CSS vars --doc-font-title/head/body. Defaults:
+   Overseer masthead · Fallout section headings · Plex prose — all phosphor-screen faces.
+   'gothic' and 'workbench' are excluded on purpose: Gothic 821 is metalwork-only (the FO1
+   chassis signage), and workbench's css is just Fallouty (an app name-plate special) —
+   both misleading in a doc picker, which sets a SCREEN surface. */
+const DOC_HEAD_FACES = ["fallout","overseer","monofonto","terminal","fixedsys","block","ticker"];
 const DOC_BODY_FACES = ["plex","sharetech","fallout","monofonto","terminal","fixedsys","typewriter","block"];
 const DOC_FONT_ORDERS = { title:DOC_HEAD_FACES, head:DOC_HEAD_FACES, body:DOC_BODY_FACES };
-const DOC_FONT_DEFAULT = { title:"gothic", head:"fallout", body:"plex" };
+const DOC_FONT_DEFAULT = { title:"overseer", head:"fallout", body:"plex" };
 /* full swatch-container ids (kept as complete literals so tools/selfcheck.py can verify
    them, and so no partial "#docfont-" string trips its id-reference check) */
 const DOC_FONT_WRAP = { title:"docfont-title-swatches", head:"docfont-head-swatches", body:"docfont-body-swatches" };
@@ -164,6 +165,9 @@ function applyFontBody(key){
 /* doc-reader fonts: kind ∈ {title, head, body} → sets --doc-font-<kind>, which the
    .docreader CSS reads (title = masthead + h1; head = subtitle + h2; body = prose + h3/h4). */
 function applyDocFont(kind, key){
+  /* coerce any unknown/retired key (e.g. a persisted "gothic" from when it was a title
+     option — it's metalwork-only now) back to the default, so screen faces stay screen. */
+  if(!DOC_FONT_ORDERS[kind].includes(key)) key=DOC_FONT_DEFAULT[kind];
   const f=FACES[key]||FACES[DOC_FONT_DEFAULT[kind]];
   document.documentElement.style.setProperty("--doc-font-"+kind, f.css);
   localStorage.setItem("yuma-docfont-"+kind, key);
@@ -276,7 +280,7 @@ function refreshCur(){
   const df=document.querySelector("#cur-docfont");
   if(df){ const t=localStorage.getItem("yuma-docfont-title")||DOC_FONT_DEFAULT.title,
               b=localStorage.getItem("yuma-docfont-body")||DOC_FONT_DEFAULT.body;
-    df.textContent = (FACES[t]||FACES.gothic).name + " / " + (FACES[b]||FACES.plex).name; }
+    df.textContent = (FACES[t]||FACES.overseer).name + " / " + (FACES[b]||FACES.plex).name; }
   document.querySelectorAll("#settings-pop .swatch[role=radio]")
     .forEach(b=>b.setAttribute("aria-checked", b.classList.contains("active")));
 }

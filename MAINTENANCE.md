@@ -135,6 +135,45 @@ the app — at worst a doc tab looks off and the roster is unaffected.
 
 ---
 
+## Chassis frame — an isolated, removable module
+
+The **metal chassis** (the "Chassis" frame option: olive bevel, rivets, brushed panels,
+the faded-yellow **Gothic 821** brand signage) is a **fully opt-in, self-contained
+module**. The default **"Screen only"** mode never touches a line of it. It was built to
+be lifted out cleanly if the metal direction doesn't earn its keep — leaving just the
+plain phosphor screen, exactly as it is by default.
+
+**Why it's safe to remove:** every part is scoped to `body[data-frame="border"]` (or
+`[data-frametint=…]`) in CSS, and gated behind the frame toggle in JS. Nothing in the
+screen-only path reads it. Removing it is deletion only — no rewrites.
+
+**The two-surface rule it serves:** SCREEN = phosphor/glow (green); METAL = physical
+housing (bevel/rivets/engraving, no glow). **Gothic 821 is the metal signage face and
+lives *only* here** — it is never a screen/doc font (the doc pickers exclude it by
+design; see the `DOC_HEAD_FACES` comment in app.js). If you remove the chassis, Gothic
+821 has no remaining user — drop its `@font-face` + the `FACES.gothic` catalogue entry too.
+
+**Removal recipe** (grep `@chassis-module` and `[data-frame=` to see every piece):
+
+- **styles.css** — (1) delete the whole `CHASSIS MODULE — BEGIN … END` banner block (all
+  the contiguous `body[data-frame="border"]` rules); (2) delete the two out-of-band
+  `@chassis-module`-tagged bits: the metal `--panel-*/--rivet-*/--frame/--bezel/--metal-*`
+  vars in `:root`, and the `body[data-frame="border"] .brand small{display:none}` line in
+  the ≤760px media query.
+- **app.js** — delete `applyFrame()` and `applyFrameTint()`; in `buildSettings()` delete the
+  `#frame-swatches` + `#frametint-swatches` innerHTML/click wiring; in `refreshCur()` delete
+  the `#cur-frame` line; in the reset handler drop `"yuma-frame"`/`"yuma-frametint"` from the
+  key list and the `applyFrame("screen"); applyFrameTint("olive");` calls; in `init()` remove
+  the two `applyFrame(…)/applyFrameTint(…)` calls.
+- **index.html** — delete the `Frame` `<details class="popgrp">` group in the Theme popover
+  (the `#cur-frame` summary + `#frame-swatches` + `#frametint-swatches`). The `.masthead`
+  wrapper div is inert in screen mode — leave it or unwrap it, your call.
+
+After removal, run `python3 tools/selfcheck.py` — a clean pass confirms no orphaned
+element-id or CSS-var references remain. The screen-only view is byte-for-byte unchanged.
+
+---
+
 ## Invariants — do not break these
 
 1. **Read-only, absolutely.** `CONFIG.sheetId` points at the tribe's original
