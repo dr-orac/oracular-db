@@ -1271,6 +1271,13 @@
     body[data-frame="border"] .brand small{ display:none; }   /* @chassis-module (out-of-band stray) */
     /* header: portrait shrinks beside the name */
     .portrait.lg{ width:120px; height:120px; }
+    /* …but 375px can't hold portrait + name + "More" across one row (the name column
+       collapses to ~40px and shatters one word per line). Stack instead: portrait and the
+       "More" action keep the top row; the name/honorific/role block drops to its own
+       full-width line below, so the name uses the whole screen width. */
+    .doss-headmain{ flex-wrap:wrap; row-gap:14px; }
+    .doss-actions{ order:2; }
+    .doss-headtext{ order:3; flex-basis:100%; }
     .dossier{ padding:18px 16px 60px; }
     .doss-head{ padding:14px 0; }
     .doss-head::before{ inset:-8px -12px; }   /* keep the glow within the 16px mobile gutter (no h-scroll) */
