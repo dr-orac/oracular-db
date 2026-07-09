@@ -349,3 +349,17 @@ stays legible); (3) softer CRT on images — drop the `.docfig-screen` bezel/ret
 (clashes with a fading image) + lower the scanline `::after` opacity so text-on-image reads;
 green tint stays via the existing Image Colour toggle. Maybe keep the framed style as a
 per-image opt-in. Acceptance: images fill the pane, edges fade, text readable, no h-overflow.
+
+## T21 · Faction switcher (replaces the brand title) — MEDIUM / config-driven; the anti-parallelism keystone
+Server variants ("factions") share ONE codebase + ONE data schema, differing only by a
+config *skin*. Add a `FACTIONS` map: `{ id: { name, theme:{colour, bg, font/style overrides},
+data:{sheetId, tab} } }`. A **dropdown where the brand title is** (top-left) selects the
+faction → applies its theme token-set (reuses the existing THEMES/colour machinery) + swaps
+the data source; persists as `yuma-faction`. A contributor adds a faction = ONE config entry
++ their own sheet — no code fork (that's the whole point: data into one structure, minimal
+parallelism). Design the theme layer as token overrides so it's forward-compatible with
+Substrate's DTCG theming (a faction ≈ a Substrate theme). Acceptance: switching faction
+changes colour/style + data + persists; adding a faction needs only config, no code.
+NOTE: this is the local expression of the bigger "reduce parallelism / integrate upstream"
+goal — see the Substrate foundation (`~/Documents/Claude/Projects/App Suite Building
+Foundations`), whose Phase 3.5 is the list-detail shell + drawer this app already built.
