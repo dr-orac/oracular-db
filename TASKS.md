@@ -340,7 +340,12 @@ refactors the apply fns to effect-only, wires init→prefs boot + reset→prefs.
 EVERY control applies+persists identically (esp. Auto size re-deriving on body-font change),
 commits. Acceptance: no behaviour change; selfcheck clean.
 
-## T20 · Doc images: full-bleed, faded edges, softer CRT — DESIGN / MEDIUM
+## T20 · Doc images: full-bleed, faded edges, softer CRT — SHIPPED 2026-07-09
+Done: `.docreader` is now a full-bleed grid (`1fr min(74ch,100%) 1fr`); `.docfig` spans `1/-1`,
+prose + caption stay in the 74ch measure; `mask-image` fades the screen top/bottom (11%/89%);
+bezel/reticle/padding dropped so the image IS the screen; scanline `::after` opacity .5→.28.
+Verified: full pane fill, edges fade, no h-overflow, phosphor tint intact. Original spec below.
+
 Many doc images have text on them → make them "bleed into the screen": (1) full-width of the
 reading pane via a full-bleed grid on `.docreader` (`1fr min(74ch,100%) 1fr`; `.docfig` spans
 `1 / -1`, prose stays in the centre measure); (2) fade top+bottom to transparent via a
