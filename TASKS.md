@@ -15,8 +15,11 @@ Work top-to-bottom unless told otherwise. **One task = one commit.**
 - ✅ **Batch 2: T9, T10, T11 done** — T9 CRT vignette softened · T10 selective text
   selection · T11 editable doc fonts + clearer scoping. ❌ T14 cancelled (Vault-Tec
   trademark).
-- 🔜 **Taste-gated next:** T12 (make the chassis metal beautiful/authentic FO1-2) and
-  T18 (visual alignment & harmony pass) — both build-then-show-before/after.
+- 🔜 **Executing now, in order:** **T18 (layout + proportion) → T12 (metal)** — sequenced
+  (both edit styles.css; T18 is the alignment/spacing backbone, T12 the metal skin on top).
+  Approach: a subagent audits the CSS spacing values while the overseer measures rendered
+  alignment in preview; combine → propose a spacing scale → implement → show before/after
+  (taste-gated). Then repeat the build-then-show pattern for T12.
 - **Needs your input:** T13 (red-button placement/function), T16 (map scope).
   **Blocked:** T17 (download the wbarahona + timeless888 zips). **T7 blocked** (pub URLs).
 - *(Ad-hoc, shipped alongside: jet-black CRT bezel + brushed-metal upgrade to the Chassis
@@ -317,3 +320,32 @@ find-in-doc; IndexedDB doc cache + lazy image hydration; Chassis frame mode
 (two-surface system); per-character Discord cards; boot sequence self-test +
 sweep bar; T6 regression sweep (fixed Chassis mobile overflow; found T8). See
 git log.*
+
+---
+# Batch 3 — system consolidation + doc images (queued 2026-07-09)
+
+*Note: T18 shipped, plus a large run since — negative-space `--edge`/`--rail`/`--sp`/`--fs`
+token scale, the Settings drawer revamp, the roster↔doc command-bar + index-rail
+standardization, jet-black bezel + toggles, `prefs.js` reusable module, selfcheck
+comment-guard. Batch 3 is the consolidation ("join the system") + the doc-image redesign.*
+
+## T19 · Migrate Settings onto the reusable prefs.js schema — MEDIUM / CAREFUL (engine-swap)
+The "Join B" from the sitrep — the biggest single entropy drop. Replace the ~15 bespoke
+`apply*()` fns + hardcoded swatch containers with ONE `Prefs({schema})` driving
+`lib/prefs/prefs.js`. Keep localStorage keys (`"yuma-"+id`) so existing users don't lose
+settings; reuse derivation via custom `apply()` (colour→whole --green-* palette, bg→3 vars,
+frametint, font-derived Auto text-size, font hover-preview). CRT toggle stores "1"/"0" + a
+body class today — handle in its apply. Sonnet drafts the schema + hard-case map; overseer
+refactors the apply fns to effect-only, wires init→prefs boot + reset→prefs.reset(), verifies
+EVERY control applies+persists identically (esp. Auto size re-deriving on body-font change),
+commits. Acceptance: no behaviour change; selfcheck clean.
+
+## T20 · Doc images: full-bleed, faded edges, softer CRT — DESIGN / MEDIUM
+Many doc images have text on them → make them "bleed into the screen": (1) full-width of the
+reading pane via a full-bleed grid on `.docreader` (`1fr min(74ch,100%) 1fr`; `.docfig` spans
+`1 / -1`, prose stays in the centre measure); (2) fade top+bottom to transparent via a
+`mask-image` linear-gradient so edges melt into the phosphor (text usually sits mid-image →
+stays legible); (3) softer CRT on images — drop the `.docfig-screen` bezel/reticle frame
+(clashes with a fading image) + lower the scanline `::after` opacity so text-on-image reads;
+green tint stays via the existing Image Colour toggle. Maybe keep the framed style as a
+per-image opt-in. Acceptance: images fill the pane, edges fade, text readable, no h-overflow.
