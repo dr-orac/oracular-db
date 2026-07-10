@@ -355,7 +355,19 @@ stays legible); (3) softer CRT on images — drop the `.docfig-screen` bezel/ret
 green tint stays via the existing Image Colour toggle. Maybe keep the framed style as a
 per-image opt-in. Acceptance: images fill the pane, edges fade, text readable, no h-overflow.
 
-## T21 · Faction switcher (replaces the brand title) — SCAFFOLDED 2026-07-10
+## T21 · Faction switcher (replaces the brand title) — LIVE 2026-07-10 (awaiting contributor sheets)
+2026-07-10 (2): the 8 server factions are now real entries with their signature colours —
+Brotherhood(red)/Vault(blue)/Legion(orange)/Bazaar(purple)/Tribe(rust)/Enclave(white)/
+Unity(green)/NCR(cyan); added orange/purple/rust to THEMES. The masthead is a boxed-caret
+dropdown listing all 8; selecting one re-skins the whole UI. Only the Tribe has a sheet — the
+others (`data.sheetId:""`) show a themed "roster not linked yet" placeholder + their own (empty)
+doc tabs, never blank or the wrong data (`showRosterFor`/`showFactionComingSoon`, `factionDocs`,
+`body.coming-soon` hides the toolbar). Search box standardized across tabs (17px mono, fits its
+placeholder, aligned over the rail). Contributors link a faction = fill its `data.sheetId`+`docs`
+(recipe in CONTRIBUTING.md). REMAINING: real per-faction sheets; optional per-faction `<title>`/OG.
+Earlier scaffold notes below.
+
+## T21 · Faction switcher — scaffold notes (2026-07-10, superseded by the LIVE entry above)
 Done: `FACTIONS` map + `FACTION_ORDER` in app.js (the tribe as the sole entry + a commented
 TEMPLATE), `activeFaction()`/`applyFaction()` (applies a faction's colour+bg via the existing
 THEMES/BGS machinery, updates the brand, persists `yuma-faction`, reloads only if the sheet

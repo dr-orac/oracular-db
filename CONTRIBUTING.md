@@ -54,14 +54,17 @@ Most additions are one config entry — the app wires the rest.
   string in the Google Doc URL; share the doc *"anyone with the link → Viewer"*. The tab
   appears automatically. Give it a Fallout glyph by adding an entry to `NAV_ICONS` keyed by
   the tab `id` (else it gets the default document icon).
-- **A faction (server variant).** A faction is a re-skin of this *same* app — its own name,
-  colour/style, and data sheet — with **no code fork**. In `app.js`, copy the commented
-  `TEMPLATE` block inside `FACTIONS`, give it a unique id, and set:
-  - `name` (switcher-menu label), `brand` + `tagline` (the masthead title);
-  - `theme` — a `{ color, bg }` pair of keys from the Settings palette (any key in `THEMES` /
-    `BGS`, e.g. `gold` + `warm`);
+- **Linking a faction.** The `FACTIONS` map in `app.js` already lists the server's factions,
+  each with its signature `theme` colour. A faction whose `data.sheetId` is `""` is *not linked
+  yet* — the switcher re-skins the app in its colour and shows a "roster not linked yet"
+  placeholder. To bring one online, fill in its entry:
   - `data.sheetId` — **your** Google Sheet (same column layout as the tribe's, shared
-    *"anyone with the link → Viewer"*); `data.gid` `""` = the first tab.
+    *"anyone with the link → Viewer"*); `data.gid` `""` = the first tab;
+  - `docs` — that faction's doc tabs, `[{ id, label, docId }, …]` (starts `[]` = no doc tabs).
+- **A brand-new faction.** Add another entry to `FACTIONS` (unique id) with `name` (switcher
+  label), `brand` + `tagline` (masthead title), `theme` — a `{ color, bg }` pair of keys from the
+  palette (any key in `THEMES` / `BGS`), and `data`/`docs` as above — then add the id to
+  `FACTION_ORDER`. The masthead dropdown and the re-skin follow automatically; no other code.
 
   Then add your id to `FACTION_ORDER`. With two or more factions the masthead title becomes a
   dropdown; selecting your faction re-skins the whole app and loads your roster. No other code.
