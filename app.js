@@ -1205,22 +1205,65 @@ function filtered(){
   return state.model.characters.filter(c=>c.search.includes(q));
 }
 
+/* ---- in-theme custom dropdown ----------------------------------------------------------
+   A themed replacement for native <select>, so the popup list renders in the terminal theme
+   (phosphor panel + options) instead of the OS chrome. One delegated handler drives every
+   .selctl on the page; markup built by buildSelect(); value read/set via data-value. */
+function buildSelect(id, value, options, ariaLabel){
+  const cur = options.find(o=>o.value===value) || options[0] || {label:""};
+  const opts = options.map(o=>
+    `<button class="selctl-opt${o.value===value?' active':''}" type="button" role="option" aria-selected="${o.value===value}" data-value="${escAttr(o.value)}">${esc(o.label)}</button>`
+  ).join("");
+  return `<div class="selctl" id="${escAttr(id)}" data-value="${escAttr(value)}">`+
+    `<button class="selctl-btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="${escAttr(ariaLabel||"")}">`+
+      `<span class="selctl-label">${esc(cur.label)}</span><span class="selctl-caret" aria-hidden="true">▼</span>`+
+    `</button>`+
+    `<div class="selctl-menu" role="listbox" aria-label="${escAttr(ariaLabel||"")}">${opts}</div>`+
+  `</div>`;
+}
+/* set a custom-select's value programmatically (label + active option follow) */
+function setSelectValue(id, value){
+  const sel=document.getElementById(id); if(!sel) return;
+  sel.dataset.value=value;
+  const opt=sel.querySelector(`.selctl-opt[data-value="${(window.CSS&&CSS.escape)?CSS.escape(value):value}"]`);
+  if(opt) sel.querySelector(".selctl-label").textContent=opt.textContent;
+  sel.querySelectorAll(".selctl-opt").forEach(o=>{ const on=o.dataset.value===value; o.classList.toggle("active",on); o.setAttribute("aria-selected",on); });
+}
+function closeAllSelects(except){
+  document.querySelectorAll(".selctl.open").forEach(s=>{ if(s!==except){ s.classList.remove("open");
+    const b=s.querySelector(".selctl-btn"); if(b) b.setAttribute("aria-expanded","false"); } });
+}
+/* what a committed selection does, keyed by the select's id (the two roster filters) */
+function onSelectChange(id, val){
+  if(id==="filter-section"){ state.filterSection=val; renderRoster(); }
+  else if(id==="sort-by"){ state.sortBy=val; renderRoster(); }
+}
+document.addEventListener("click", e=>{
+  const opt=e.target.closest(".selctl-opt");
+  if(opt){ const sel=opt.closest(".selctl");
+    setSelectValue(sel.id, opt.dataset.value); closeAllSelects();
+    onSelectChange(sel.id, opt.dataset.value); return; }
+  const btn=e.target.closest(".selctl-btn"), sel=btn && btn.closest(".selctl");
+  closeAllSelects(sel);                                   // clicking any trigger closes the others
+  if(btn && sel){ const open=sel.classList.toggle("open"); btn.setAttribute("aria-expanded", open?"true":"false"); return; }
+  if(!e.target.closest(".selctl-menu")) closeAllSelects();   // outside click
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeAllSelects(); });
+
 /* build the roster filter + sort controls from the loaded model (once per load) */
 function renderListControls(model){
   if(state.filterSection!=="all" && !model.sections.includes(state.filterSection)) state.filterSection="all";
-  const secOpts = `<option value="all">All sections</option>` +
-    model.sections.map(s=>`<option value="${escAttr(s)}"${s===state.filterSection?" selected":""}>${esc(sectionLabel(s))}</option>`).join("");
+  const secOpts = [{value:"all", label:"All sections"}]
+    .concat(model.sections.map(s=>({value:s, label:sectionLabel(s)})));
   const sortOpts = [["rank","Chiefs first"],["sheet","Sheet order"],["name","Name A–Z"],["role","By role"]]
-    .map(([v,l])=>`<option value="${v}"${v===state.sortBy?" selected":""}>${l}</option>`).join("");
+    .map(([value,label])=>({value,label}));
   const ctl=$("#listctl");
   // only show the section filter when there's actually more than one section to pick
   // (a lone section makes the dropdown a no-op — drop the clutter).
   const showSecFilter = model.sections.length > 1;
   ctl.innerHTML =
-    (showSecFilter ? `<select id="filter-section" title="Filter by section" aria-label="Filter roster by section">${secOpts}</select>` : "") +
-    `<select id="sort-by" title="Sort" aria-label="Sort roster">${sortOpts}</select>`;
-  if(showSecFilter) $("#filter-section").addEventListener("change", e=>{ state.filterSection=e.target.value; renderRoster(); });
-  $("#sort-by").addEventListener("change", e=>{ state.sortBy=e.target.value; renderRoster(); });
+    (showSecFilter ? buildSelect("filter-section", state.filterSection, secOpts, "Filter roster by section") : "") +
+    buildSelect("sort-by", state.sortBy, sortOpts, "Sort roster");
 }
 
 function rankOf(ch){
@@ -1348,7 +1391,7 @@ function filterByTag(tag){
   state.query=tag;
   state.filterSection="all";                         // tag search spans all sections
   const s=$("#search"); if(s){ s.value=tag; s.closest(".search").classList.add("has-value"); }
-  const fs=$("#filter-section"); if(fs) fs.value="all";   // keep the dropdown in sync
+  setSelectValue("filter-section", "all");   // keep the dropdown in sync
   render();
 }
 
@@ -1368,7 +1411,7 @@ function gotoChar(slug){
   if(state.view!=="roster") setView("roster");
   // make sure the target isn't hidden by an active section filter
   if(state.filterSection!=="all" && state.model.characters[idx].section!==state.filterSection){
-    state.filterSection="all"; const sel=$("#filter-section"); if(sel) sel.value="all";
+    state.filterSection="all"; setSelectValue("filter-section", "all");
   }
   selectIndex(idx);
   const a=$("#list .row.active"); if(a) a.scrollIntoView({block:"nearest"});

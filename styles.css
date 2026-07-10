@@ -922,11 +922,27 @@
      borders, no gaps) rather than floating as separate pills. Less busy, easier to hit. */
   .listctl{ flex:0 0 auto; display:flex; gap:0; padding:8px var(--sp-2) 0; border-bottom:1px solid var(--green-faint);
     background:linear-gradient(180deg, rgba(255,255,255,.02), transparent); }
-  .listctl select{ flex:1 1 0; min-width:0; background:var(--bg-panel); color:var(--green);
-    border:1px solid var(--green-faint); font:inherit; font-size:17px;
-    padding:11px 14px; text-shadow:var(--glow); cursor:pointer;
-    transition:background .1s, color .1s; }
-  .listctl select + select{ border-left:0; }   /* the two boxes ABUT — share one border, no gap */
+  /* in-theme custom dropdown (replaces native <select> — the popup is themed, not OS chrome).
+     Reused wherever a select is needed; the two roster filters ABUT (shared border, no gap). */
+  .selctl{ position:relative; flex:1 1 0; min-width:0; }
+  .selctl-btn{ display:flex; align-items:center; gap:10px; width:100%;
+    background:var(--bg-panel); color:var(--green); border:1px solid var(--green-faint);
+    font:inherit; font-size:17px; padding:11px 14px; text-shadow:var(--glow); cursor:pointer;
+    text-align:left; transition:background .1s, color .1s; }
+  .selctl + .selctl .selctl-btn{ border-left:0; }   /* the two boxes ABUT — share one border, no gap */
+  .selctl-btn:hover, .selctl.open .selctl-btn{ background:var(--bg-panel-2); color:var(--green-bright); }
+  .selctl-label{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .selctl-caret{ flex:0 0 auto; font-size:11px; line-height:1; color:var(--green); transition:transform .16s; }
+  .selctl.open .selctl-caret{ transform:rotate(180deg); color:var(--green-bright); }
+  .selctl-menu{ display:none; position:absolute; left:0; right:0; top:calc(100% + 4px); z-index:40;
+    flex-direction:column; max-height:60vh; overflow:auto; padding:4px;
+    background:var(--bg-panel-2); border:1px solid var(--green-faint);
+    box-shadow:0 12px 30px -10px rgba(0,0,0,.85); }
+  .selctl.open .selctl-menu{ display:flex; }
+  .selctl-opt{ font:inherit; font-size:17px; text-align:left; color:var(--green-dim);
+    background:transparent; border:0; cursor:pointer; padding:9px 12px; text-shadow:none; white-space:nowrap; }
+  .selctl-opt:hover{ color:var(--green-bright); background:var(--bg-panel); }
+  .selctl-opt.active{ color:var(--bg); background:var(--green); }
   .listctl select:hover{ background:var(--bg-panel-2); color:var(--green-bright); }
   .listctl select:focus{ outline:0; background:var(--bg-panel-2); color:var(--green-bright);
     position:relative; z-index:1; box-shadow:inset 0 -2px 0 var(--green); }
