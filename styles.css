@@ -689,6 +689,24 @@
     font-family:"IBM Plex Mono", ui-monospace, monospace; font-size:2.6em; line-height:1;
     color:rgba(var(--green-rgb),.45); font-style:normal; text-shadow:0 0 10px rgba(var(--green-rgb),.4); }
   .docreader .docquote .dq{ text-shadow:none; }   /* don't double-glow inline quotes inside a quote block */
+  /* a "line box" the author drew in the Doc → a fully-framed, centred pull-quote that glows off
+     the screen: phosphor border + inner glow, a big centred opening quote mark, italic. Overrides
+     the left-bar .docquote base above (it also carries the .docquote class). */
+  .docreader .docquote-box{
+    margin:2.4em auto; padding:1.5em 1.9em 1.35em; max-width:64ch;
+    border:1px solid var(--green-faint); border-radius:3px; border-left-width:1px;
+    background:linear-gradient(180deg, rgba(var(--green-rgb),.06), rgba(var(--green-rgb),.02));
+    box-shadow:0 0 0 1px rgba(var(--green-rgb),.10), 0 0 26px -14px rgba(var(--green-rgb),.5),
+      inset 0 0 34px -16px rgba(var(--green-rgb),.5);
+    color:var(--green-bright); font-style:italic; font-size:1.16em; line-height:1.72;
+    text-align:center; text-shadow:0 0 8px rgba(var(--green-rgb),.28); }
+  .docreader .docquote-box::before{
+    content:"\201C"; position:static; display:block; margin:0 0 .05em;
+    font-family:"IBM Plex Mono", ui-monospace, monospace; font-size:2.3em; line-height:.7;
+    color:rgba(var(--green-rgb),.5); font-style:normal; text-shadow:0 0 10px rgba(var(--green-rgb),.4); }
+  .docreader .docquote-box p{ margin:0 0 .55em; }
+  .docreader .docquote-box p:last-child{ margin-bottom:0; }
+  .docreader .docquote-box .doc-title, .docreader .docquote-box .doc-subtitle{ text-align:center; }
   /* doc images as terminal "screens": a phosphor bezel + subtle scanline overlay + a mono
      caption. By default the image is TINTED to the screen phosphor (green monochrome) to match
      the portraits; Settings → Image Colour → Original restores true colour (see the

@@ -1729,7 +1729,16 @@ function docClean(node){
       }
       return;
     }
-    if(tag==="table"){ out+=`<div class="doctable"><table>${docClean(n)}</table></div>`; return; }  // wrap → scrolls on narrow screens
+    if(tag==="table"){
+      // a single-cell table = a "line box" the author drew in the Doc around a quote (Google
+      // exports a bordered box as a 1×1 table) → render it as a featured framed quote, not a
+      // data table. Real data tables (≥2 cells) still render as scrollable tables.
+      if(n.querySelectorAll("tr").length===1 && n.querySelectorAll("td,th").length===1){
+        out+=`<blockquote class="docquote docquote-box">${docClean(n.querySelector("td,th"))}</blockquote>`;
+        return;
+      }
+      out+=`<div class="doctable"><table>${docClean(n)}</table></div>`; return;   // wrap → scrolls on narrow screens
+    }
     const inner=docClean(n);
     if(/^(p|h[1-6]|li|blockquote|td|th)$/.test(tag)){
       if(!inner.trim()) return;                          // drop empty blocks (Docs spacers)
