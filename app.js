@@ -43,15 +43,18 @@ const CONFIG = {
      theme   — a { color, bg } pair of keys from the Settings palette (THEMES / BGS)
      data    — { sheetId, gid } for THIS faction's roster (gid "" = the first tab) */
 const FACTIONS = {
-  brotherhood:{ name:"Brotherhood of Steel",       brand:"BROTHERHOOD OF STEEL",    tagline:"// CODEX-LINK", theme:{color:"red",    bg:"warm"},     data:{sheetId:"1hG6V1ddnlr8jZZm8Rg0jJ4360WrH7zUD-TvNqaPkuUg", gid:"735572717"}, docs:[] },
-  vault:      { name:"The Vault",                   brand:"THE VAULT",               tagline:"// VAULT-NET",  theme:{color:"blue",   bg:"cool"},     data:{sheetId:"", gid:""}, docs:[] },
-  legion:     { name:"The Legion",                  brand:"THE LEGION",              tagline:"// TRVE-NET",   theme:{color:"orange", bg:"warm"},     data:{sheetId:"", gid:""}, docs:[] },
-  bazaar:     { name:"The Bazaar",                  brand:"THE BAZAAR",              tagline:"// TRADE-NET",  theme:{color:"purple", bg:"cool"},     data:{sheetId:"", gid:""}, docs:[] },
-  tribe:      { name:"The Tribe",                   brand:"THE TRIBE DATABASE",      tagline:"// PIP-LINK",   theme:{color:"rust",   bg:"warm"},     data:{sheetId:CONFIG.sheetId, gid:CONFIG.gid}, docs:[] /* set to DOCS below */ },
-  enclave:    { name:"The Enclave",                 brand:"THE ENCLAVE",             tagline:"// EYEBOT-NET", theme:{color:"white",  bg:"slate"},    data:{sheetId:"", gid:""}, docs:[] },
-  unity:      { name:"The Unity",                   brand:"THE UNITY",               tagline:"// FEV-NET",    theme:{color:"green",  bg:"phosphor"}, data:{sheetId:"", gid:""}, docs:[] },
-  ncr:        { name:"The New California Republic", brand:"NEW CALIFORNIA REPUBLIC", tagline:"// RANGER-NET", theme:{color:"cyan",   bg:"cool"},     data:{sheetId:"", gid:""}, docs:[] },
+  brotherhood:{ name:"Brotherhood of Steel",       brand:"BROTHERHOOD OF STEEL",    tagline:"// CODEX-LINK", theme:{color:"red",    bg:"warm"},     font:{head:"monofonto", body:"sharetech"}, data:{sheetId:"1hG6V1ddnlr8jZZm8Rg0jJ4360WrH7zUD-TvNqaPkuUg", gid:"735572717"}, docs:[] },
+  vault:      { name:"The Vault",                   brand:"THE VAULT",               tagline:"// VAULT-NET",  theme:{color:"blue",   bg:"cool"},     font:{head:"overseer",  body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
+  legion:     { name:"The Legion",                  brand:"THE LEGION",              tagline:"// TRVE-NET",   theme:{color:"orange", bg:"warm"},     font:{head:"block",     body:"sharetech"}, data:{sheetId:"", gid:""}, docs:[] },
+  bazaar:     { name:"The Bazaar",                  brand:"THE BAZAAR",              tagline:"// TRADE-NET",  theme:{color:"purple", bg:"cool"},     font:{head:"ticker",    body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
+  tribe:      { name:"The Tribe",                   brand:"THE TRIBE DATABASE",      tagline:"// PIP-LINK",   theme:{color:"rust",   bg:"warm"},     font:{head:"fallout",   body:"fallout"},   data:{sheetId:CONFIG.sheetId, gid:CONFIG.gid}, docs:[] /* set to DOCS below */ },
+  enclave:    { name:"The Enclave",                 brand:"THE ENCLAVE",             tagline:"// EYEBOT-NET", theme:{color:"white",  bg:"slate"},    font:{head:"fixedsys",  body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
+  unity:      { name:"The Unity",                   brand:"THE UNITY",               tagline:"// FEV-NET",    theme:{color:"green",  bg:"phosphor"}, font:{head:"fallout",   body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
+  ncr:        { name:"The New California Republic", brand:"NEW CALIFORNIA REPUBLIC", tagline:"// RANGER-NET", theme:{color:"cyan",   bg:"cool"},     font:{head:"terminal",  body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
 };
+/* fallback if a faction ever lacks a `font` (mirrors the Tribe's iconic Fallouty pairing) */
+const FACTION_FONT_DEFAULT = { head:"fallout", body:"fallout" };
+function factionFont(f){ return (f && f.font) || FACTION_FONT_DEFAULT; }
 /* Switcher order (top→bottom in the dropdown). Add each new faction id here too.
    docs: a faction's own doc tabs — [] until linked (the Tribe's are wired below to DOCS).
    data.sheetId: "" = "not linked yet" → the app shows a themed coming-soon roster. */
@@ -71,6 +74,9 @@ function applyFaction(id){
   const f = FACTIONS[id];
   applyColor(localStorage.getItem("yuma-color-"+id) || f.theme.color);   // this faction's colour (its override, else its signature)
   applyBg(localStorage.getItem("yuma-bg-"+id) || f.theme.bg);
+  const ff = factionFont(f);                                            // this faction's signature typeface
+  applyFontHead(localStorage.getItem("yuma-font-head-"+id) || ff.head); // (its override, else its signature)
+  applyFontBody(localStorage.getItem("yuma-font-body-"+id) || ff.body);
   renderBrand();
   renderNav();                                       // this faction's doc tabs (may be none)
   // if the doc tab we were on doesn't exist for this faction, fall back to the roster
@@ -184,9 +190,12 @@ const BG_ORDER = ["phosphor","warm","cool","black","slate"];
    the option's own name in the picker when it differs from `css`. */
 const LEGIBLE='"IBM Plex Mono", ui-monospace, monospace';
 const FACES = {
-  /* default — "Fallouty": a clean, even Fallout pixel face whose glyphs fill ~58% of the
-     em, so it reads bigger without the heavy/irregular look of the chunkier JH face. */
-  fallout:   { name:"Fallout 1·2", css:'"Fallouty", "Fallout", "VT323", monospace' },
+  /* the primary/iconic face — "Fallouty" (Sébastien Caisse / "Red!", 2002): the real, widely-known
+     fan recreation of the Fallout 1/2 title lettering. A clean, even pixel face whose glyphs fill
+     ~58% of the em, so it reads bigger without the heavy/irregular look of the chunkier JH face.
+     ("Fallout"=Fallout12 and VT323 are only fallbacks.) Internal key stays `fallout` — renaming it
+     would churn stored prefs, PRESET_MIGRATE, the font orders and the body[data-font-*] CSS hooks. */
+  fallout:   { name:"Fallouty",    css:'"Fallouty", "Fallout", "VT323", monospace' },
   /* Workbench is a wide display face: as a HEADINGS pick it styles the brand + character
      name plates only (via body[data-font-head="workbench"] CSS); other headings stay
      Fallout. Too loud for every label — this is the curated behaviour it always had. */
@@ -256,14 +265,14 @@ function applyFontHead(key){
   const f=FACES[key]||FACES.fallout;
   document.documentElement.style.setProperty("--font-head", f.css);
   document.body.dataset.fontHead=key;      // CSS hook: body[data-font-head="workbench"] name plates
-  localStorage.setItem("yuma-font-head", key);
+  localStorage.setItem("yuma-font-head-"+currentFaction, key);   // font override remembered PER FACTION
   document.querySelectorAll("#fonthead-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 function applyFontBody(key){
   const f=FACES[key]||FACES.fallout;
   document.documentElement.style.setProperty("--font-body", f.css);
   document.body.dataset.fontBody=key;      // CSS hook: body[data-font-body="fallout"] line-height tuning
-  localStorage.setItem("yuma-font-body", key);
+  localStorage.setItem("yuma-font-body-"+currentFaction, key);   // font override remembered PER FACTION
   document.querySelectorAll("#fontbody-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
   // if the user hasn't explicitly chosen a text size, derive it from the BODY face
   // (small pixel faces → large) so bitmap fonts stay legible by default.
@@ -354,7 +363,11 @@ function setTextSizeAttr(key){
   if(!ok.includes(key)) key = "comfortable";
   document.body.dataset.textsize = key;
 }
-function bodyFontKey(){ return localStorage.getItem("yuma-font-body") || "fallout"; }
+/* the live body face (set by applyFontBody), used to derive the auto text size. Falls back to
+   this faction's stored override, then its signature body. (Fonts are per-faction now.) */
+function bodyFontKey(){ return document.body.dataset.fontBody
+  || localStorage.getItem("yuma-font-body-"+currentFaction)
+  || factionFont(activeFaction()).body; }
 function markTextSizeSwatch(choice){
   document.querySelectorAll("#textsize-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===choice));
 }
@@ -2192,9 +2205,11 @@ $("#refresh").addEventListener("click", ()=>load(true));
 $("#reset-settings").addEventListener("click", ()=>{
   ["yuma-font","yuma-font-head","yuma-font-body","yuma-docfont-title","yuma-docfont-head",
    "yuma-docfont-body","yuma-color","yuma-bg",
-   "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel","yuma-cards","yuma-imgcolor","yuma-bezel"
+   "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel","yuma-cards","yuma-imgcolor","yuma-bezel",
+   "yuma-font-head-"+currentFaction,"yuma-font-body-"+currentFaction   // clear THIS faction's font override → its signature reloads
   ].forEach(k=>localStorage.removeItem(k));
-  applyFontHead("fallout"); applyFontBody("fallout");
+  const _rf = factionFont(activeFaction());
+  applyFontHead(_rf.head); applyFontBody(_rf.body);   // reset to the active faction's signature typeface
   applyTextSize("auto");                                 // size follows the font again
   ["title","head","body"].forEach(kind=>applyDocFont(kind, DOC_FONT_DEFAULT[kind]));
   applyColor("green"); applyBg("phosphor");
@@ -2465,8 +2480,15 @@ function runBoot(){
     localStorage.setItem("yuma-font-head", mh); localStorage.setItem("yuma-font-body", mb);
   }
   localStorage.removeItem("yuma-font");
-  applyFontHead(localStorage.getItem("yuma-font-head") || "fallout");
-  applyFontBody(localStorage.getItem("yuma-font-body") || "fallout");  /* sets a font-derived size if none stored */
+  /* fonts are now remembered PER FACTION (like colours); fold any legacy GLOBAL head/body
+     choice into the current faction's key once, then retire the global keys. */
+  const _gH=localStorage.getItem("yuma-font-head"), _gB=localStorage.getItem("yuma-font-body");
+  if(_gH && !localStorage.getItem("yuma-font-head-"+currentFaction)) localStorage.setItem("yuma-font-head-"+currentFaction, _gH);
+  if(_gB && !localStorage.getItem("yuma-font-body-"+currentFaction)) localStorage.setItem("yuma-font-body-"+currentFaction, _gB);
+  localStorage.removeItem("yuma-font-head"); localStorage.removeItem("yuma-font-body");
+  const _ff = factionFont(activeFaction());   // each faction loads in ITS signature typeface, unless overridden for that faction
+  applyFontHead(localStorage.getItem("yuma-font-head-"+currentFaction) || _ff.head);
+  applyFontBody(localStorage.getItem("yuma-font-body-"+currentFaction) || _ff.body);  /* sets a font-derived size if none stored */
   ["title","head","body"].forEach(kind=>
     applyDocFont(kind, localStorage.getItem("yuma-docfont-"+kind) || DOC_FONT_DEFAULT[kind]));
   applyTextSize(localStorage.getItem("yuma-textsize") || "auto");  /* "auto" follows the body font; a stored manual size wins */

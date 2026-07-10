@@ -575,3 +575,35 @@ The 4-edge fade + ~10% side buffers shipped. `.docfig img` brightness(1.16)/cont
 `.docfig-tint` opacity .42 still leave illustrations slightly washed. Tune by eye on the live site
 (test an image WITH text / a screenshot). Balance: bright enough to survive the multiply tint, not so
 bright it blows midtones to uniform colour. Portrait uses brightness(1.32)/contrast(1.3) + tint .5.
+
+## T38 · Per-faction signature fonts + rename the iconic "Fallouty" face — SMALL/MED [now]
+The app font (head + body) should differ per faction, giving each its own typographic identity —
+loaded automatically when the faction loads, exactly like its signature COLOUR already does (per-
+faction keys, user override remembered per faction). The iconic Fallout-1/2 pixel face is the
+"primary" and may be reused across factions.
+
+**Rename:** the FACES entry keyed `fallout` was labelled "Fallout 1·2". Its primary rendering font is
+`Fallouty` (by Sébastien Caisse / "Red!", 2002 — the real, iconic fan recreation of the FO1/2 title
+lettering; Fallout12/VT323 are only fallbacks). Relabel it to its real name **"Fallouty"** in the
+picker. Keep the internal key `fallout` (renaming it would churn localStorage keys, PRESET_MIGRATE,
+orders, defaults, and CSS `body[data-font-*="fallout"]` hooks — not worth it).
+
+**Signature map** (`FACTIONS[id].font = {head, body}`), thematic, legible body everywhere:
+- tribe       → fallout  / fallout    (Fallouty — the flagship/iconic look, unchanged)
+- brotherhood → monofonto / sharetech (hard military terminal)
+- vault       → overseer  / plex      (the actual Vault-Tec "Overseer" signage + legible prose)
+- legion      → block     / sharetech (Pixelify — monolithic, carved-stone brutalism)
+- bazaar      → ticker    / plex       (DotGothic16 — dot-matrix trader marquee)
+- enclave     → fixedsys  / plex       (cold government mainframe)
+- unity       → fallout   / plex       (Fallouty reused, green phosphor + legible body)
+- ncr         → terminal  / plex        (VT323 — frontier-republic CRT surplus)
+
+**Mechanism:** applyFontHead/applyFontBody persist to `yuma-font-head-<faction>` / `-body-<faction>`
+(was global). applyFaction + init load `localStorage.getItem("yuma-font-head-"+id) || faction.font.head`.
+One-time migration: fold any legacy global `yuma-font-head/-body` into the current faction's key.
+Body faces are all legible (plex/sharetech) so the size-follows-font logic keeps prose readable.
+Doc-reader fonts (--doc-font-*) stay on their own defaults this pass (separate reading surface) — a
+possible follow-up is to key those per-faction too.
+Acceptance: switching faction visibly changes the typeface throughout the chrome (home/roster/nav/
+brand), Tribe still loads Fallouty, picker shows "Fallouty", overrides remembered per faction; verify
++ screenshot two factions.
