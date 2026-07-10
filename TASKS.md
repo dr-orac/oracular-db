@@ -655,3 +655,32 @@ User: "the 'brotherhood' entries should show up only in the brotherhood tab." In
 data / EXTRA_CHARACTERS / sections are scoped per faction; ensure no Brotherhood-affiliated entries
 appear under the Tribe (or any other faction). Root-cause via the architecture audit, then scope the
 data correctly. Verify each faction's roster shows ONLY its own members.
+
+## ── Batch 8 (2026-07-10 eve) — exterior border + breathing room ──
+Principle (user): improve the SYSTEM as we go, don't generate entropy — extend existing structures
+(the `body::after` bezel, the `--edge` inset model) rather than bolt on parallel ones.
+
+## T45 · Exterior screen border rework — MED [design, needs 2 answers]
+"The exterior border is a bit cramped." Rework the jet-black monitor bezel (screen mode: the
+`body:not([data-frame="border"])::after` box-shadow at styles.css ~161, currently a 12px `#000` ring +
+`border-radius:22px`). From OUTSIDE in:
+  1. Jet-black border **~1mm thicker** (≈ +4px → 12px → ~16px).
+  2. A small **gap/padding** (screen-bg) between the black border and…
+  3. A **theme-coloured hairline** (~1px), rounded to follow the bezel radius (tracks `--green`).
+  4. **Healthy padding** between that hairline and interior content.
+  5. EXCEPTION: long horizontal rules (e.g. the header divider) may extend all the way OUT to the
+     hairline, rather than stopping at the content inset.
+Approach: model it with CSS vars (`--bezel-black`, `--bezel-gap`, `--bezel-line`, `--bezel-pad`) and
+raise the content inset (`--edge` min) so it never collapses under the border on small screens (the
+current min 12px is the cramping). Likely restructure: `.app` pads to the hairline; header/main/
+commandbar pad the "healthy" gap; header's border-bottom then reaches the hairline naturally.
+⚠ OPEN Qs: (a) screen mode only, or Chassis too? (b) how the CodePen reference informs it (blocked).
+
+## T46 · More padding in the top title area — SMALL
+The header/title row needs more top (and general) breathing room — it reads tight against the bezel.
+Fold into T45's padding model so the title area sits a healthy distance below the top hairline.
+
+## T47 · Crib from the CodePen reference — BLOCKED (needs source)
+codepen.io/carterfromsl/pen/OJjxXKJ — 403 to automated fetch, no export zip on disk. Once the user
+pastes the code or drops the .zip in the project, mine it for thematic legibility ideas (borders,
+glows, type, scanlines) and fold the good parts in WITHOUT adding parallel systems.
