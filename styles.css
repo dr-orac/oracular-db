@@ -758,13 +758,20 @@
     font-size:var(--fs-note); letter-spacing:.5px; line-height:1.4; color:var(--green-dim); text-shadow:none; }
   .docreader .docfig-cap::before{ content:"▐ "; color:var(--green); }
   /* data tables → terminal readout: bright header, zebra rows, hairline grid */
-  .docreader .doctable{ overflow-x:auto; margin:1.4em 0; -webkit-overflow-scrolling:touch; }
-  .docreader table{ border-collapse:collapse; margin:0; width:100%; font-size:.95em;
-    border:1px solid var(--green-faint); }
-  .docreader th, .docreader td{ border:1px solid var(--green-faint); padding:7px 12px; text-align:left; vertical-align:top; }
-  .docreader th, .docreader thead td{ color:var(--bg); background:var(--green-dim);
-    font-family:var(--font-head); letter-spacing:.5px; text-shadow:none; }
-  .docreader tbody tr:nth-child(odd){ background:rgba(var(--green-rgb),.04); }
+  /* data tables → a polished terminal readout: a framed panel with a bright, underlined header,
+     horizontal row rules (verticals kept faint so columns separate without a busy grid),
+     comfortable padding, zebra striping and a row-hover highlight for scanning. */
+  .docreader .doctable{ overflow-x:auto; margin:2em 0; -webkit-overflow-scrolling:touch;
+    border:1px solid var(--green-faint); box-shadow:0 0 22px -14px rgba(var(--green-rgb),.45); }
+  .docreader table{ border-collapse:collapse; margin:0; width:100%; font-size:1em; }
+  .docreader th, .docreader td{ padding:10px 15px; text-align:left; vertical-align:top;
+    border-bottom:1px solid rgba(var(--green-rgb),.13); }
+  .docreader td + td, .docreader th + th{ border-left:1px solid rgba(var(--green-rgb),.08); }   /* faint column separators */
+  .docreader th, .docreader thead td{ color:var(--green-bright); background:rgba(var(--green-rgb),.13);
+    font-family:var(--font-head); letter-spacing:.6px; text-shadow:none; border-bottom:2px solid var(--green); }
+  .docreader tbody tr:nth-child(even){ background:rgba(var(--green-rgb),.045); }
+  .docreader tbody tr:hover{ background:rgba(var(--green-rgb),.10); }
+  .docreader tbody tr:last-child td{ border-bottom:0; }
 
   /* ---------- toolbar ---------- */
   .toolbar{
