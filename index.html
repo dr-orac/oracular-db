@@ -36,7 +36,11 @@
            STYLE-GUIDE.md); everything below it is screen. Unstyled in the default mode. -->
       <div class="masthead">
       <div class="titlebar">
-        <div class="brand">THE TRIBE DATABASE <small>// PIP-LINK</small></div>
+        <nav id="topnav" class="topnav" role="tablist" aria-label="Sections"></nav>
+        <div class="titlebar-right">
+          <button class="btn" id="settings-btn" title="Display settings" aria-expanded="false" aria-haspopup="dialog">⚙<span class="sb-label"> Settings</span></button>
+          <div class="brand">THE TRIBE DATABASE <small>// PIP-LINK</small></div>
+        </div>
         <div class="popwrap">
           <div class="settings-back" id="settings-back" aria-hidden="true"></div>
           <aside class="settings-drawer" id="settings-pop" role="dialog" aria-modal="false" aria-label="Settings" aria-hidden="true">
@@ -121,11 +125,11 @@
           </aside>
         </div>
       </div>
-      <div class="navrow">
-        <nav id="topnav" class="topnav" role="tablist" aria-label="Sections"></nav>
-        <button class="btn" id="settings-btn" title="Display settings" aria-expanded="false" aria-haspopup="dialog">⚙<span class="sb-label"> Settings</span></button>
-      </div>
       </div><!-- /masthead -->
+    </header>
+    <!-- command bar: sits BELOW the header divider line, its search width-aligned to the list
+         column (rail) so it reads as the head of that column, not a floating toolbar. -->
+    <div class="commandbar">
       <div class="toolbar">
         <label class="search">
           <span class="prompt">&gt;</span>
@@ -153,7 +157,7 @@
         <span class="docnow" id="docnow" aria-live="polite"></span>
         <a class="doclink" id="doclink" href="#" target="_blank" rel="noopener noreferrer" title="Open this document in Google Docs" aria-label="Open in Google Docs">↗ Docs</a>
       </div>
-    </header>
+    </div><!-- /commandbar -->
 
     <main>
       <!-- HOME VIEW (section tiles — the landing page) -->

@@ -120,12 +120,10 @@ function renderBrand(){
   if(FACTION_ORDER.length < 2){ el.classList.remove("has-switch"); el.innerHTML = title; return; }
   el.classList.add("has-switch");
   el.innerHTML =
-    `<button class="brand-switch" id="faction-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Switch faction">`+
+    `<button class="brand-switch" id="faction-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Switch faction — choose which database to view">`+
       `<span class="brand-title">${title}</span>`+
-      `<span class="brand-switchbox" aria-hidden="true">`+
-        `<span class="brand-hint">Switch faction</span>`+
-        `<span class="brand-caret">▾</span>`+
-      `</span></button>`+
+      `<span class="brand-caret" aria-hidden="true">▼</span>`+
+    `</button>`+
     `<div class="brand-menu" id="faction-menu" role="listbox" aria-label="Faction">`+
       FACTION_ORDER.map(id =>
         `<button class="brand-opt${id===currentFaction?' active':''}" type="button" role="option" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">${esc(FACTIONS[id].name)}</button>`

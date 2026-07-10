@@ -452,51 +452,42 @@
      big screens. */
   body:not([data-frame="border"]) header{ padding-left:calc(var(--edge) + var(--sp-2)); padding-right:calc(var(--edge) + var(--sp-2)); }
   body:not([data-frame="border"]) main{ padding-left:var(--edge); padding-right:var(--edge); }
-  .titlebar{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:nowrap; }
+  /* one header row: section tabs on the LEFT, then Settings + the faction selector pushed to the
+     top-RIGHT corner (the selector is the brand wordmark itself — see .brand / .brand-caret). */
+  .titlebar{ display:flex; align-items:center; gap:10px 16px; flex-wrap:wrap; }
+  .titlebar > .topnav{ margin-right:auto; }
+  .titlebar-right{ display:flex; align-items:center; gap:14px; margin-left:auto; }
+  .titlebar-right > #settings-btn{ flex:0 0 auto; }
   /* masthead — "Workbench" wide display face as a fixed logo wordmark (a techy "terminal
      signage" look for the title, regardless of the chosen body font). */
   .brand{
     font-family:"Workbench","Gothic 821",sans-serif;
-    font-size:33px; line-height:1.02;
+    font-size:26px; line-height:1.02;
     color:var(--green-bright);
     letter-spacing:.5px;
     text-shadow:0 0 5px rgba(182,255,206,.35);
+    text-align:right;
   }
-  .brand small{ font-family:var(--font-body); font-size:18px; color:var(--green-dim); letter-spacing:2px; }
-  /* faction switcher — only rendered when 2+ factions exist (see renderBrand). The button
-     inherits the brand type; a caret + dropdown menu decant the other factions. */
+  .brand small{ font-family:var(--font-body); font-size:14px; color:var(--green-dim); letter-spacing:2px; }
+  /* faction switcher — only rendered when 2+ factions exist (see renderBrand). The whole wordmark is
+     the button; a large boxed ▼ makes it unmistakably a selector dropdown, top-right of the header. */
   .brand.has-switch{ position:relative; }
   .brand-switch{ font:inherit; color:inherit; letter-spacing:inherit; text-shadow:inherit;
     background:transparent; border:0; padding:0; margin:0; cursor:pointer; display:inline-flex;
-    align-items:center; gap:.5em; text-align:left; }
+    align-items:center; gap:.4em; text-align:right; }
   .brand-switch small{ align-self:baseline; }
   .brand-switch:hover .brand-title{ color:var(--green-bright); }
-  /* an explicit, labelled "SWITCH FACTION ▾" pill sits beside the wordmark so the masthead
-     reads unmistakably as a control, not a static logo. It carries a slow, gentle pulse to
-     draw the eye ("there's more than the database here"). */
-  .brand-switchbox{ display:inline-flex; align-items:center; gap:.55em; align-self:center;
-    font-family:var(--font-body); font-size:12px; line-height:1; letter-spacing:2px;
-    text-transform:uppercase; color:var(--green); text-shadow:none;
-    border:1px solid var(--green); background:rgba(var(--green-rgb),.09);
-    padding:.62em .7em; white-space:nowrap;
-    box-shadow:0 0 0 0 rgba(var(--green-rgb),.35);
-    transition:color .14s, border-color .14s, background .14s, box-shadow .14s;
-    animation:brandpulse 5.5s ease-in-out infinite; }
-  .brand-hint{ font-weight:bold; }
-  .brand-caret{ font-size:13px; line-height:1; transition:transform .16s; }
-  .brand-switch:hover .brand-switchbox{ color:var(--green-bright); border-color:var(--green-bright);
-    background:rgba(var(--green-rgb),.18); box-shadow:0 0 16px -4px rgba(var(--green-rgb),.6); animation:none; }
-  .brand.open .brand-switchbox{ color:var(--green-bright); border-color:var(--green-bright);
-    background:rgba(var(--green-rgb),.22); animation:none; }
-  .brand.open .brand-caret{ transform:rotate(180deg); }
-  @keyframes brandpulse{
-    0%, 82%, 100%{ box-shadow:0 0 0 0 rgba(var(--green-rgb),0); border-color:var(--green); }
-    88%{ box-shadow:0 0 18px -3px rgba(var(--green-rgb),.65); border-color:var(--green-bright); }
-    94%{ box-shadow:0 0 0 0 rgba(var(--green-rgb),0); border-color:var(--green); }
-  }
-  @media (prefers-reduced-motion:reduce){ .brand-switchbox{ animation:none; } }
-  .brand-menu{ display:none; position:absolute; left:0; top:calc(100% + 8px); z-index:40;
-    flex-direction:column; min-width:220px; padding:5px;
+  /* the large, clear downward triangle — a boxed ▼ that plainly signals "dropdown" */
+  .brand-caret{ display:inline-flex; align-items:center; justify-content:center;
+    flex:0 0 auto; width:1.35em; height:1.35em; font-size:.62em; line-height:1;
+    color:var(--green); border:2px solid var(--green); background:rgba(var(--green-rgb),.10);
+    transition:transform .18s, background .14s, border-color .14s, color .14s; }
+  .brand-switch:hover .brand-caret{ color:var(--green-bright); border-color:var(--green-bright);
+    background:rgba(var(--green-rgb),.20); }
+  .brand.open .brand-caret{ transform:rotate(180deg); color:var(--green-bright);
+    border-color:var(--green-bright); background:rgba(var(--green-rgb),.24); }
+  .brand-menu{ display:none; position:absolute; right:0; top:calc(100% + 8px); z-index:40;
+    flex-direction:column; min-width:240px; padding:5px;
     background:var(--bg-panel-2); border:1px solid var(--green-faint);
     box-shadow:0 12px 30px -10px rgba(0,0,0,.85); }
   .brand.open .brand-menu{ display:flex; }
@@ -510,10 +501,8 @@
   @keyframes blink{ 50%{ opacity:0; } }
 
   /* ---------- top-level section nav (Roster + embedded docs) ---------- */
-  /* nav row: section tabs on the left, Settings on the right (shared across every view) */
-  .navrow{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; }
+  /* section tabs live at the LEFT of the single header row (see .titlebar) */
   .topnav{ display:flex; gap:8px; flex-wrap:wrap; }
-  .navrow > #settings-btn{ flex:0 0 auto; }
   .navtab{
     display:inline-flex; align-items:center; gap:9px;
     font-family:var(--font-head); font-size:20px; letter-spacing:1.5px; text-transform:uppercase;
@@ -843,7 +832,12 @@
   .docreader tbody tr:hover{ background:rgba(var(--green-rgb),.10); }
   .docreader tbody tr:last-child td{ border-bottom:0; }
 
-  /* ---------- toolbar ---------- */
+  /* ---------- command bar (search / view / find) — BELOW the header divider line ---------- */
+  /* mirrors the header's horizontal padding so the search's rail-width box lines up exactly with
+     the list column beneath it (the search reads as the head of that column). */
+  .commandbar{ flex:0 0 auto; padding:0 16px; }
+  body:not([data-frame="border"]) .commandbar{ padding-left:calc(var(--edge) + var(--sp-2)); padding-right:calc(var(--edge) + var(--sp-2)); }
+  body[data-section="home"] .commandbar{ display:none; }
   .toolbar{
     margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; min-height:52px;
   }
@@ -924,11 +918,18 @@
      always keeps the lion's share. */
   .roster{ display:grid; grid-template-columns:var(--rail) 1fr; height:100%; min-height:0; }
   .listcol{ display:flex; flex-direction:column; min-height:0; min-width:0; border-right:1px solid var(--green-faint); }
-  .listctl{ flex:0 0 auto; display:flex; gap:6px; padding:8px 10px 8px var(--sp-2); border-bottom:1px solid var(--green-faint);
+  /* filter + sort: one chunky segmented bar spanning the column — the boxes ABUT (shared 1px
+     borders, no gaps) rather than floating as separate pills. Less busy, easier to hit. */
+  .listctl{ flex:0 0 auto; display:flex; gap:0; padding:8px var(--sp-2) 0; border-bottom:1px solid var(--green-faint);
     background:linear-gradient(180deg, rgba(255,255,255,.02), transparent); }
-  .listctl select{ flex:1; min-width:0; background:var(--bg-panel); color:var(--green);
-    border:1px solid var(--green-faint); font:inherit; font-size:17px; padding:4px 6px; text-shadow:var(--glow); }
-  .listctl select:focus{ outline:0; border-color:var(--green); }
+  .listctl select{ flex:1 1 0; min-width:0; background:var(--bg-panel); color:var(--green);
+    border:1px solid var(--green-faint); font:inherit; font-size:17px;
+    padding:11px 14px; text-shadow:var(--glow); cursor:pointer;
+    transition:background .1s, color .1s; }
+  .listctl select + select{ border-left:0; }   /* the two boxes ABUT — share one border, no gap */
+  .listctl select:hover{ background:var(--bg-panel-2); color:var(--green-bright); }
+  .listctl select:focus{ outline:0; background:var(--bg-panel-2); color:var(--green-bright);
+    position:relative; z-index:1; box-shadow:inset 0 -2px 0 var(--green); }
   /* roster list: rows RECEDE softly at the bottom edge (a scroll-fade mask) rather than
      being clipped by a hard line — reads as the list continuing into the frame. Only the
      bottom fades, so the sticky section header (pinned at top) stays full-strength. */
@@ -1349,8 +1350,7 @@
     :root{ --frame:16px; }   /* slimmer metal frame so it doesn't eat the small screen */
     .navtab{ font-size:16px; padding:7px 13px 6px; letter-spacing:1px; gap:7px; }
     .navico{ width:17px; height:17px; }
-    /* nav row: keep Settings a compact gear top-right so the tabs get the width */
-    .navrow{ align-items:flex-start; }
+    /* keep Settings a compact gear so the tabs get the width */
     #settings-btn .sb-label{ display:none; }
     #settings-btn{ font-size:20px; padding:6px 11px; flex:0 0 auto; }
     .search{ flex:1 1 auto; }   /* rail is full-width on mobile → let the search fill too */
