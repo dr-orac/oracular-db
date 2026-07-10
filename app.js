@@ -1784,7 +1784,8 @@ function styleTOC(reader){
 let docHeads=[];
 function buildDocSidebar(reader){
   const toc=$("#doctoc");
-  docHeads=[...reader.querySelectorAll("h1,h2")].filter(h=>h.textContent.trim());
+  docHeads=[...reader.querySelectorAll("h1,h2,h3,h4")]                                     // full outline, not just h1/h2
+    .filter(h=>h.textContent.trim() && !h.classList.contains("doc-title"));                // …minus the masthead title
   if(docHeads.length<3){ toc.innerHTML=""; return; }            // too short to bother
   // reuse the roster's own section-header component so the two index rails share one
   // element (»-prefix + trailing dashed rule come with the class) — not a parallel style.
