@@ -281,9 +281,8 @@ function applyFontBody(key){
   document.body.dataset.fontBody=key;      // CSS hook: body[data-font-body="fallout"] line-height tuning
   localStorage.setItem(fkey("font-body"), key);   // font override remembered PER FACTION
   document.querySelectorAll("#fontbody-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
-  // if the user hasn't explicitly chosen a text size, derive it from the BODY face
-  // (small pixel faces → large) so bitmap fonts stay legible by default.
-  const _ts=localStorage.getItem("yuma-textsize"); if(!_ts || _ts==="auto") setTextSizeAttr(defaultSizeForFont(key));
+  // re-derive the size if it's on Auto (pixel faces size up so they stay legible); a manual px stays put
+  renderTextSize();
 }
 /* doc-reader fonts: kind ∈ {title, head, body} → sets --doc-font-<kind>, which the
    .docreader CSS reads (title = masthead + h1; head = subtitle + h2; body = prose + h3/h4). */
@@ -362,30 +361,42 @@ function applyBezel(key){
    (The user's explicit Text Size choice is persisted and wins over this default.
    Fallouty fills most of the em, so it reads large already at "comfortable".) */
 const SMALL_FONTS = new Set(["fixedsys","terminal","sharetech","ticker","block"]);
-function defaultSizeForFont(faceKey){ return SMALL_FONTS.has(faceKey) ? "large" : "comfortable"; }
-
-/* set the RENDERED size attribute only (no persist, no swatch) — used by font-derived Auto. */
-function setTextSizeAttr(key){
-  const ok = ["cozy","comfortable","large","xlarge"];
-  if(!ok.includes(key)) key = "comfortable";
-  document.body.dataset.textsize = key;
-}
+/* Text size is a numeric px stepper with a hard legibility floor. Stored ("yuma-textsize") as
+   "auto" (font-aware default — pixel faces render small, so they START larger) or an ABSOLUTE px
+   string. Absolute sizes are decoupled from the font, so switching face never swings the size. */
+const TS_MIN=17, TS_MAX=30;
+function autoSizeForFont(bodyKey){ return SMALL_FONTS.has(bodyKey) ? 22 : 19; }
 /* the live body face (set by applyFontBody), used to derive the auto text size. Falls back to
    this faction's stored override, then its signature body. (Fonts are per-faction now.) */
 function bodyFontKey(){ return document.body.dataset.fontBody
   || localStorage.getItem(fkey("font-body"))
   || factionFont(activeFaction()).body; }
-function markTextSizeSwatch(choice){
-  document.querySelectorAll("#textsize-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===choice));
+/* the effective root font-size (px): "auto" → font-derived, else the clamped stored number */
+function effectiveTextPx(){
+  const s=localStorage.getItem("yuma-textsize");
+  if(!s || s==="auto") return autoSizeForFont(bodyFontKey());
+  const n=parseInt(s,10);
+  return isNaN(n) ? autoSizeForFont(bodyFontKey()) : Math.min(TS_MAX, Math.max(TS_MIN, n));
 }
-/* explicit user choice. "auto" = the size follows the chosen body font (pixel faces read
-   small, so they size up); a manual size overrides. Persists the CHOICE (incl. "auto"). */
+/* apply the size to the page (--root-fs drives body font-size) + refresh the stepper UI */
+function renderTextSize(){
+  const px=effectiveTextPx(), isAuto=(localStorage.getItem("yuma-textsize")||"auto")==="auto";
+  document.documentElement.style.setProperty("--root-fs", px+"px");
+  const v=$("#textsize-value"); if(v) v.textContent = isAuto ? px+"px · Auto" : px+"px";
+  const dec=$("#textsize-dec"), inc=$("#textsize-inc"), au=$("#textsize-auto");
+  if(dec) dec.disabled = px<=TS_MIN;
+  if(inc) inc.disabled = px>=TS_MAX;
+  if(au) au.classList.toggle("active", isAuto);
+}
+/* ± commits an ABSOLUTE size (so a later font change won't move it); floored at TS_MIN */
+function stepTextSize(delta){
+  const px=Math.min(TS_MAX, Math.max(TS_MIN, effectiveTextPx()+delta));
+  localStorage.setItem("yuma-textsize", String(px)); renderTextSize();
+}
+/* kept for init/reset: pass "auto" or an absolute px */
 function applyTextSize(choice){
-  const choices = ["auto","cozy","comfortable","large","xlarge"];
-  if(!choices.includes(choice)) choice = "auto";
-  localStorage.setItem("yuma-textsize", choice);
-  markTextSizeSwatch(choice);
-  setTextSizeAttr(choice === "auto" ? defaultSizeForFont(bodyFontKey()) : choice);
+  localStorage.setItem("yuma-textsize", (choice==null ? "auto" : String(choice)));
+  renderTextSize();
 }
 function buildSettings(){
   // face pickers: each option's name renders IN its own typeface (the name is the
@@ -410,10 +421,19 @@ function buildSettings(){
     wrap.addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDocFont(kind, b.dataset.key); });
     wireFontPreview(wrap, "--doc-font-"+kind, null);
   });
+  // text size = a − / + stepper (even 1px steps, hard legibility floor) + an Auto reset that
+  // follows the font's default. Replaces the old jumpy Cozy/Comfortable/Large/X-Large tiers.
   document.querySelector("#textsize-swatches").innerHTML =
-    [["auto","Auto"],["cozy","Cozy"],["comfortable","Comfortable"],["large","Large"],["xlarge","X-Large"]]
-      .map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
-  document.querySelector("#textsize-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyTextSize(b.dataset.key); });
+    `<div class="stepper" role="group" aria-label="Text size">`+
+      `<button class="swatch stepbtn" id="textsize-dec" type="button" aria-label="Smaller text" title="Smaller">−</button>`+
+      `<span class="stepval" id="textsize-value" aria-live="polite"></span>`+
+      `<button class="swatch stepbtn" id="textsize-inc" type="button" aria-label="Larger text" title="Larger">+</button>`+
+      `<button class="swatch stepauto" id="textsize-auto" type="button" title="Match the font's default size">Auto</button>`+
+    `</div>`;
+  $("#textsize-dec").addEventListener("click",()=>stepTextSize(-1));
+  $("#textsize-inc").addEventListener("click",()=>stepTextSize(+1));
+  $("#textsize-auto").addEventListener("click",()=>applyTextSize("auto"));
+  renderTextSize();
   document.querySelector("#frame-swatches").innerHTML =
     [["screen","Screen only"],["border","Chassis"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#frame-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyFrame(b.dataset.key); });

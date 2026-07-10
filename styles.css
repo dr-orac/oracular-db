@@ -81,11 +81,9 @@
     text-shadow:var(--glow);
     overflow:hidden; /* app manages its own scroll regions */
   }
-  /* Text Size — adjustable from the Theme popover, persisted as 'yuma-textsize'. */
-  body[data-textsize="cozy"]        { font-size:17px;   }   /* the minimum — still legible */
-  body[data-textsize="comfortable"] { font-size:19px;   }   /* default for legible (Plex-body) fonts */
-  body[data-textsize="large"]       { font-size:23px;   }   /* default for pixel fonts (Fallout, etc.) — bitmap reads small, so bumped */
-  body[data-textsize="xlarge"]      { font-size:26px;   }
+  /* Text Size — a numeric px stepper (Settings), driven by --root-fs. Floored at 17px so body
+     text is never too small; "Auto" makes --root-fs follow the font (set in JS). */
+  body{ font-size:var(--root-fs, 19px); }
   /* Fallout pixel BODY breathes a bit more — the bitmap reads better with loose tracking.
      (Applies to "Fallout pure" AND the "Workbench" preset, which both use Fallout as body.) */
   body[data-font-body="fallout"]{ line-height:1.78; letter-spacing:.4px; }
@@ -1557,6 +1555,13 @@
   .swatch.active{ border-color:var(--green); background:var(--bg-panel-2); }
   /* non-colour cue for the active swatch (helps low-vision / colour-blind users) */
   .swatch.active::after{ content:"✓"; margin-left:5px; color:var(--green-bright); font-size:17px; }
+  /* text-size − / + stepper (replaces the old jumpy size tiers) */
+  .stepper{ display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .stepbtn{ min-width:42px; justify-content:center; font-size:22px; line-height:1; padding:5px 12px; }
+  .stepbtn:disabled{ opacity:.35; cursor:not-allowed; }
+  .stepbtn:disabled:hover{ border-color:var(--green-faint); color:var(--green); }
+  .stepval{ min-width:112px; text-align:center; font-size:15px; letter-spacing:.5px;
+    text-transform:none; color:var(--green); }
 
   /* ---- face pickers (Headings / Body) ----
      One row per typeface; the option's NAME renders in that face (the name IS the
