@@ -607,3 +607,51 @@ possible follow-up is to key those per-faction too.
 Acceptance: switching faction visibly changes the typeface throughout the chrome (home/roster/nav/
 brand), Tribe still loads Fallouty, picker shows "Fallouty", overrides remembered per faction; verify
 + screenshot two factions.
+
+## ── Batch 7 (2026-07-10 pm) — header relayout, declutter, architecture, bug ──
+
+## T39 · Move the faction selector to the top-right corner — MED [design]
+"THE TRIBE DATABASE" (the brand, which IS the faction switcher) should live in the **top-right
+corner** with a **large, clear downward triangle (▼)** so it's unmistakably a selector dropdown.
+This SUPERSEDES the "SWITCH FACTION" pill (de0a62c) — the wordmark itself becomes the trigger.
+- Move `.brand` to the right of the titlebar row; drop the separate `.brand-switchbox` pill.
+- Big ▼ glyph next to the wordmark; whole thing is the button (`#faction-btn`).
+- To declutter, pull the nav tabs UP into the titlebar row (one row: [tabs] … [BRAND ▼] [⚙]),
+  removing the separate `.navrow` where it fits. Keep the gentle pulse cue (optional, subtler).
+- The dropdown menu (`.brand-menu`) opens anchored to the right edge.
+
+## T40 · Drop the roster search INTO the list column — MED [design]
+Right now the search sits in the command-bar row ABOVE the divider line. Move it so it **drops below
+that line and nestles into the list column** (left rail), perfectly width-aligned with the character
+list / the section-filter controls beneath it. Goal: **less busy** — the search reads as the head of
+the roster column, not a floating toolbar element. Keep `#search`, `#search-clear`, the `/` hint;
+the doc-find bar (`.docbar`) should mirror the same in-column placement over the doc TOC rail.
+
+## T41 · Chunkier, abutting filter inputs + declutter — SMALL [design]
+The square input boxes (section filter, sort, and the List/Cards seg) should be **larger, chunkier,
+and ABUT each other** (shared 1px borders, no gaps between them) — a single segmented control bar
+rather than scattered pills. Look for other clutter to cut (redundant labels, the Refresh button's
+prominence, spacing). Keep the 17px legible type.
+
+## T42 · Theme ALL dropdown menus consistently — SMALL/MED [design]
+The section-filter and sort controls are native `<select>`s whose popup lists render in the OS chrome
+(off-theme). Make every dropdown share ONE in-theme look. Prefer REUSING the existing custom-dropdown
+pattern (`.brand-menu`/`.brand-opt` + open/close/outside-click/Esc from `wireFactionMenu`) rather than
+adding a second system — extract a tiny reusable custom-select so faction + section + sort all match.
+(If a full custom-select is too heavy, at minimum style the closed control + `<option>`s uniformly and
+document the native-popup limitation.)
+
+## T43 · Simplify the multi-faction architecture — MED [refactor]
+Reduce parallelism/complexity in the faction system (driven by an architecture audit). Likely wins:
+- One helper to resolve a per-faction pref: `factionPref(kind, faction)` returning
+  `localStorage.getItem("yuma-"+kind+"-"+faction) || signatureDefault(kind, faction)` — collapse the
+  repeated `getItem(...)||faction.theme.X` / `||factionFont().X` triples now duplicated across
+  `applyFaction`, `init`, `refreshCur`, and reset.
+- A single source of truth for each faction's signature (colour/bg/font) + one apply path used by both
+  switch and init. No behaviour change; fewer places to update when adding a faction.
+
+## T44 · BUG: Brotherhood entries must show only in the Brotherhood tab — [correctness]
+User: "the 'brotherhood' entries should show up only in the brotherhood tab." Investigate how roster
+data / EXTRA_CHARACTERS / sections are scoped per faction; ensure no Brotherhood-affiliated entries
+appear under the Tribe (or any other faction). Root-cause via the architecture audit, then scope the
+data correctly. Verify each faction's roster shows ONLY its own members.
