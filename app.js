@@ -55,6 +55,19 @@ const FACTIONS = {
 /* fallback if a faction ever lacks a `font` (mirrors the Tribe's iconic Fallouty pairing) */
 const FACTION_FONT_DEFAULT = { head:"fallout", body:"fallout" };
 function factionFont(f){ return (f && f.font) || FACTION_FONT_DEFAULT; }
+/* ---- per-faction preferences (colour / bg / font are all remembered PER FACTION) ----
+   One key builder + one resolver, so the "stored override, else this faction's signature"
+   logic lives in ONE place instead of being re-spelled in applyFaction / init / refreshCur. */
+function fkey(aspect, f){ return "yuma-"+aspect+"-"+(f||currentFaction); }
+function factionAppearance(id){
+  const f = FACTIONS[id] || activeFaction(), ff = factionFont(f);
+  return {
+    color: localStorage.getItem(fkey("color",     id)) || f.theme.color,
+    bg:    localStorage.getItem(fkey("bg",        id)) || f.theme.bg,
+    head:  localStorage.getItem(fkey("font-head", id)) || ff.head,
+    body:  localStorage.getItem(fkey("font-body", id)) || ff.body,
+  };
+}
 /* Switcher order (top→bottom in the dropdown). Add each new faction id here too.
    docs: a faction's own doc tabs — [] until linked (the Tribe's are wired below to DOCS).
    data.sheetId: "" = "not linked yet" → the app shows a themed coming-soon roster. */
@@ -71,12 +84,8 @@ function applyFaction(id){
   if(!FACTIONS[id]) return;
   currentFaction = id;
   try{ localStorage.setItem("yuma-faction", id); }catch(e){}
-  const f = FACTIONS[id];
-  applyColor(localStorage.getItem("yuma-color-"+id) || f.theme.color);   // this faction's colour (its override, else its signature)
-  applyBg(localStorage.getItem("yuma-bg-"+id) || f.theme.bg);
-  const ff = factionFont(f);                                            // this faction's signature typeface
-  applyFontHead(localStorage.getItem("yuma-font-head-"+id) || ff.head); // (its override, else its signature)
-  applyFontBody(localStorage.getItem("yuma-font-body-"+id) || ff.body);
+  const f = FACTIONS[id], ap = factionAppearance(id);   // this faction's look: its overrides, else its signature
+  applyColor(ap.color); applyBg(ap.bg); applyFontHead(ap.head); applyFontBody(ap.body);
   renderBrand();
   renderNav();                                       // this faction's doc tabs (may be none)
   // if the doc tab we were on doesn't exist for this faction, fall back to the roster
@@ -250,13 +259,13 @@ function applyColor(key){
   r.setProperty("--green-dim",t.dim);  r.setProperty("--green-faint",t.faint);
   r.setProperty("--green-rgb", hexToRgbTriplet(t.primary));   // translucent fills/glows follow the preset
   r.setProperty("--glow","0 0 2px "+t.glow);     // softer glow for legibility
-  localStorage.setItem("yuma-color-"+currentFaction, key);   // colour override is remembered PER FACTION
+  localStorage.setItem(fkey("color"), key);   // colour override is remembered PER FACTION
   document.querySelectorAll("#color-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 function applyBg(key){
   const b=BGS[key]||BGS.phosphor, r=document.documentElement.style;
   r.setProperty("--bg",b.bg); r.setProperty("--bg-panel",b.panel); r.setProperty("--bg-panel-2",b.panel2);
-  localStorage.setItem("yuma-bg-"+currentFaction, key);   // bg override is remembered PER FACTION
+  localStorage.setItem(fkey("bg"), key);   // bg override is remembered PER FACTION
   document.querySelectorAll("#bg-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
   /* keep the browser chrome (mobile tab bar, PWA splash) in sync with the picked background */
   const tc = document.querySelector('meta[name="theme-color"]'); if(tc) tc.setAttribute("content", b.bg);
@@ -265,14 +274,14 @@ function applyFontHead(key){
   const f=FACES[key]||FACES.fallout;
   document.documentElement.style.setProperty("--font-head", f.css);
   document.body.dataset.fontHead=key;      // CSS hook: body[data-font-head="workbench"] name plates
-  localStorage.setItem("yuma-font-head-"+currentFaction, key);   // font override remembered PER FACTION
+  localStorage.setItem(fkey("font-head"), key);   // font override remembered PER FACTION
   document.querySelectorAll("#fonthead-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 function applyFontBody(key){
   const f=FACES[key]||FACES.fallout;
   document.documentElement.style.setProperty("--font-body", f.css);
   document.body.dataset.fontBody=key;      // CSS hook: body[data-font-body="fallout"] line-height tuning
-  localStorage.setItem("yuma-font-body-"+currentFaction, key);   // font override remembered PER FACTION
+  localStorage.setItem(fkey("font-body"), key);   // font override remembered PER FACTION
   document.querySelectorAll("#fontbody-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
   // if the user hasn't explicitly chosen a text size, derive it from the BODY face
   // (small pixel faces → large) so bitmap fonts stay legible by default.
@@ -366,7 +375,7 @@ function setTextSizeAttr(key){
 /* the live body face (set by applyFontBody), used to derive the auto text size. Falls back to
    this faction's stored override, then its signature body. (Fonts are per-faction now.) */
 function bodyFontKey(){ return document.body.dataset.fontBody
-  || localStorage.getItem("yuma-font-body-"+currentFaction)
+  || localStorage.getItem(fkey("font-body"))
   || factionFont(activeFaction()).body; }
 function markTextSizeSwatch(choice){
   document.querySelectorAll("#textsize-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===choice));
@@ -445,7 +454,7 @@ function buildSettings(){
    popover communicates state without opening every group. Also syncs aria-checked. */
 function refreshCur(){
   const headK=document.body.dataset.fontHead||"fallout", bodyK=document.body.dataset.fontBody||"fallout";
-  const colorK=localStorage.getItem("yuma-color-"+currentFaction)||activeFaction().theme.color, bgK=localStorage.getItem("yuma-bg-"+currentFaction)||activeFaction().theme.bg;
+  const ap=factionAppearance(currentFaction), colorK=ap.color, bgK=ap.bg;
   const set=(id,txt)=>{ const el=document.querySelector(id); if(el) el.textContent=txt; };
   set("#cur-type", (FACES[headK]||FACES.fallout).name + (bodyK!==headK ? " / "+(FACES[bodyK]||FACES.fallout).name : ""));
   set("#cur-colour", (THEMES[colorK]||THEMES.green).name + " · " + (BGS[bgK]||BGS.phosphor).name);
@@ -2209,7 +2218,7 @@ $("#reset-settings").addEventListener("click", ()=>{
   ["yuma-font","yuma-font-head","yuma-font-body","yuma-docfont-title","yuma-docfont-head",
    "yuma-docfont-body","yuma-color","yuma-bg",
    "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel","yuma-cards","yuma-imgcolor","yuma-bezel",
-   "yuma-font-head-"+currentFaction,"yuma-font-body-"+currentFaction   // clear THIS faction's font override → its signature reloads
+   fkey("font-head"),fkey("font-body")   // clear THIS faction's font override → its signature reloads
   ].forEach(k=>localStorage.removeItem(k));
   const _rf = factionFont(activeFaction());
   applyFontHead(_rf.head); applyFontBody(_rf.body);   // reset to the active faction's signature typeface
@@ -2486,17 +2495,18 @@ function runBoot(){
   /* fonts are now remembered PER FACTION (like colours); fold any legacy GLOBAL head/body
      choice into the current faction's key once, then retire the global keys. */
   const _gH=localStorage.getItem("yuma-font-head"), _gB=localStorage.getItem("yuma-font-body");
-  if(_gH && !localStorage.getItem("yuma-font-head-"+currentFaction)) localStorage.setItem("yuma-font-head-"+currentFaction, _gH);
-  if(_gB && !localStorage.getItem("yuma-font-body-"+currentFaction)) localStorage.setItem("yuma-font-body-"+currentFaction, _gB);
+  if(_gH && !localStorage.getItem(fkey("font-head"))) localStorage.setItem(fkey("font-head"), _gH);
+  if(_gB && !localStorage.getItem(fkey("font-body"))) localStorage.setItem(fkey("font-body"), _gB);
   localStorage.removeItem("yuma-font-head"); localStorage.removeItem("yuma-font-body");
-  const _ff = factionFont(activeFaction());   // each faction loads in ITS signature typeface, unless overridden for that faction
-  applyFontHead(localStorage.getItem("yuma-font-head-"+currentFaction) || _ff.head);
-  applyFontBody(localStorage.getItem("yuma-font-body-"+currentFaction) || _ff.body);  /* sets a font-derived size if none stored */
+  /* each faction loads in ITS signature look (Tribe = Fallouty + rust/yellow), unless overridden for that faction */
+  const _ap = factionAppearance(currentFaction);
+  applyFontHead(_ap.head);
+  applyFontBody(_ap.body);  /* sets a font-derived size if none stored */
   ["title","head","body"].forEach(kind=>
     applyDocFont(kind, localStorage.getItem("yuma-docfont-"+kind) || DOC_FONT_DEFAULT[kind]));
   applyTextSize(localStorage.getItem("yuma-textsize") || "auto");  /* "auto" follows the body font; a stored manual size wins */
-  applyColor(localStorage.getItem("yuma-color-"+currentFaction) || activeFaction().theme.color);  /* each faction loads in ITS signature colour (Tribe = rust/yellow), unless overridden for that faction */
-  applyBg(localStorage.getItem("yuma-bg-"+currentFaction) || activeFaction().theme.bg);
+  applyColor(_ap.color);
+  applyBg(_ap.bg);
   applyFrame(localStorage.getItem("yuma-frame") || "screen");
   applyFrameTint(localStorage.getItem("yuma-frametint") || "olive");
   applyGlass(localStorage.getItem("yuma-sheen") || "off");
