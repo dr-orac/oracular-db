@@ -355,7 +355,19 @@ stays legible); (3) softer CRT on images — drop the `.docfig-screen` bezel/ret
 green tint stays via the existing Image Colour toggle. Maybe keep the framed style as a
 per-image opt-in. Acceptance: images fill the pane, edges fade, text readable, no h-overflow.
 
-## T21 · Faction switcher (replaces the brand title) — MEDIUM / config-driven; the anti-parallelism keystone
+## T21 · Faction switcher (replaces the brand title) — SCAFFOLDED 2026-07-10
+Done: `FACTIONS` map + `FACTION_ORDER` in app.js (the tribe as the sole entry + a commented
+TEMPLATE), `activeFaction()`/`applyFaction()` (applies a faction's colour+bg via the existing
+THEMES/BGS machinery, updates the brand, persists `yuma-faction`, reloads only if the sheet
+differs), `renderBrand()` (plain title at 1 faction → dropdown switcher at 2+), and
+`effectiveSheetId()`/`sheetUrl()` wired to the active faction's sheet (yuma = CONFIG.sheetId,
+so the default data flow and dev overrides are unchanged). Verified: 1-faction default renders
+the plain title + green theme + 56 rows; a temp 2nd faction reveals the switcher and selecting
+it re-skins the whole app (amber/warm) + persists; unknown-persisted-faction falls back safely.
+Contributor recipe in CONTRIBUTING.md → "Adding things". REMAINING to fully finish: real 2nd
+faction sheets from contributors (data-reload path is wired but only exercised with a different
+sheet); optional per-faction `<title>`/OG meta + a faction-specific `relabelTribe`. Original spec:
+
 Server variants ("factions") share ONE codebase + ONE data schema, differing only by a
 config *skin*. Add a `FACTIONS` map: `{ id: { name, theme:{colour, bg, font/style overrides},
 data:{sheetId, tab} } }`. A **dropdown where the brand title is** (top-left) selects the

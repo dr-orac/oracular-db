@@ -31,6 +31,82 @@ const CONFIG = {
   webAppUrl: "",
 };
 
+/* ── Factions ──────────────────────────────────────────────────────────────
+   A "faction" is a server variant of this same app: ONE codebase + ONE data
+   schema, differing only by a config *skin* — a name, a colour/style, and its own
+   data sheet. A contributor adds a variant by appending ONE entry here (plus their
+   own Google Sheet, shared "anyone with the link → Viewer") — no code fork. When two
+   or more factions exist, the masthead title becomes a switcher (see renderBrand).
+     name    — short label shown in the switcher menu
+     brand   — the masthead title (big text)
+     tagline — the // sub-label after it
+     theme   — a { color, bg } pair of keys from the Settings palette (THEMES / BGS)
+     data    — { sheetId, gid } for THIS faction's roster (gid "" = the first tab) */
+const FACTIONS = {
+  yuma: {
+    name:    "The Tribe",
+    brand:   "THE TRIBE DATABASE",
+    tagline: "// PIP-LINK",
+    theme:   { color: "green", bg: "phosphor" },
+    data:    { sheetId: CONFIG.sheetId, gid: CONFIG.gid },
+  },
+  /* ── TEMPLATE — copy this block, uncomment it, and add its id to FACTION_ORDER ──
+  ncr: {
+    name:    "NCR Registry",
+    brand:   "NCR PERSONNEL REGISTRY",
+    tagline: "// RANGER-NET",
+    theme:   { color: "gold", bg: "warm" },        // any colour + bg from Settings
+    data:    { sheetId: "PASTE_YOUR_SHEET_ID", gid: "" },
+  },
+  ──────────────────────────────────────────────────────────────────────────── */
+};
+const FACTION_ORDER = ["yuma"];   // switcher order — add each new faction id here too
+let currentFaction = FACTION_ORDER[0];
+try{ const _f = localStorage.getItem("yuma-faction"); if(_f && FACTIONS[_f]) currentFaction = _f; }catch(e){}
+function activeFaction(){ return FACTIONS[currentFaction] || FACTIONS[FACTION_ORDER[0]]; }
+/* switch faction: apply its skin (colour + bg + brand), persist it, and reload the
+   roster only if this faction's data sheet differs from the current one. */
+function applyFaction(id){
+  if(!FACTIONS[id]) return;
+  const prevSheet = activeFaction().data.sheetId;
+  currentFaction = id;
+  try{ localStorage.setItem("yuma-faction", id); }catch(e){}
+  const f = FACTIONS[id];
+  applyColor(f.theme.color); applyBg(f.theme.bg);   // the faction's distinct colour/style
+  renderBrand();
+  if(f.data.sheetId !== prevSheet) load(false);     // repoint the roster at this faction's sheet
+}
+/* the masthead title: a plain brand when there's one faction, a dropdown switcher with 2+. */
+function renderBrand(){
+  const el = document.querySelector(".brand"); if(!el) return;
+  const f = activeFaction();
+  const title = `${esc(f.brand)} <small>${esc(f.tagline)}</small>`;
+  if(FACTION_ORDER.length < 2){ el.classList.remove("has-switch","open"); el.innerHTML = title; return; }
+  el.classList.add("has-switch");
+  el.innerHTML =
+    `<button class="brand-switch" id="faction-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Switch faction">`+
+      `${title} <span class="brand-caret" aria-hidden="true">▾</span></button>`+
+    `<div class="brand-menu" id="faction-menu" role="listbox" aria-label="Faction">`+
+      FACTION_ORDER.map(id =>
+        `<button class="brand-opt${id===currentFaction?' active':''}" type="button" role="option" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">${esc(FACTIONS[id].name)}</button>`
+      ).join("")+
+    `</div>`;
+}
+/* one-time delegated wiring for the switcher — open/close the menu + select a faction. */
+function wireFactionMenu(){
+  const closeMenu = () => { const el=document.querySelector(".brand.open"); if(el){ el.classList.remove("open");
+    const b=document.querySelector("#faction-btn"); if(b) b.setAttribute("aria-expanded","false"); } };
+  document.addEventListener("click", e => {
+    const opt = e.target.closest(".brand-opt");
+    if(opt){ closeMenu(); applyFaction(opt.dataset.faction); return; }
+    const btn = e.target.closest("#faction-btn");
+    const el = document.querySelector(".brand.has-switch");
+    if(btn && el){ const open = el.classList.toggle("open"); btn.setAttribute("aria-expanded", open?"true":"false"); return; }
+    if(!e.target.closest(".brand-menu")) closeMenu();     // outside click
+  });
+  document.addEventListener("keydown", e => { if(e.key==="Escape") closeMenu(); });
+}
+
 /* Extra top-nav sections that embed a Google Doc (read-only, in the terminal frame).
    Each doc must be shared "Anyone with the link -> Viewer" to render in the iframe.
    To add another: append { id, label, docId } (docId = the long string in the doc URL,
@@ -490,12 +566,14 @@ function effectiveSheetId(){
       const ls = localStorage.getItem("yuma-sheet-override");
       if(ok(ls)) return ls;
     }
-  }catch(e){ /* sandboxed / no storage — fall through to the configured id */ }
+  }catch(e){ /* sandboxed / no storage — fall through to the faction / configured id */ }
+  try{ const fs = activeFaction().data.sheetId; if(ok(fs)) return fs; }catch(e){}   // active faction's sheet (yuma = CONFIG.sheetId)
   return CONFIG.sheetId;
 }
 function sheetUrl(){
   let u = `https://docs.google.com/spreadsheets/d/${effectiveSheetId()}/gviz/tq?tqx=out:csv`;
-  if (CONFIG.gid) u += `&gid=${encodeURIComponent(CONFIG.gid)}`;
+  const gid = (activeFaction().data.gid) || CONFIG.gid;
+  if (gid) u += `&gid=${encodeURIComponent(gid)}`;
   u += `&_=${Date.now()}`;          // cache-buster
   return u;
 }
@@ -2311,8 +2389,8 @@ function runBoot(){
   ["title","head","body"].forEach(kind=>
     applyDocFont(kind, localStorage.getItem("yuma-docfont-"+kind) || DOC_FONT_DEFAULT[kind]));
   applyTextSize(localStorage.getItem("yuma-textsize") || "auto");  /* "auto" follows the body font; a stored manual size wins */
-  applyColor(localStorage.getItem("yuma-color") || "green");
-  applyBg(localStorage.getItem("yuma-bg") || "phosphor");
+  applyColor(localStorage.getItem("yuma-color") || activeFaction().theme.color);  /* faction sets the default colour; a user's stored pick still wins */
+  applyBg(localStorage.getItem("yuma-bg") || activeFaction().theme.bg);
   applyDensity(localStorage.getItem("yuma-density") || "comfortable");
   applyFrame(localStorage.getItem("yuma-frame") || "screen");
   applyFrameTint(localStorage.getItem("yuma-frametint") || "olive");
@@ -2328,5 +2406,6 @@ function runBoot(){
   const v=localStorage.getItem("yuma-view"); if(v) setView(v);
   refreshCur();                      // fill the popover's collapsed-group value lines
   renderNav();                       // build the Roster + docs section tabs
+  renderBrand(); wireFactionMenu();  // masthead = plain title (1 faction) or a switcher (2+)
   load(false);                       // docs warm on tab hover/focus (see prefetchDoc) — not blanket-prefetched
 })();
