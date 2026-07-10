@@ -587,15 +587,22 @@
 
   /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */
   .docview{ position:relative; display:flex; flex-direction:column; height:100%; min-height:0; padding:0; gap:10px; }   /* command bar now lives in the header; the TOC/content sit right under it, like the roster rail */
-  /* back-to-top (long docs) — fades in once you've scrolled down */
+  /* reading-progress marker + back-to-top (long docs): a circular ring whose arc fills with how
+     far you've read (Medium-style, bottom-right); the centre arrow jumps to the top on click.
+     Fades in once you've started reading. One control does both jobs. */
   .doctop{ position:absolute; bottom:18px; right:22px; z-index:5;
-    font-family:var(--font-head); font-size:15px; letter-spacing:1px;
-    background:var(--bg-panel-2); color:var(--green); border:1px solid var(--green-faint);
-    padding:7px 13px; cursor:pointer; opacity:0; transform:translateY(8px);
+    width:48px; height:48px; border-radius:50%; border:0; padding:0; background:var(--bg-panel-2);
+    display:grid; place-items:center; cursor:pointer; opacity:0; transform:translateY(8px);
     transition:opacity .2s, transform .2s; pointer-events:none; }
-  .doctop.show{ opacity:.92; transform:none; pointer-events:auto; }
-  .doctop:hover{ color:var(--green-bright); border-color:var(--green); background:var(--bg-panel);
-    box-shadow:0 0 14px -3px rgba(var(--green-rgb),.5); }
+  .doctop.show{ opacity:.95; transform:none; pointer-events:auto; }
+  .doctop-ring{ position:absolute; inset:0; border-radius:50%;
+    background:conic-gradient(var(--green) calc(var(--docpct, 0) * 1turn), rgba(var(--green-rgb),.18) 0);
+    -webkit-mask:radial-gradient(farthest-side, #0000 calc(100% - 5px), #000 calc(100% - 4px));
+            mask:radial-gradient(farthest-side, #0000 calc(100% - 5px), #000 calc(100% - 4px)); }
+  .doctop-ico{ position:relative; z-index:1; font-family:var(--font-head); font-size:17px; line-height:1;
+    color:var(--green); text-shadow:none; }
+  .doctop:hover{ box-shadow:0 0 16px -3px rgba(var(--green-rgb),.55); }
+  .doctop:hover .doctop-ico{ color:var(--green-bright); }
   /* one command-bar shape shared with the roster toolbar: primary control grows on the left,
      quiet actions on the right. */
   /* display is toggled per-view above; here just the command-bar box — same top spacing AND

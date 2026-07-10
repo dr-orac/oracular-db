@@ -2232,7 +2232,10 @@ $("#home").addEventListener("click", e=>{
    in hidden tabs; scroll events still fire there) */
 let docScrollTick=false, _hydLast=0;
 $("#docscroll").addEventListener("scroll", ()=>{
-  $("#doctop").classList.toggle("show", $("#docscroll").scrollTop>500);
+  const sc=$("#docscroll"), max=sc.scrollHeight - sc.clientHeight;
+  const pct = max>0 ? sc.scrollTop/max : 0;                 // reading progress 0→1 (Medium-style)
+  $("#doctop").style.setProperty("--docpct", pct.toFixed(3));
+  $("#doctop").classList.toggle("show", sc.scrollTop>200);  // the progress ring doubles as back-to-top
   if(!docScrollTick){ docScrollTick=true; requestAnimationFrame(()=>{ trackDocSection(); docScrollTick=false; }); }
   const now=Date.now();
   if(now-_hydLast>120){ _hydLast=now; runHydratePass(); }
