@@ -426,6 +426,14 @@ page renders in-theme, internal links navigate in-app, no h-overflow, sanitised 
 
 # Batch 5 — doc-reader polish + faction data (queued 2026-07-10) — go in order
 
+**Progress (2026-07-10):** ✅ T23 (TOC: h1–h4, ≥17px, clean hierarchy) · ✅ T24 (quote-bullets
+consistent) · ✅ T25 (tables restyled) · ✅ T26 (line-art auto-invert — SHIPPED but pending a LIVE
+visual check; couldn't screenshot the diagram in the headless preview, tune the light-ratio
+threshold after) · ✅ T27 (Brotherhood roster wired + faction data scoped: EXTRA_CHARACTERS,
+default section, relabelTribe all now tribe-only). ⏳ **T28 remains** — the relationship-matrix
+view (LARGE, design-first, its own context).
+
+
 Facts gathered up front (build on these; don't re-derive):
 - Sidebar TOC (`buildDocSidebar`, app.js): collects `querySelectorAll("h1,h2")` ONLY → every
   h3/h4 is dropped. `.doctoc a.tl2` = 15px (below the 17px legibility floor).
