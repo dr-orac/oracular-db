@@ -406,8 +406,9 @@ proxy) and feed it through `docClean` (extend the whitelist for wiki markup: tab
 internal links → rewrite to in-app navigation); (3) a wiki has MANY pages → needs an index/nav
 (the TOC rail could list pages, or follow internal links). Fits the per-faction `docs` model
 (each faction points at its own wiki). **GATED:** the user wants this AFTER the app is properly
-linked to **Substrate** and **"Lattice"** (⚠ term unconfirmed — clarify what Lattice is before
-baking in the dependency; Substrate = the Lit/DTCG multi-app foundation). Acceptance: a wiki
+linked to **Substrate** (the Lit/DTCG multi-app foundation) and **Lattice** (a UI builder linked
+to Substrate that supplies standard HTML layouts to reduce parallelism / standardise building —
+in the Claude project folder). Acceptance: a wiki
 page renders in-theme, internal links navigate in-app, no h-overflow, sanitised (no raw scripts).
 
 ## Faction system — remaining finish items (small, when factions get real data)
@@ -422,3 +423,70 @@ page renders in-theme, internal links navigate in-app, no h-overflow, sanitised 
 ## + rail no longer shift between views (docbar moved to header); nav always shows; doc images +
 ## portraits share a theme-tracking tint; Pip-Boy portrait frame + camera/emblem buttons; 8
 ## factions w/ signature colours + switcher + coming-soon state; per-faction tab title; AA fixes.
+
+# Batch 5 — doc-reader polish + faction data (queued 2026-07-10) — go in order
+
+Facts gathered up front (build on these; don't re-derive):
+- Sidebar TOC (`buildDocSidebar`, app.js): collects `querySelectorAll("h1,h2")` ONLY → every
+  h3/h4 is dropped. `.doctoc a.tl2` = 15px (below the 17px legibility floor).
+- Quote boxes vs tables: the two "-Brom" quotes are 1×1 (single-cell) tables; ALL other tables are
+  multi-cell (lore 8×24 Faction/Standing; roleplay 5×15 Role/Description). The 1×1→framed-quote split
+  SHIPPED this session (commit dd87fcf) and is correct — leave it.
+- Bullets: two Roleplay bullets render differently despite IDENTICAL source (`<li class="c4 c17
+  li-bullet-0">`, margin-left 30pt) → the divergence is in OUR rendering (docClean/CSS), not the Doc.
+- Sheet A `1hG6V1ddnlr8jZZm8Rg0jJ4360WrH7zUD-TvNqaPkuUg` gid 735572717 = tribe-format Brotherhood
+  roster clone (row1 "BROTHERHOOD OF STEEL ROSTER", row2 headers "Discord Name/Full name/Caste and
+  Rank/Age·Sex·…" — columns differ slightly from the tribe's).
+- Sheet B `1oJUOBuiDdjCo62ko39LWtqBtyt81ZLLgpE1iFIkltF0` gid 879658166 = a RELATIONSHIP MATRIX
+  (characters × relationship types: Acquaintance/Friend/Crush/Family/Rival/Hatred…), not a roster.
+
+## T23 · TOC — all headings + legible, attractive formatting — SMALL
+The sidebar CONTENTS rail drops sub-headings and is too small. (1) `buildDocSidebar`: collect h1–h3
+(add `tl3`), judge whether h4 is worth including from the real docs. (2) Raise sizes: no TOC entry
+below the 17px floor (tl2 is 15px today); scale slightly by level (tl1 largest) but never < 17px.
+(3) Make the hierarchy read clearly and attractively — indent per level, comfortable row spacing/
+line-height, keep the active-item accent. Acceptance: every h1–h3 in both docs appears; nothing < 17px;
+desktop + mobile screenshots; no overflow.
+
+## T24 · Consistent bulleted lists — SMALL / investigate-then-fix
+Identical-source bullets render differently → find where OUR pipeline diverges. Reproduce in preview
+(inspect both `<li>`s: tag, parent `<ul>`/`<ol>`, computed margin/indent, `::before` marker). Likely
+cause: Google exports runs of bullets as separate `<ul>`s or a stray element splits the list, or a
+bullet loses its `<ul>` wrapper in docClean. Normalise so every same-level bullet is identical (marker,
+indent, spacing). Acceptance: the two example bullets + all same-level bullets render identically;
+numbered lists unaffected; screenshot.
+
+## T25 · Make multi-cell data tables more attractive — DESIGN / MEDIUM
+Real tables (lore Faction/Standing, roleplay Role/Description/Notes) use the plain `.doctable` style.
+Improve: distinct header row, comfortable cell padding, phosphor-tuned row rhythm/zebra, a subtle
+frame, graceful narrow-screen scroll (no page overflow). Theme-tracking (var(--green*)). MULTI-cell
+only — 1×1 boxes are quotes (done). Acceptance: both tables look polished desktop + mobile, header
+clearly distinct, no h-overflow, before/after screenshots.
+
+## T26 · Line-art diagrams — invert + colourise to theme — DESIGN / MEDIUM
+Doc images get grayscale + theme-multiply (good for photos), but a flow chart (dark lines on white)
+stays light-bg and clashes with the dark screen. For line-art: INVERT (light-on-dark) then colourise
+to the phosphor. Weigh: (a) auto-detect line-art (mostly-white/few-colour) → invert; (b) author opt-in
+via alt-text tag (e.g. "[diagram]"); (c) a per-figure/Settings toggle. Pick the simplest reliable one.
+Acceptance: the lore flow chart reads clearly on the dark theme, colourised to the active faction;
+photos unaffected; before/after screenshot.
+
+## T27 · Wire the Brotherhood roster (make a faction real) — SMALL-MEDIUM
+Point `FACTIONS.brotherhood.data.sheetId` (+ gid 735572717) at sheet A so switching to Brotherhood
+loads a real roster (red theme) instead of coming-soon. Verify field mapping: its columns differ
+("Caste and Rank" etc.) — ADD `FIELDS[x].match` fuzzy aliases as needed (never rename existing).
+Confirm the sheet is shared "anyone with the link → Viewer". Acceptance: Brotherhood shows its real
+roster, fields populate, tribe↔brotherhood reloads correct data, no console errors. ⚠ READ-ONLY —
+never write to the sheet.
+
+## T28 · Relationship-matrix view (new content type + own tab) — LARGE / DESIGN-FIRST
+Sheet B is a character RELATIONSHIP MATRIX, not a roster — needs a bespoke renderer + its own nav
+section (a third section type beyond roster/doc). Design first: how to present a 2D relationship grid
+in the terminal theme (matrix? per-character relationship lists? interactive graph?), mobile included.
+Do the content-source generalisation (`{type, source}` groundwork) first. Its own context/design pass
+before building. Acceptance: TBD in the design pass.
+
+## Note — T22 gate clarified
+"Lattice" = a UI builder linked to Substrate, providing standard HTML layouts to reduce parallelism /
+standardise building (in the Claude project folder). T22 (Misfits wiki reader) stays gated on Substrate
++ Lattice.
