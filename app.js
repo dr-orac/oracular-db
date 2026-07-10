@@ -157,8 +157,8 @@ const THEMES = {
   magenta: { name:"Magenta", primary:"#ff6cc0", bright:"#ffc8e8", dim:"#d44e9e", faint:"#3a1028", glow:"rgba(255,108,192,.5)" },
   red:     { name:"Red",     primary:"#ff6a5c", bright:"#ffc6bf", dim:"#dd5146", faint:"#3a1410", glow:"rgba(255,106,92,.5)" },
   orange:  { name:"Orange",  primary:"#ff8a3c", bright:"#ffceaa", dim:"#c66a26", faint:"#3a2210", glow:"rgba(255,138,60,.5)" },
-  purple:  { name:"Purple",  primary:"#b98cff", bright:"#e2ccff", dim:"#8f63d6", faint:"#271042", glow:"rgba(185,140,255,.5)" },
-  rust:    { name:"Rust",    primary:"#e0a338", bright:"#ffd992", dim:"#9e7526", faint:"#382a10", glow:"rgba(224,163,56,.5)" },
+  purple:  { name:"Purple",  primary:"#b98cff", bright:"#e2ccff", dim:"#9a70de", faint:"#271042", glow:"rgba(185,140,255,.5)" },
+  rust:    { name:"Rust",    primary:"#e0a338", bright:"#ffd992", dim:"#a87d2b", faint:"#382a10", glow:"rgba(224,163,56,.5)" },
 };
 const COLOR_ORDER = ["green","amber","gold","rust","orange","red","magenta","purple","blue","cyan","white"];
 const BGS = {
