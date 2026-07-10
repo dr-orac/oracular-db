@@ -46,21 +46,26 @@ def main():
         l, t, r, b = d.textbbox((0, 0), text, font=font)
         return r - l, b - t
 
-    tw1, th1 = measure("THE TRIBE", title)
-    tw2, th2 = measure("DATABASE",  title)
-    sw,  sh  = measure("// PIP-LINK · ROBCO ARCHIVE", subtitle)
-    pw,  ph  = measure("dossiers · spirits · screenshots", tagline)
+    # umbrella brand (each faction keeps its own brand in-app; this is the shared site card)
+    TITLE1, TITLE2 = "MISFITS", "DATABASE"
+    SUB = "// MULTI-FACTION ARCHIVE"
+    TAG = "dossiers · lore · roleplay"
+
+    tw1, th1 = measure(TITLE1, title)
+    tw2, th2 = measure(TITLE2, title)
+    sw,  sh  = measure(SUB, subtitle)
+    pw,  ph  = measure(TAG, tagline)
 
     block_h = th1 + th2 + sh + ph + 30 + 24 + 18
     y = (H - block_h) // 2
 
-    d.text(((W - tw1) // 2, y),                     "THE TRIBE", font=title, fill=BRIGHT)
+    d.text(((W - tw1) // 2, y), TITLE1, font=title, fill=BRIGHT)
     y += th1 + 6
-    d.text(((W - tw2) // 2, y),                     "DATABASE",  font=title, fill=BRIGHT)
+    d.text(((W - tw2) // 2, y), TITLE2, font=title, fill=BRIGHT)
     y += th2 + 30
-    d.text(((W - sw)  // 2, y), "// PIP-LINK · ROBCO ARCHIVE",   font=subtitle, fill=GREEN)
+    d.text(((W - sw)  // 2, y), SUB, font=subtitle, fill=GREEN)
     y += sh + 24
-    d.text(((W - pw)  // 2, y), "dossiers · spirits · screenshots", font=tagline,  fill=DIM)
+    d.text(((W - pw)  // 2, y), TAG, font=tagline,  fill=DIM)
 
     # blinking-cursor block at the end of the tagline
     d.rectangle([(W + pw) // 2 + 12, y + 2, (W + pw) // 2 + 30, y + ph],

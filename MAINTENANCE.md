@@ -7,9 +7,11 @@ assistant's working memory is lost, **start here.** Last structural update: 2026
 
 ## What this is
 
-A **Fallout-1 / Pip-Boy themed roster viewer** for an SS14 RP tribe (presents as
-**"The Tribe Database"**). It reads a Google Sheet live and renders one dossier per
-character. Pure static site:
+A **Fallout-1 / Pip-Boy themed roster viewer** for SS14 RP factions. The umbrella brand is the
+**Misfits Database**, hosting multiple factions (the Tribe, the Brotherhood of Steel, and more);
+each faction keeps its own brand (e.g. **"The Tribe Database"**) and a masthead selector switches
+between them. Each faction reads a Google Sheet live and renders one dossier per character. Pure
+static site:
 
 - **No build step, no framework, no CDN, no dependencies.** Just `index.html` + `styles.css`
   + `app.js` + self-hosted `fonts/`. Open the file, it runs.

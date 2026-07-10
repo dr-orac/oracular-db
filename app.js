@@ -1,5 +1,6 @@
 /* ====================================================================
-   THE TRIBE DATABASE  —  live read-only viewer for a Google Sheet
+   MISFITS DATABASE  —  multi-faction live read-only viewer for Google Sheets
+   (umbrella brand; each faction keeps its own brand — see FACTIONS below)
    --------------------------------------------------------------------
    Reads the public sheet via the gviz CSV endpoint (CORS-enabled for
    "anyone with link -> Viewer" sheets). No API key required to read.
@@ -2532,7 +2533,7 @@ function runBoot(){
 
   // step 4: type the final "online" line, brief pause, then fade
   function finalLine(){
-    const text="THE TRIBE DATABASE — ONLINE";
+    const text="MISFITS DATABASE — ONLINE";
     let ci2=0;
     (function typeFinal(){
       if(done) return;

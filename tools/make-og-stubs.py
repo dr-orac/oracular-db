@@ -56,7 +56,7 @@ STUB = """<!doctype html>
 <title>{name} // The Tribe Database</title>
 <meta name="description" content="{desc}">
 <meta property="og:type" content="profile">
-<meta property="og:site_name" content="The Tribe Database">
+<meta property="og:site_name" content="Misfits Database">
 <meta property="og:title" content="{name} — The Tribe Database">
 <meta property="og:description" content="{desc}">
 <meta property="og:image" content="{image}">

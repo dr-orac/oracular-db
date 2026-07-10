@@ -1,8 +1,11 @@
-# Yuma Tribe Roster — "The Tribe Database"
+# Misfits Database (formerly the Yuma Tribe Roster / "The Tribe Database")
 
-A Fallout-style ("Pip-Boy" terminal) web viewer for an RP character roster. It reads a
-Google Sheet **live and read-only** and renders each character as a CRT dossier, with
-optional write-back (uploads / edits) via a Google Apps Script.
+A Fallout-style ("Pip-Boy" terminal) web viewer for SS14 RP factions. The **Misfits Database**
+is the umbrella: it hosts multiple factions (the Tribe, the Brotherhood of Steel, and more),
+each a config *skin* with its own brand, colour, fonts, sheet and docs — a masthead selector
+switches between them. Each faction reads a Google Sheet **live and read-only** and renders
+each character as a CRT dossier, with optional write-back (uploads / edits) via a Google Apps
+Script. (The source folder is still named `Yuma Tribe Roster` for history.)
 
 No framework, no build step — three static files plus assets.
 
