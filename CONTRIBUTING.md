@@ -39,6 +39,32 @@ review effort for design and trade-offs.
 - **Self-host assets.** New fonts go in `fonts/` as woff2 + an `@font-face`; no CDN. Only ship
   fonts you're licensed to embed and redistribute (`selfcheck.py` flags orphan font files).
 - **Tokens over literals.** Prefer `var(--..)` so a theme change propagates.
+- **Commits.** One logical change per commit; imperative subject line + a body that says
+  *why*. No trailers or attributions — just the change and its reason.
+
+## Adding things
+
+Most additions are one config entry — the app wires the rest.
+
+- **A character.** Normally: add a row to the tribe's Google Sheet (columns match by fuzzy
+  header substring; a row with a single filled cell is a section divider). For a
+  character that isn't in the sheet (a visitor / NPC), append to `EXTRA_CHARACTERS` in
+  `app.js`: `{ name, section, fields:{ usename, honorific, role, species, appearance, … } }`.
+- **A doc tab.** Append to `DOCS` in `app.js`: `{ id, label, docId }` — `docId` is the long
+  string in the Google Doc URL; share the doc *"anyone with the link → Viewer"*. The tab
+  appears automatically. Give it a Fallout glyph by adding an entry to `NAV_ICONS` keyed by
+  the tab `id` (else it gets the default document icon).
+- **A faction (server variant).** A faction is a re-skin of this *same* app — its own name,
+  colour/style, and data sheet — with **no code fork**. In `app.js`, copy the commented
+  `TEMPLATE` block inside `FACTIONS`, give it a unique id, and set:
+  - `name` (switcher-menu label), `brand` + `tagline` (the masthead title);
+  - `theme` — a `{ color, bg }` pair of keys from the Settings palette (any key in `THEMES` /
+    `BGS`, e.g. `gold` + `warm`);
+  - `data.sheetId` — **your** Google Sheet (same column layout as the tribe's, shared
+    *"anyone with the link → Viewer"*); `data.gid` `""` = the first tab.
+
+  Then add your id to `FACTION_ORDER`. With two or more factions the masthead title becomes a
+  dropdown; selecting your faction re-skins the whole app and loads your roster. No other code.
 
 ## Preview
 
