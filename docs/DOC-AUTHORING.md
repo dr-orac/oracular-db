@@ -38,6 +38,12 @@ Start a paragraph with `>` followed by a space (e.g. `> "Kin to kin, we hold eac
 other up."`) and it renders as a highlighted, indented quote block instead of a
 normal paragraph.
 
+For a quote you want to really stand out — a longer passage, verse, or scripture —
+**put it in a box**: the most reliable way is a **1×1 table** (Insert → Table → 1×1),
+type the quote inside. A single-celled box renders as a fully-framed, centred
+pull-quote that glows off the screen. (A table with more than one cell still renders
+as a normal data table, so only use 1×1 for quote boxes.)
+
 ## Keep the two docs separate
 
 Lore and Roleplay are split into two docs on purpose — a shorter, focused doc loads
