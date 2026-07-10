@@ -1662,7 +1662,7 @@ function renderNav(){
   const tabs=[{id:"roster", label:"Roster"}].concat(factionDocs().map(d=>({id:d.id, label:d.label})));
   nav.innerHTML = tabs.map(t=>
     `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}"><span class="navico">${NAV_ICONS[t.id]||NAV_ICONS._default}</span><span class="navlabel">${esc(t.label)}</span></button>`).join("");
-  nav.classList.toggle("hidden", tabs.length < 2);   // nothing to switch to → no nav
+  nav.classList.remove("hidden");   // always show the nav (at least Roster) so it stays put across factions
 }
 /* Re-render a Google Doc in the terminal theme. We fetch the doc's HTML export
    (a CORS-readable endpoint for link-shared docs) and rebuild it from a strict
