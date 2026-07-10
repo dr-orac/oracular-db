@@ -557,3 +557,21 @@ wiki navigation / internal links. (Supersedes T22; its Substrate+Lattice gate is
 
 ## Also (folded into the above): remove the portrait corner-bracket reticle (quick, part of T29
 ## visual pass); dropdown-clarity is part of T32.
+
+## T36 · Text-size +/- stepper with a legibility floor — SMALL [next]
+The current text-size control is 5 swatches (Auto/Cozy/Comfortable/Large/X-Large) whose steps jump
+DRASTICALLY, and "Auto" is font-derived so sizes swing when the font changes. Replace with a simple
+**− / +** stepper (a logical spot in Settings → Typography, or near the doc reader). Requirements:
+- A small, even step scale (e.g. 5–6 rem-ish steps) with a **hard minimum so BODY text is never too
+  small** (respect the 17px legibility floor for prose).
+- Persist the chosen step (`yuma-textsize`), keep it decoupled from the font choice (no more wild
+  swings when the pixel font is picked).
+- Wire to `applyTextSize` / `setTextSizeAttr` / the `body[data-textsize=…]` CSS in app.js/styles.css.
+  Keep an "Auto/Default" middle if useful, but − and + are the primary control.
+Acceptance: +/- steps the doc + roster text smoothly, never below the floor; persists; screenshot.
+
+## T37 · Doc-image brightness/tint final tune — TINY [next]
+The 4-edge fade + ~10% side buffers shipped. `.docfig img` brightness(1.16)/contrast(1.12) +
+`.docfig-tint` opacity .42 still leave illustrations slightly washed. Tune by eye on the live site
+(test an image WITH text / a screenshot). Balance: bright enough to survive the multiply tint, not so
+bright it blows midtones to uniform colour. Portrait uses brightness(1.32)/contrast(1.3) + tint .5.
