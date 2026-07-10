@@ -731,7 +731,7 @@
   .docreader .docfig img{ display:block; width:100%; height:auto; opacity:1;
     /* desaturate; the phosphor colour comes from the theme-tracking tint below (so doc images
        match the portraits AND the active faction's colour — amber, red, blue…). */
-    filter:grayscale(1) brightness(1.06) contrast(1.05);
+    filter:grayscale(1) brightness(1.32) contrast(1.06);   /* brighter, to survive the multiply-tint dimming */
     transition:opacity .3s, filter .3s; }
   .docreader .docfig-tint{ position:absolute; inset:0; z-index:1; pointer-events:none;
     background:var(--green); mix-blend-mode:multiply; opacity:.5; }
@@ -907,18 +907,6 @@
     padding:0; cursor:pointer; text-shadow:var(--glow); flex:0 0 auto; }
   .mini:hover{ border-color:var(--green); color:var(--green-bright); background:var(--bg-panel-2); }
 
-  /* compact density (body.compact) */
-  body.compact .row{ padding:4px 16px; }
-  body.compact .row-sub{ font-size:17px; }
-  body.compact .sectionhdr{ padding:8px 16px 4px; }
-  body.compact .dossier{ padding:16px 24px 50px; }
-  body.compact .field{ margin:0 0 13px; }
-  body.compact .field > .label{ font-size:17px; }
-  body.compact .field .body, body.compact .logbody{ line-height:1.4; }
-  body.compact .idgrid{ gap:7px 18px; margin:16px 0 0; padding:14px 0 0; }
-  body.compact .doss-head{ padding:14px 0; margin-bottom:22px; }
-  body.compact .doss-head::before{ inset:-8px -18px; }   /* tighter bleed to stay within compact dossier padding (22px) */
-
   /* cards view */
   .cards{
     height:100%; overflow:auto; min-height:0;
@@ -961,26 +949,13 @@
     position:relative; flex:0 0 auto; overflow:hidden;
     border:1px solid var(--green-faint); background:#020703;
   }
-  /* dossier portrait = a Pip-Boy "scanned ID": a crisp bright phosphor frame that glows off the
-     dark screen, with bold glowing corner reticle brackets. */
+  /* dossier portrait: a crisp bright phosphor frame that glows off the dark screen. */
   .portrait.lg{ width:166px; height:166px; border-color:var(--green);
     box-shadow:
       0 0 0 1px var(--green),                         /* crisp bright edge */
       0 0 17px -3px rgba(var(--green-rgb),.5),         /* outer phosphor glow */
       inset 0 0 26px -8px rgba(var(--green-rgb),.45),  /* inner glow */
       0 6px 18px -8px rgba(0,0,0,.7); }
-  .portrait.lg::before{ content:""; position:absolute; inset:0; z-index:3; pointer-events:none;
-    background:
-      linear-gradient(var(--green-bright),var(--green-bright)) 0 0/18px 3px,
-      linear-gradient(var(--green-bright),var(--green-bright)) 0 0/3px 18px,
-      linear-gradient(var(--green-bright),var(--green-bright)) 100% 0/18px 3px,
-      linear-gradient(var(--green-bright),var(--green-bright)) 100% 0/3px 18px,
-      linear-gradient(var(--green-bright),var(--green-bright)) 0 100%/18px 3px,
-      linear-gradient(var(--green-bright),var(--green-bright)) 0 100%/3px 18px,
-      linear-gradient(var(--green-bright),var(--green-bright)) 100% 100%/18px 3px,
-      linear-gradient(var(--green-bright),var(--green-bright)) 100% 100%/3px 18px;
-    background-repeat:no-repeat;
-    filter:drop-shadow(0 0 2px rgba(var(--green-rgb),.75)); }
   .portrait.sm{ width:74px; height:74px; }
   /* upload modal */
   .uploadnote{ font-size:17px; color:var(--green-dim); margin:8px 0; }
@@ -991,7 +966,7 @@
   .portrait img{
     width:100%; height:100%; object-fit:cover; display:block;
     image-rendering:pixelated;                 /* keep pixel-art sprites crisp */
-    filter:grayscale(1) brightness(1.18) contrast(1.32);   /* punchier than pale-grey; the tint colours it */
+    filter:grayscale(1) brightness(1.5) contrast(1.28);   /* bright enough to survive the phosphor multiply-tint */
   }
   .portrait .tint{                 /* green phosphor wash */
     position:absolute; inset:0; background:var(--green);
@@ -1401,6 +1376,12 @@
   }
   .settings-back.open{ opacity:1; pointer-events:auto; }
   .settings-drawer{                     /* ~a third of the screen, slides in from the right */
+    /* the drawer keeps ONE fixed legible face regardless of the app font the user picks — its
+       chrome shouldn't turn chunky when a pixel face is on. (The font PICKERS still preview each
+       face: their option names carry an inline font-family that wins over this.) */
+    --font-head:"IBM Plex Mono", ui-monospace, "Share Tech Mono", monospace;
+    --font-body:"IBM Plex Mono", ui-monospace, "Share Tech Mono", monospace;
+    font-family:"IBM Plex Mono", ui-monospace, "Share Tech Mono", monospace;
     position:fixed; top:0; right:0; z-index:9350; height:100%;
     width:clamp(320px, 33vw, 460px); max-width:94vw;
     display:flex; flex-direction:column; text-align:left;
@@ -1472,8 +1453,6 @@
   .swatch.active{ border-color:var(--green); background:var(--bg-panel-2); }
   /* non-colour cue for the active swatch (helps low-vision / colour-blind users) */
   .swatch.active::after{ content:"✓"; margin-left:5px; color:var(--green-bright); font-size:17px; }
-  .swatch .chip{ width:12px; height:12px; border-radius:50%; box-shadow:0 0 5px currentColor; }
-  .swatch.bg .chip{ border-radius:2px; box-shadow:none; border:1px solid rgba(255,255,255,.18); }
 
   /* ---- face pickers (Headings / Body) ----
      One row per typeface; the option's NAME renders in that face (the name IS the

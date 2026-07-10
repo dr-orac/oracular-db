@@ -286,11 +286,6 @@ function wireFontPreview(wrap, cssVar, dataAttr){
   wrap.addEventListener("mouseover", e=>{ const b=e.target.closest(".swatch"); if(b) show(b.dataset.key); });
   wrap.addEventListener("mouseleave", ()=>{ const a=wrap.querySelector(".swatch.active"); if(a) show(a.dataset.key); });
 }
-function applyDensity(key){
-  document.body.classList.toggle("compact", key==="compact");
-  localStorage.setItem("yuma-density", key);
-  document.querySelectorAll("#density-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
-}
 function applyFrame(key){
   if(key!=="border") key="screen";                 // only two modes; default clean screen
   document.body.dataset.frame = key;
@@ -388,9 +383,6 @@ function buildSettings(){
     wrap.addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDocFont(kind, b.dataset.key); });
     wireFontPreview(wrap, "--doc-font-"+kind, null);
   });
-  document.querySelector("#density-swatches").innerHTML =
-    [["comfortable","Comfortable"],["compact","Compact"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
-  document.querySelector("#density-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDensity(b.dataset.key); });
   document.querySelector("#textsize-swatches").innerHTML =
     [["auto","Auto"],["cozy","Cozy"],["comfortable","Comfortable"],["large","Large"],["xlarge","X-Large"]]
       .map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
@@ -417,9 +409,9 @@ function buildSettings(){
     [["on","On"],["off","Off"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#bezel-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyBezel(b.dataset.key); });
   document.querySelector("#color-swatches").innerHTML = COLOR_ORDER.map(k=>
-    `<button class="swatch" data-key="${k}"><span class="chip" style="background:${THEMES[k].primary};color:${THEMES[k].primary}"></span>${THEMES[k].name}</button>`).join("");
+    `<button class="swatch" data-key="${k}">${THEMES[k].name}</button>`).join("");
   document.querySelector("#bg-swatches").innerHTML = BG_ORDER.map(k=>
-    `<button class="swatch bg" data-key="${k}"><span class="chip" style="background:${BGS[k].bg}"></span>${BGS[k].name}</button>`).join("");
+    `<button class="swatch bg" data-key="${k}">${BGS[k].name}</button>`).join("");
   document.querySelector("#color-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyColor(b.dataset.key); });
   document.querySelector("#bg-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyBg(b.dataset.key); });
   // after ANY click in the popover, refresh the collapsed-group value lines + radio a11y
@@ -2159,17 +2151,17 @@ $("#crt-toggle").addEventListener("click", ()=>{
 
 $("#refresh").addEventListener("click", ()=>load(true));
 
-/* Reset all Theme-popover settings to defaults (font, colour, bg, density, text size,
+/* Reset all Theme-popover settings to defaults (font, colour, bg, text size,
    frame, frame tint, screen glass, CRT). Doesn't touch character data / icons / photos. */
 $("#reset-settings").addEventListener("click", ()=>{
   ["yuma-font","yuma-font-head","yuma-font-body","yuma-docfont-title","yuma-docfont-head",
-   "yuma-docfont-body","yuma-color","yuma-bg","yuma-density",
+   "yuma-docfont-body","yuma-color","yuma-bg",
    "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel","yuma-cards","yuma-imgcolor","yuma-bezel"
   ].forEach(k=>localStorage.removeItem(k));
   applyFontHead("fallout"); applyFontBody("fallout");
   applyTextSize("auto");                                 // size follows the font again
   ["title","head","body"].forEach(kind=>applyDocFont(kind, DOC_FONT_DEFAULT[kind]));
-  applyColor("green"); applyBg("phosphor"); applyDensity("comfortable");
+  applyColor("green"); applyBg("phosphor");
   applyFrame("screen"); applyFrameTint("olive"); applyGlass("off"); applyDossPanel("on");
   applyCards("auto"); applyImgColor("screen"); applyBezel("on");
   document.body.classList.add("crt");
@@ -2444,7 +2436,6 @@ function runBoot(){
   applyTextSize(localStorage.getItem("yuma-textsize") || "auto");  /* "auto" follows the body font; a stored manual size wins */
   applyColor(localStorage.getItem("yuma-color") || activeFaction().theme.color);  /* faction sets the default colour; a user's stored pick still wins */
   applyBg(localStorage.getItem("yuma-bg") || activeFaction().theme.bg);
-  applyDensity(localStorage.getItem("yuma-density") || "comfortable");
   applyFrame(localStorage.getItem("yuma-frame") || "screen");
   applyFrameTint(localStorage.getItem("yuma-frametint") || "olive");
   applyGlass(localStorage.getItem("yuma-sheen") || "off");
