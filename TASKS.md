@@ -498,3 +498,62 @@ before building. Acceptance: TBD in the design pass.
 "Lattice" = a UI builder linked to Substrate, providing standard HTML layouts to reduce parallelism /
 standardise building (in the Claude project folder). T22 (Misfits wiki reader) stays gated on Substrate
 + Lattice.
+
+# Batch 6 — Misfits Database: nav, home page, chrome, wiki (queued 2026-07-10)
+
+The app is now a multi-faction **Misfits Database** (Tribe, Brotherhood, +more), not just the
+Tribe. This batch reframes it around that. Do the quick fixes (T29 group) first, then the
+design-led pieces. **Wiki (T35) is the eventual target — complete the rest first.**
+
+## T29 · Settings-drawer cleanup — SMALL [quick fixes]
+- **One fixed legible font** for the drawer chrome (from FACES, e.g. Plex / IBM Plex Mono) — do
+  NOT inherit the user's chosen app font, so the prefs stay readable when a chunky pixel face is on.
+- **Remove the little colour-circle previews** from the Colour swatches — and from the Background
+  swatches too (keep the names/labels only).
+- **Remove the Screen Density (comfortable/compact) control** — it does little; drop it (and its
+  `body.compact` CSS / applyDensity) unless a real use surfaces.
+
+## T30 · Image rendering improvements — MEDIUM
+- **Brightness:** the theme-colourise multiply tint dims images — raise image brightness to
+  compensate (portraits + doc figures), keeping the phosphor look. Tune per surface.
+- **Fade-in on scroll:** images currently pop in on hydration; add a subtle, attractive fade
+  (opacity/blur-in) as each scrolls into view.
+- **Lazy-load audit:** doc images already lazy-hydrate; assess extending lazy-load / decode hints
+  to roster portraits + card thumbs for perceived performance.
+
+## T31 · Screen border redesign — MEDIUM / DESIGN
+- A **jet-black bezel** around the screen (like a real Apple display) + a **rounded hairline** line
+  where the rounded bezel meets the app content — a crisp inner edge that lifts visual quality.
+  Must work in BOTH chassis (metal) and screen-only modes.
+
+## T32 · Navigation + home-page redesign — LARGE / DESIGN-FIRST
+The umbrella is "Misfits Database" hosting factions/sections. Rethink the top bar + add a home page.
+- **Faction dropdown UNMISTAKABLY a dropdown** — the boxed caret isn't enough; make it obvious.
+- **Top section buttons much larger** — stretch to fill the full width of their row, auto-dividing
+  evenly by count.
+- **Home button + home landing page:** big full-height section tiles, each with an icon + a short
+  explainer of what's in that section — website-navigation logic. The top-row buttons essentially
+  ARE the home tiles, elongated; the home page doesn't repeat them on its own top row.
+- Consider a **gentle occasional pulse** on the top bar to signal "there's more than the database"
+  (judge vs distracting).
+- Design-first: sketch the home layout + nav behaviour before building.
+
+## T33 · Rename the project → "Misfits Database" — MEDIUM
+No longer just the Tribe. Rename consistently: the umbrella brand / page `<title>` / OG default =
+**"Misfits Database"** (the share "preview" should say this), while each faction keeps its own
+brand (Tribe → "THE TRIBE DATABASE"). Update README/docs and consider the repo name. Mind the
+per-faction `document.title` already in renderBrand.
+
+## T34 · Reading-progress marker — SMALL
+A subtle indicator (bottom-right?) showing how far through a doc you've read (Medium-style),
+driven by `#docscroll` progress.
+
+## T35 · Wiki reading (AUTHORISED — relaxes T22's gate) — LARGE
+The Google Docs are being migrated INTO the Misfits **wiki**; the target is to use this system to
+view the WIKI well. **The database keeps reading Google Sheets (unchanged). The existing Google-Doc
+reader MUST keep working — wiki reading is ADDITIONAL** (a new source type for now). Generalise the
+content source (`{type: gdoc|wiki, source}`), fetch + sanitise wiki HTML through `docClean`, handle
+wiki navigation / internal links. (Supersedes T22; its Substrate+Lattice gate is relaxed.)
+
+## Also (folded into the above): remove the portrait corner-bracket reticle (quick, part of T29
+## visual pass); dropdown-clarity is part of T32.
