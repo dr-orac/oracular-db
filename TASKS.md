@@ -392,3 +392,33 @@ changes colour/style + data + persists; adding a faction needs only config, no c
 NOTE: this is the local expression of the bigger "reduce parallelism / integrate upstream"
 goal — see the Substrate foundation (`~/Documents/Claude/Projects/App Suite Building
 Foundations`), whose Phase 3.5 is the list-detail shell + drawer this app already built.
+
+# Batch 4 — future / architecture-gated (queued 2026-07-10)
+
+## T22 · Render the Misfits wiki in the terminal theme — DESIGN / architecture-gated
+Extend the doc reader beyond Google Docs to display the **Misfits** SS14 (Nuclear-14 fork)
+**wiki** inside the Pip-Boy shell. The pieces already exist: `loadDoc()` fetches HTML and
+`docClean()` re-renders it from a strict whitelist into the theme — so a wiki page is "just
+another content source." Work: (1) generalise the content source — a doc/section can be a
+Google Doc OR a wiki URL (add a `type`/`source` field to the DOCS/faction-docs entry);
+(2) fetch the wiki page HTML (CORS permitting — may need the wiki's REST/parse API or a read
+proxy) and feed it through `docClean` (extend the whitelist for wiki markup: tables, infoboxes,
+internal links → rewrite to in-app navigation); (3) a wiki has MANY pages → needs an index/nav
+(the TOC rail could list pages, or follow internal links). Fits the per-faction `docs` model
+(each faction points at its own wiki). **GATED:** the user wants this AFTER the app is properly
+linked to **Substrate** and **"Lattice"** (⚠ term unconfirmed — clarify what Lattice is before
+baking in the dependency; Substrate = the Lit/DTCG multi-app foundation). Acceptance: a wiki
+page renders in-theme, internal links navigate in-app, no h-overflow, sanitised (no raw scripts).
+
+## Faction system — remaining finish items (small, when factions get real data)
+- **Faction-scoped `relabelTribe`** — the global "Yuma Tribe"→"Tribe" rewrite would wrongly
+  rebrand a linked faction's data; gate it to the tribe (or make relabel a per-faction config).
+  Latent only — no effect until a non-tribe faction links a sheet.
+- **Per-faction visual style beyond colour** — the vision is "distinct colour AND visual style";
+  today factions differ by colour+bg only. Consider a per-faction accent (heading font / frame
+  treatment) so factions read distinct beyond hue.
+
+## Done this session (2026-07-10, later): removed the ONLINE/UNITS/SYNC status line; command bar
+## + rail no longer shift between views (docbar moved to header); nav always shows; doc images +
+## portraits share a theme-tracking tint; Pip-Boy portrait frame + camera/emblem buttons; 8
+## factions w/ signature colours + switcher + coming-soon state; per-faction tab title; AA fixes.
