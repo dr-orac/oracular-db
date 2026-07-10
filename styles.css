@@ -735,6 +735,12 @@
     transition:opacity .3s, filter .3s; }
   .docreader .docfig-tint{ position:absolute; inset:0; z-index:1; pointer-events:none;
     background:var(--green); mix-blend-mode:multiply; opacity:.5; }
+  /* auto-detected line-art diagram (flow chart): INVERT it (dark lines on white → light lines on
+     the dark screen); the tint above then colourises the light lines to the theme. Don't fade its
+     edges or lay heavy scanlines over the linework. */
+  .docreader .docfig-invert img{ filter:invert(1) grayscale(1) contrast(1.05) brightness(1.02); }
+  .docreader .docfig-invert{ -webkit-mask-image:none; mask-image:none; }
+  .docreader .docfig-invert::after{ opacity:.12; }
   /* Settings → Image Colour → Original: true colour on both doc images and portraits */
   body[data-imgcolor="original"] .docreader .docfig img{ filter:none; }
   body[data-imgcolor="original"] .docreader .docfig-tint{ display:none; }

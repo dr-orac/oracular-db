@@ -1886,7 +1886,21 @@ async function fetchAndPrepare_(docId, signal){
      events + getBoundingClientRect, which work everywhere. Also gives above-the-fold
      images an instant start instead of waiting for IO's async callback. */
 let _docImgIO = null, _docHydrateCtx = null;
-const _figDone = img => { const s=img.closest(".docfig-screen"); if(s) s.classList.remove("pending"); };
+const _figDone = img => { const s=img.closest(".docfig-screen"); if(s){ s.classList.remove("pending"); classifyDocImage(img, s); } };
+/* a mostly-white image with dark marks is a line-art DIAGRAM (flow chart), not a photo — it
+   would render as a pale block on the dark screen. Detect it (sample a downscaled copy for the
+   light-pixel ratio) and flag it so CSS inverts it to light-on-dark, then the phosphor tint
+   colourises it to the theme. data: URLs are same-origin so the canvas read is untainted. */
+function classifyDocImage(img, screen){
+  if(!img.naturalWidth) return;
+  try{
+    const n=40, c=document.createElement("canvas"); c.width=c.height=n;
+    const ctx=c.getContext("2d"); ctx.drawImage(img, 0, 0, n, n);
+    const d=ctx.getImageData(0,0,n,n).data; let light=0;
+    for(let p=0;p<d.length;p+=4){ if(d[p]>210 && d[p+1]>210 && d[p+2]>210) light++; }
+    screen.classList.toggle("docfig-invert", light/(n*n) > 0.55);
+  }catch(e){ /* unsupported / tainted — treat as a normal photo */ }
+}
 const _figArm  = img => { img.addEventListener("load", ()=>_figDone(img), {once:true});
                           img.addEventListener("error", ()=>_figDone(img), {once:true}); };
 function _figSet(img, images){
