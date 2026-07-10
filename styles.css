@@ -468,15 +468,33 @@
   .brand.has-switch{ position:relative; }
   .brand-switch{ font:inherit; color:inherit; letter-spacing:inherit; text-shadow:inherit;
     background:transparent; border:0; padding:0; margin:0; cursor:pointer; display:inline-flex;
-    align-items:center; gap:.4em; text-align:left; }
+    align-items:center; gap:.5em; text-align:left; }
   .brand-switch small{ align-self:baseline; }
-  .brand-switch:hover{ color:var(--green-bright); }
-  /* a boxed caret, like a <select>'s arrow, so the big title reads unmistakably as a dropdown */
-  .brand-caret{ font-family:var(--font-body); font-size:.4em; line-height:1; color:var(--green);
-    border:1px solid var(--green-faint); padding:.3em .36em .22em; margin-left:.1em;
-    transition:border-color .12s, color .12s, background .12s; }
-  .brand-switch:hover .brand-caret{ border-color:var(--green); background:rgba(var(--green-rgb),.12); }
-  .brand.open .brand-caret{ border-color:var(--green); color:var(--green-bright); background:rgba(var(--green-rgb),.18); }
+  .brand-switch:hover .brand-title{ color:var(--green-bright); }
+  /* an explicit, labelled "SWITCH FACTION ▾" pill sits beside the wordmark so the masthead
+     reads unmistakably as a control, not a static logo. It carries a slow, gentle pulse to
+     draw the eye ("there's more than the database here"). */
+  .brand-switchbox{ display:inline-flex; align-items:center; gap:.55em; align-self:center;
+    font-family:var(--font-body); font-size:12px; line-height:1; letter-spacing:2px;
+    text-transform:uppercase; color:var(--green); text-shadow:none;
+    border:1px solid var(--green); background:rgba(var(--green-rgb),.09);
+    padding:.62em .7em; white-space:nowrap;
+    box-shadow:0 0 0 0 rgba(var(--green-rgb),.35);
+    transition:color .14s, border-color .14s, background .14s, box-shadow .14s;
+    animation:brandpulse 5.5s ease-in-out infinite; }
+  .brand-hint{ font-weight:bold; }
+  .brand-caret{ font-size:13px; line-height:1; transition:transform .16s; }
+  .brand-switch:hover .brand-switchbox{ color:var(--green-bright); border-color:var(--green-bright);
+    background:rgba(var(--green-rgb),.18); box-shadow:0 0 16px -4px rgba(var(--green-rgb),.6); animation:none; }
+  .brand.open .brand-switchbox{ color:var(--green-bright); border-color:var(--green-bright);
+    background:rgba(var(--green-rgb),.22); animation:none; }
+  .brand.open .brand-caret{ transform:rotate(180deg); }
+  @keyframes brandpulse{
+    0%, 82%, 100%{ box-shadow:0 0 0 0 rgba(var(--green-rgb),0); border-color:var(--green); }
+    88%{ box-shadow:0 0 18px -3px rgba(var(--green-rgb),.65); border-color:var(--green-bright); }
+    94%{ box-shadow:0 0 0 0 rgba(var(--green-rgb),0); border-color:var(--green); }
+  }
+  @media (prefers-reduced-motion:reduce){ .brand-switchbox{ animation:none; } }
   .brand-menu{ display:none; position:absolute; left:0; top:calc(100% + 8px); z-index:40;
     flex-direction:column; min-width:220px; padding:5px;
     background:var(--bg-panel-2); border:1px solid var(--green-faint);

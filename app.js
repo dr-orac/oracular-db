@@ -106,7 +106,11 @@ function renderBrand(){
   el.classList.add("has-switch");
   el.innerHTML =
     `<button class="brand-switch" id="faction-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Switch faction">`+
-      `<span class="brand-title">${title}</span><span class="brand-caret" aria-hidden="true">▾</span></button>`+
+      `<span class="brand-title">${title}</span>`+
+      `<span class="brand-switchbox" aria-hidden="true">`+
+        `<span class="brand-hint">Switch faction</span>`+
+        `<span class="brand-caret">▾</span>`+
+      `</span></button>`+
     `<div class="brand-menu" id="faction-menu" role="listbox" aria-label="Faction">`+
       FACTION_ORDER.map(id =>
         `<button class="brand-opt${id===currentFaction?' active':''}" type="button" role="option" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">${esc(FACTIONS[id].name)}</button>`
