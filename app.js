@@ -96,6 +96,7 @@ function showFactionComingSoon(f){
 function renderBrand(){
   const el = document.querySelector(".brand"); if(!el) return;
   const f = activeFaction();
+  document.title = `${f.brand} ${f.tagline}`;                     // browser tab follows the faction
   const title = `${esc(f.brand)} <small>${esc(f.tagline)}</small>`;
   el.classList.remove("open");                                   // a re-render always starts closed
   if(FACTION_ORDER.length < 2){ el.classList.remove("has-switch"); el.innerHTML = title; return; }
