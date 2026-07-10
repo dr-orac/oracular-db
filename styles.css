@@ -510,7 +510,7 @@
   /* find = the primary control: sits over the TOC rail exactly like the roster search sits over
      the list (same left edge + width), so the two views share one command-bar shape. */
   .docfind-wrap{ display:flex; align-items:center; gap:6px; flex:0 1 calc(var(--rail) - var(--sp-2)); min-width:170px;
-    background:var(--bg-panel); border:1px solid var(--green-faint); padding:4px 10px; }
+    background:var(--bg-panel); border:1px solid var(--green-faint); padding:6px 10px; }   /* same chrome + height as the roster .search box */
   /* sticky "current section" breadcrumb — updates as you scroll; secondary, pushed right */
   .docnow{ color:var(--green-dim); font-size:15px; letter-spacing:.3px; flex:0 1 auto; margin-left:auto;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
