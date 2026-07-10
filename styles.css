@@ -97,7 +97,7 @@
   body[data-font-head="workbench"] .card .cname{ font-family:"Workbench", monospace; font-size:19px; letter-spacing:.5px; line-height:1.2; text-transform:uppercase; }
   /* small / secondary text: drop the glow so it stays crisp and legible */
   .row-sub, .idcell .k, .conn-k, .spec-k, .logmeta, .composer-note, .uploadnote,
-  .statusline, .editnote, .tag, .chip, .crole, .cmeta, .row-name, .elabel{ text-shadow:none; }
+  .editnote, .tag, .chip, .crole, .cmeta, .row-name, .elabel{ text-shadow:none; }
 
   /* ---------- CRT overlay effects (toggle .crt on body) ---------- */
   .scanlines, .vignette, .flicker{ display:none; }
@@ -520,7 +520,6 @@
   .docbar{ display:none; }
   body[data-section]:not([data-section="roster"]) .docbar{ display:flex; }
   body[data-section]:not([data-section="roster"]) .toolbar{ display:none; }
-  body[data-section]:not([data-section="roster"]) .statusline{ visibility:hidden; }
 
   /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */
   .docview{ position:relative; display:flex; flex-direction:column; height:100%; min-height:0; padding:0; gap:10px; }   /* command bar now lives in the header; the TOC/content sit right under it, like the roster rail */
@@ -743,45 +742,6 @@
   .docreader th, .docreader thead td{ color:var(--bg); background:var(--green-dim);
     font-family:var(--font-head); letter-spacing:.5px; text-shadow:none; }
   .docreader tbody tr:nth-child(odd){ background:rgba(var(--green-rgb),.04); }
-
-  /* lightweight status readout — subdued chrome, the link dot is the only accent */
-  .statusline{
-    margin-top:5px; font-size:15px; color:var(--green-dim);
-    letter-spacing:1px; opacity:.78;
-    display:flex; gap:16px; flex-wrap:wrap; align-items:center;
-  }
-  .dot{ position:relative; color:var(--green); }
-  .dot.warn{ color:var(--amber); text-shadow:0 0 4px rgba(255,210,74,.6); }
-  /* ---------- activity indicators (busy link / background doc sync) ----------
-     A single-element CSS "signal ping": a ring expands off the dot and fades — reads as
-     a transmitted pulse, fitting the PIP-LINK language. Pure CSS, currentColor + tokens
-     only (so it follows the dot's colour under every preset — green normally, amber for
-     .warn), no layout shift (absolutely positioned over the existing glyph). */
-  .dot.busy::after{
-    content:""; position:absolute; inset:-2px; border-radius:50%;
-    border:1px solid currentColor; opacity:0; pointer-events:none;
-    animation:sigping 1.4s ease-out infinite;
-  }
-  @keyframes sigping{
-    0%{ transform:scale(.6); opacity:.9; }
-    70%{ transform:scale(2.4); opacity:0; }
-    100%{ opacity:0; }
-  }
-  /* small background-sync blip near SYNC — a quieter version of the same ping, shown
-     while a stale cached doc is silently re-fetching (see prepareDoc in app.js) */
-  .bgsync{
-    position:relative; display:inline-block; width:6px; height:6px; border-radius:50%;
-    background:var(--green-dim); opacity:0; transition:opacity .2s;
-  }
-  .bgsync.show{ opacity:1; }
-  .bgsync.show::after{
-    content:""; position:absolute; inset:-2px; border-radius:50%;
-    border:1px solid var(--green-dim); opacity:0; pointer-events:none;
-    animation:sigping 1.6s ease-out infinite;
-  }
-  @media (prefers-reduced-motion: reduce){
-    .dot.busy::after, .bgsync.show::after{ animation:none; opacity:.5; transform:scale(1.5); }
-  }
 
   /* ---------- toolbar ---------- */
   .toolbar{

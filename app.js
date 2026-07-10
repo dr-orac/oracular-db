@@ -89,8 +89,6 @@ function showFactionComingSoon(f){
   document.body.classList.add("coming-soon");
   $("#roster").classList.add("hidden"); $("#cards").classList.add("hidden");
   $("#state").classList.remove("hidden");
-  setLink("STANDBY");
-  $("#countinfo").textContent = ""; $("#syncinfo").textContent = "";
   $("#loadermsg").innerHTML = "⚑ " + esc(f.name.toUpperCase());
   $("#statesub").innerHTML = `Roster not linked yet — <b>${esc(f.name)}</b>'s archive will be connected soon.`;
 }
@@ -1266,12 +1264,6 @@ function render(){
       $("#roster").classList.add("hidden");
       renderCards();
     }
-    /* keep the header count truthful under filtering — show n/total when narrowed */
-    const total = state.model.characters.length;
-    const shown = filtered().length;
-    $("#countinfo").textContent = shown === total
-      ? total + " UNITS"
-      : shown + "/" + total + " UNITS";
   }catch(err){
     console.error("render failed:", err);
     toast("Render error — see console");
@@ -2243,19 +2235,13 @@ async function setCharacterIcon(slug, key){
 }
 
 /* ------------------------ load ------------------------ */
-function setLink(status, warn){
-  $("#linkstatus").textContent=status;
-  // every in-progress status (CONNECTING…/RE-SYNCING…/SAVING…/UPLOADING…) ends in "…" by
-  // convention — inferred rather than passed explicitly so existing call sites don't need
-  // touching. Terminal states (ONLINE/OFFLINE) never end in "…".
-  const busy = !warn && /…$/.test(status);
-  $("#linkdot").className = "dot"+(warn?" warn":"")+(busy?" busy":"");
-}
-/* tiny background-sync blip near #syncinfo: shown while a stale cached doc is silently
-   re-fetching (see prepareDoc). Reference-counted since both docs could go stale at once. */
-let _bgSyncCount=0;
-function bgSyncStart(){ _bgSyncCount++; const el=$("#bgsync"); if(el) el.classList.add("show"); }
-function bgSyncEnd(){ _bgSyncCount=Math.max(0,_bgSyncCount-1); if(_bgSyncCount===0){ const el=$("#bgsync"); if(el) el.classList.remove("show"); } }
+/* status line was removed; kept as a no-op so the ~18 save/upload/log/load call sites
+   (setLink("SAVING…"), setLink("ONLINE"), setLink("OFFLINE", true)…) don't need touching. */
+function setLink(status, warn){}
+/* background-sync blip was part of the removed status line; kept as no-ops so the doc
+   prefetch call sites (bgSyncStart / bgSyncEnd) don't need touching. */
+function bgSyncStart(){}
+function bgSyncEnd(){}
 function showState(title, sub, isError){
   $("#roster").classList.add("hidden");
   $("#cards").classList.add("hidden");
@@ -2282,8 +2268,6 @@ async function load(isRefresh){
     renderListControls(model);             // roster filter + sort controls
     if(state.selected>=model.characters.length) state.selected=0;
     setLink("ONLINE");
-    $("#countinfo").textContent=model.characters.length+" UNITS";
-    $("#syncinfo").textContent="SYNC "+new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
     render();
     if(!isRefresh) openFromHash();        // honour a permalink on first load
   }catch(err){
