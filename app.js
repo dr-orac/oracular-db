@@ -74,7 +74,9 @@ function applyFaction(id){
   renderBrand();
   renderNav();                                       // this faction's doc tabs (may be none)
   // if the doc tab we were on doesn't exist for this faction, fall back to the roster
-  if(currentSection!=="roster" && !factionDocs().some(d=>d.id===currentSection)) setSection("roster");
+  // (home + roster are universal, so they survive a faction switch)
+  if(currentSection==="home") setSection("home");     // re-render the tiles for this faction's docs
+  else if(currentSection!=="roster" && !factionDocs().some(d=>d.id===currentSection)) setSection("roster");
   else if(currentSection==="roster") showRosterFor(f);
 }
 /* show the roster for a faction: its live data if the sheet is linked, else a themed
@@ -1646,14 +1648,33 @@ let currentSection = "roster";
    tab's text colour). roster = personnel bust · lore = open book · roleplay = dialogue bubble;
    any future doc tab without its own icon falls back to a document glyph. */
 const NAV_ICONS = {
+  home:    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.5 11h2.3v9h5v-6h4.4v6h5v-9h2.3L12 3Z"/></svg>',
   roster:  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-8 8c0-3.6 3.6-6 8-6s8 2.4 8 6v.6H4V20Z"/></svg>',
   lore:    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.4C10.5 5.2 8.3 4.6 6 4.6c-1.1 0-2.1.1-3 .4v13.2c.9-.3 1.9-.4 3-.4 2.3 0 4.5.6 6 1.8V6.4Zm2 0v13.2c1.5-1.2 3.7-1.8 6-1.8 1.1 0 2.1.1 3 .4V5c-.9-.3-1.9-.4-3-.4-2.3 0-4.5.6-6 1.8Z"/></svg>',
   roleplay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c.55 0 1 .45 1 1v11c0 .55-.45 1-1 1H9l-4 4v-4H4c-.55 0-1-.45-1-1V5c0-.55.45-1 1-1Zm3 5h10v-2H7v2Zm0 4h7v-2H7v2Z"/></svg>',
   _default:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6V3Zm7 1.5V8h3.5L13 4.5Z"/></svg>',
 };
+/* one-line explainer per section, shown on the home tiles */
+const HOME_INFO = {
+  roster:   "Every member — dossiers, appearance, and story. Search, filter, browse.",
+  lore:     "The world and beliefs of the tribe — customs, spirits, and how things work.",
+  roleplay: "How to play well — voice, accent, conflict, and etiquette at the fire.",
+  _default: "An in-world document, rendered on the terminal.",
+};
+/* the home landing page: a full-height tile per section (icon + title + explainer). */
+function renderHome(){
+  const el=$("#home"); if(!el) return;
+  const items=[{id:"roster",label:"Roster"}].concat(factionDocs().map(d=>({id:d.id,label:d.label})));
+  el.innerHTML = `<div class="home-tiles">`+ items.map(it=>
+    `<button class="home-tile" data-section="${escAttr(it.id)}">`+
+      `<span class="home-ico">${NAV_ICONS[it.id]||NAV_ICONS._default}</span>`+
+      `<span class="home-tile-title">${esc(it.label)}</span>`+
+      `<span class="home-tile-desc">${esc(HOME_INFO[it.id]||HOME_INFO._default)}</span>`+
+    `</button>`).join("") + `</div>`;
+}
 function renderNav(){
   const nav=$("#topnav"); if(!nav) return;
-  const tabs=[{id:"roster", label:"Roster"}].concat(factionDocs().map(d=>({id:d.id, label:d.label})));
+  const tabs=[{id:"home", label:"Home"},{id:"roster", label:"Roster"}].concat(factionDocs().map(d=>({id:d.id, label:d.label})));
   nav.innerHTML = tabs.map(t=>
     `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}"><span class="navico">${NAV_ICONS[t.id]||NAV_ICONS._default}</span><span class="navlabel">${esc(t.label)}</span></button>`).join("");
   nav.classList.remove("hidden");   // always show the nav (at least Roster) so it stays put across factions
@@ -2079,16 +2100,22 @@ function focusDocFind(i){
 }
 function stepDocFind(dir){ if(_docFindMatches.length) focusDocFind(_docFindIdx+dir); }
 function setSection(id){
-  if(id!=="roster" && !factionDocs().some(d=>d.id===id)) id="roster";
+  if(id!=="home" && id!=="roster" && !factionDocs().some(d=>d.id===id)) id="roster";
   currentSection = id;
   document.body.setAttribute("data-section", id);
   document.querySelectorAll("#topnav .navtab").forEach(b=>{
     const on = b.dataset.section===id;
     b.classList.toggle("active", on); b.setAttribute("aria-selected", on);
   });
-  const isRoster = id==="roster";
-  $("#docview").classList.toggle("hidden", isRoster);
-  if(isRoster){
+  const isHome = id==="home", isRoster = id==="roster";
+  const home=$("#home"); if(home) home.classList.toggle("hidden", !isHome);
+  $("#docview").classList.toggle("hidden", isRoster || isHome);
+  if(isHome){
+    renderHome();
+    $("#roster").classList.add("hidden");
+    $("#cards").classList.add("hidden");
+    $("#state").classList.add("hidden");
+  }else if(isRoster){
     showRosterFor(activeFaction());                  // live data, or a themed coming-soon state
   }else{
     $("#roster").classList.add("hidden");
@@ -2100,6 +2127,10 @@ function setSection(id){
 }
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
+});
+/* home landing tiles navigate into their section, same as the nav tabs */
+$("#home").addEventListener("click", e=>{
+  const t=e.target.closest(".home-tile"); if(t) setSection(t.dataset.section);
 });
 /* prefetch a doc the moment its tab is hovered or focused (just-in-time cache warming) */
 ["pointerover","focusin"].forEach(ev => $("#topnav").addEventListener(ev, e=>{
@@ -2451,6 +2482,6 @@ function runBoot(){
   const v=localStorage.getItem("yuma-view"); if(v) setView(v);
   refreshCur();                      // fill the popover's collapsed-group value lines
   renderBrand(); wireFactionMenu();  // masthead = plain title (1 faction) or a switcher (2+)
-  renderNav();                       // build the active faction's Roster + docs section tabs
-  showRosterFor(activeFaction());    // load the tribe's roster, or a coming-soon state for an unlinked faction
+  renderNav();                       // build the active faction's Home + Roster + docs section tabs
+  setSection("home");                // land on the home page (big section tiles); roster loads on demand
 })();

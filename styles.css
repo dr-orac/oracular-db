@@ -518,8 +518,46 @@
      shows on a document — one at a time, same position. The statusline keeps its HEIGHT on docs
      (visibility, not display) so the command bar + index rail below never jump between views. */
   .docbar{ display:none; }
-  body[data-section]:not([data-section="roster"]) .docbar{ display:flex; }
+  body[data-section]:not([data-section="roster"]):not([data-section="home"]) .docbar{ display:flex; }
   body[data-section]:not([data-section="roster"]) .toolbar{ display:none; }
+  /* the home landing page has no command bar at all — it is its own full-bleed navigation */
+  body[data-section="home"] .toolbar,
+  body[data-section="home"] .docbar{ display:none; }
+
+  /* ---------- home landing page (full-height section tiles) ----------
+     The top nav's sections, blown up: one tall tile per section (icon + title + explainer).
+     "The buttons ARE the home page, just elongated full height." Tiles fill the viewport and
+     divide evenly by count; each is a big, obvious click target into that section. */
+  .home{ height:100%; min-height:0; overflow:auto; }
+  .home-tiles{ display:flex; flex-direction:column; gap:10px; min-height:100%;
+    padding:10px; box-sizing:border-box; }
+  .home-tile{
+    flex:1 1 0; min-height:120px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:14px; text-align:center; padding:24px 28px;
+    background:var(--bg-panel); color:var(--green);
+    border:1px solid var(--green-faint); cursor:pointer;
+    font-family:var(--font-head); position:relative; overflow:hidden;
+    transition:color .18s, border-color .18s, background .18s, box-shadow .18s, transform .12s;
+  }
+  .home-tile:hover, .home-tile:focus-visible{
+    color:var(--green-bright); border-color:var(--green);
+    background:var(--bg-panel-2); outline:none;
+    box-shadow:0 0 26px -8px rgba(var(--green-rgb),.5), inset 0 0 60px -40px rgba(var(--green-rgb),.6);
+  }
+  .home-tile:active{ transform:translateY(1px); }
+  .home-ico{ width:52px; height:52px; display:inline-flex; opacity:.92; }
+  .home-ico svg{ width:100%; height:100%; display:block; fill:currentColor;
+    filter:drop-shadow(0 0 10px rgba(var(--green-rgb),.35)); }
+  .home-tile-title{ font-size:clamp(20px, 3.4vw, 34px); letter-spacing:2px; text-transform:uppercase;
+    text-shadow:0 0 14px rgba(var(--green-rgb),.4); }
+  .home-tile-desc{ font-family:var(--font-body); font-size:clamp(13px, 1.5vw, 16px);
+    letter-spacing:.3px; color:var(--green-dim); max-width:52ch; line-height:1.5; }
+  .home-tile:hover .home-tile-desc, .home-tile:focus-visible .home-tile-desc{ color:var(--green); }
+  @media (max-width:640px){
+    .home-tile{ padding:18px 16px; min-height:96px; gap:10px; }
+    .home-ico{ width:40px; height:40px; }
+  }
 
   /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */
   .docview{ position:relative; display:flex; flex-direction:column; height:100%; min-height:0; padding:0; gap:10px; }   /* command bar now lives in the header; the TOC/content sit right under it, like the roster rail */
