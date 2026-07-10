@@ -43,7 +43,7 @@ const CONFIG = {
      theme   — a { color, bg } pair of keys from the Settings palette (THEMES / BGS)
      data    — { sheetId, gid } for THIS faction's roster (gid "" = the first tab) */
 const FACTIONS = {
-  brotherhood:{ name:"Brotherhood of Steel",       brand:"BROTHERHOOD OF STEEL",    tagline:"// CODEX-LINK", theme:{color:"red",    bg:"warm"},     data:{sheetId:"", gid:""}, docs:[] },
+  brotherhood:{ name:"Brotherhood of Steel",       brand:"BROTHERHOOD OF STEEL",    tagline:"// CODEX-LINK", theme:{color:"red",    bg:"warm"},     data:{sheetId:"1hG6V1ddnlr8jZZm8Rg0jJ4360WrH7zUD-TvNqaPkuUg", gid:"735572717"}, docs:[] },
   vault:      { name:"The Vault",                   brand:"THE VAULT",               tagline:"// VAULT-NET",  theme:{color:"blue",   bg:"cool"},     data:{sheetId:"", gid:""}, docs:[] },
   legion:     { name:"The Legion",                  brand:"THE LEGION",              tagline:"// TRVE-NET",   theme:{color:"orange", bg:"warm"},     data:{sheetId:"", gid:""}, docs:[] },
   bazaar:     { name:"The Bazaar",                  brand:"THE BAZAAR",              tagline:"// TRADE-NET",  theme:{color:"purple", bg:"cool"},     data:{sheetId:"", gid:""}, docs:[] },
@@ -535,14 +535,21 @@ function explicitIcon(ch){
    `match` = substrings tested against the normalised header text. */
 const FIELDS = {
   discord:      { match:["discord"],                          label:"Player (Discord)" },
-  usename:      { match:["use-name","use name"],              label:"Use-Name" },
+  usename:      { match:["use-name","use name","full name"],  label:"Use-Name" },
   honorific:    { match:["honorific","brave"],                label:"Brave-Name / Honorific" },
   truename:     { match:["true name"],                        label:"True Name" },
   birth:        { match:["birth","original name"],            label:"Birth Name" },
   address:      { match:["mode of address","favoured mode","address"], label:"Address As" },
   species:      { match:["species"],                          label:"Species" },
-  role:         { match:["usual role","role"],                label:"Role" },
+  role:         { match:["usual role","caste and rank","caste","rank","role"], label:"Role" },
   appearance:   { match:["appearance","age /","age/"],        label:"Age / Sex / Appearance", type:"block" },
+  /* fields specific to the Brotherhood roster (unmatched on the tribe sheet → simply not shown) */
+  origin:       { match:["origin"],                           label:"Origin", type:"block" },
+  armament:     { match:["preferred armament","armament"],    label:"Preferred Armament", type:"block" },
+  talents:      { match:["talents"],                          label:"Talents", type:"block" },
+  medical:      { match:["medical history","medical"],        label:"Medical History", type:"block" },
+  accomplishments:{ match:["accomplishments"],                label:"Accomplishments", type:"block" },
+  status:       { match:["status"],                           label:"Status" },
   spirit:       { match:["spirit animal"],                    label:"Spirit Animal", type:"block" },
   relationships:{ match:["relationship"],                     label:"Relationships", type:"lead" },
   plot:         { match:["plot"],                             label:"Key Plot Moments", type:"lead" },
@@ -558,8 +565,8 @@ const FIELDS = {
   icon:         { match:["icon","sigil","emblem","glyph"], label:"Icon" },
 };
 /* order shown in the dossier body (identity fields handled separately) */
-const ID_ORDER   = ["truename","birth","address","species","discord"];
-const BLOCK_ORDER = ["appearance","spirit","relationships","plot","notes","tastes","activities"];
+const ID_ORDER   = ["truename","birth","address","species","status","discord"];
+const BLOCK_ORDER = ["appearance","origin","armament","talents","medical","accomplishments","spirit","relationships","plot","notes","tastes","activities"];
 /* fields offered in edit mode; ta=true -> multi-line textarea. Image is handled by upload. */
 const EDIT_FIELDS = [
   ["usename",false],["honorific",false],["truename",false],["birth",false],
@@ -648,7 +655,8 @@ function mapColumns(headerRow){
 /* display rebrand: "the Yuma Tribe" → "the Tribe" everywhere it's shown (the underlying sheet
    keeps its own wording; this only relabels for display). Scoped to the phrase, so place-name
    "Yuma" on its own is left untouched. */
-const relabelTribe = s => (s||"").replace(/\bYuma Tribe\b/g, "Tribe");
+/* the "Yuma Tribe" → "Tribe" display rebrand is tribe-specific — don't rewrite other factions' data */
+const relabelTribe = s => (currentFaction==="tribe" ? (s||"").replace(/\bYuma Tribe\b/g, "Tribe") : (s||""));
 function buildModel(rows){
   // find header row: the one containing "discord" (or "use-name")
   let hIdx = rows.findIndex(r=>r.some(c=>{const x=norm(c);return x.includes("discord")||x.includes("use-name");}));
@@ -662,7 +670,7 @@ function buildModel(rows){
 
   const characters=[];
   const sections=[];           // ordered list of section names (for grouping)
-  let current=CONFIG.defaultSection;
+  let current=activeFaction().name || CONFIG.defaultSection;   // default section = the active faction's name
   sections.push(current);
 
   for(const r of dataRows){
@@ -689,8 +697,8 @@ function buildModel(rows){
     characters.push({ name:displayName, section:current, fields, search:norm(r.join(" ")) });
   }
 
-  // merge in code-defined extra characters (visitors etc. not present in the sheet)
-  for(const ex of (EXTRA_CHARACTERS||[])){
+  // merge in code-defined extra characters (visitors etc. not present in the sheet) — tribe only
+  for(const ex of (currentFaction==="tribe" ? (EXTRA_CHARACTERS||[]) : [])){
     const fields={}; for(const k in ex.fields) fields[k]=relabelTribe(ex.fields[k]);
     const sec=relabelTribe(ex.section||CONFIG.defaultSection);
     characters.push({ name: ex.name||fields.usename||"(unnamed)", section:sec, fields,
