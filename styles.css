@@ -468,10 +468,15 @@
   .brand.has-switch{ position:relative; }
   .brand-switch{ font:inherit; color:inherit; letter-spacing:inherit; text-shadow:inherit;
     background:transparent; border:0; padding:0; margin:0; cursor:pointer; display:inline-flex;
-    align-items:baseline; gap:.35em; text-align:left; }
-  .brand-switch:hover{ color:#fff; }
-  .brand-caret{ font-family:var(--font-body); font-size:.5em; color:var(--green-dim); transform:translateY(-.15em); }
-  .brand.open .brand-caret{ color:var(--green); }
+    align-items:center; gap:.4em; text-align:left; }
+  .brand-switch small{ align-self:baseline; }
+  .brand-switch:hover{ color:var(--green-bright); }
+  /* a boxed caret, like a <select>'s arrow, so the big title reads unmistakably as a dropdown */
+  .brand-caret{ font-family:var(--font-body); font-size:.4em; line-height:1; color:var(--green);
+    border:1px solid var(--green-faint); padding:.3em .36em .22em; margin-left:.1em;
+    transition:border-color .12s, color .12s, background .12s; }
+  .brand-switch:hover .brand-caret{ border-color:var(--green); background:rgba(var(--green-rgb),.12); }
+  .brand.open .brand-caret{ border-color:var(--green); color:var(--green-bright); background:rgba(var(--green-rgb),.18); }
   .brand-menu{ display:none; position:absolute; left:0; top:calc(100% + 8px); z-index:40;
     flex-direction:column; min-width:220px; padding:5px;
     background:var(--bg-panel-2); border:1px solid var(--green-faint);
@@ -541,7 +546,7 @@
   .docfind-wrap.no-match{ border-color:var(--amber); }
   .docfind-ico{ color:var(--green-dim); font-size:16px; flex:0 0 auto; }
   #docfind{ flex:1; min-width:0; background:transparent; border:0; outline:0; color:var(--green-bright);
-    font:inherit; font-size:16px; text-shadow:var(--glow); }
+    text-shadow:var(--glow); }   /* font-family + size come from the shared search-box rule */
   #docfind::placeholder{ color:var(--green-dim); }
   .docfind-count{ color:var(--green-dim); font-size:var(--fs-note); letter-spacing:.5px; white-space:nowrap;
     font-family:"IBM Plex Mono", ui-monospace, monospace; flex:0 0 auto; }
@@ -775,12 +780,17 @@
     background:var(--bg-panel); border:1px solid var(--green-faint);
     padding:6px 10px;
   }
+  /* the search input reads in a clean 17px mono (not the chunky display face) so the full
+     placeholder fits and the box matches the doc find box exactly — one search shape everywhere. */
+  .search input, #docfind{ font-family:"IBM Plex Mono", ui-monospace, "Share Tech Mono", monospace;
+    font-size:17px; line-height:1.25; }
   .search input{
     flex:1; background:transparent; border:0; outline:0;
-    color:var(--green-bright); font:inherit; text-shadow:var(--glow);
+    color:var(--green-bright); text-shadow:var(--glow);
   }
   .search input::placeholder{ color:var(--green-dim); }
-  .search .prompt{ color:var(--green-dim); }
+  .search .prompt{ color:var(--green-dim); font-size:17px; }
+  body.coming-soon .toolbar{ display:none; }   /* an unlinked faction has no roster to search or refresh */
   /* a11y skip-link: hidden until keyboard focus, then jumps past the header into the list */
   .skip-link{
     position:fixed; top:8px; left:8px; z-index:9800;

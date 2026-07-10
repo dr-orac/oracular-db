@@ -43,49 +43,68 @@ const CONFIG = {
      theme   — a { color, bg } pair of keys from the Settings palette (THEMES / BGS)
      data    — { sheetId, gid } for THIS faction's roster (gid "" = the first tab) */
 const FACTIONS = {
-  yuma: {
-    name:    "The Tribe",
-    brand:   "THE TRIBE DATABASE",
-    tagline: "// PIP-LINK",
-    theme:   { color: "green", bg: "phosphor" },
-    data:    { sheetId: CONFIG.sheetId, gid: CONFIG.gid },
-  },
-  /* ── TEMPLATE — copy this block, uncomment it, and add its id to FACTION_ORDER ──
-  ncr: {
-    name:    "NCR Registry",
-    brand:   "NCR PERSONNEL REGISTRY",
-    tagline: "// RANGER-NET",
-    theme:   { color: "gold", bg: "warm" },        // any colour + bg from Settings
-    data:    { sheetId: "PASTE_YOUR_SHEET_ID", gid: "" },
-  },
-  ──────────────────────────────────────────────────────────────────────────── */
+  brotherhood:{ name:"Brotherhood of Steel",       brand:"BROTHERHOOD OF STEEL",    tagline:"// CODEX-LINK", theme:{color:"red",    bg:"warm"},     data:{sheetId:"", gid:""}, docs:[] },
+  vault:      { name:"The Vault",                   brand:"THE VAULT",               tagline:"// VAULT-NET",  theme:{color:"blue",   bg:"cool"},     data:{sheetId:"", gid:""}, docs:[] },
+  legion:     { name:"The Legion",                  brand:"THE LEGION",              tagline:"// TRVE-NET",   theme:{color:"orange", bg:"warm"},     data:{sheetId:"", gid:""}, docs:[] },
+  bazaar:     { name:"The Bazaar",                  brand:"THE BAZAAR",              tagline:"// TRADE-NET",  theme:{color:"purple", bg:"cool"},     data:{sheetId:"", gid:""}, docs:[] },
+  tribe:      { name:"The Tribe",                   brand:"THE TRIBE DATABASE",      tagline:"// PIP-LINK",   theme:{color:"rust",   bg:"warm"},     data:{sheetId:CONFIG.sheetId, gid:CONFIG.gid}, docs:[] /* set to DOCS below */ },
+  enclave:    { name:"The Enclave",                 brand:"THE ENCLAVE",             tagline:"// EYEBOT-NET", theme:{color:"white",  bg:"slate"},    data:{sheetId:"", gid:""}, docs:[] },
+  unity:      { name:"The Unity",                   brand:"THE UNITY",               tagline:"// FEV-NET",    theme:{color:"green",  bg:"phosphor"}, data:{sheetId:"", gid:""}, docs:[] },
+  ncr:        { name:"The New California Republic", brand:"NEW CALIFORNIA REPUBLIC", tagline:"// RANGER-NET", theme:{color:"cyan",   bg:"cool"},     data:{sheetId:"", gid:""}, docs:[] },
 };
-const FACTION_ORDER = ["yuma"];   // switcher order — add each new faction id here too
-let currentFaction = FACTION_ORDER[0];
+/* Switcher order (top→bottom in the dropdown). Add each new faction id here too.
+   docs: a faction's own doc tabs — [] until linked (the Tribe's are wired below to DOCS).
+   data.sheetId: "" = "not linked yet" → the app shows a themed coming-soon roster. */
+const FACTION_ORDER = ["brotherhood","vault","legion","bazaar","tribe","enclave","unity","ncr"];
+const DEFAULT_FACTION = "tribe";   // the only faction with data today — new visitors start here
+let currentFaction = DEFAULT_FACTION;
 try{ const _f = localStorage.getItem("yuma-faction"); if(_f && FACTIONS[_f]) currentFaction = _f; }catch(e){}
-function activeFaction(){ return FACTIONS[currentFaction] || FACTIONS[FACTION_ORDER[0]]; }
+function activeFaction(){ return FACTIONS[currentFaction] || FACTIONS[DEFAULT_FACTION]; }
+function factionDocs(){ return activeFaction().docs || []; }         // this faction's doc tabs
+function factionLinked(f){ return /^[A-Za-z0-9_-]{20,}$/.test((f && f.data && f.data.sheetId) || ""); }
 /* switch faction: apply its skin (colour + bg + brand), persist it, and reload the
    roster only if this faction's data sheet differs from the current one. */
 function applyFaction(id){
   if(!FACTIONS[id]) return;
-  const prevSheet = activeFaction().data.sheetId;
   currentFaction = id;
   try{ localStorage.setItem("yuma-faction", id); }catch(e){}
   const f = FACTIONS[id];
   applyColor(f.theme.color); applyBg(f.theme.bg);   // the faction's distinct colour/style
   renderBrand();
-  if(f.data.sheetId !== prevSheet) load(false);     // repoint the roster at this faction's sheet
+  renderNav();                                       // this faction's doc tabs (may be none)
+  // if the doc tab we were on doesn't exist for this faction, fall back to the roster
+  if(currentSection!=="roster" && !factionDocs().some(d=>d.id===currentSection)) setSection("roster");
+  else if(currentSection==="roster") showRosterFor(f);
+}
+/* show the roster for a faction: its live data if the sheet is linked, else a themed
+   "coming soon" placeholder (so an unlinked faction never renders blank or another
+   faction's data). */
+function showRosterFor(f){
+  if(!factionLinked(f)){ showFactionComingSoon(f); return; }
+  document.body.classList.remove("coming-soon");
+  if(!state.model || state.loadedSheet !== f.data.sheetId) load(false);   // (re)fetch this faction's sheet
+  else render();                                                          // already in memory → instant
+}
+function showFactionComingSoon(f){
+  document.body.classList.add("coming-soon");
+  $("#roster").classList.add("hidden"); $("#cards").classList.add("hidden");
+  $("#state").classList.remove("hidden");
+  setLink("STANDBY");
+  $("#countinfo").textContent = ""; $("#syncinfo").textContent = "";
+  $("#loadermsg").innerHTML = "⚑ " + esc(f.name.toUpperCase());
+  $("#statesub").innerHTML = `Roster not linked yet — <b>${esc(f.name)}</b>'s archive will be connected soon.`;
 }
 /* the masthead title: a plain brand when there's one faction, a dropdown switcher with 2+. */
 function renderBrand(){
   const el = document.querySelector(".brand"); if(!el) return;
   const f = activeFaction();
   const title = `${esc(f.brand)} <small>${esc(f.tagline)}</small>`;
-  if(FACTION_ORDER.length < 2){ el.classList.remove("has-switch","open"); el.innerHTML = title; return; }
+  el.classList.remove("open");                                   // a re-render always starts closed
+  if(FACTION_ORDER.length < 2){ el.classList.remove("has-switch"); el.innerHTML = title; return; }
   el.classList.add("has-switch");
   el.innerHTML =
     `<button class="brand-switch" id="faction-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Switch faction">`+
-      `${title} <span class="brand-caret" aria-hidden="true">▾</span></button>`+
+      `<span class="brand-title">${title}</span><span class="brand-caret" aria-hidden="true">▾</span></button>`+
     `<div class="brand-menu" id="faction-menu" role="listbox" aria-label="Faction">`+
       FACTION_ORDER.map(id =>
         `<button class="brand-opt${id===currentFaction?' active':''}" type="button" role="option" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">${esc(FACTIONS[id].name)}</button>`
@@ -115,6 +134,7 @@ const DOCS = [
   { id: "lore",     label: "Tribe Lore",     docId: "1N_gne2LAWEJpjp6CfLhtvuHHD8bm97d64V0dHoXnlIE" },
   { id: "roleplay", label: "Roleplay Guide", docId: "1lQrOZ-UPOR8-FP58l8ZFMvSPOyYDb5BYvvkwg0dR1oU" },
 ];
+FACTIONS.tribe.docs = DOCS;   // the Tribe's doc tabs (other factions start with none — link later)
 
 /* Code-defined entries that aren't rows in the sheet (e.g. visiting characters).
    Each: { name, section, fields:{ usename, honorific, ... image, icon } }. */
@@ -138,8 +158,11 @@ const THEMES = {
   white:   { name:"White",   primary:"#dbe3df", bright:"#ffffff", dim:"#7c8884", faint:"#2b322f", glow:"rgba(219,227,223,.35)" },
   magenta: { name:"Magenta", primary:"#ff6cc0", bright:"#ffc8e8", dim:"#d44e9e", faint:"#3a1028", glow:"rgba(255,108,192,.5)" },
   red:     { name:"Red",     primary:"#ff6a5c", bright:"#ffc6bf", dim:"#dd5146", faint:"#3a1410", glow:"rgba(255,106,92,.5)" },
+  orange:  { name:"Orange",  primary:"#ff8a3c", bright:"#ffceaa", dim:"#c66a26", faint:"#3a2210", glow:"rgba(255,138,60,.5)" },
+  purple:  { name:"Purple",  primary:"#b98cff", bright:"#e2ccff", dim:"#8f63d6", faint:"#271042", glow:"rgba(185,140,255,.5)" },
+  rust:    { name:"Rust",    primary:"#e0a338", bright:"#ffd992", dim:"#9e7526", faint:"#382a10", glow:"rgba(224,163,56,.5)" },
 };
-const COLOR_ORDER = ["green","amber","gold","blue","cyan","white","magenta","red"];
+const COLOR_ORDER = ["green","amber","gold","rust","orange","red","magenta","purple","blue","cyan","white"];
 const BGS = {
   phosphor:{ name:"Phosphor",  bg:"#050a06", panel:"#07140c", panel2:"#0a1d11" },
   warm:    { name:"Warm Dark", bg:"#0a0704", panel:"#15100a", panel2:"#1f1810" },
@@ -1633,7 +1656,7 @@ const NAV_ICONS = {
 };
 function renderNav(){
   const nav=$("#topnav"); if(!nav) return;
-  const tabs=[{id:"roster", label:"Roster"}].concat(DOCS.map(d=>({id:d.id, label:d.label})));
+  const tabs=[{id:"roster", label:"Roster"}].concat(factionDocs().map(d=>({id:d.id, label:d.label})));
   nav.innerHTML = tabs.map(t=>
     `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}"><span class="navico">${NAV_ICONS[t.id]||NAV_ICONS._default}</span><span class="navlabel">${esc(t.label)}</span></button>`).join("");
   nav.classList.toggle("hidden", tabs.length < 2);   // nothing to switch to → no nav
@@ -2027,7 +2050,7 @@ function focusDocFind(i){
 }
 function stepDocFind(dir){ if(_docFindMatches.length) focusDocFind(_docFindIdx+dir); }
 function setSection(id){
-  if(id!=="roster" && !DOCS.some(d=>d.id===id)) id="roster";
+  if(id!=="roster" && !factionDocs().some(d=>d.id===id)) id="roster";
   currentSection = id;
   document.body.setAttribute("data-section", id);
   document.querySelectorAll("#topnav .navtab").forEach(b=>{
@@ -2037,12 +2060,12 @@ function setSection(id){
   const isRoster = id==="roster";
   $("#docview").classList.toggle("hidden", isRoster);
   if(isRoster){
-    render();                                        // restore roster/cards per state.view
+    showRosterFor(activeFaction());                  // live data, or a themed coming-soon state
   }else{
     $("#roster").classList.add("hidden");
     $("#cards").classList.add("hidden");
     $("#state").classList.add("hidden");
-    const doc=DOCS.find(d=>d.id===id);
+    const doc=factionDocs().find(d=>d.id===id);
     if(doc) loadDoc(doc);
   }
 }
@@ -2052,7 +2075,7 @@ $("#topnav").addEventListener("click", e=>{
 /* prefetch a doc the moment its tab is hovered or focused (just-in-time cache warming) */
 ["pointerover","focusin"].forEach(ev => $("#topnav").addEventListener(ev, e=>{
   const b=e.target.closest(".navtab"); if(!b) return;
-  const doc=DOCS.find(d=>d.id===b.dataset.section); if(doc) prefetchDoc(doc.docId);
+  const doc=factionDocs().find(d=>d.id===b.dataset.section); if(doc) prefetchDoc(doc.docId);
 }));
 /* on doc scroll: back-to-top visibility + sticky section / sidebar tracking (rAF-throttled)
    + the image-hydration fallback pass (timestamp-throttled — NOT rAF, which is suspended
@@ -2239,7 +2262,8 @@ function showState(title, sub, isError){
 }
 
 async function load(isRefresh){
-  if(!isRefresh) showState("ACCESSING PIP-LINK", "Establishing read-only link to the tribe archive…");
+  document.body.classList.remove("coming-soon");
+  if(!isRefresh) showState("ACCESSING PIP-LINK", "Establishing read-only link to the archive…");
   setLink(isRefresh?"RE-SYNCING…":"CONNECTING…");
   try{
     const res=await fetch(sheetUrl(), {cache:"no-store"});
@@ -2249,6 +2273,7 @@ async function load(isRefresh){
     const model=buildModel(rows);
     if(!model.characters.length) throw new Error("No character rows found");
     state.model=model;
+    state.loadedSheet=effectiveSheetId();  // remember which faction's sheet is in memory
     buildNameIndex(model);                 // for cross-linking names in dossiers
     buildConnections(model);               // mentions / mentioned-by graph data
     renderListControls(model);             // roster filter + sort controls
@@ -2405,7 +2430,7 @@ function runBoot(){
   $("#crt-toggle").classList.toggle("active", crtOn);
   const v=localStorage.getItem("yuma-view"); if(v) setView(v);
   refreshCur();                      // fill the popover's collapsed-group value lines
-  renderNav();                       // build the Roster + docs section tabs
   renderBrand(); wireFactionMenu();  // masthead = plain title (1 faction) or a switcher (2+)
-  load(false);                       // docs warm on tab hover/focus (see prefetchDoc) — not blanket-prefetched
+  renderNav();                       // build the active faction's Roster + docs section tabs
+  showRosterFor(activeFaction());    // load the tribe's roster, or a coming-soon state for an unlinked faction
 })();
