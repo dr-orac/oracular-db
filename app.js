@@ -69,7 +69,8 @@ function applyFaction(id){
   currentFaction = id;
   try{ localStorage.setItem("yuma-faction", id); }catch(e){}
   const f = FACTIONS[id];
-  applyColor(f.theme.color); applyBg(f.theme.bg);   // the faction's distinct colour/style
+  applyColor(localStorage.getItem("yuma-color-"+id) || f.theme.color);   // this faction's colour (its override, else its signature)
+  applyBg(localStorage.getItem("yuma-bg-"+id) || f.theme.bg);
   renderBrand();
   renderNav();                                       // this faction's doc tabs (may be none)
   // if the doc tab we were on doesn't exist for this faction, fall back to the roster
@@ -234,13 +235,13 @@ function applyColor(key){
   r.setProperty("--green-dim",t.dim);  r.setProperty("--green-faint",t.faint);
   r.setProperty("--green-rgb", hexToRgbTriplet(t.primary));   // translucent fills/glows follow the preset
   r.setProperty("--glow","0 0 2px "+t.glow);     // softer glow for legibility
-  localStorage.setItem("yuma-color",key);
+  localStorage.setItem("yuma-color-"+currentFaction, key);   // colour override is remembered PER FACTION
   document.querySelectorAll("#color-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 function applyBg(key){
   const b=BGS[key]||BGS.phosphor, r=document.documentElement.style;
   r.setProperty("--bg",b.bg); r.setProperty("--bg-panel",b.panel); r.setProperty("--bg-panel-2",b.panel2);
-  localStorage.setItem("yuma-bg",key);
+  localStorage.setItem("yuma-bg-"+currentFaction, key);   // bg override is remembered PER FACTION
   document.querySelectorAll("#bg-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
   /* keep the browser chrome (mobile tab bar, PWA splash) in sync with the picked background */
   const tc = document.querySelector('meta[name="theme-color"]'); if(tc) tc.setAttribute("content", b.bg);
@@ -425,7 +426,7 @@ function buildSettings(){
    popover communicates state without opening every group. Also syncs aria-checked. */
 function refreshCur(){
   const headK=document.body.dataset.fontHead||"fallout", bodyK=document.body.dataset.fontBody||"fallout";
-  const colorK=localStorage.getItem("yuma-color")||"green", bgK=localStorage.getItem("yuma-bg")||"phosphor";
+  const colorK=localStorage.getItem("yuma-color-"+currentFaction)||activeFaction().theme.color, bgK=localStorage.getItem("yuma-bg-"+currentFaction)||activeFaction().theme.bg;
   const set=(id,txt)=>{ const el=document.querySelector(id); if(el) el.textContent=txt; };
   set("#cur-type", (FACES[headK]||FACES.fallout).name + (bodyK!==headK ? " / "+(FACES[bodyK]||FACES.fallout).name : ""));
   set("#cur-colour", (THEMES[colorK]||THEMES.green).name + " · " + (BGS[bgK]||BGS.phosphor).name);
@@ -2434,8 +2435,8 @@ function runBoot(){
   ["title","head","body"].forEach(kind=>
     applyDocFont(kind, localStorage.getItem("yuma-docfont-"+kind) || DOC_FONT_DEFAULT[kind]));
   applyTextSize(localStorage.getItem("yuma-textsize") || "auto");  /* "auto" follows the body font; a stored manual size wins */
-  applyColor(localStorage.getItem("yuma-color") || activeFaction().theme.color);  /* faction sets the default colour; a user's stored pick still wins */
-  applyBg(localStorage.getItem("yuma-bg") || activeFaction().theme.bg);
+  applyColor(localStorage.getItem("yuma-color-"+currentFaction) || activeFaction().theme.color);  /* each faction loads in ITS signature colour (Tribe = rust/yellow), unless overridden for that faction */
+  applyBg(localStorage.getItem("yuma-bg-"+currentFaction) || activeFaction().theme.bg);
   applyFrame(localStorage.getItem("yuma-frame") || "screen");
   applyFrameTint(localStorage.getItem("yuma-frametint") || "olive");
   applyGlass(localStorage.getItem("yuma-sheen") || "off");
