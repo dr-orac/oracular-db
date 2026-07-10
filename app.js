@@ -1544,11 +1544,20 @@ function setView(v){
 
 /* ---------- top-level section nav: Roster + embedded Google Docs ---------- */
 let currentSection = "roster";
+/* flat 2D Fallout-style tab glyphs (solid silhouettes, fill:currentColor so they track the
+   tab's text colour). roster = personnel bust · lore = open book · roleplay = dialogue bubble;
+   any future doc tab without its own icon falls back to a document glyph. */
+const NAV_ICONS = {
+  roster:  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-8 8c0-3.6 3.6-6 8-6s8 2.4 8 6v.6H4V20Z"/></svg>',
+  lore:    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.4C10.5 5.2 8.3 4.6 6 4.6c-1.1 0-2.1.1-3 .4v13.2c.9-.3 1.9-.4 3-.4 2.3 0 4.5.6 6 1.8V6.4Zm2 0v13.2c1.5-1.2 3.7-1.8 6-1.8 1.1 0 2.1.1 3 .4V5c-.9-.3-1.9-.4-3-.4-2.3 0-4.5.6-6 1.8Z"/></svg>',
+  roleplay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c.55 0 1 .45 1 1v11c0 .55-.45 1-1 1H9l-4 4v-4H4c-.55 0-1-.45-1-1V5c0-.55.45-1 1-1Zm3 5h10v-2H7v2Zm0 4h7v-2H7v2Z"/></svg>',
+  _default:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6V3Zm7 1.5V8h3.5L13 4.5Z"/></svg>',
+};
 function renderNav(){
   const nav=$("#topnav"); if(!nav) return;
   const tabs=[{id:"roster", label:"Roster"}].concat(DOCS.map(d=>({id:d.id, label:d.label})));
   nav.innerHTML = tabs.map(t=>
-    `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}">${esc(t.label)}</button>`).join("");
+    `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}"><span class="navico">${NAV_ICONS[t.id]||NAV_ICONS._default}</span><span class="navlabel">${esc(t.label)}</span></button>`).join("");
   nav.classList.toggle("hidden", tabs.length < 2);   // nothing to switch to → no nav
 }
 /* Re-render a Google Doc in the terminal theme. We fetch the doc's HTML export
