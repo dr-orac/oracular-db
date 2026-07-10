@@ -1758,6 +1758,14 @@ function docClean(node){
         : `<p class="doc-subtitle">${inner}</p>`;
       return;
     }
+    // a bullet that is ENTIRELY one quoted phrase → the "quoted speech" style, consistently.
+    // docText's inline quote-wrap only fires when a whole "…" sits in one text node, so quotes
+    // Google split across spans were missed → identical quote bullets styled inconsistently.
+    // Detect at the block level (full text) so every quote bullet matches.
+    if(tag==="li" && /^["“”][^"“”]{1,300}["“”]$/.test(n.textContent.trim())){
+      out+=`<li><span class="dq">${esc(relabelTribe(n.textContent.trim()))}</span></li>`;
+      return;
+    }
     const id=n.getAttribute("id");                       // keep heading anchors so the TOC can jump
     const attr=(id && /^[\w.:-]+$/.test(id) ? ` id="${escAttr(id)}"` : "")
       + (tag==="h1" && /^\s*part\b/i.test(n.textContent) ? ' class="part"' : "");
