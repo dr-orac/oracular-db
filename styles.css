@@ -716,14 +716,22 @@
      caption. By default the image is TINTED to the screen phosphor (green monochrome) to match
      the portraits; Settings → Image Colour → Original restores true colour (see the
      body[data-imgcolor="original"] rules below). Hovering fades the scanlines. */
-  /* …EXCEPT figures, which bleed the full pane width */
-  .docreader > .docfig{ grid-column:1 / -1; margin:2.4em 0; }
-  /* the image IS the screen now — no bezel/reticle frame. A top+bottom mask melts the edges
-     into the phosphor (doc images carry their text mid-frame, which stays crisp), and the
-     scanline overlay is softened so any text overlaid on the image stays readable. */
+  /* figures span the grid but sit inside ~10% side buffers (a consistent, calmer width, roughly
+     the reading measure) rather than edge-to-edge. */
+  .docreader > .docfig{ grid-column:1 / -1; margin:2.4em 0; padding-inline:10%; }
+  /* the image IS the screen — no bezel. A mask melts ALL FOUR edges into the phosphor (doc images
+     carry their text mid-frame, which stays crisp); the two gradients are intersected. The
+     scanline overlay is softened so overlaid text stays readable. (Inverted diagrams override
+     mask to none below — a flow chart shouldn't fade off.) */
   .docreader .docfig-screen{ position:relative;
-    -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 11%, #000 89%, transparent 100%);
-            mask-image:linear-gradient(to bottom, transparent 0, #000 11%, #000 89%, transparent 100%); }
+    -webkit-mask-image:
+      linear-gradient(to bottom, transparent 0, #000 10%, #000 90%, transparent 100%),
+      linear-gradient(to right,  transparent 0, #000 7%,  #000 93%, transparent 100%);
+    -webkit-mask-composite:source-in;
+    mask-image:
+      linear-gradient(to bottom, transparent 0, #000 10%, #000 90%, transparent 100%),
+      linear-gradient(to right,  transparent 0, #000 7%,  #000 93%, transparent 100%);
+    mask-composite:intersect; }
   .docreader .docfig-screen::after{ content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
     background:repeating-linear-gradient(to bottom, rgba(0,0,0,.14) 0 1px, transparent 1px 3px);
     mix-blend-mode:multiply; opacity:.28; transition:opacity .25s; }
@@ -731,10 +739,10 @@
   .docreader .docfig img{ display:block; width:100%; height:auto; opacity:1;
     /* desaturate; the phosphor colour comes from the theme-tracking tint below (so doc images
        match the portraits AND the active faction's colour — amber, red, blue…). */
-    filter:grayscale(1) brightness(1.32) contrast(1.06);   /* brighter, to survive the multiply-tint dimming */
+    filter:grayscale(1) brightness(1.16) contrast(1.12);   /* a touch brighter to offset the tint, without blowing out detail */
     transition:opacity .3s, filter .3s; }
   .docreader .docfig-tint{ position:absolute; inset:0; z-index:1; pointer-events:none;
-    background:var(--green); mix-blend-mode:multiply; opacity:.5; }
+    background:var(--green); mix-blend-mode:multiply; opacity:.42; }   /* lighter tint → images keep their detail */
   /* auto-detected line-art diagram (flow chart): INVERT it (dark lines on white → light lines on
      the dark screen); the tint above then colourises the light lines to the theme. Don't fade its
      edges or lay heavy scanlines over the linework. */
@@ -966,7 +974,7 @@
   .portrait img{
     width:100%; height:100%; object-fit:cover; display:block;
     image-rendering:pixelated;                 /* keep pixel-art sprites crisp */
-    filter:grayscale(1) brightness(1.5) contrast(1.28);   /* bright enough to survive the phosphor multiply-tint */
+    filter:grayscale(1) brightness(1.32) contrast(1.3);   /* brighter than the old pale grey, detail intact under the tint */
   }
   .portrait .tint{                 /* green phosphor wash */
     position:absolute; inset:0; background:var(--green);
@@ -1296,6 +1304,7 @@
     .docnow{ display:none; }          /* breadcrumb hidden on narrow screens (bar too tight) */
     .docscroll{ padding:8px 16px 60px; }
     .docreader{ font-size:16px; }
+    .docreader > .docfig{ padding-inline:0; }   /* small screen: let figures use the full width */
     .docreader table{ min-width:460px; }   /* scroll horizontally in its wrapper, not cram */
     .doctitle{ font-size:19px; }
     .doclink{ font-size:15px; }
