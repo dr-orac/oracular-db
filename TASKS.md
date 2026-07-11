@@ -713,3 +713,47 @@ Make the home section tiles look impressive (study real web landing patterns): s
 hierarchy, depth/framing, richer hover (lift, glow, arrow/CTA reveal, icon motion), better use of the
 full-height space, maybe a faint terminal texture or per-section accent. Keep it on-theme + responsive
 + reduced-motion-safe. It's the first thing visitors see — it should feel designed, not utilitarian.
+
+## ── Batch 11 (2026-07-11) — deep-link URLs, key rename, icons, wiki ──
+
+## T48b · URL deep-linking (hash router) — MED [now]
+Make the URL reflect the current view so people can link to a faction/section/character/doc-section.
+Use HASH routing (not History API paths): it's client-side only — ZERO extra loading, no server
+round-trip, no 404 risk on static GitHub Pages. Scheme, clear words + `/` only:
+  #<faction>/<section>[/<target>]
+  #tribe/roster · #tribe/roster/big-brom-matlok · #tribe/lore · #tribe/lore/relations-to-other-factions
+  #home (faction-agnostic landing)
+- `applyRoute(hash)` parses → applyFaction + setSection + open char / scroll to heading.
+- `routeToHash()` writes the hash on nav (replaceState, no history spam for scroll; pushState for clicks).
+- hashchange → applyRoute (back/forward); guard a re-entrancy flag so our own writes don't loop.
+- Keep legacy `#c=<slug>` / `?c=<slug>` (the c/ OG stubs) working → normalise to the new scheme.
+
+## T49b · Rename the legacy `yuma-*` keys → `mdb-*` — SMALL [now]
+Dev-only storage keys (localStorage `yuma-color`, `yuma-font-*`, `yuma-faction`, … + `YUMA_SHEET_
+OVERRIDE`, IndexedDB `yuma-docdb`) still say "yuma" from the old project name. No users yet → no
+migration needed. Rename `yuma-` → `mdb-` in app.js AND tools/preview.py (which injects the override).
+Fix other stale-name entropy spotted in passing (leave the repo/folder name — that's a bigger call).
+
+## T50b · Larger, Fallout-style icons for the menu + home — MED [design]
+The nav/faction/section glyphs are small flat silhouettes. Make them LARGER and more Fallout-styled
+(chunkier, bolder, more iconic — Pip-Boy perk-icon energy) in the top nav, the faction picker, and the
+home tiles/row. Keep fill:currentColor tinting + reduced-motion. (First pass: bump sizes; then refine
+the drawing.)
+
+## T51b · List/Cards toggle needs more internal padding — TINY [now]
+`.seg button` (List / Cards) is cramped. Add vertical + horizontal padding so the pill breathes.
+
+## T35 · WIKI reader — FEASIBILITY CONFIRMED, ready to build — LARGE [roadmap→build]
+Target: https://wiki.misfitsystems.net (MediaWiki). ✅ Verified 2026-07-11: `api.php?action=parse&
+page=<Page>&prop=text|sections&format=json&formatversion=2&origin=*` is **CORS-enabled** (browser fetch
+returns `type:"cors"`, full parsed HTML + section anchors). So NO backend/proxy needed — same client-
+side model as the Google-Doc reader. Plan:
+  - Generalise the content source: a section can be `{type:"gdoc", docId}` OR `{type:"wiki", page}`.
+  - `loadWiki(page)`: fetch the parse API, take `parse.text`, run it through `docClean` (already a
+    strict whitelist sanitiser — reuse it), theme with the doc-reader CSS. Cache like docs (IndexedDB).
+  - Rewrite internal links (`/index.php/Page` or `/wiki/Page`, and `#anchor`) to in-app routes so
+    clicking a wiki link loads that page in-theme instead of leaving the site; strip edit/`action=`
+    links. Section anchors from `parse.sections` feed the TOC + deep links (ties into T48b).
+  - Keep the Google-Doc reader + Sheets roster working alongside; the wiki is an ADDITIONAL source.
+  - Nice: the Main Page already ships dark-monospace inline styles — decide whether to keep or strip
+    them so our theme fully owns the look (probably strip inline color/bg in docClean, keep structure).
