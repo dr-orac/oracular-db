@@ -1701,7 +1701,9 @@ function slugify(s){ return (s||"").toString().toLowerCase().trim()
 /* write the current view to the URL (target = character slug in roster, or heading slug in a doc) */
 function writeRoute(target){
   if(_routing) return;
+  // the wiki is umbrella content (not faction-scoped) → a top-level #wiki/<Page> route
   const h = currentSection==="home" ? "home"
+          : currentSection==="wiki" ? "wiki" + (_wikiPage && _wikiPage!==WIKI.home ? "/"+encodeURIComponent(_wikiPage) : "")
           : currentFaction + "/" + currentSection + (target ? "/"+target : "");
   const full = "#" + h;
   if(location.hash !== full){ try{ history.replaceState(null,"",full); }catch(e){} }
@@ -1724,6 +1726,13 @@ function applyRoute(){
     if(r.faction && FACTIONS[r.faction] && r.faction!==currentFaction) applyFaction(r.faction);
     let sec = r.section || "home";
     if(sec!=="home" && sec!=="roster" && sec!=="wiki" && !factionDocs().some(d=>d.id===sec)) sec="roster";
+    if(sec==="wiki"){                        // #wiki/<Page> — the target IS the wiki page to open
+      const pg = r.target || WIKI.home;
+      if(sec!==currentSection){ _wikiPage = pg; setSection("wiki"); }   // setSection loads _wikiPage
+      else if(pg!==_wikiPage){ loadWiki(pg); }
+      _pendingTarget = null;
+      return;
+    }
     if(sec!==currentSection) setSection(sec);
     _pendingTarget = r.target || null;
     if(sec==="roster") openPendingChar();   // doc anchors are consumed by loadDoc when it finishes
@@ -2318,11 +2327,15 @@ async function loadWiki(page){
     }
     tmp.querySelectorAll("a[href]").forEach(a=>a.setAttribute("href", wikiAbs(a.getAttribute("href"))));
     docBoldClasses=new Set(); docItalicClasses=new Set(); docTitleCount=0; _docImgSink=null;   // reset docClean state
-    reader.innerHTML = docClean(tmp);
+    // docClean strips block wrappers (divs), so wiki content comes back as loose inline/text runs.
+    // .docreader is a grid (1fr · centre measure · 1fr) — loose runs would land in the narrow side
+    // column (one word per line). Wrap them in ONE block so they sit in the centre column and flow.
+    reader.innerHTML = `<div class="wikibody">${docClean(tmp)}</div>`;
     styleTOC(reader); buildDocSidebar(reader); trackDocSection();
     reader.dataset.docid = "wiki:"+page;
     $("#docnow").textContent = "› "+page.replace(/_/g," ");
     status.className="docstatus"; status.textContent="";
+    writeRoute();                                             // reflect the loaded wiki page in the URL
   }catch(e){
     if(currentSection!=="wiki") return;
     stopDocLoader(); status.className="docstatus error";
