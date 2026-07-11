@@ -1239,8 +1239,10 @@
   /* cards view */
   .cards{
     height:100%; overflow:auto; min-height:0;
-    display:grid; grid-template-columns:repeat(auto-fill, minmax(340px,1fr));
-    gap:16px; padding:18px; align-content:start;
+    /* fewer, roomier cards by default; min(100%,…) clamps the track to the container on narrow
+       screens so a card never overflows (a raw 440px min would exceed a phone's width). */
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 440px), 1fr));
+    gap:18px; padding:18px; align-content:start;
   }
   /* Cards-per-row (Settings). "Auto" = the responsive fill above. Fixed counts apply only on
      wider viewports so a chosen 4-up never squeezes into tiny cards on a phone (there it falls
@@ -1260,8 +1262,18 @@
      collided with long names) */
   .card .cplayer{ margin-top:15px; padding-top:11px; border-top:1px dashed var(--fg-faint);
     font-size:17px; letter-spacing:1px; text-transform:uppercase; color:var(--fg-dim); text-shadow:none; }
-  .card .card-top{ display:flex; gap:16px; align-items:flex-start; }
+  .card .card-top{ display:flex; gap:18px; align-items:flex-start; }
   .card .card-id{ min-width:0; }
+  /* card portrait: bigger + a framed phosphor screen (a calmer take on the dossier .lg frame) so the
+     photo reads as a proper mugshot, not a thumbnail. */
+  .card .portrait.sm{ width:124px; height:124px; border-color:var(--fg-dim);
+    box-shadow:0 0 0 1px var(--fg-dim), 0 0 13px -4px rgba(var(--fg-rgb),.42),
+      inset 0 0 20px -8px rgba(var(--fg-rgb),.4), 0 4px 14px -8px rgba(0,0,0,.7); }
+  .card:hover .portrait.sm{ border-color:var(--fg); box-shadow:0 0 0 1px var(--fg),
+    0 0 16px -3px rgba(var(--fg-rgb),.55), inset 0 0 22px -8px rgba(var(--fg-rgb),.45), 0 4px 14px -8px rgba(0,0,0,.7); }
+  .card .portrait.sm .upbtn, .card .portrait.sm .iconbtn{ width:27px; height:27px; bottom:6px; }
+  .card .portrait.sm .upbtn{ right:6px; } .card .portrait.sm .iconbtn{ left:6px; }
+  .card .portrait.sm .upbtn svg, .card .portrait.sm .iconbtn svg{ width:14px; height:14px; }
   .card .cname{ font-family:var(--font-head); font-size:30px; line-height:1.08; color:var(--fg-bright); text-shadow:var(--glow-strong); }
   .card .chon{ font-size:18px; color:var(--fg); font-style:italic; margin-top:4px; }
   .card .crole{ font-size:18px; color:var(--fg-dim); margin-top:8px; line-height:1.45; }
@@ -1720,6 +1732,11 @@
     .rel-scroll{ padding:18px 16px 60px; }
     .rel-head{ flex-direction:column; gap:var(--sp-3); }
     .rel-cards{ grid-template-columns:1fr; }
+    /* cards: a smaller mugshot + name so the header sits comfortably beside the portrait on phones */
+    .card{ padding:16px; }
+    .card .card-top{ gap:14px; }
+    .card .portrait.sm{ width:88px; height:88px; }
+    .card .cname{ font-size:22px; }
     /* compact the ROW-1 boxes (faction + home/wiki) together on narrow screens */
     .faction-name, .navbox .navlabel{ font-size:18px; }
     .faction-box, .navbox{ gap:10px; }

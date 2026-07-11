@@ -17,6 +17,15 @@ Google Sheets, network-blocked here) — implement carefully + verify on the LIV
 - Keep the phosphor tint + the CRT frame; mind mobile. Acceptance: cards read spacious + legible, photos
   prominent, plus-to-upload obvious; verified on the live site.
 
+### T57 — Cards layout DONE (2026-07-11)
+Shipped the cards redesign: plus-to-upload already done earlier; now **fewer, roomier cards** (grid min
+340→440, clamped with `minmax(min(100%,440px),1fr)` so a card never overflows a phone) and a **larger,
+framed portrait** (card `.portrait.sm` 74→124px with a calmer version of the dossier `.lg` phosphor
+frame + a hover lift; 88px on mobile so the name fits beside it). Verified: desktop screenshot (proper
+mugshot, name/role/meta/appearance/tags well laid out); mobile measured clean (no overflow, long names
+like "Chupacabra-Stalks" unclipped). STILL PENDING on live data: confirm real uploaded photos crop/tint
+well at 124px (sandbox can't load Google-hosted images).
+
 ## T58 · Menu tiers — consistent + harmonious — DONE 2026-07-11 (fdd9ece + this commit)
 Resolved (user steer): the two tiers are a deliberate SIZE HIERARCHY, not one flat scale. ROW 1
 (HOME/FACTION/WIKI) all read at the FACTION box's level — HOME/WIKI (`.navbox`) now SHARE the
