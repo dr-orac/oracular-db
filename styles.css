@@ -490,7 +490,7 @@
   /* the "FACTION" legend rides the top border, fieldset-style */
   .faction-legend{ position:absolute; top:0; left:13px; transform:translateY(-52%); padding:0 6px;
     background:var(--bg);                             /* masks the border behind the word */
-    font-family:var(--font-body); font-size:11px; letter-spacing:3px; text-transform:uppercase;
+    font-family:var(--font-body); font-size:12px; letter-spacing:2.5px; text-transform:uppercase;
     color:var(--fg-dim); text-shadow:none; }
   .faction-name{ font-family:"Workbench","Gothic 821",sans-serif; font-size:22px; line-height:1;
     letter-spacing:.5px; text-transform:uppercase; white-space:nowrap;
