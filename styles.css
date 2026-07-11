@@ -492,6 +492,12 @@
     letter-spacing:.5px; text-transform:uppercase; white-space:nowrap;
     text-shadow:0 0 6px rgba(var(--fg-rgb),.4); }
   /* the generous Fallout-style arrow (chunky solid chevron) */
+  /* the active faction's glyph, at the left of the box */
+  .faction-ico{ display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
+    width:28px; height:28px; color:var(--fg); }
+  .faction-ico svg{ width:100%; height:100%; fill:currentColor;
+    filter:drop-shadow(0 0 4px rgba(var(--fg-rgb),.4)); }
+  .faction-box:hover .faction-ico, .brand.open .faction-ico{ color:var(--fg-bright); }
   .faction-arrow{ display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
     width:26px; height:26px; color:var(--fg);
     transition:transform .32s cubic-bezier(.34,1.4,.5,1); }
@@ -513,13 +519,16 @@
     opacity:0; transform:translateY(-8px) scaleY(.72); pointer-events:none;
     transition:opacity .16s ease, transform .22s cubic-bezier(.2,.85,.3,1); }
   .brand.open .faction-menu{ opacity:1; transform:none; pointer-events:auto; }
-  .faction-opt{ font-family:var(--font-head); font-size:18px; letter-spacing:1px; text-transform:uppercase;
+  .faction-opt{ display:flex; align-items:center; gap:11px;
+    font-family:var(--font-head); font-size:18px; letter-spacing:1px; text-transform:uppercase;
     text-align:left; color:var(--fg-dim); background:transparent; border:0; cursor:pointer;
     padding:9px 12px; text-shadow:none;
     opacity:0; transform:translateX(7px); transition:color .1s, background .1s, opacity .16s ease, transform .16s ease; }
   .brand.open .faction-opt{ opacity:1; transform:none; transition-delay:calc(var(--i, 0) * 26ms); }
   .faction-opt:hover{ color:var(--fg-bright); background:var(--bg-panel); }
   .faction-opt.active{ color:var(--bg); background:var(--fg); }
+  .faction-opt-ico{ flex:0 0 auto; width:22px; height:22px; display:inline-flex; }
+  .faction-opt-ico svg{ width:100%; height:100%; fill:currentColor; display:block; }
   @media (prefers-reduced-motion:reduce){
     .faction-menu{ transition:opacity .12s; transform:none; }
     .faction-opt, .brand.open .faction-opt{ transform:none; transition-delay:0s; }
@@ -564,8 +573,20 @@
      The top nav's sections, blown up: one tall tile per section (icon + title + explainer).
      "The buttons ARE the home page, just elongated full height." Tiles fill the viewport and
      divide evenly by count; each is a big, obvious click target into that section. */
-  .home{ height:100%; min-height:0; overflow:auto; }
-  .home-tiles{ display:flex; flex-direction:column; gap:12px; min-height:100%;
+  .home{ height:100%; min-height:0; overflow:auto; display:flex; flex-direction:column; }
+  /* top line: the faction picker — one icon+name box per faction, the active one lit */
+  .home-factions{ flex:0 0 auto; display:flex; flex-wrap:wrap; gap:8px; padding:12px 12px 0; }
+  .home-fac{ display:inline-flex; align-items:center; gap:9px; cursor:pointer; padding:8px 13px;
+    background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg); font-family:var(--font-head);
+    transition:color .14s, border-color .14s, background .14s, box-shadow .14s; }
+  .home-fac-ico{ flex:0 0 auto; width:24px; height:24px; display:inline-flex; }
+  .home-fac-ico svg{ width:100%; height:100%; fill:currentColor; display:block; }
+  .home-fac-name{ font-size:14px; letter-spacing:1px; text-transform:uppercase; white-space:nowrap; }
+  .home-fac:hover{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
+    box-shadow:0 0 14px -5px rgba(var(--fg-rgb),.5); }
+  .home-fac.active{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
+    box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.4), 0 0 16px -6px rgba(var(--fg-rgb),.6); }
+  .home-tiles{ flex:1 1 auto; display:flex; flex-direction:column; gap:12px; min-height:0;
     padding:12px; box-sizing:border-box; }
   /* each section is a full-height nav-CARD: left accent bar · framed icon · title+blurb · Enter CTA,
      with a faded index watermark. Reads as a designed landing row, not a plain button. */

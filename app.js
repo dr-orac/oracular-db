@@ -111,6 +111,20 @@ function showFactionComingSoon(f){
   $("#loadermsg").innerHTML = "⚑ " + esc(f.name.toUpperCase());
   $("#statesub").innerHTML = `Roster not linked yet — <b>${esc(f.name)}</b>'s archive will be connected soon.`;
 }
+/* Original, in-house SVG glyph per faction (flat single-colour silhouettes, fill:currentColor so they
+   tint to the active theme — NOT the trademarked Fallout logos). Each evokes the faction:
+   Brotherhood=gear · Vault=vault door · Legion=crossed swords · Bazaar=trade scales · Tribe=flame ·
+   Enclave=shield · Unity=joined rings · NCR=ranger star. Shown in the faction picker + home row. */
+const FACTION_ICONS = {
+  brotherhood:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M13.4 2h-2.8l-.4 2.4c-.6.2-1.2.5-1.7.9L6.3 4.2 4.2 6.3l1.1 2.2c-.4.5-.7 1.1-.9 1.7L2 10.6v2.8l2.4.4c.2.6.5 1.2.9 1.7l-1.1 2.2 2.1 2.1 2.2-1.1c.5.4 1.1.7 1.7.9l.4 2.4h2.8l.4-2.4c.6-.2 1.2-.5 1.7-.9l2.2 1.1 2.1-2.1-1.1-2.2c.4-.5.7-1.1.9-1.7l2.4-.4v-2.8l-2.4-.4c-.2-.6-.5-1.2-.9-1.7l1.1-2.2-2.1-2.1-2.2 1.1c-.5-.4-1.1-.7-1.7-.9L13.4 2Zm-1.4 6a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/></svg>',
+  vault:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19Zm0 2.6a6.9 6.9 0 1 1 0 13.8 6.9 6.9 0 0 1 0-13.8Z"/><circle cx="12" cy="12" r="2.4"/><path d="M11.2 4.6h1.6v3h-1.6zM11.2 16.4h1.6v3h-1.6zM4.6 11.2h3v1.6h-3zM16.4 11.2h3v1.6h-3z"/></svg>',
+  legion:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.2 6 3.7l9.3 9.3-1.5 1.5-9.3-9.3L4 4.2Zm16 0-.5 2-4.2 4.2-1.5-1.5 4.2-4.2 2-.5ZM4.5 18.7l3.6-3.6 1.5 1.5-3.6 3.6-1.5-1.5Zm13.4-3.6 3.6 3.6-1.5 1.5-3.6-3.6 1.5-1.5Z"/></svg>',
+  bazaar:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3h2v2.3l6 1.3v1.6l-6-1.3V19h3.5v2h-9v-2H11V6.9L5 8.2V6.6l6-1.3V3Z"/><path d="M5 7.3 2.3 12.6h5.4L5 7.3Zm14 0-2.7 5.3h5.4L19 7.3Z"/></svg>',
+  tribe:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 2c.6 3.4-2.4 4.8-2.4 7.7 0 1.2.9 2 1.8 2s1.4-.9 1.4-1.9c1.6 1.4 2.6 3.2 2.6 5.4a6 6 0 0 1-12 0c0-2.9 1.9-5.1 3.9-6.9-.5 1.9.3 3 1.2 3.3C8.4 8.9 8 6.6 9.9 4.2c1.4-1 2.3-1.6 3.3-2.2Z"/></svg>',
+  enclave:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2 4 5v6.5c0 4.7 3.2 8.1 8 10.5 4.8-2.4 8-5.8 8-10.5V5l-8-3Zm0 3.7 5 1.9v3.9c0 3.2-2 5.5-5 7.1-3-1.6-5-3.9-5-7.1V7.6l5-1.9Z"/></svg>',
+  unity:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M9 6.6a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 2.4a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2Z"/><path fill-rule="evenodd" d="M15 6.6a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 2.4a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2Z"/></svg>',
+  ncr:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2.5 2.7 5.9 6.4.7-4.8 4.4 1.3 6.3L12 16.7l-5.6 3.1 1.3-6.3L2.9 9.1l6.4-.7L12 2.5Z"/></svg>',
+};
 /* the masthead FACTION selector: a labelled box showing the current faction + a big Fallout arrow;
    the whole box is the dropdown trigger. (Single faction → a static plate, no menu.) */
 const FACTION_ARROW = `<span class="faction-arrow" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M2 5.5h16L10 15z"/></svg></span>`;
@@ -119,7 +133,8 @@ function renderBrand(){
   const f = activeFaction();
   document.title = f.brand;                                        // browser tab = the faction's brand (tagline dropped)
   el.classList.remove("open");                                    // a re-render always starts closed
-  const inner = `<span class="faction-legend">Faction</span><span class="faction-name">${esc(f.name)}</span>`;
+  const ico = FACTION_ICONS[currentFaction] ? `<span class="faction-ico" aria-hidden="true">${FACTION_ICONS[currentFaction]}</span>` : "";
+  const inner = ico + `<span class="faction-legend">Faction</span><span class="faction-name">${esc(f.name)}</span>`;
   if(FACTION_ORDER.length < 2){                                    // single faction → static plate, no menu
     el.classList.remove("has-switch");
     el.innerHTML = `<span class="faction-box faction-box--static">${inner}</span>`;
@@ -132,7 +147,9 @@ function renderBrand(){
     `</button>`+
     `<div class="faction-menu" id="faction-menu" role="listbox" aria-label="Faction">`+
       FACTION_ORDER.map((id,i) =>
-        `<button class="faction-opt${id===currentFaction?' active':''}" style="--i:${i}" type="button" role="option" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">${esc(FACTIONS[id].name)}</button>`
+        `<button class="faction-opt${id===currentFaction?' active':''}" style="--i:${i}" type="button" role="option" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">`+
+          `<span class="faction-opt-ico" aria-hidden="true">${FACTION_ICONS[id]||""}</span><span>${esc(FACTIONS[id].name)}</span>`+
+        `</button>`
       ).join("")+
     `</div>`;
 }
@@ -1791,7 +1808,16 @@ const HOME_ARROW = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 9h9.
 function renderHome(){
   const el=$("#home"); if(!el) return;
   const items=[{id:"roster",label:"Roster"}].concat(factionDocs().map(d=>({id:d.id,label:d.label})));
-  el.innerHTML = `<div class="home-tiles">`+ items.map((it,i)=>
+  // top line: a faction picker — one icon+name box per faction, the active one lit (omitted if solo)
+  const facRow = FACTION_ORDER.length < 2 ? "" :
+    `<div class="home-factions" role="tablist" aria-label="Choose faction">`+
+      FACTION_ORDER.map(id =>
+        `<button class="home-fac${id===currentFaction?' active':''}" type="button" role="tab" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">`+
+          `<span class="home-fac-ico" aria-hidden="true">${FACTION_ICONS[id]||""}</span>`+
+          `<span class="home-fac-name">${esc(FACTIONS[id].name)}</span>`+
+        `</button>`).join("")+
+    `</div>`;
+  el.innerHTML = facRow + `<div class="home-tiles">`+ items.map((it,i)=>
     `<button class="home-tile" data-section="${escAttr(it.id)}" style="--i:${i}">`+
       `<span class="home-tile-bar" aria-hidden="true"></span>`+
       `<span class="home-tile-num" aria-hidden="true">${String(i+1).padStart(2,"0")}</span>`+
@@ -2259,8 +2285,9 @@ function setSection(id){
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
 });
-/* home landing tiles navigate into their section, same as the nav tabs */
+/* home landing: faction boxes switch faction; section tiles navigate into their section */
 $("#home").addEventListener("click", e=>{
+  const fac=e.target.closest(".home-fac"); if(fac){ applyFaction(fac.dataset.faction); return; }
   const t=e.target.closest(".home-tile"); if(t) setSection(t.dataset.section);
 });
 /* prefetch a doc the moment its tab is hovered or focused (just-in-time cache warming) */
