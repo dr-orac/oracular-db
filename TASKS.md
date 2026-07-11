@@ -3,6 +3,16 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## FACTION ROSTER aligned to the wiki (2026-07-11)
+`FACTIONS` now mirrors the Misfits **wiki's own faction listing** (each with the wiki's signature
+colour, mapped to the nearest theme preset) + the Unity. 13 total: tribe(rust)·brotherhood(blue)·
+ncr(gold)·legion(red)·enclave(white)·vault/Vault Dwellers(purple)·followers(cyan)·townsfolk(white)·
+wastelanders(amber)·outlaws(orange)·synthetics(magenta)·supermutants(green)·unity(green). Dropped the
+invented `bazaar`. tribe + brotherhood keep live sheet data; the rest are coming-soon until linked.
+Added 6 new in-house SVG faction icons (medical cross / house / compass / skull / robot / fist) and
+fixed the coming-soon possessive for s-ending names ("Outlaws’ archive"). Adding a faction still =
+one `FACTIONS` entry + `FACTION_ORDER` + a `FACTION_ICONS` glyph (recipe in CONTRIBUTING.md).
+
 ## Status
 
 - ✅ **T1–T6 done** (activity indicators · CRT comparison report · dossier niceties ·
