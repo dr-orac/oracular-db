@@ -771,3 +771,23 @@ STILL TO DO to make it good:
      like docs); build the sidebar TOC from `parse.sections`.
   4. Decide faction-scoping: the wiki is umbrella (currently routes under the active faction as
      `#tribe/wiki`) — maybe make it a top-level `#wiki` route instead.
+
+## T35 UPDATE (2026-07-11, later) — refinements 1/3/4 DONE (85b0c26, ba744a9)
+  1. ✅ NARROW TEXT FIXED — root cause found: `.docreader` is a grid (side · centre measure · side),
+     and docClean returns wiki content as LOOSE inline/text runs (it drops every `<div>` wrapper), so
+     bare runs auto-placed into the narrow side column → one word per line. Fix: wrap the cleaned wiki
+     HTML in ONE `<div class="wikibody">` so it sits in the centre column and flows. (No new CSS — it
+     rides the existing `.docreader > *{grid-column:2}` rule. The Google-Doc path is untouched: its
+     content is already block-wrapped, so it never hit this.) Also: leaf content-`<div>`s → `<p>` in
+     wiki preprocessing so the Main Page's styled banners keep their own lines (were merging).
+  2. ⛔ IMAGES — MOOT, NOT NEEDED. Verified the wiki has ZERO uploaded images (`list=allimages` empty;
+     content pages contain no `<img>`; the whole wiki is text + inline-CSS styled boxes). Nothing to
+     restore. The strip pass still drops `img` defensively. (Reopen only if images are ever uploaded.)
+  3. ✅ URL CARRIES THE PAGE + ✅ TOC. Top-level `#wiki/<Page>` route (writeRoute emits the current
+     `_wikiPage`, applyRoute opens it, loadWiki writes it on every load → in-app link browsing AND cold
+     deep links are shareable). TOC already builds from the rendered headings via `buildDocSidebar`
+     (12 h's → 29 links on Rules), so `parse.sections` isn't needed. IndexedDB caching NOT done — wiki
+     pages are 20–40 KB and fetch fast; low value, left as an optional nicety.
+  4. ✅ FACTION-SCOPING DECIDED — wiki is now a TOP-LEVEL `#wiki` route (umbrella content), not
+     `#<faction>/wiki`. The Wiki tab still appears in each faction's nav but shows the shared wiki.
+  Verified live (both Main_Page and content pages render full-width, in-theme; console clean).
