@@ -44,8 +44,13 @@ properly afterwards.
 
 ## App changes (in order)
 
-1. **Un-strip + theme wiki images** in `loadWiki`/`renderWiki` (above). Ship + verify against a real wiki
-   page that already has an image.
+1. ✅ **DONE (2026-07-11)** — **Un-strip + theme wiki images.** `loadWiki` no longer removes images; a new
+   `normaliseWikiImages()` rewrites thumbs/galleries/inline images into bare `<img>` (absolute src via
+   `wikiAbs`, caption lifted from `<figcaption>`/gallery text into `alt`, the File: wrapper link removed so
+   the image isn't a broken nav target); `renderWiki` wraps a top-level `<img>` so `docClean` re-skins it
+   as a themed `.docfig`; `armWikiFigures()` clears the loading state as each image settles. The wiki has
+   **zero images today**, so this was verified synthetically (thumb + gallery + a real data-URI image):
+   absolute src, lifted captions, unwrapped links, 3 themed figures, live render + fade-in, no regression.
 2. **Generalise the section source model.** A faction "doc" tab becomes source-tagged:
    `{ id, label, source:{kind:"wiki", page:"The_Tribe/Lore"} }` **or** `{…, source:{kind:"gdoc", docId}}`.
    `setSection` dispatches: `kind==="wiki"` → `loadWiki(page)`, `kind==="gdoc"` → `loadDoc(doc)`. (Back-

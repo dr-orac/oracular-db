@@ -2553,6 +2553,40 @@ function wikiLeafDivsToP(root){
   });
 }
 function wikiClean(el){ wikiLeafDivsToP(el); return docClean(el); }
+/* Normalise MediaWiki images into bare <img> (src absolute + caption in alt), so docClean re-skins
+   each as a themed .docfig — the same treatment roster/doc images get. MediaWiki wraps thumbs in a
+   <figure>/.thumb with a File: link + a <figcaption>, and galleries in <ul class="gallery">; both carry
+   chrome (magnify icon, the File: link) we don't want, so we replace the whole wrapper with one clean
+   <img> rather than trying to prune it. (Google-Doc images can't render cross-origin — wiki images,
+   served from the host we already fetch from, can.) */
+function normaliseWikiImages(root){
+  const clean=(src,cap)=>{ const i=document.createElement("img"); i.setAttribute("src",src); if(cap) i.setAttribute("alt",cap); return i; };
+  const capOf=el=>el?el.textContent.replace(/\s+/g," ").trim():"";
+  // galleries → a plain run of images (drop the grid chrome)
+  root.querySelectorAll("ul.gallery").forEach(gal=>{
+    const box=document.createElement("div");
+    gal.querySelectorAll("img").forEach(img=>{
+      const abs=wikiAbs(img.getAttribute("src")); if(!abs) return;
+      box.appendChild(clean(abs, capOf(img.closest(".gallerybox") && img.closest(".gallerybox").querySelector(".gallerytext"))));
+    });
+    gal.replaceWith(box);
+  });
+  // thumbs / figures / inline images → one clean <img>
+  root.querySelectorAll("img").forEach(img=>{
+    const abs=wikiAbs(img.getAttribute("src"));
+    if(!abs){ img.remove(); return; }
+    const fig=img.closest("figure, .thumb, .thumbinner");
+    const cap=capOf(fig && fig.querySelector("figcaption, .thumbcaption")) || (img.getAttribute("alt")||"").trim();
+    (fig || img).replaceWith(clean(abs, cap));
+  });
+}
+/* clear the loading state on plain-src (wiki) figures once each image settles — the doc path only
+   arms data: images (hydrated lazily); wiki images carry a real src, so arm them here. */
+function armWikiFigures(reader){
+  reader.querySelectorAll(".docfig-screen.pending img[src]").forEach(img=>{
+    if(img.complete && img.naturalWidth) _figDone(img); else _figArm(img);
+  });
+}
 /* walk the parsed MediaWiki DOM and emit themed structure; recurse through plain wrapper divs */
 function renderWiki(node){
   let out="";
@@ -2584,6 +2618,9 @@ function renderWiki(node){
       const w=document.createElement("div"); w.appendChild(el.cloneNode(true)); out+=docClean(w); return;
     }
     if(tag==="div"){ out += el.querySelector("div,table") ? renderWiki(el) : wikiClean(el); return; }
+    // a top-level image (a MediaWiki thumb, normalised to a bare <img> in loadWiki) — docClean only
+    // themes an <img> it meets as a CHILD, so wrap it, same as the table path above.
+    if(tag==="img"){ const w=document.createElement("div"); w.appendChild(el.cloneNode(true)); out+=docClean(w); return; }
     out+=docClean(el);
   });
   return out;
@@ -2615,14 +2652,16 @@ async function loadWiki(page){
     const html = j && j.parse && j.parse.text;
     if(!html) throw new Error(j && j.error ? j.error.info : "no content");
     const tmp=document.createElement("div"); tmp.innerHTML=html;
-    tmp.querySelectorAll(".mw-editsection,.toc,#toc,.mw-empty-elt,style,script,.navbox,.metadata,.noprint,sup.reference,img,figure,.thumb")
-      .forEach(e=>e.remove());                                // drop MediaWiki chrome (the wiki has no images)
+    tmp.querySelectorAll(".mw-editsection,.toc,#toc,.mw-empty-elt,style,script,.navbox,.metadata,.noprint,sup.reference")
+      .forEach(e=>e.remove());                                // drop MediaWiki chrome (keep images)
     tmp.querySelectorAll("a[href]").forEach(a=>a.setAttribute("href", wikiAbs(a.getAttribute("href"))));
+    normaliseWikiImages(tmp);                                 // keep + theme images (see helper)
     docBoldClasses=new Set(); docItalicClasses=new Set(); docTitleCount=0; _docImgSink=null;   // reset docClean state
     // renderWiki re-skins the wiki's hand-built structure (hero/callout/card-grid/columns) as native
     // components; the .wikibody wrapper keeps loose prose in the reader's centre measure (the reader
     // is a grid, so bare runs would otherwise fall into the narrow side column).
     reader.innerHTML = `<div class="wikibody">${renderWiki(tmp)}</div>`;
+    armWikiFigures(reader);                                    // fade wiki images in as they load
     // if this wiki page IS one of our factions, offer a jump to its roster in the Database (closes the
     // faction↔wiki loop; the coming-soon → wiki link is the other direction)
     const jumpId = Object.keys(FACTION_WIKI).find(id => FACTION_WIKI[id] === page);
