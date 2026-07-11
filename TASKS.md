@@ -599,6 +599,27 @@ live theme; app source untouched) — desktop + mobile both read well. BLOCKERS 
       N×N, directed vs mutual, full type list) must be locked against real rows first.
 Build plan (data adapter → section plumbing → renderer → styles → verify) is in the design doc.
 
+## T28 BUILT (2026-07-11) — Relations section shipped from EXISTING roster data (no Sheet B)
+Direction B built, but sourced from the roster's own **Relationships** free-text field + the mention
+graph — sidestepping the Sheet-B blocker (no bespoke matrix sheet needed yet). Delivered:
+  • A faction-scoped **Relations** section — row-2 nav tab + home tile + route `#<faction>/relations/<slug>`
+    (`NAV_ICONS.relations`, `HOME_INFO.relations`, `setSection`/`applyRoute`/`renderNav`/`renderHome`).
+  • `renderRelations()` — left **character rail** (grouped by roster section, each name badged with its
+    connection degree) + right **panel**: the selected character's stated relationships as cross-linked
+    cards (parsed "NAME: description", linked case-insensitively via `nameSlug`; non-roster names show as
+    plain "ext" leads) + a **Mentioned by** backlink list.
+  • `relationsGraph()` — forward/back graph built from parsed relationships (the prose mention graph is
+    case-sensitive and misses ALLCAPS leads, so backlinks are derived from the parse, folded with the
+    prose graph). Recomputed per render → never stale after an in-place edit.
+  • Every name (rail item, card link, backlink chip) **re-centres the web** in place (stays in Relations,
+    updates the route); an **Open dossier ▸** button is the explicit hop to the roster. Command bar hidden
+    for the section; mobile stacks the rail above the panel.
+VERIFIED against live tribe data (55 chars, 5 rail groups): rail degrees, card links, backlinks,
+re-centring, Open-dossier hop, deep-link, and mobile stack all confirmed in the preview.
+NOT DONE (deferred): typed relationship categories (Family/Friend/Crush/Rival/Hatred) — the free-text
+field has no type column, so cards are untyped. If/when Sheet B (or a type column) lands, group cards
+by type per the design doc.
+
 ## Note — T22 gate clarified
 "Lattice" = a UI builder linked to Substrate, providing standard HTML layouts to reduce parallelism /
 standardise building (in the Claude project folder). T22 (Misfits wiki reader) stays gated on Substrate

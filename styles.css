@@ -1061,7 +1061,10 @@
   .commandbar{ flex:0 0 auto; padding:0 16px; }
   body:not([data-frame="border"]) .commandbar{ padding-left:calc(var(--edge) + var(--sp-2)); padding-right:calc(var(--edge) + var(--sp-2));
     margin-top:var(--sp-4); }   /* breathing below the header divider */
-  body[data-section="home"] .commandbar{ display:none; }
+  /* home is the landing (tiles ARE the nav); Relations has its own rail picker — neither
+     needs the command bar (roster search / doc-find), so drop it in both. */
+  body[data-section="home"] .commandbar,
+  body[data-section="relations"] .commandbar{ display:none; }
   .toolbar{
     margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; min-height:52px;
   }
@@ -1486,6 +1489,59 @@
   .chip{ display:inline-block; margin:2px 4px 2px 0; padding:2px 8px; border:1px solid var(--fg-faint);
     text-decoration:none; cursor:pointer; }
   .chip:hover{ border-color:var(--fg); }
+
+  /* ------------ Relations view (a character's web, from roster data) ------------ */
+  .relations-view{ display:flex; flex-direction:column; height:100%; min-height:0; }
+  .rel-body{ flex:1 1 auto; min-height:0; display:flex; }
+  /* LEFT rail: the character picker (same footprint + behaviour as the roster list / doc TOC) */
+  .rel-rail{ flex:0 0 var(--rail); min-height:0; overflow:auto; padding:8px 12px 60px 0;
+    border-right:1px solid var(--fg-faint); }
+  .rel-railgroup{ margin-bottom:var(--sp-5); }
+  .rel-railhead{ position:sticky; top:0; z-index:1; background:var(--bg);
+    font-family:var(--font-head); font-size:14px; text-transform:uppercase; letter-spacing:2.5px;
+    color:var(--fg-dim); padding:8px 12px 8px var(--sp-2); }
+  .rel-railitem{ display:flex; align-items:center; gap:8px; width:100%; text-align:left; cursor:pointer;
+    background:none; border:0; color:var(--fg); font-family:var(--font-body); font-size:17px; line-height:1.3;
+    padding:8px 12px 8px var(--sp-2); }
+  .rel-railitem:hover{ color:var(--fg-bright); background:var(--bg-panel-2); }
+  .rel-railitem.active{ color:var(--fg-bright); background:var(--bg-panel-2); box-shadow:inset 3px 0 0 var(--fg); }
+  .rel-railname{ flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rel-raildeg{ flex:0 0 auto; font-size:13px; color:var(--fg-dim); border:1px solid var(--fg-faint);
+    border-radius:11px; padding:0 8px; line-height:1.6; }
+  .rel-railitem:hover .rel-raildeg,
+  .rel-railitem.active .rel-raildeg{ color:var(--fg-bright); border-color:var(--fg); }
+  /* RIGHT panel: the selected character's relationships */
+  .rel-scroll{ flex:1 1 auto; min-height:0; min-width:0; overflow:auto;
+    padding:clamp(20px,3vw,44px) var(--sp-7) 84px; }
+  .rel-panel{ max-width:1040px; }
+  .rel-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:var(--sp-5);
+    padding-bottom:var(--sp-4); margin-bottom:var(--sp-6);
+    border-bottom:1px solid var(--fg-dim); box-shadow:0 1px 0 rgba(var(--fg-rgb),.35), 0 0 12px -2px rgba(var(--fg-rgb),.4); }
+  .rel-head-main{ min-width:0; }
+  .rel-name{ font-family:var(--font-head); font-size:clamp(28px,4vw,40px); line-height:1.05;
+    letter-spacing:1px; color:var(--fg-bright); text-shadow:var(--glow); }
+  .rel-sub{ margin-top:6px; font-size:15px; text-transform:uppercase; letter-spacing:2px; color:var(--fg-dim); }
+  .rel-dossier{ flex:0 0 auto; white-space:nowrap; align-self:center; }
+  .rel-block{ margin-bottom:var(--sp-7); }
+  .rel-blockhead{ display:flex; align-items:center; gap:10px; margin-bottom:var(--sp-4);
+    font-family:var(--font-head); font-size:16px; text-transform:uppercase; letter-spacing:3px; color:var(--fg-dim); }
+  .rel-count{ font-size:13px; letter-spacing:1px; color:var(--fg-dim); border:1px solid var(--fg-faint);
+    border-radius:11px; padding:1px 9px; }
+  .rel-cards{ display:grid; gap:var(--sp-3); grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); }
+  .rel-card{ border:1px solid var(--fg-faint); border-left:2px solid var(--fg);
+    background:var(--bg-panel); padding:var(--sp-3) var(--sp-4); }
+  .rel-cardtop{ margin-bottom:7px; }
+  .rel-cardname{ font-family:var(--font-body); font-size:18px; font-weight:bold; letter-spacing:.5px;
+    color:var(--fg-bright); background:none; border:0; padding:0; cursor:pointer;
+    text-decoration:underline dotted; text-underline-offset:3px; }
+  .rel-cardname:hover{ background:var(--fg); color:var(--bg); text-shadow:none; }
+  .rel-cardname--ext{ text-decoration:none; cursor:default; color:var(--fg); }
+  .rel-cardname--ext:hover{ background:none; color:var(--fg); }
+  .rel-carddesc{ color:var(--fg); font-size:16px; line-height:1.5; }
+  .rel-chips{ display:flex; flex-wrap:wrap; gap:7px; }
+  .rel-chip{ margin:0; font-size:16px; padding:4px 11px; }
+  .rel-empty{ color:var(--fg-dim); font-size:17px; line-height:1.6; max-width:64ch;
+    border:1px dashed var(--fg-faint); padding:var(--sp-5); }
   /* S.P.E.C.I.A.L stat block */
   .specgrid{ display:grid; gap:5px; max-width:440px; }
   .spec-row{ display:grid; grid-template-columns:118px 1fr 26px; align-items:center; gap:10px; }
@@ -1650,6 +1706,13 @@
     .doclink{ font-size:15px; }
     .roster{ grid-template-columns:1fr; grid-template-rows:minmax(120px,38%) 1fr; }
     .listcol{ border-right:0; border-bottom:1px solid var(--fg-faint); }
+    /* Relations: stack the character rail above the panel (like the roster list) */
+    .rel-body{ flex-direction:column; }
+    .rel-rail{ flex:0 0 40%; min-height:120px; border-right:0; border-bottom:1px solid var(--fg-faint);
+      padding:8px 8px 16px; }
+    .rel-scroll{ padding:18px 16px 60px; }
+    .rel-head{ flex-direction:column; gap:var(--sp-3); }
+    .rel-cards{ grid-template-columns:1fr; }
     /* compact the ROW-1 boxes (faction + home/wiki) together on narrow screens */
     .faction-name, .navbox .navlabel{ font-size:18px; }
     .faction-box, .navbox{ gap:10px; }

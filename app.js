@@ -128,9 +128,21 @@ function showRosterFor(f){
   if(!state.model || state.loadedSheet !== f.data.sheetId) load(false);   // (re)fetch this faction's sheet
   else render();                                                          // already in memory → instant
 }
+/* Relations shares the roster's data; same live-vs-coming-soon gate as showRosterFor. */
+function showRelationsFor(f){
+  if(!factionLinked(f)){ showFactionComingSoon(f); return; }
+  document.body.classList.remove("coming-soon");
+  if(!state.model || state.loadedSheet !== f.data.sheetId){
+    $("#relations").classList.add("hidden");   // the loader (#state) owns the screen until data lands
+    load(false);                               // → render() → renderRelations() once the model is in
+  } else {
+    renderRelations();                         // already in memory → instant
+  }
+}
 function showFactionComingSoon(f){
   document.body.classList.add("coming-soon");
   $("#roster").classList.add("hidden"); $("#cards").classList.add("hidden");
+  $("#relations").classList.add("hidden");
   $("#state").classList.remove("hidden");
   $("#loadermsg").innerHTML = "⚑ " + esc(f.name.toUpperCase());
   const poss = /s$/i.test(f.name) ? "’" : "’s";   // "Outlaws’ archive", not "Outlaws’s"
@@ -1202,6 +1214,141 @@ function connectionsSectionHTML(ch){
   return html+`</div>`;
 }
 
+/* ------------------------ Relations view ------------------------
+   A faction-scoped web of who-knows-whom, built entirely from the roster's own data:
+   the free-text "Relationships" field (parsed into NAME: description entries) plus the
+   derived mention graph (buildConnections). Pick a character in the rail → their stated
+   relationships as cards + the people who mention them; every name re-centres the web. */
+
+/* Parse the free-text Relationships field into {name, slug, desc} entries. Mirrors the
+   ALLCAPS-lead shape used by renderLead ("BIG BROM MATLOK: a theological counterpart…").
+   A line with no lead is folded into the previous entry (a wrapped description); a lone
+   leadless line with no predecessor becomes a nameless note. */
+function parseRelationshipEntries(text, selfSlug){
+  const out=[];
+  (text||"").split("\n").forEach(line=>{
+    if(!line.trim()) return;
+    const m = line.match(/^\s*([^a-z:]{2,}?):\s*(.*)$/);
+    if(m && /[A-Z0-9]/.test(m[1])){
+      const name=m[1].trim(), slug=nameSlug(name);
+      out.push({ name, slug: (slug && slug!==selfSlug) ? slug : "", desc:m[2].trim() });
+    } else if(out.length){
+      out[out.length-1].desc += (out[out.length-1].desc?" ":"") + line.trim();
+    } else {
+      out.push({ name:"", slug:"", desc:line.trim() });
+    }
+  });
+  return out.filter(e=>e.name||e.desc);
+}
+
+/* Build the relationship graph for the whole roster: forward = a character's own stated
+   relationships (parsed case-insensitively via nameSlug — the leads are ALLCAPS, the names
+   Title-Case, so the prose mention graph misses them); back = who lists them. The looser
+   prose mention graph (buildConnections) is folded in for extra coverage. Recomputed each
+   render (roster is small) so it never goes stale after an in-place field edit. */
+function relationsGraph(){
+  const model=state.model, fwd={}, back={};
+  model.characters.forEach(c=>{ fwd[c.slug]=new Set(); back[c.slug]=new Set(); });
+  model.characters.forEach(c=>{
+    parseRelationshipEntries(c.fields && c.fields.relationships, c.slug).forEach(e=>{
+      if(e.slug && back[e.slug]){ fwd[c.slug].add(e.slug); back[e.slug].add(c.slug); }
+    });
+    const conn=model.connections && model.connections[c.slug];
+    if(conn){ conn.out.forEach(s=>{ if(fwd[c.slug]&&s!==c.slug) fwd[c.slug].add(s); });
+              conn.in.forEach(s=>{ if(back[c.slug]&&s!==c.slug) back[c.slug].add(s); }); }
+  });
+  return {fwd,back};
+}
+
+/* the right-hand panel: one character's relationships + their backlinks */
+function relationsPanelHTML(ch, graph){
+  const sub  = [ch.fields && (ch.fields.role||ch.fields.title||ch.fields.rank), ch.section]
+                 .filter(Boolean).join(" · ");
+  let html = `<header class="rel-head">`+
+      `<div class="rel-head-main">`+
+        `<h2 class="rel-name" id="app-relname">${esc(ch.name)}</h2>`+
+        (sub?`<div class="rel-sub">${esc(sub)}</div>`:"")+
+      `</div>`+
+      `<button class="btn rel-dossier" data-slug="${escAttr(ch.slug)}" type="button" title="Open ${esc(ch.name)}’s full dossier">Open dossier ▸</button>`+
+    `</header>`;
+
+  const stated = parseRelationshipEntries(ch.fields && ch.fields.relationships, ch.slug);
+  if(stated.length){
+    html += `<section class="rel-block"><h3 class="rel-blockhead">Relationships <span class="rel-count">${stated.length}</span></h3><div class="rel-cards">`+
+      stated.map(e=>{
+        const head = !e.name ? ""
+          : e.slug ? `<button class="xref rel-cardname" data-slug="${escAttr(e.slug)}" title="Follow to ${esc(e.name)}">${esc(e.name)}</button>`
+                   : `<span class="rel-cardname rel-cardname--ext" title="Not a listed character">${esc(e.name)}</span>`;
+        return `<div class="rel-card">${head?`<div class="rel-cardtop">${head}</div>`:""}`+
+          (e.desc?`<div class="rel-carddesc">${linkifyText(e.desc, ch.slug)}</div>`:"")+`</div>`;
+      }).join("")+`</div></section>`;
+  }
+
+  // people who list this character but aren't already in their own stated list (avoid duplication)
+  const statedSlugs = new Set(stated.filter(e=>e.slug).map(e=>e.slug));
+  const backlinks = [...(graph.back[ch.slug]||[])].filter(s=>!statedSlugs.has(s) && s!==ch.slug);
+  if(backlinks.length){
+    html += `<section class="rel-block"><h3 class="rel-blockhead">Mentioned by <span class="rel-count">${backlinks.length}</span></h3><div class="rel-chips">`+
+      backlinks.map(s=>{ const c=state.model.characters.find(x=>x.slug===s);
+        return c?`<button class="xref chip rel-chip" data-slug="${escAttr(s)}" title="Follow to ${esc(c.name)}">${esc(c.name)}</button>`:""; }).join("")+
+      `</div></section>`;
+  }
+
+  if(!stated.length && !backlinks.length){
+    html += `<div class="rel-empty">No relationships recorded for <b>${esc(ch.name)}</b> yet — add them in the character’s <b>Relationships</b> field on the sheet, or mention another member by name in their story.</div>`;
+  }
+  return html;
+}
+
+function renderRelations(){
+  const wrap=$("#relations"); if(!wrap || !state.model) return;
+  wrap.classList.remove("hidden");
+  const chars=state.model.characters;
+  if(!chars.length){ $("#rel-rail").innerHTML=""; $("#rel-panel").innerHTML=`<div class="rel-empty">No characters to map yet.</div>`; return; }
+
+  // consume a deep-linked target (#<faction>/relations/<slug>) if one is pending
+  if(_pendingTarget){
+    const pi=chars.findIndex(c=>c.slug===_pendingTarget);
+    if(pi>=0) state.selected=pi;
+    _pendingTarget=null;
+  }
+  const sel = chars[state.selected] || chars[0];
+  const graph = relationsGraph();
+
+  const rail = state.model.sections.map(sec=>{
+    const inSec = chars.filter(c=>c.section===sec);
+    if(!inSec.length) return "";
+    return `<div class="rel-railgroup"><div class="rel-railhead">${esc(sec)}</div>`+
+      inSec.map(c=>{
+        const deg=new Set([...(graph.fwd[c.slug]||[]), ...(graph.back[c.slug]||[])]).size;
+        const on=c.slug===sel.slug;
+        return `<button class="rel-railitem${on?' active':''}" data-slug="${escAttr(c.slug)}" role="option" aria-selected="${on}">`+
+          `<span class="rel-railname">${esc(c.name)}</span>`+
+          (deg?`<span class="rel-raildeg" title="${deg} connection${deg===1?'':'s'}">${deg}</span>`:"")+
+        `</button>`;
+      }).join("")+`</div>`;
+  }).join("");
+  $("#rel-rail").innerHTML = rail;
+  $("#rel-panel").innerHTML = relationsPanelHTML(sel, graph);
+  const active=$("#rel-rail .rel-railitem.active"); if(active) active.scrollIntoView({block:"nearest"});
+}
+
+/* re-centre the web on a character (from the rail or any in-panel cross-link). Kept in the
+   Relations view — the "Open dossier" button is the explicit hop to the roster. */
+function relationsSelect(slug){
+  const idx=state.model.characters.findIndex(c=>c.slug===slug);
+  if(idx<0) return;
+  state.selected=idx; renderRelations();
+  $("#rel-scroll").scrollTop=0;
+  writeRoute(slug);
+}
+$("#relations").addEventListener("click", e=>{
+  const dos=e.target.closest(".rel-dossier");
+  if(dos){ setSection("roster"); gotoChar(dos.dataset.slug); return; }
+  const nav=e.target.closest(".xref, .rel-railitem");
+  if(nav && nav.dataset.slug){ e.stopPropagation(); relationsSelect(nav.dataset.slug); }
+});
+
 /* personal-log: just a label + ＋ when empty; entries + hidden composer when used */
 function logSectionHTML(ch){
   const entries=(ch.logs||[]);
@@ -1472,7 +1619,9 @@ function render(){
   if(!state.model) return;
   try{
     $("#state").classList.add("hidden");
-    if(currentSection!=="roster"){
+    if(currentSection==="relations"){
+      renderRelations();                       // the Relations web owns the main area
+    }else if(currentSection!=="roster"){
       /* a doc section owns the main area — leave roster/cards hidden */
     }else if(state.view==="roster"){
       $("#roster").classList.remove("hidden");
@@ -1796,7 +1945,7 @@ function applyRoute(){
   try{
     if(r.faction && FACTIONS[r.faction] && r.faction!==currentFaction) applyFaction(r.faction);
     let sec = r.section || "home";
-    if(sec!=="home" && sec!=="roster" && sec!=="wiki" && !factionDocs().some(d=>d.id===sec)) sec="roster";
+    if(sec!=="home" && sec!=="roster" && sec!=="relations" && sec!=="wiki" && !factionDocs().some(d=>d.id===sec)) sec="roster";
     if(sec==="wiki"){                        // #wiki/<Page> — the target IS the wiki page to open
       const pg = r.target || WIKI.home;
       if(sec!==currentSection){ _wikiPage = pg; setSection("wiki"); }   // setSection loads _wikiPage
@@ -1807,6 +1956,7 @@ function applyRoute(){
     if(sec!==currentSection) setSection(sec);
     _pendingTarget = r.target || null;
     if(sec==="roster") openPendingChar();   // doc anchors are consumed by loadDoc when it finishes
+    else if(sec==="relations" && state.model) renderRelations();   // consume the pending target now (else a pending load's render() will)
   } finally { _routing = false; }
 }
 /* open the pending character once the roster model is loaded (re-tried after each roster render) */
@@ -1921,12 +2071,14 @@ const NAV_ICONS = {
   roster:  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-8 8c0-3.6 3.6-6 8-6s8 2.4 8 6v.6H4V20Z"/></svg>',
   lore:    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.4C10.5 5.2 8.3 4.6 6 4.6c-1.1 0-2.1.1-3 .4v13.2c.9-.3 1.9-.4 3-.4 2.3 0 4.5.6 6 1.8V6.4Zm2 0v13.2c1.5-1.2 3.7-1.8 6-1.8 1.1 0 2.1.1 3 .4V5c-.9-.3-1.9-.4-3-.4-2.3 0-4.5.6-6 1.8Z"/></svg>',
   roleplay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c.55 0 1 .45 1 1v11c0 .55-.45 1-1 1H9l-4 4v-4H4c-.55 0-1-.45-1-1V5c0-.55.45-1 1-1Zm3 5h10v-2H7v2Zm0 4h7v-2H7v2Z"/></svg>',
+  relations:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm10 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M8.6 6.5l6.8 4M8.6 17.5l6.8-4M7 8v8m10-8v8" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
   wiki:    '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16Z"/><path d="M4 12h16M12 4c2.6 2.2 2.6 13.8 0 16M12 4c-2.6 2.2-2.6 13.8 0 16" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
   _default:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6V3Zm7 1.5V8h3.5L13 4.5Z"/></svg>',
 };
 /* one-line explainer per section, shown on the home tiles */
 const HOME_INFO = {
   roster:   "Every member — dossiers, appearance, and story. Search, filter, browse.",
+  relations:"Who knows whom — allies, rivals, kin. Follow the web from any character.",
   lore:     "The world and beliefs of the tribe — customs, spirits, and how things work.",
   roleplay: "How to play well — voice, accent, conflict, and etiquette at the fire.",
   wiki:     "The Misfits wiki — factions, gameplay, crafting, survival and more.",
@@ -1936,7 +2088,7 @@ const HOME_INFO = {
 const HOME_ARROW = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 9h9.2l-3.7-3.7L11 4l6 6-6 6-1.5-1.3L13.2 11H4z"/></svg>`;
 function renderHome(){
   const el=$("#home"); if(!el) return;
-  const items=[{id:"roster",label:"Roster"}].concat(factionDocs().map(d=>({id:d.id,label:d.label})))
+  const items=[{id:"roster",label:"Roster"},{id:"relations",label:"Relations"}].concat(factionDocs().map(d=>({id:d.id,label:d.label})))
     .concat([{id:"wiki",label:"Wiki"}]);   // universal umbrella wiki, alongside the faction sections
   // FIRST box (same footprint as a section card): a titled faction picker, factions subdivided into
   // a grid inside it — "pick a faction to jump to its section". Omitted when there's only one faction.
@@ -1976,7 +2128,7 @@ function renderHome(){
    controls that live in ROW 1 (the primary nav), not here. */
 function renderNav(){
   const nav=$("#topnav"); if(!nav) return;
-  const tabs=[{id:"roster", label:"Roster"}].concat(factionDocs().map(d=>({id:d.id, label:d.label})));
+  const tabs=[{id:"roster", label:"Roster"},{id:"relations", label:"Relations"}].concat(factionDocs().map(d=>({id:d.id, label:d.label})));
   nav.innerHTML = tabs.map(t=>
     `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}"><span class="navico">${NAV_ICONS[t.id]||NAV_ICONS._default}</span><span class="navlabel">${esc(t.label)}</span></button>`).join("");
   nav.classList.remove("hidden");
@@ -2561,7 +2713,7 @@ function focusDocFind(i){
 }
 function stepDocFind(dir){ if(_docFindMatches.length) focusDocFind(_docFindIdx+dir); }
 function setSection(id){
-  if(id!=="home" && id!=="roster" && id!=="wiki" && !factionDocs().some(d=>d.id===id)) id="roster";
+  if(id!=="home" && id!=="roster" && id!=="relations" && id!=="wiki" && !factionDocs().some(d=>d.id===id)) id="roster";
   currentSection = id;
   document.body.setAttribute("data-section", id);
   document.querySelectorAll("#topnav .navtab").forEach(b=>{
@@ -2569,9 +2721,10 @@ function setSection(id){
     b.classList.toggle("active", on); b.setAttribute("aria-selected", on);
   });
   renderPrimaryNav();   // sync the ROW-1 HOME/WIKI active state
-  const isHome = id==="home", isRoster = id==="roster";
+  const isHome = id==="home", isRoster = id==="roster", isRelations = id==="relations";
   const home=$("#home"); if(home) home.classList.toggle("hidden", !isHome);
-  $("#docview").classList.toggle("hidden", isRoster || isHome);
+  $("#docview").classList.toggle("hidden", isRoster || isHome || isRelations);
+  $("#relations").classList.toggle("hidden", !isRelations);
   if(isHome){
     renderHome();
     $("#roster").classList.add("hidden");
@@ -2579,6 +2732,11 @@ function setSection(id){
     $("#state").classList.add("hidden");
   }else if(isRoster){
     showRosterFor(activeFaction());                  // live data, or a themed coming-soon state
+  }else if(isRelations){
+    $("#roster").classList.add("hidden");
+    $("#cards").classList.add("hidden");
+    $("#state").classList.add("hidden");
+    showRelationsFor(activeFaction());               // live data, or a themed coming-soon state
   }else{
     $("#roster").classList.add("hidden");
     $("#cards").classList.add("hidden");
@@ -2594,6 +2752,7 @@ function setAppHeading(){
   const h=$("#app-h1"); if(!h) return;
   if(currentSection==="home"){ h.textContent="Misfits Database — Home"; return; }
   const label = currentSection==="roster" ? "Roster"
+    : currentSection==="relations" ? "Relations"
     : currentSection==="wiki" ? "Wiki"
     : (factionDocs().find(d=>d.id===currentSection)||{}).label || currentSection;
   h.textContent = activeFaction().name + " — " + label;
