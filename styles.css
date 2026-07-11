@@ -202,16 +202,8 @@
     --rivet-lo:     #181505;   /* rivet shadow ring */
     --frame:        clamp(18px, 2.1vw, 34px);   /* plate width — scales with the window */
     --bezel:        clamp(15px, 1.7vw, 24px);   /* jet-black matte surround between metal + glass */
-    /* fine brushed-metal grain: alternating faint dark + warm-light vertical hairlines,
-       layered over a base metal gradient to lift the panels off "flat olive". Technique
-       adapted clean-room from a skeuomorphic-console pen — see CREDITS.md. */
-    --metal-brush: repeating-linear-gradient(90deg,
-       rgba(0,0,0,.05) 0 1px, rgba(0,0,0,0) 1px 2px,
-       rgba(255,248,224,.045) 2px 3px, rgba(0,0,0,0) 3px 5px);
-    /* broad raking sheen — light catches the plate from the top-left, falls to shade */
-    --metal-sheen: linear-gradient(118deg,
-       rgba(255,250,232,.10) 0%, rgba(255,250,232,.02) 22%,
-       rgba(0,0,0,0) 46%, rgba(0,0,0,.05) 78%, rgba(0,0,0,.12) 100%);
+    /* (the brushed-grain + raking-sheen vars were retired with the pixel-art rework — the metal is
+       flat colour blocks with hard stepped bevels now, no soft gradients.) */
   }
   /* dark olive surround behind the centred panel, with a faint vignette */
   body{
@@ -291,58 +283,43 @@
      ║ To remove the module cleanly and keep just the plain screen, follow the recipe  ║
      ║ in MAINTENANCE.md § "Chassis frame — an isolated, removable module".            ║
      ╚═══════════════════════════════════════════════════════════════════════════════╝ */
-  /* ---- experimental pixel-art Fallout-1 bezel ----
-     Built in three crisp layers (no soft gradients on the metal, so it reads pixel-art):
-       .app          = the flat stamped plate, raised with a directional bevel
-       .app::before  = frame furniture: subtle rivets + the centred top tab
-       .app::after   = the CANTED LIP — a chamfered rim that overhangs the screen
-                       and casts a shadow down onto the glass.                          */
+  /* ---- MINIMALIST PIXEL-ART Fallout-1 chassis ----
+     Flat colour blocks + HARD stepped bevels (no soft gradients / no blur on the metal), a
+     limited olive palette, and crisp keylines — reads as stamped pixel-art panel, not shiny
+     realistic metal. Three layers:
+       .app          = the flat plate, raised by a hard mitred bevel + crisp keylines
+       .app::before  = frame furniture: flat pixel bolts run around the plate
+       .app::after   = the recessed jet-black bezel the glass sits in.                   */
   body[data-frame="border"] .app{
-    /* olive plate. The faceted border-colors are the fallback bevel; a metallic gradient
-       border-image (lit top-left → shaded bottom-right) gives it a rolled-metal sheen so
-       it doesn't read as flat next to the brushed masthead. */
+    /* flat olive plate with a HARD mitred bevel — lit top/left, shaded bottom/right, no gradient */
     border:var(--frame) solid var(--panel);
     border-top-color:var(--panel-hi);
     border-left-color:var(--panel-hi);
     border-right-color:var(--panel-lo);
     border-bottom-color:var(--panel-lo);
-    border-image:linear-gradient(135deg,
-      var(--panel-hi) 0%, var(--panel-mid) 30%, var(--panel) 55%, var(--panel-lo) 88%, var(--panel-ink) 100%) 1;
     box-shadow:
-      inset 0 0 0 1px var(--panel-mid),        /* breaks the flat plate edge */
-      0 0 0 1px var(--panel-ink),              /* crisp outer keyline */
-      0 5px 16px -2px rgba(0,0,0,.6);          /* the whole unit sits on the desk */
+      0 0 0 2px var(--panel-ink),              /* crisp black outer keyline (the pixel edge) */
+      inset 2px 2px 0 0 var(--panel-hi),       /* hard inner top-left catch step */
+      inset -2px -2px 0 0 var(--panel-lo),     /* hard inner bottom-right shade step */
+      0 6px 18px -6px rgba(0,0,0,.7);          /* grounding shadow (cast light, not metal) */
   }
-  /* ::before = frame furniture on the plate: subtle evenly-spaced rivets + a top tab.
-     Rivets are tiny and low-contrast now — they read as stamped bolts, not buttons. */
+  /* ::before = frame furniture: flat pixel BOLTS run evenly around the plate. Each bolt is a
+     hard 2-tone dot (bright core, dark ring, no soft edge) — stamped, not a shiny dome. */
   body[data-frame="border"] .app::before{
     content:""; position:absolute; z-index:6000; pointer-events:none;
     inset:calc(var(--frame) * -1);
     --mid: calc(var(--frame) * 0.5);
-    /* a dimensional stud: off-centre catch-light (lit top-left) → mid dome → shadow ring,
-       so it reads as a domed screw head rather than a flat dot */
-    --rv: radial-gradient(circle 3.2px at 38% 34%,
-            var(--rivet-hi) 0 1px, var(--panel-mid) 1.4px 2px,
-            var(--panel-lo) 2.4px 3.2px, transparent 3.2px);
-    /* the centred top tab — a small raised boss (lit top, dark bottom) with a keyline */
-    --tab: linear-gradient(180deg,
-            var(--panel-ink) 0 1px, var(--panel-hi) 1px 35%,
-            var(--panel-mid) 35% 70%, var(--panel-lo) 70% calc(100% - 1px),
-            var(--panel-ink) calc(100% - 1px) 100%);
-    background-image:
-      var(--rv), var(--rv), var(--rv), var(--rv),   /* four edge runs */
-      var(--tab);                                   /* top-centre tab */
-    background-repeat:
-      repeat-x, repeat-x, repeat-y, repeat-y,
-      no-repeat;
+    --rv: radial-gradient(circle 4px at 50% 50%,
+            var(--rivet-hi) 0 1.5px, var(--panel-mid) 1.5px 2.5px,
+            var(--rivet-lo) 2.5px 3.5px, transparent 3.5px);
+    background-image: var(--rv), var(--rv), var(--rv), var(--rv);   /* four edge runs, no top tab */
+    background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
     background-size:
-      64px var(--frame), 64px var(--frame),
-      var(--frame) 64px, var(--frame) 64px,
-      clamp(48px, 7vw, 92px) calc(var(--frame) + 3px);
+      72px var(--frame), 72px var(--frame),
+      var(--frame) 72px, var(--frame) 72px;
     background-position:
       var(--mid) top, var(--mid) bottom,
-      left var(--mid), right var(--mid),
-      top center;
+      left var(--mid), right var(--mid);
   }
   /* ::after = the JET-BLACK BEZEL: a matte black surround between the metal housing and
      the recessed glass, the way a real CRT reads. It draws as a border band at the app's
@@ -352,14 +329,13 @@
      the bezel (see below), so the screen is ringed on all four sides. */
   body[data-frame="border"] .app::after{
     content:""; position:absolute; inset:0; z-index:5998; pointer-events:none;
-    border:var(--bezel) solid #0a0a0a;               /* the matte bezel band */
+    border:var(--bezel) solid #0a0a0a;               /* the matte black bezel band */
     box-shadow:
-      0 0 0 1px rgba(0,0,0,.6),                      /* keyline: metal housing meets the bezel */
-      inset 0 0 0 1px rgba(214,220,208,.07),         /* the bezel's inner chamfer catches a little light */
-      inset 0 5px 9px -2px rgba(0,0,0,.92),          /* glass sits RECESSED below the top of the bezel */
-      inset 4px 0 9px -4px rgba(0,0,0,.55),          /* …and a little from the left */
-      inset -4px 0 9px -4px rgba(0,0,0,.55),         /* …and the right */
-      inset 0 0 30px 3px rgba(0,0,0,.5);             /* soft overall recess into the surround */
+      0 0 0 1px var(--panel-ink),                    /* crisp keyline: metal housing meets the bezel */
+      inset 0 0 0 1px rgba(214,220,208,.06),         /* 1px inner chamfer catch (crisp, no blur) */
+      inset 0 3px 0 -1px rgba(0,0,0,.85),            /* hard recess line — glass sits below the bezel top */
+      inset 2px 0 0 -1px rgba(0,0,0,.5),             /* crisp left recess */
+      inset -2px 0 0 -1px rgba(0,0,0,.5);            /* crisp right recess */
   }
   /* inset the screen (main = roster / cards / docs) so the bezel band sits in a gutter and
      never overlaps content. Left/right/bottom get the surround; the top meets the status
@@ -380,17 +356,14 @@
     position:relative; z-index:9042;
     margin:-10px -16px 0;                          /* bleed over the header padding (10px 16px 8px) */
     padding:12px 16px 12px;
-    /* brushed grain + raking sheen layered over the lit-from-above base gradient */
-    background:
-      var(--metal-brush),
-      var(--metal-sheen),
-      linear-gradient(180deg, var(--panel-hi) 0, var(--panel-mid) 8%, var(--panel) 70%, var(--panel-lo) 100%);
+    background:var(--panel-mid);                    /* FLAT plate — no brush, no sheen */
     /* the metal plate's own dark bottom lip, then the black bezel band = the TOP run of the
        screen surround (the ::after bezel covers left/right/bottom; this covers the top) */
     border-bottom:var(--bezel) solid #0b0b0b;
-    box-shadow: inset 0 1px 0 var(--rivet-hi), inset 0 -2px 0 var(--panel-lo),
-      inset 0 -3px 5px -2px rgba(0,0,0,.7),         /* glass recessed just below the black band */
-      0 1px 0 var(--panel-ink), 0 4px 10px -3px rgba(0,0,0,.65);
+    box-shadow:
+      inset 0 2px 0 var(--panel-hi),               /* hard top highlight line */
+      inset 0 -3px 0 var(--panel-lo),              /* hard bottom shade line above the black band */
+      0 1px 0 var(--panel-ink);
   }
   /* (Chassis metalwork brand signage was for the old wordmark; the FACTION box now carries the
      masthead identity in both modes. Chassis-specific box styling is a later polish — see T12.) */
@@ -398,19 +371,18 @@
      and an indicator LAMP (the one lawful glow on metal: it's a light, not phosphor) */
   body[data-frame="border"] .navtab,
   body[data-frame="border"] .titlebar .popwrap > .btn{
-    background:
-      var(--metal-brush),
-      linear-gradient(180deg, var(--panel-hi), var(--panel-mid) 45%, var(--panel));
+    background:var(--panel);                        /* FLAT face, hard pixel bevel */
     border:1px solid var(--panel-ink);
     color:var(--panel-ink);
     text-shadow:0 1px 0 color-mix(in srgb, var(--panel-hi) 85%, transparent);
-    box-shadow: inset 0 1px 0 var(--panel-hi), inset 1px 0 0 var(--panel-hi),
-      inset 0 -2px 0 var(--panel-lo), inset -1px 0 0 var(--panel-lo),
-      0 2px 0 var(--panel-ink), 0 3px 5px rgba(0,0,0,.5);
+    box-shadow:
+      inset 2px 2px 0 0 var(--panel-hi),           /* hard top-left highlight */
+      inset -2px -2px 0 0 var(--panel-lo),         /* hard bottom-right shade */
+      0 2px 0 0 var(--panel-ink);                  /* hard base line */
   }
   body[data-frame="border"] .navtab:hover,
   body[data-frame="border"] .titlebar .popwrap > .btn:hover{
-    background:linear-gradient(180deg, var(--rivet-hi), var(--panel-hi) 42%, var(--panel));
+    background:var(--panel-hi);
     color:var(--panel-ink);
   }
   body[data-frame="border"] .navtab::before{
@@ -419,17 +391,45 @@
     background:#20201a; box-shadow:inset 0 1px 2px #000, 0 1px 0 var(--panel-hi);  /* unlit lamp */
   }
   body[data-frame="border"] .navtab.active{
-    background:linear-gradient(180deg, var(--panel-lo), var(--panel) 55%, var(--panel-mid));
+    background:var(--panel-lo);
     border-color:var(--panel-ink);
     color:var(--panel-ink);
     text-shadow:0 1px 0 color-mix(in srgb, var(--panel-hi) 60%, transparent);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,.55), inset 0 1px 0 var(--panel-ink), 0 1px 0 var(--panel-hi);
-    transform:translateY(1px);                     /* pressed in */
+    box-shadow:
+      inset 2px 2px 0 0 var(--panel-lo),           /* inverted bevel = pressed IN */
+      inset -2px -2px 0 0 var(--panel-hi),
+      inset 0 2px 3px rgba(0,0,0,.5);
+    transform:translateY(1px);
   }
   body[data-frame="border"] .navtab.active::before{
     background:var(--fg);
     box-shadow:0 0 7px var(--fg), inset 0 0 1px rgba(0,0,0,.35);                /* lamp lit */
   }
+  /* the FACTION selector reads as a phosphor READOUT recessed INTO the metal (two-surface law:
+     data on a screen, inset in the housing) — a dark inset panel with an inverted pixel bevel. */
+  body[data-frame="border"] .faction-box{
+    background:#0a0e0a;
+    border:1px solid var(--panel-ink);
+    box-shadow:
+      inset 2px 2px 0 0 var(--panel-lo),         /* recessed (inverted bevel) */
+      inset -2px -2px 0 0 var(--panel-hi),
+      inset 0 0 12px rgba(0,0,0,.75);
+  }
+  body[data-frame="border"] .faction-legend{     /* the legend is stamped on the METAL above the readout */
+    background:var(--panel-mid); color:var(--panel-ink); text-shadow:0 1px 0 var(--panel-hi); }
+  body[data-frame="border"] .brand.open .faction-box{ border-color:var(--panel-ink); background:#0a0e0a; }
+  /* the Settings cog is a physical metal button too (same flat pixel bevel as the nav tabs) */
+  body[data-frame="border"] .cogbtn{
+    background:var(--panel); border:1px solid var(--panel-ink); color:var(--panel-ink);
+    box-shadow:
+      inset 2px 2px 0 0 var(--panel-hi),
+      inset -2px -2px 0 0 var(--panel-lo),
+      0 2px 0 0 var(--panel-ink); }
+  body[data-frame="border"] .cogbtn:hover{ background:var(--panel-hi); color:var(--panel-ink); box-shadow:
+      inset 2px 2px 0 0 var(--panel-hi), inset -2px -2px 0 0 var(--panel-lo), 0 2px 0 0 var(--panel-ink); }
+  body[data-frame="border"] .cogbtn[aria-expanded="true"]{
+    background:var(--panel-lo); color:var(--panel-hi);
+    box-shadow: inset 2px 2px 0 0 var(--panel-lo), inset -2px -2px 0 0 var(--panel-hi); }
   /* modals must still cover the (now-raised) metal — lift them above it in this mode */
   body[data-frame="border"] .modal-back{ z-index:9100; }
   /* ╚══ CHASSIS MODULE — END. Two out-of-band bits remain, both tagged @chassis-module:

@@ -227,7 +227,19 @@ Two coupled parts (one task, since they touch the same UI and CSS).
 - Scope note: touches the doc reader's CSS but **not `docClean()`** — stay out of the
   sanitiser per the scope fuse.
 
-## T12 · Make the chassis metal beautiful + authentically Fallout-1/2 — DESIGN / TASTE-GATED
+## T12 · Chassis metal — ✅ DONE 2026-07-11 (MINIMALIST PIXEL-ART, user-directed)
+User steer: "a minimalist pixel art style might help get to a decent looking version quickly; make
+sure it's fully implemented." Reworked the whole Chassis frame from the muddy soft-gradient "realistic
+metal" (which the survey below flagged as busier-not-better) to **flat pixel-art**: solid `--panel-*`
+colour blocks with HARD stepped bevels (lit top/left, shaded bottom/right), crisp keylines, flat pixel
+BOLTS around the plate (dropped the centred top tab + brushed grain + raking sheen — `--metal-brush`/
+`--metal-sheen` vars removed), a crisp recessed black bezel, a flat masthead plate, physical
+pixel-beveled nav buttons with indicator lamps, the FACTION selector as a phosphor readout recessed
+into the metal, and the cog as a matching metal button. Verified: olive + theme-tinted palettes,
+desktop + mobile, home + content views; console + selfcheck clean. Docs updated (CREDITS, MAINTENANCE).
+The original taste-gated spec is kept below for the record.
+
+## T12 (original spec, superseded by the pixel-art rework above) — DESIGN / TASTE-GATED
 Goal (user): plated metal that's *beautiful and skeuomorphic like the Fallout 1 & 2 UI* —
 worn industrial olive-drab panels, not clean sci-fi. **Finding from surveying the CSS
 references** (skeuomorphic-spacecraft-control-panel + the fallout-4-pip-boy / pip-boy-screen

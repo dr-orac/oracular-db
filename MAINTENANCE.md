@@ -139,8 +139,9 @@ the app — at worst a doc tab looks off and the roster is unaffected.
 
 ## Chassis frame — an isolated, removable module
 
-The **metal chassis** (the "Chassis" frame option: olive bevel, rivets, brushed panels,
-the faded-yellow **Gothic 821** brand signage) is a **fully opt-in, self-contained
+The **metal chassis** (the "Chassis" frame option: flat pixel-art olive panels with hard
+stepped bevels + pixel bolts, physical nav buttons with indicator lamps, and the FACTION
+selector as a phosphor readout recessed into the metal) is a **fully opt-in, self-contained
 module**. The default **"Screen only"** mode never touches a line of it. It was built to
 be lifted out cleanly if the metal direction doesn't earn its keep — leaving just the
 plain phosphor screen, exactly as it is by default.

@@ -25,13 +25,12 @@ Fonts have their own licence files in `fonts/`.
   gillesv (codepen.io/gillesv/pen/WbeZXyb) and "Punch Label Dymo Effect" by getwestfall
   (codepen.io/getwestfall/pen/WNyzZOL); implemented from scratch with our own shadow
   stack and tokens (`.brand small` in the Chassis frame mode, styles.css).
-- **Brushed-metal surface treatment** — the metal panels in the Chassis frame mode
-  (masthead, nav buttons, frame) use a brushed-grain `repeating-linear-gradient` overlay +
-  raking sheen + off-centre-lit dimensional screws. Techniques studied from "Skeuomorphic
-  Spacecraft Control Panel" by Margarita-the-solid
-  (codepen.io/Margarita-the-solid/pen/qENzBWN); reimplemented from scratch in our own olive
-  `--panel-*` token palette (`--metal-brush`/`--metal-sheen` and the `--rv` stud in
-  styles.css).
+- **Chassis metal panels** — the metal in the Chassis frame mode (masthead, nav buttons, frame)
+  is now **flat pixel-art**: solid `--panel-*` colour blocks with hard stepped bevels and flat
+  pixel bolts, no soft gradients. (An earlier version used a brushed-grain + raking-sheen
+  treatment studied from "Skeuomorphic Spacecraft Control Panel" by Margarita-the-solid,
+  codepen.io/Margarita-the-solid/pen/qENzBWN; that treatment was retired in the pixel-art rework,
+  so no external technique remains in the current chassis.)
 - **CRT screen glass (reflection + curvature) + phosphor text-glow** — the always-on screen
   treatment: a layered light-catch near the top suggesting curved glass, soft edge-curvature
   shading inside the jet-black bezel, and a two-layer text glow (a soft coloured bloom + a tight
