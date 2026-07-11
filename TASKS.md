@@ -17,13 +17,14 @@ Google Sheets, network-blocked here) — implement carefully + verify on the LIV
 - Keep the phosphor tint + the CRT frame; mind mobile. Acceptance: cards read spacious + legible, photos
   prominent, plus-to-upload obvious; verified on the live site.
 
-## T58 · Menu tiers — consistent + harmonious sizing/appearance — ROADMAPPED (design/taste pass)
-After the two-level masthead (T56), spend a focused pass making each tier read as a coherent system:
-the row-1 boxes (HOME/FACTION/WIKI) and row-2 section tabs should share a consistent box height, padding
-rhythm, icon size, and type scale so the two rows feel like one designed unit (not two ad-hoc bars).
-Align the box heights, unify the icon sizes, pick one padding scale, and balance the row-1 vs row-2
-weight (row 1 slightly more prominent as the umbrella level). Also revisit the mobile wrap (row 1 can
-get tall). Taste-gated — present before/after.
+## T58 · Menu tiers — consistent + harmonious — DONE 2026-07-11 (fdd9ece + this commit)
+Resolved (user steer): the two tiers are a deliberate SIZE HIERARCHY, not one flat scale. ROW 1
+(HOME/FACTION/WIKI) all read at the FACTION box's level — HOME/WIKI (`.navbox`) now SHARE the
+`.faction-box` rules (same box, 32px icon, 22px Workbench display label), differing only by no
+legend/no arrow. ROW 2 section tabs (`.navtab`) are the smaller sub-level (16px/22px), internally
+consistent. So each tier is coherent and the row-1 > row-2 hierarchy is intentional. The "FACTION"
+legend was brightened (--fg-dim → --fg-bright). Entropy: the duplicate navbox styling was folded into
+shared selectors. Remaining nicety: the mobile masthead can still get tall (row 1 boxes wrap) — minor.
 
 ## T56 · Two-level masthead (umbrella row + faction-section row) — DONE (d4a8053)
 User: split the nav into two hierarchy levels.

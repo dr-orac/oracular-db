@@ -576,7 +576,7 @@
   }
   /* flat 2D Fallout-style glyph per tab — inherits currentColor, so it dims/brightens with the
      label and inverts to the screen colour on the active (filled) tab. */
-  .navico{ flex:0 0 auto; width:22px; height:22px; display:inline-flex; }   /* one icon size across both menu tiers */
+  .navico{ flex:0 0 auto; width:22px; height:22px; display:inline-flex; }   /* ROW-2 section-tab icon (ROW-1 boxes use 32px via .navbox .navico) */
   .navico svg{ width:100%; height:100%; display:block; fill:currentColor; }
   /* on a doc section, hide the roster-only chrome (search / view toggle / refresh / status) */
   /* command-bar slot in the header: the roster toolbar shows on the roster, the doc find bar
