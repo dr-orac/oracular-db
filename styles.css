@@ -578,6 +578,11 @@
      that job), so hide them — home IS the navigation. The cog + the home content stay. */
   body[data-section="home"] .titlebar > #topnav{ display:none; }
   body[data-section="home"] .brand{ display:none; }
+  /* with nav+brand gone the header holds only the cog — trim its tall breathing band + drop the
+     divider so the hero sits high on the landing instead of below a strip of dead space. */
+  body[data-section="home"]:not([data-frame="border"]) header{
+    padding-top:var(--bezel-in); padding-bottom:0; }
+  body[data-section="home"]:not([data-frame="border"]) header::after{ display:none; }
   /* landing hero — the umbrella brand + a one-line "what to do" */
   .home-hero{ flex:0 0 auto; text-align:center; padding:14px 24px 2px; }
   .home-hero-brand{ display:block; font-family:"Workbench","Gothic 821",sans-serif;
