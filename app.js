@@ -60,6 +60,14 @@ const FACTIONS = {
   supermutants:{ name:"Super Mutants",               brand:"SUPER MUTANTS",           tagline:"// MUTANT-NET",   theme:{color:"green",   bg:"phosphor"}, font:{head:"block",     body:"sharetech"}, data:{sheetId:"", gid:""}, docs:[] },
   unity:       { name:"The Unity",                   brand:"THE UNITY",               tagline:"// FEV-NET",      theme:{color:"green",   bg:"phosphor"}, font:{head:"fallout",   body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
 };
+/* each faction's page on the Misfits wiki (the wiki's own faction listing) — used to offer a
+   "read about this faction on the wiki" link even before its roster is linked. Unity has no page. */
+const FACTION_WIKI = {
+  tribe:"Wasteland_Tribes", brotherhood:"Brotherhood_of_Steel", ncr:"New_California_Republic",
+  legion:"Caesar's_Legion", enclave:"The_Enclave", vault:"Vault_Dwellers",
+  followers:"Followers_of_the_Apocalypse", townsfolk:"Townsfolk", wastelanders:"Wastelanders",
+  outlaws:"Outlaws", synthetics:"Synthetics", supermutants:"Super_Mutants",
+};
 /* fallback if a faction ever lacks a `font` (mirrors the Tribe's iconic Fallouty pairing) */
 const FACTION_FONT_DEFAULT = { head:"fallout", body:"fallout" };
 function factionFont(f){ return (f && f.font) || FACTION_FONT_DEFAULT; }
@@ -118,7 +126,11 @@ function showFactionComingSoon(f){
   $("#state").classList.remove("hidden");
   $("#loadermsg").innerHTML = "⚑ " + esc(f.name.toUpperCase());
   const poss = /s$/i.test(f.name) ? "’" : "’s";   // "Outlaws’ archive", not "Outlaws’s"
-  $("#statesub").innerHTML = `Roster not linked yet — <b>${esc(f.name)}</b>${poss} archive will be connected soon.`;
+  const wpage = FACTION_WIKI[currentFaction];      // most factions have a wiki page → offer it meanwhile
+  const wlink = wpage
+    ? `<div class="coming-wiki"><a href="#wiki/${encodeURIComponent(wpage)}" data-wiki="${escAttr(wpage)}">▸ Read about ${esc(f.name)} on the wiki</a></div>`
+    : "";
+  $("#statesub").innerHTML = `Roster not linked yet — <b>${esc(f.name)}</b>${poss} archive will be connected soon.${wlink}`;
 }
 /* Original, in-house SVG glyph per faction (flat single-colour silhouettes, fill:currentColor so they
    tint to the active theme — NOT the trademarked Fallout logos). Each evokes the faction distinctly:

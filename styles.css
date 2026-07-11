@@ -1044,6 +1044,13 @@
   .search input::placeholder{ color:var(--fg); opacity:.9; }
   .search .prompt{ color:var(--fg); font-size:17px; }
   body.coming-soon .toolbar{ display:none; }   /* an unlinked faction has no roster to search or refresh */
+  /* coming-soon → offer the faction's wiki page meanwhile */
+  .coming-wiki{ margin-top:18px; }
+  .coming-wiki a{ display:inline-block; padding:8px 16px; border:1px solid var(--fg-faint);
+    color:var(--fg); font-family:var(--font-head); letter-spacing:1px; text-decoration:none;
+    transition:color .15s, border-color .15s, background .15s, box-shadow .15s; }
+  .coming-wiki a:hover{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel);
+    box-shadow:0 0 16px -5px rgba(var(--fg-rgb),.5); }
   /* a11y skip-link: hidden until keyboard focus, then jumps past the header into the list */
   .skip-link{
     position:fixed; top:8px; left:8px; z-index:9800;
