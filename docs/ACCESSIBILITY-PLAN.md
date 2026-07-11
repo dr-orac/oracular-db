@@ -72,9 +72,10 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
 - [ ] `aria-expanded` on all disclosure controls (faction/select dropdowns — done; audit others).
 
 ## Motion
-- [ ] `prefers-reduced-motion` is honoured in many places (tiles, menus, image fade, pending loader) —
-      sweep the rest: brand pulse, boot sequence, arrow rotations, hover transforms — ensure each has a
-      reduced-motion fallback.
+- [x] ✅ SWEPT — clean. All 5 keyframe animations are disabled under `prefers-reduced-motion`: flicker +
+      cursor blink (styles.css:151), home-tile entrance (:718), doc-loader `docrx` (:980), vault-boy
+      `vaultping` (:1605); plus the menu/tile/control transitions (:557, :718, :1896) and image fade
+      (earlier). No un-tamed animation found. (Boot sequence is JS-gated on reduced-motion.)
 
 ## Touch targets (mobile)
 - [ ] Interactive controls ≥ ~44×44px on mobile (text-size steppers, modal close ×, doc-find buttons,
