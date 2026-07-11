@@ -111,23 +111,28 @@ function showFactionComingSoon(f){
   $("#loadermsg").innerHTML = "⚑ " + esc(f.name.toUpperCase());
   $("#statesub").innerHTML = `Roster not linked yet — <b>${esc(f.name)}</b>'s archive will be connected soon.`;
 }
-/* the masthead title: a plain brand when there's one faction, a dropdown switcher with 2+. */
+/* the masthead FACTION selector: a labelled box showing the current faction + a big Fallout arrow;
+   the whole box is the dropdown trigger. (Single faction → a static plate, no menu.) */
+const FACTION_ARROW = `<span class="faction-arrow" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M2 5.5h16L10 15z"/></svg></span>`;
 function renderBrand(){
   const el = document.querySelector(".brand"); if(!el) return;
   const f = activeFaction();
-  document.title = `${f.brand} ${f.tagline}`;                     // browser tab follows the faction
-  const title = `${esc(f.brand)} <small>${esc(f.tagline)}</small>`;
-  el.classList.remove("open");                                   // a re-render always starts closed
-  if(FACTION_ORDER.length < 2){ el.classList.remove("has-switch"); el.innerHTML = title; return; }
+  document.title = f.brand;                                        // browser tab = the faction's brand (tagline dropped)
+  el.classList.remove("open");                                    // a re-render always starts closed
+  const inner = `<span class="faction-legend">Faction</span><span class="faction-name">${esc(f.name)}</span>`;
+  if(FACTION_ORDER.length < 2){                                    // single faction → static plate, no menu
+    el.classList.remove("has-switch");
+    el.innerHTML = `<span class="faction-box faction-box--static">${inner}</span>`;
+    return;
+  }
   el.classList.add("has-switch");
   el.innerHTML =
-    `<button class="brand-switch" id="faction-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Switch faction — choose which database to view">`+
-      `<span class="brand-title">${title}</span>`+
-      `<span class="brand-caret" aria-hidden="true">▼</span>`+
+    `<button class="faction-box" id="faction-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Switch faction">`+
+      inner + FACTION_ARROW +
     `</button>`+
-    `<div class="brand-menu" id="faction-menu" role="listbox" aria-label="Faction">`+
-      FACTION_ORDER.map(id =>
-        `<button class="brand-opt${id===currentFaction?' active':''}" type="button" role="option" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">${esc(FACTIONS[id].name)}</button>`
+    `<div class="faction-menu" id="faction-menu" role="listbox" aria-label="Faction">`+
+      FACTION_ORDER.map((id,i) =>
+        `<button class="faction-opt${id===currentFaction?' active':''}" style="--i:${i}" type="button" role="option" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">${esc(FACTIONS[id].name)}</button>`
       ).join("")+
     `</div>`;
 }
@@ -136,12 +141,12 @@ function wireFactionMenu(){
   const closeMenu = () => { const el=document.querySelector(".brand.open"); if(el){ el.classList.remove("open");
     const b=document.querySelector("#faction-btn"); if(b) b.setAttribute("aria-expanded","false"); } };
   document.addEventListener("click", e => {
-    const opt = e.target.closest(".brand-opt");
+    const opt = e.target.closest(".faction-opt");
     if(opt){ closeMenu(); applyFaction(opt.dataset.faction); return; }
     const btn = e.target.closest("#faction-btn");
     const el = document.querySelector(".brand.has-switch");
     if(btn && el){ const open = el.classList.toggle("open"); btn.setAttribute("aria-expanded", open?"true":"false"); return; }
-    if(!e.target.closest(".brand-menu")) closeMenu();     // outside click
+    if(!e.target.closest(".faction-menu")) closeMenu();     // outside click
   });
   document.addEventListener("keydown", e => { if(e.key==="Escape") closeMenu(); });
 }

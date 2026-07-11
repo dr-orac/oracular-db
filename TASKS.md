@@ -684,3 +684,32 @@ Fold into T45's padding model so the title area sits a healthy distance below th
 codepen.io/carterfromsl/pen/OJjxXKJ — 403 to automated fetch, no export zip on disk. Once the user
 pastes the code or drops the .zip in the project, mine it for thematic legibility ideas (borders,
 glows, type, scanlines) and fold the good parts in WITHOUT adding parallel systems.
+
+## ── Batch 9 (2026-07-11) — masthead controls + home-tile glow-up ──
+Anti-entropy: reshape the existing `.brand`/`.brand-menu`/`wireFactionMenu` and `.home-tile`
+systems — don't add parallel ones. Screen mode is the target; keep Chassis coherent.
+
+## T48 · Settings → a large cog icon on the far right — SMALL
+Replace the "⚙ Settings" text button with a large standalone cog GLYPH (no label), pinned to the
+FAR right of the header row (rightmost element). Keep it accessible (aria-label "Settings",
+title). It still opens the settings drawer. Style: sized to sit with the other masthead controls,
+hover/active states, theme-tinted.
+
+## T49 · A labelled FACTION dropdown box + drop the tagline — MED [design]
+Replace the wordmark-as-dropdown with a dedicated **FACTION** control: a bordered box containing the
+label "FACTION" (and the current faction) + a **generous, large Fallout-style ⯆ arrow** on its right.
+This box is the dropdown trigger. **Remove the "// PIP-LINK" tagline** (`.brand small`) everywhere it
+shows. Decide (see Q) whether the big wordmark stays as a title or the FACTION box replaces it.
+Arrow = chunky pixel/Fallout chevron, not a text "▼".
+
+## T50 · Workshop the faction dropdown motion — SMALL/MED [design]
+Make the open/close feel FLUID and Fallout-like: the menu should animate in (slide+fade / expand from
+the box, terminal-style), the big arrow should rotate/morph smoothly, options should have a crisp
+phosphor hover, maybe a subtle stagger or scanline sweep. Respect prefers-reduced-motion. Reuse
+`.brand-menu`/`.selctl` patterns; unify if it reduces duplication.
+
+## T51 · Home-page tiles — a proper web-design glow-up — MED [design]
+Make the home section tiles look impressive (study real web landing patterns): stronger visual
+hierarchy, depth/framing, richer hover (lift, glow, arrow/CTA reveal, icon motion), better use of the
+full-height space, maybe a faint terminal texture or per-section accent. Keep it on-theme + responsive
++ reduced-motion-safe. It's the first thing visitors see — it should feel designed, not utilitarian.
