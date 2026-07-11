@@ -663,19 +663,25 @@
   .home-tile-desc{ font-family:var(--font-body); font-size:clamp(13px, 1.4vw, 16px);
     letter-spacing:.3px; color:var(--fg-dim); max-width:62ch; line-height:1.5; }
   .home-tile:hover .home-tile-desc, .home-tile:focus-visible .home-tile-desc{ color:var(--fg); }
-  /* big faded index watermark */
-  .home-tile-num{ position:absolute; z-index:0; right:150px; top:50%; transform:translateY(-50%);
-    font-family:"Workbench","Gothic 821",sans-serif; font-size:clamp(56px, 8vw, 116px); line-height:1;
-    color:rgba(var(--fg-rgb),.06); pointer-events:none; user-select:none; transition:color .25s; }
-  .home-tile:hover .home-tile-num, .home-tile:focus-visible .home-tile-num{ color:rgba(var(--fg-rgb),.12); }
-  /* CTA — hidden until hover, then fades in + arrow slides */
-  .home-tile-cta{ flex:0 0 auto; display:inline-flex; align-items:center; gap:8px;
-    font-family:var(--font-head); font-size:15px; letter-spacing:2px; text-transform:uppercase;
-    color:var(--fg-dim); opacity:0; transform:translateX(-6px);
-    transition:opacity .2s, transform .2s, color .2s; }
-  .home-tile-cta svg{ width:20px; height:20px; fill:currentColor; transition:transform .2s; }
+  /* big faded index watermark — anchored to the right edge so it fills the card's right third as a
+     deliberate oversized numeral (not a number floating mid-card). Brightens + drifts left on hover. */
+  .home-tile-num{ position:absolute; z-index:0; right:clamp(18px,3.5vw,40px); top:50%;
+    transform:translateY(-50%);
+    font-family:"Workbench","Gothic 821",sans-serif; font-size:clamp(60px, 8.5vw, 124px); line-height:1;
+    color:rgba(var(--fg-rgb),.085); pointer-events:none; user-select:none;
+    transition:color .25s, right .25s, text-shadow .25s; }
+  .home-tile:hover .home-tile-num, .home-tile:focus-visible .home-tile-num{
+    color:rgba(var(--fg-rgb),.17); right:clamp(24px,4.5vw,52px);
+    text-shadow:0 0 30px rgba(var(--fg-rgb),.25); }
+  /* CTA — sits under the blurb (left-aligned so it never fights the right-edge numeral); collapses
+     to zero height at rest and grows in on hover, keeping the resting card clean. */
+  .home-tile-cta{ align-self:flex-start; display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--font-head); font-size:14px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--fg-bright); overflow:hidden; max-height:0; opacity:0; transform:translateY(4px);
+    transition:opacity .2s, transform .2s, max-height .2s, margin-top .2s; }
+  .home-tile-cta svg{ width:18px; height:18px; fill:currentColor; transition:transform .2s; }
   .home-tile:hover .home-tile-cta, .home-tile:focus-visible .home-tile-cta{
-    color:var(--fg-bright); opacity:1; transform:none; }
+    opacity:1; transform:none; max-height:2em; margin-top:2px; }
   .home-tile:hover .home-tile-cta svg, .home-tile:focus-visible .home-tile-cta svg{ transform:translateX(5px); }
   @keyframes hometile{ from{ opacity:0; transform:translateY(14px); } }
   @media (max-width:640px){

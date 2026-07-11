@@ -1892,8 +1892,8 @@ function renderHome(){
       `<span class="home-tile-body">`+
         `<span class="home-tile-title">${esc(it.label)}</span>`+
         `<span class="home-tile-desc">${esc(HOME_INFO[it.id]||HOME_INFO._default)}</span>`+
+        `<span class="home-tile-cta" aria-hidden="true">Enter ${HOME_ARROW}</span>`+
       `</span>`+
-      `<span class="home-tile-cta" aria-hidden="true">Enter ${HOME_ARROW}</span>`+
     `</button>`).join("");
   // landing hero — the umbrella brand (the per-faction masthead selector is hidden on home, so this
   // carries the identity). No section tabs here either: the cards below ARE the navigation.
