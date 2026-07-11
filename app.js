@@ -2280,13 +2280,66 @@ async function loadDoc(doc){
   }
 }
 
-/* ---------- WIKI reader (trial) ----------------------------------------------------------------
+/* ---------- WIKI reader ----------------------------------------------------------------
    The Misfits wiki is a MediaWiki whose parse API is CORS-enabled, so we fetch a page's HTML
-   client-side (like the Google Docs), strip the MediaWiki chrome, sanitise it through docClean and
-   render it in the terminal theme. Internal wiki links load in-app so you can browse through it.
-   TRIAL SCOPE: text-first (images stripped for now); the wiki page isn't yet carried in the URL. */
+   client-side (like the Google Docs) and re-render it in the terminal theme. Rather than flatten
+   the wiki's hand-built landing structure into a wall of text, renderWiki() RECOGNISES its
+   semantics (hero banner, callouts/alerts, a faction card grid, column layouts — all built with
+   inline styles) and re-skins each as a native phosphor component, so the page reads better than
+   the source. Leaf/prose content still goes through docClean (the strict sanitiser). Internal
+   wiki links load in-app so you can browse through it. */
 const WIKI = { host:"wiki.misfitsystems.net", home:"Main_Page" };
 let _wikiPage = WIKI.home;
+/* a block is a "styled box" if the author gave it a border/background (a banner, callout or card) */
+function wikiStyled(el){ return /(?:border|background)\s*:/i.test(el.getAttribute("style")||""); }
+function wikiHexRgb(c){ c=(c||"").replace("#",""); if(c.length===3) c=c.split("").map(x=>x+x).join("");
+  if(!/^[0-9a-f]{6}$/i.test(c)) return null; const n=parseInt(c,16); return {r:n>>16&255,g:n>>8&255,b:n&255}; }
+/* a reddish border/background marks an ALERT box (the Main Page's "MANDATORY READING") */
+function wikiIsAlert(el){
+  const m=(el.getAttribute("style")||"").match(/(?:border|background)[^;]*?(#[0-9a-fA-F]{3,6}|red|crimson|darkred)/);
+  if(!m) return false; const c=m[1].toLowerCase();
+  if(/red|crimson|darkred/.test(c)) return true;
+  const rgb=wikiHexRgb(c); return !!rgb && rgb.r>90 && rgb.r>rgb.g*1.7 && rgb.r>rgb.b*1.7;
+}
+/* docClean drops <div>, merging sibling text runs — so convert leaf content-divs (no block child,
+   and NOT a styled box) to <p> first, so a box/cell's title·body·links stack on their own lines */
+function wikiLeafDivsToP(root){
+  root.querySelectorAll("div").forEach(d=>{
+    if(wikiStyled(d)) return;
+    if(!d.querySelector("div,p,ul,ol,table,h1,h2,h3,h4,h5,h6,blockquote,hr,li")){
+      const p=document.createElement("p"); while(d.firstChild) p.appendChild(d.firstChild); d.replaceWith(p);
+    }
+  });
+}
+function wikiClean(el){ wikiLeafDivsToP(el); return docClean(el); }
+/* walk the parsed MediaWiki DOM and emit themed structure; recurse through plain wrapper divs */
+function renderWiki(node){
+  let out="";
+  [...node.children].forEach(el=>{
+    const tag=el.tagName.toLowerCase();
+    if(tag==="div" && wikiStyled(el)){                          // banner / callout / alert
+      const raw=el.getAttribute("style")+el.innerHTML;
+      const cls = wikiIsAlert(el) ? "wiki-callout wiki-callout--alert"
+        : (/font-size:\s*(?:1\.[5-9]|[2-9])/i.test(raw) && /text-align:\s*center/i.test(raw)) ? "wiki-hero"
+        : "wiki-callout";
+      out+=`<div class="${cls}">${wikiClean(el)}</div>`; return;
+    }
+    if(tag==="table"){
+      const cells=[...el.querySelectorAll("tr > td, tr > th")];
+      const styled=cells.filter(c=>wikiStyled(c)).length;
+      if(cells.length>=2 && styled>=Math.ceil(cells.length/2)){  // colour-coded cells → a card grid
+        out+=`<div class="wiki-cardgrid">`+cells.map(c=>`<div class="wiki-card">${wikiClean(c)}</div>`).join("")+`</div>`; return;
+      }
+      if(!el.querySelector("th") && el.querySelectorAll("tr").length===1 && cells.length>=2 && cells.length<=4){
+        out+=`<div class="wiki-cols" style="--n:${cells.length}">`+cells.map(c=>`<div class="wiki-col">${wikiClean(c)}</div>`).join("")+`</div>`; return;   // single-row layout table → columns
+      }
+      out+=docClean(el); return;                                // a genuine data table → .doctable
+    }
+    if(tag==="div"){ out += el.querySelector("div,table") ? renderWiki(el) : wikiClean(el); return; }
+    out+=docClean(el);
+  });
+  return out;
+}
 function wikiAbs(u){ if(!u) return u; if(/^https?:/i.test(u)) return u;
   if(u.startsWith("//")) return "https:"+u; if(u.startsWith("/")) return "https://"+WIKI.host+u; return u; }
 function wikiPageFromHref(href){                               // wiki page title from a URL, else null
@@ -2316,32 +2369,12 @@ async function loadWiki(page){
     const tmp=document.createElement("div"); tmp.innerHTML=html;
     tmp.querySelectorAll(".mw-editsection,.toc,#toc,.mw-empty-elt,style,script,.navbox,.metadata,.noprint,sup.reference,img,figure,.thumb")
       .forEach(e=>e.remove());                                // drop MediaWiki chrome (the wiki has no images)
-    // MediaWiki uses TABLES for page layout (the Main Page is one big grid) — flatten them to a
-    // linear flow (innermost-first) so the text reads normally instead of squeezed into columns.
-    for(let g=0; g<60; g++){
-      const leaf=[...tmp.querySelectorAll("table")].find(t=>!t.querySelector("table"));
-      if(!leaf) break;
-      const box=document.createElement("div");
-      leaf.querySelectorAll("td,th").forEach(c=>{ const d=document.createElement("div");
-        while(c.firstChild) d.appendChild(c.firstChild); box.appendChild(d); });
-      leaf.replaceWith(box);
-    }
-    // docClean drops <div> (keeps only its children), so sibling styled boxes (the Main Page's
-    // hand-built banners, and the flattened table cells above) would merge into one text run.
-    // Convert every leaf div (one with no block children) to a <p> so each stays its own line.
-    tmp.querySelectorAll("div").forEach(d=>{
-      if(!d.querySelector("div,p,ul,ol,table,h1,h2,h3,h4,h5,h6,blockquote,hr,li")){
-        const p=document.createElement("p");
-        while(d.firstChild) p.appendChild(d.firstChild);
-        d.replaceWith(p);
-      }
-    });
     tmp.querySelectorAll("a[href]").forEach(a=>a.setAttribute("href", wikiAbs(a.getAttribute("href"))));
     docBoldClasses=new Set(); docItalicClasses=new Set(); docTitleCount=0; _docImgSink=null;   // reset docClean state
-    // docClean strips block wrappers (divs), so wiki content comes back as loose inline/text runs.
-    // .docreader is a grid (1fr · centre measure · 1fr) — loose runs would land in the narrow side
-    // column (one word per line). Wrap them in ONE block so they sit in the centre column and flow.
-    reader.innerHTML = `<div class="wikibody">${docClean(tmp)}</div>`;
+    // renderWiki re-skins the wiki's hand-built structure (hero/callout/card-grid/columns) as native
+    // components; the .wikibody wrapper keeps loose prose in the reader's centre measure (the reader
+    // is a grid, so bare runs would otherwise fall into the narrow side column).
+    reader.innerHTML = `<div class="wikibody">${renderWiki(tmp)}</div>`;
     styleTOC(reader); buildDocSidebar(reader); trackDocSection();
     reader.dataset.docid = "wiki:"+page;
     $("#docnow").textContent = "› "+page.replace(/_/g," ");

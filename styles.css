@@ -980,6 +980,43 @@
   .docreader tbody tr:hover{ background:rgba(var(--fg-rgb),.10); }
   .docreader tbody tr:last-child td{ border-bottom:0; }
 
+  /* ---------- WIKI native components (renderWiki re-skins the MediaWiki landing structure) ----------
+     The source wiki hand-builds a hero banner, callouts, a faction card grid and column layouts with
+     inline styles; we re-render them as phosphor components that read better than the flat source. */
+  .wikibody{ display:block; }
+  .wikibody > *:first-child{ margin-top:0; }
+  /* HERO banner — the page's title block */
+  .wikibody .wiki-hero{ text-align:center; margin:0 0 22px; padding:26px 24px;
+    border:1px solid var(--fg); background:linear-gradient(180deg, rgba(var(--fg-rgb),.07), transparent 90%);
+    box-shadow:inset 0 0 46px -22px rgba(var(--fg-rgb),.6), 0 0 26px -16px rgba(var(--fg-rgb),.4); }
+  .wikibody .wiki-hero p{ margin:.28em 0; color:var(--fg-dim); letter-spacing:1px; }
+  .wikibody .wiki-hero p:first-child{ font-family:var(--doc-font-head, var(--font-head));
+    font-size:1.9em; line-height:1.05; letter-spacing:3px; text-transform:uppercase;
+    color:var(--fg-bright); text-shadow:var(--glow-strong); margin:0 0 .3em; }
+  /* CALLOUT / ALERT — an admonition box with a left accent bar */
+  .wikibody .wiki-callout{ margin:0 0 20px; padding:14px 18px;
+    border:1px solid var(--fg-faint); border-left:3px solid var(--fg); background:var(--bg-panel); }
+  .wikibody .wiki-callout--alert{ border-left-width:4px; border-left-color:var(--fg-bright);
+    box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.22), 0 0 20px -12px rgba(var(--fg-rgb),.5); }
+  .wikibody .wiki-callout p{ margin:.32em 0; }
+  .wikibody .wiki-callout p:first-child{ font-family:var(--font-head); letter-spacing:1px; color:var(--fg-bright); }
+  /* CARD GRID — the faction cards (source uses one coloured cell each; we go clean phosphor + hover) */
+  .wikibody .wiki-cardgrid{ display:grid; gap:12px; margin:0 0 22px;
+    grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); }
+  .wikibody .wiki-card{ padding:14px 16px; border:1px solid var(--fg-faint); background:var(--bg-panel);
+    transition:border-color .18s, background .18s, transform .18s, box-shadow .18s; }
+  .wikibody .wiki-card:hover{ border-color:var(--fg); background:var(--bg-panel-2); transform:translateY(-2px);
+    box-shadow:0 12px 26px -16px rgba(0,0,0,.9), 0 0 22px -8px rgba(var(--fg-rgb),.45); }
+  .wikibody .wiki-card p{ margin:.28em 0; font-size:.92em; color:var(--fg-dim); }
+  .wikibody .wiki-card p:first-child{ font-family:var(--font-head); font-size:1.05em; letter-spacing:1.5px;
+    text-transform:uppercase; color:var(--fg-bright); margin:0 0 .4em; text-shadow:0 0 10px rgba(var(--fg-rgb),.35); }
+  /* COLUMN layout (e.g. Quick Links | New Player) */
+  .wikibody .wiki-cols{ display:grid; gap:22px; margin:0 0 20px;
+    grid-template-columns:repeat(var(--n,2), minmax(0,1fr)); }
+  @media (max-width:640px){
+    .wikibody .wiki-cardgrid, .wikibody .wiki-cols{ grid-template-columns:1fr; }
+  }
+
   /* ---------- command bar (search / view / find) — BELOW the header divider line ---------- */
   /* mirrors the header's horizontal padding so the search's rail-width box lines up exactly with
      the list column beneath it (the search reads as the head of that column). */

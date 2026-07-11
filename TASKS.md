@@ -824,6 +824,24 @@ STILL TO DO to make it good:
      `#<faction>/wiki`. The Wiki tab still appears in each faction's nav but shows the shared wiki.
   Verified live (both Main_Page and content pages render full-width, in-theme; console clean).
 
+## T35 VISUAL LAYOUT (2026-07-11) — "surpass the source MediaWiki" — DONE
+User: the wiki looked like a jumble; design a visual layout that beats the source. The flatten-and-
+strip approach (above) fixed readability but DESTROYED the Main Page's hand-built structure. Replaced
+it with a STRUCTURE-AWARE renderer `renderWiki()` (app.js): it walks the parsed MediaWiki DOM and
+RE-SKINS the author's inline-styled semantics as native phosphor components instead of flattening —
+  • styled centred box w/ big text → `.wiki-hero` (glowing bordered banner);
+  • reddish-bordered box → `.wiki-callout--alert`; other styled box → `.wiki-callout` (accent-bar admonition);
+  • a table whose cells carry inline border/background → `.wiki-cardgrid` of hover-lift `.wiki-card`s
+    (the faction cards — the source colour-codes each; we go clean monochrome phosphor + hover);
+  • a single-row plain multi-col table → `.wiki-cols` (responsive columns, stack on mobile);
+  • a genuine data table (`<th>`, no per-cell inline bg) → the existing `.doctable`.
+  Leaf prose still goes through docClean; `wikiClean()` runs the leaf-div→`<p>` pass per box/cell so
+  title·body·links stack. CSS `.wiki-*` added to styles.css. The old destructive table-flatten loop is
+  gone. Verified: Main Page now reads as a designed landing (hero + alert + 2-col quick-links + 3-col
+  faction card grid); content pages (Rules) gain the hero/blockquote treatment with no regression;
+  cards+cols stack on mobile (no h-overflow); standard `.wikitable`s still render as data tables; console
+  + selfcheck clean.
+
 ## HOME fine-tuning (2026-07-11) — DONE (17e7a67, e2040bc, 7e1ae1b), user-picked
 Three home-page polishes the user asked for after the wiki work:
   A. ✅ Trimmed the empty header band on `body[data-section="home"]` — nav+brand are hidden there, so
