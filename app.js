@@ -2355,15 +2355,22 @@ function renderWiki(node){
       out+=`<div class="${cls}">${wikiClean(el)}</div>`; return;
     }
     if(tag==="table"){
+      const rows=[...el.querySelectorAll("tr")];
       const cells=[...el.querySelectorAll("tr > td, tr > th")];
       const styled=cells.filter(c=>wikiStyled(c)).length;
-      if(cells.length>=2 && styled>=Math.ceil(cells.length/2)){  // colour-coded cells → a card grid
+      const cols=Math.max(0,...rows.map(r=>r.querySelectorAll(":scope > td, :scope > th").length));
+      // colour-coded cells in a ≥3-column grid → faction card grid. (A 2-column styled table is a
+      // key-value infobox, e.g. a faction dossier — leave it to the data-table renderer below.)
+      if(cols>=3 && styled>=Math.ceil(cells.length/2)){
         out+=`<div class="wiki-cardgrid">`+cells.map(c=>`<div class="wiki-card">${wikiClean(c)}</div>`).join("")+`</div>`; return;
       }
       if(!el.querySelector("th") && el.querySelectorAll("tr").length===1 && cells.length>=2 && cells.length<=4){
         out+=`<div class="wiki-cols" style="--n:${cells.length}">`+cells.map(c=>`<div class="wiki-col">${wikiClean(c)}</div>`).join("")+`</div>`; return;   // single-row layout table → columns
       }
-      out+=docClean(el); return;                                // a genuine data table → .doctable
+      // a genuine data table / key-value infobox → let docClean render it as a .doctable. docClean
+      // only wraps a <table> it meets as a CHILD node, so pass a wrapper (calling it on the table
+      // itself would iterate the rows loose and collapse to text).
+      const w=document.createElement("div"); w.appendChild(el.cloneNode(true)); out+=docClean(w); return;
     }
     if(tag==="div"){ out += el.querySelector("div,table") ? renderWiki(el) : wikiClean(el); return; }
     out+=docClean(el);
@@ -2405,6 +2412,15 @@ async function loadWiki(page){
     // components; the .wikibody wrapper keeps loose prose in the reader's centre measure (the reader
     // is a grid, so bare runs would otherwise fall into the narrow side column).
     reader.innerHTML = `<div class="wikibody">${renderWiki(tmp)}</div>`;
+    // if this wiki page IS one of our factions, offer a jump to its roster in the Database (closes the
+    // faction↔wiki loop; the coming-soon → wiki link is the other direction)
+    const jumpId = Object.keys(FACTION_WIKI).find(id => FACTION_WIKI[id] === page);
+    if(jumpId){
+      const wb = reader.querySelector(".wikibody");
+      if(wb){ const d=document.createElement("div"); d.className="wiki-factionjump";
+        d.innerHTML = `<a href="#${escAttr(jumpId)}/roster">▸ View ${esc(FACTIONS[jumpId].name)} in the Database</a>`;
+        wb.insertBefore(d, wb.firstChild); }
+    }
     styleTOC(reader); buildDocSidebar(reader); trackDocSection();
     reader.dataset.docid = "wiki:"+page;
     $("#docnow").textContent = "› "+page.replace(/_/g," ");

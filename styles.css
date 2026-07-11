@@ -986,6 +986,14 @@
      inline styles; we re-render them as phosphor components that read better than the flat source. */
   .wikibody{ display:block; }
   .wikibody > *:first-child{ margin-top:0; }
+  /* faction↔wiki jump: shown when the open wiki page is one of our factions */
+  .wikibody .wiki-factionjump{ margin:0 0 18px; }
+  .wikibody .wiki-factionjump a{ display:inline-flex; align-items:center; gap:8px; padding:8px 16px;
+    border:1px solid var(--fg); background:linear-gradient(180deg, rgba(var(--fg-rgb),.10), transparent);
+    color:var(--fg-bright); font-family:var(--font-head); letter-spacing:1px; text-decoration:none;
+    box-shadow:0 0 18px -8px rgba(var(--fg-rgb),.6); transition:background .15s, box-shadow .15s; }
+  .wikibody .wiki-factionjump a:hover{ background:var(--bg-panel-2);
+    box-shadow:0 0 22px -5px rgba(var(--fg-rgb),.7); }
   /* HERO banner — the page's title block */
   .wikibody .wiki-hero{ text-align:center; margin:0 0 22px; padding:26px 24px;
     border:1px solid var(--fg); background:linear-gradient(180deg, rgba(var(--fg-rgb),.07), transparent 90%);
