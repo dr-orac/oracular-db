@@ -604,11 +604,18 @@
      that job), so hide them — home IS the navigation. The cog + the home content stay. */
   body[data-section="home"] .primary-nav{ display:none; }   /* home is the landing — the tiles ARE the nav */
   body[data-section="home"] #topnav{ display:none; }        /* (both masthead rows hidden; only the cog stays) */
-  /* with nav+brand gone the header holds only the cog — trim its tall breathing band + drop the
-     divider so the hero sits high on the landing instead of below a strip of dead space. */
+  /* Home is a fixed, non-scrolling landing → frame it like a poster: EQUAL --edge inset on all four
+     sides. With nav+brand gone the header holds only the cog, so collapse its band to nothing (it would
+     otherwise inflate the TOP gap) and float the cog into the top-right corner at the same --edge inset.
+     main then carries an even --edge on every side, so the content box sits centred in an equal frame. */
   body[data-section="home"]:not([data-frame="border"]) header{
-    padding-top:var(--bezel-in); padding-bottom:0; }
+    position:relative; height:0; padding:0; overflow:visible; }
   body[data-section="home"]:not([data-frame="border"]) header::after{ display:none; }
+  body[data-section="home"]:not([data-frame="border"]) .masthead{ position:static; }
+  body[data-section="home"]:not([data-frame="border"]) .titlebar{ display:block; }
+  body[data-section="home"]:not([data-frame="border"]) .titlebar-right{
+    position:absolute; top:var(--edge); right:var(--edge); margin-left:0; z-index:30; }
+  body[data-section="home"]:not([data-frame="border"]) main{ padding:var(--edge); }
   /* landing hero — the umbrella brand + a one-line "what to do" */
   .home-hero{ flex:0 0 auto; text-align:center; padding:14px 24px 2px; }
   .home-hero-brand{ display:block; font-family:"Workbench","Gothic 821",sans-serif;
