@@ -1879,7 +1879,7 @@ function renderHome(){
         FACTION_ORDER.map(id =>
           `<button class="home-fac${id===currentFaction?' active':''}" type="button" role="tab" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">`+
             `<span class="home-fac-ico" aria-hidden="true">${FACTION_ICONS[id]||""}</span>`+
-            `<span class="home-fac-name">${esc(FACTIONS[id].name)}</span>`+
+            `<span class="home-fac-name">${esc(FACTIONS[id].name.replace(/^The\s+/i,""))}</span>`+  // compact: drop the "The" so tiles line up
           `</button>`).join("")+
       `</div>`+
     `</div>`;
