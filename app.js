@@ -2241,9 +2241,14 @@ function prefetchDoc(docId){ if(docId && !_docCache.has(docId)) prepareDoc(docId
    pixel-font tofu. One interval, cleared the moment the fetch settles. */
 const _LOADMSG = ["establishing archive link", "retrieving document", "decoding transmission", "rendering dossier"];
 let _docLoaderTimer = null;
+/* announce a STABLE doc/wiki state to screen readers (loading / error). Not the animated loader —
+   that repaints 12×/s and would flood a live region; this fires once per state change. */
+function announceDoc(msg){ const a=$("#doc-announce"); if(a) a.textContent = msg || ""; }
 function startDocLoader(status){
   stopDocLoader();
   status.className = "docstatus loading";
+  const _r=$("#docreader"); if(_r) _r.setAttribute("aria-busy","true");
+  announceDoc("Loading document…");                          // once, not per animation frame
   const W = 28; let f = 0;
   const frame = () => {
     const span = W*2 - 2, ph = f % span, p = ph < W ? ph : span - ph;   // ping-pong head position
@@ -2258,7 +2263,8 @@ function startDocLoader(status){
   frame();
   _docLoaderTimer = setInterval(frame, 85);
 }
-function stopDocLoader(){ if(_docLoaderTimer){ clearInterval(_docLoaderTimer); _docLoaderTimer = null; } }
+function stopDocLoader(){ if(_docLoaderTimer){ clearInterval(_docLoaderTimer); _docLoaderTimer = null; }
+  const _r=$("#docreader"); if(_r) _r.setAttribute("aria-busy","false"); }
 
 /* inject a prepared doc into the reader (shared by the cold + cached paths) */
 function renderPreparedDoc(reader, prepared, doc){
@@ -2270,6 +2276,7 @@ function renderPreparedDoc(reader, prepared, doc){
   trackDocSection();
   reader.dataset.docid = doc.id;
   resetDocFind();                                             // fresh doc → clear any stale find state
+  announceDoc((doc.label||"Document")+" loaded");            // screen-reader cue for the loaded doc
 }
 function docLoadError(status, e){
   stopDocLoader();
@@ -2278,6 +2285,7 @@ function docLoadError(status, e){
     "Couldn’t load this document. Make sure it’s shared <b>“Anyone with the link → Viewer.”</b>";
   status.innerHTML = `${why} `+
     `<a href="${escAttr($("#doclink").href)}" target="_blank" rel="noopener noreferrer">Open in Google Docs ↗</a>`;
+  announceDoc(why.replace(/<[^>]+>/g,""));                    // screen-reader error cue (tags stripped)
 }
 async function loadDoc(doc){
   $("#doctitle").textContent = doc.label;
@@ -2432,11 +2440,13 @@ async function loadWiki(page){
     reader.dataset.docid = "wiki:"+page;
     $("#docnow").textContent = "› "+page.replace(/_/g," ");
     status.className="docstatus"; status.textContent="";
+    announceDoc(page.replace(/_/g," ")+" loaded");           // screen-reader cue for the loaded page
     writeRoute();                                             // reflect the loaded wiki page in the URL
   }catch(e){
     if(currentSection!=="wiki") return;
     stopDocLoader(); status.className="docstatus error";
     status.innerHTML = `Couldn’t load the wiki page. <a href="${escAttr($("#doclink").href)}" target="_blank" rel="noopener noreferrer">Open the wiki ↗</a>`;
+    announceDoc("Couldn’t load the wiki page.");
   }finally{ if(currentSection==="wiki") stopDocLoader(); clearTimeout(timer); }
 }
 /* clicking an internal wiki link browses to that page in-app instead of leaving the site */

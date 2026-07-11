@@ -188,6 +188,9 @@
           <div class="docscroll" id="docscroll">
             <article class="docreader" id="docreader"></article>
             <div class="docstatus" id="docstatus"></div>
+            <!-- stable a11y live region: announced ONCE per state (the animated #docstatus above
+                 updates 12×/s, so it can't be a live region without spamming screen readers) -->
+            <span id="doc-announce" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
           </div>
         </div>
         <button id="doctop" class="doctop" type="button" title="Reading progress — click to jump to the top" aria-label="Back to top">
