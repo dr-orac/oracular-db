@@ -1723,7 +1723,7 @@ function applyRoute(){
   try{
     if(r.faction && FACTIONS[r.faction] && r.faction!==currentFaction) applyFaction(r.faction);
     let sec = r.section || "home";
-    if(sec!=="home" && sec!=="roster" && !factionDocs().some(d=>d.id===sec)) sec="roster";
+    if(sec!=="home" && sec!=="roster" && sec!=="wiki" && !factionDocs().some(d=>d.id===sec)) sec="roster";
     if(sec!==currentSection) setSection(sec);
     _pendingTarget = r.target || null;
     if(sec==="roster") openPendingChar();   // doc anchors are consumed by loadDoc when it finishes
@@ -1841,6 +1841,7 @@ const NAV_ICONS = {
   roster:  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-8 8c0-3.6 3.6-6 8-6s8 2.4 8 6v.6H4V20Z"/></svg>',
   lore:    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.4C10.5 5.2 8.3 4.6 6 4.6c-1.1 0-2.1.1-3 .4v13.2c.9-.3 1.9-.4 3-.4 2.3 0 4.5.6 6 1.8V6.4Zm2 0v13.2c1.5-1.2 3.7-1.8 6-1.8 1.1 0 2.1.1 3 .4V5c-.9-.3-1.9-.4-3-.4-2.3 0-4.5.6-6 1.8Z"/></svg>',
   roleplay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c.55 0 1 .45 1 1v11c0 .55-.45 1-1 1H9l-4 4v-4H4c-.55 0-1-.45-1-1V5c0-.55.45-1 1-1Zm3 5h10v-2H7v2Zm0 4h7v-2H7v2Z"/></svg>',
+  wiki:    '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16Z"/><path d="M4 12h16M12 4c2.6 2.2 2.6 13.8 0 16M12 4c-2.6 2.2-2.6 13.8 0 16" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
   _default:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6V3Zm7 1.5V8h3.5L13 4.5Z"/></svg>',
 };
 /* one-line explainer per section, shown on the home tiles */
@@ -1848,13 +1849,15 @@ const HOME_INFO = {
   roster:   "Every member — dossiers, appearance, and story. Search, filter, browse.",
   lore:     "The world and beliefs of the tribe — customs, spirits, and how things work.",
   roleplay: "How to play well — voice, accent, conflict, and etiquette at the fire.",
+  wiki:     "The Misfits wiki — factions, gameplay, crafting, survival and more.",
   _default: "An in-world document, rendered on the terminal.",
 };
 /* the home landing page: a full-height tile per section (icon + title + explainer). */
 const HOME_ARROW = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 9h9.2l-3.7-3.7L11 4l6 6-6 6-1.5-1.3L13.2 11H4z"/></svg>`;
 function renderHome(){
   const el=$("#home"); if(!el) return;
-  const items=[{id:"roster",label:"Roster"}].concat(factionDocs().map(d=>({id:d.id,label:d.label})));
+  const items=[{id:"roster",label:"Roster"}].concat(factionDocs().map(d=>({id:d.id,label:d.label})))
+    .concat([{id:"wiki",label:"Wiki"}]);   // universal umbrella wiki, alongside the faction sections
   // FIRST box (same footprint as a section card): a titled faction picker, factions subdivided into
   // a grid inside it — "pick a faction to jump to its section". Omitted when there's only one faction.
   const facBox = FACTION_ORDER.length < 2 ? "" :
@@ -1883,11 +1886,17 @@ function renderHome(){
       `</span>`+
       `<span class="home-tile-cta" aria-hidden="true">Enter ${HOME_ARROW}</span>`+
     `</button>`).join("");
-  el.innerHTML = `<div class="home-tiles">` + facBox + sectionTiles + `</div>`;
+  // landing hero — the umbrella brand (the per-faction masthead selector is hidden on home, so this
+  // carries the identity). No section tabs here either: the cards below ARE the navigation.
+  const hero = `<div class="home-hero"><span class="home-hero-brand">Misfits Database</span>`+
+    `<span class="home-hero-tag">Multi-faction archive — choose a faction, then a section</span></div>`;
+  el.innerHTML = hero + `<div class="home-tiles">` + facBox + sectionTiles + `</div>`;
 }
 function renderNav(){
   const nav=$("#topnav"); if(!nav) return;
-  const tabs=[{id:"home", label:"Home"},{id:"roster", label:"Roster"}].concat(factionDocs().map(d=>({id:d.id, label:d.label})));
+  const tabs=[{id:"home", label:"Home"},{id:"roster", label:"Roster"}]
+    .concat(factionDocs().map(d=>({id:d.id, label:d.label})))
+    .concat([{id:"wiki", label:"Wiki"}]);   // universal — the umbrella Misfits wiki
   nav.innerHTML = tabs.map(t=>
     `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}"><span class="navico">${NAV_ICONS[t.id]||NAV_ICONS._default}</span><span class="navlabel">${esc(t.label)}</span></button>`).join("");
   nav.classList.remove("hidden");   // always show the nav (at least Roster) so it stays put across factions
@@ -2261,6 +2270,73 @@ async function loadDoc(doc){
   }
 }
 
+/* ---------- WIKI reader (trial) ----------------------------------------------------------------
+   The Misfits wiki is a MediaWiki whose parse API is CORS-enabled, so we fetch a page's HTML
+   client-side (like the Google Docs), strip the MediaWiki chrome, sanitise it through docClean and
+   render it in the terminal theme. Internal wiki links load in-app so you can browse through it.
+   TRIAL SCOPE: text-first (images stripped for now); the wiki page isn't yet carried in the URL. */
+const WIKI = { host:"wiki.misfitsystems.net", home:"Main_Page" };
+let _wikiPage = WIKI.home;
+function wikiAbs(u){ if(!u) return u; if(/^https?:/i.test(u)) return u;
+  if(u.startsWith("//")) return "https:"+u; if(u.startsWith("/")) return "https://"+WIKI.host+u; return u; }
+function wikiPageFromHref(href){                               // wiki page title from a URL, else null
+  try{ const u=new URL(href, "https://"+WIKI.host);
+    if(u.host!==WIKI.host) return null;
+    let m=u.pathname.match(/\/(?:wiki|index\.php)\/(.+)$/);
+    if(m) return decodeURIComponent(m[1]);
+    if(u.searchParams.get("title") && !u.searchParams.get("action")) return u.searchParams.get("title");
+  }catch(e){}
+  return null;
+}
+async function loadWiki(page){
+  page = page || WIKI.home; _wikiPage = page;
+  const reader=$("#docreader"), status=$("#docstatus");
+  $("#docscroll").scrollTop=0;
+  $("#doctitle").textContent = "Wiki";
+  $("#doclink").href = "https://"+WIKI.host+"/index.php/"+encodeURIComponent(page);
+  reader.innerHTML=""; startDocLoader(status);
+  const ctrl=new AbortController(); const timer=setTimeout(()=>ctrl.abort(),15000);
+  try{
+    const url="https://"+WIKI.host+"/api.php?action=parse&format=json&formatversion=2&origin=*"+
+      "&redirects=1&prop=text&page="+encodeURIComponent(page);
+    const r=await fetch(url,{signal:ctrl.signal}); const j=await r.json();
+    if(currentSection!=="wiki") return;                       // stale guard (user navigated away)
+    const html = j && j.parse && j.parse.text;
+    if(!html) throw new Error(j && j.error ? j.error.info : "no content");
+    const tmp=document.createElement("div"); tmp.innerHTML=html;
+    tmp.querySelectorAll(".mw-editsection,.toc,#toc,.mw-empty-elt,style,script,.navbox,.metadata,.noprint,sup.reference,img,figure,.thumb")
+      .forEach(e=>e.remove());                                // drop MediaWiki chrome + images (text-first trial)
+    // MediaWiki uses TABLES for page layout (the Main Page is one big grid) — flatten them to a
+    // linear flow (innermost-first) so the text reads normally instead of squeezed into columns.
+    for(let g=0; g<60; g++){
+      const leaf=[...tmp.querySelectorAll("table")].find(t=>!t.querySelector("table"));
+      if(!leaf) break;
+      const box=document.createElement("div");
+      leaf.querySelectorAll("td,th").forEach(c=>{ const d=document.createElement("div");
+        while(c.firstChild) d.appendChild(c.firstChild); box.appendChild(d); });
+      leaf.replaceWith(box);
+    }
+    tmp.querySelectorAll("a[href]").forEach(a=>a.setAttribute("href", wikiAbs(a.getAttribute("href"))));
+    docBoldClasses=new Set(); docItalicClasses=new Set(); docTitleCount=0; _docImgSink=null;   // reset docClean state
+    reader.innerHTML = docClean(tmp);
+    styleTOC(reader); buildDocSidebar(reader); trackDocSection();
+    reader.dataset.docid = "wiki:"+page;
+    $("#docnow").textContent = "› "+page.replace(/_/g," ");
+    status.className="docstatus"; status.textContent="";
+  }catch(e){
+    if(currentSection!=="wiki") return;
+    stopDocLoader(); status.className="docstatus error";
+    status.innerHTML = `Couldn’t load the wiki page. <a href="${escAttr($("#doclink").href)}" target="_blank" rel="noopener noreferrer">Open the wiki ↗</a>`;
+  }finally{ if(currentSection==="wiki") stopDocLoader(); clearTimeout(timer); }
+}
+/* clicking an internal wiki link browses to that page in-app instead of leaving the site */
+$("#docreader").addEventListener("click", e=>{
+  if(currentSection!=="wiki") return;
+  const a=e.target.closest("a[href]"); if(!a) return;
+  const p=wikiPageFromHref(a.href);
+  if(p){ e.preventDefault(); loadWiki(p); }
+});
+
 /* ---- in-document find: highlight matches, step through them ---- */
 let _docFindMatches=[], _docFindIdx=-1;
 function clearDocFindMarks(){
@@ -2315,7 +2391,7 @@ function focusDocFind(i){
 }
 function stepDocFind(dir){ if(_docFindMatches.length) focusDocFind(_docFindIdx+dir); }
 function setSection(id){
-  if(id!=="home" && id!=="roster" && !factionDocs().some(d=>d.id===id)) id="roster";
+  if(id!=="home" && id!=="roster" && id!=="wiki" && !factionDocs().some(d=>d.id===id)) id="roster";
   currentSection = id;
   document.body.setAttribute("data-section", id);
   document.querySelectorAll("#topnav .navtab").forEach(b=>{
@@ -2336,8 +2412,8 @@ function setSection(id){
     $("#roster").classList.add("hidden");
     $("#cards").classList.add("hidden");
     $("#state").classList.add("hidden");
-    const doc=factionDocs().find(d=>d.id===id);
-    if(doc) loadDoc(doc);
+    if(id==="wiki"){ loadWiki(_wikiPage); }
+    else { const doc=factionDocs().find(d=>d.id===id); if(doc) loadDoc(doc); }
   }
   writeRoute();   // reflect the section in the URL (character/heading is added by its own handler)
 }

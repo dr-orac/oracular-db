@@ -574,10 +574,21 @@
      "The buttons ARE the home page, just elongated full height." Tiles fill the viewport and
      divide evenly by count; each is a big, obvious click target into that section. */
   .home{ height:100%; min-height:0; overflow:auto; display:flex; flex-direction:column; }
+  /* on the landing, the section tabs + faction selector are redundant (the cards + faction grid do
+     that job), so hide them — home IS the navigation. The cog + the home content stay. */
+  body[data-section="home"] .titlebar > #topnav{ display:none; }
+  body[data-section="home"] .brand{ display:none; }
+  /* landing hero — the umbrella brand + a one-line "what to do" */
+  .home-hero{ flex:0 0 auto; text-align:center; padding:14px 24px 2px; }
+  .home-hero-brand{ display:block; font-family:"Workbench","Gothic 821",sans-serif;
+    font-size:clamp(26px,4.4vw,42px); letter-spacing:1px; line-height:1;
+    color:var(--fg-bright); text-shadow:var(--glow-strong); }
+  .home-hero-tag{ display:block; margin-top:6px; font-family:var(--font-body); font-size:13px;
+    letter-spacing:2px; text-transform:uppercase; color:var(--fg-dim); }
   /* the FACTION-PICKER box — a section-card-sized tile with a heading + a grid of factions inside.
      Doubled class so it wins over the base .home-tile rules (which are defined AFTER this block). */
-  .home-tile.home-tile--factions{ flex-direction:column; align-items:stretch; gap:12px; cursor:default;
-    padding:18px 24px; }
+  .home-tile.home-tile--factions{ flex:0 0 auto; flex-direction:column; align-items:stretch; gap:12px;
+    cursor:default; padding:18px 24px; overflow:visible; }   /* sized to the grid so all factions always show */
   .home-tile.home-tile--factions::before{ content:none; }   /* no whole-box hover wash — the cells are the targets */
   .home-tile.home-tile--factions:hover, .home-tile.home-tile--factions:focus-visible{ transform:none;
     border-color:var(--fg-faint); background:var(--bg-panel);
