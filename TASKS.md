@@ -757,3 +757,17 @@ side model as the Google-Doc reader. Plan:
   - Keep the Google-Doc reader + Sheets roster working alongside; the wiki is an ADDITIONAL source.
   - Nice: the Main Page already ships dark-monospace inline styles — decide whether to keep or strip
     them so our theme fully owns the look (probably strip inline color/bg in docClean, keep structure).
+
+## T35 UPDATE (2026-07-11) — WIKI TRIAL SHIPPED (0960d35), refinements remain
+Built: universal Wiki tab + home card; `loadWiki(page)` (fetch parse API → strip chrome → flatten
+layout tables → docClean → render); internal wiki links browse in-app; deep-link `#<faction>/wiki`.
+STILL TO DO to make it good:
+  1. Layout: the Main Page's bespoke markup still renders some text one-word-per-line even after the
+     table flatten — investigate (maybe `<center>`/`<big>`/inline-style remnants, or `<pre>`); make
+     wiki content flow at full reader width.
+  2. Images: currently stripped — restore them (rewrite src→absolute, render like docfig, but they're
+     URL-based not base64 so skip the base64 hydration path).
+  3. Carry the wiki page in the URL (`#wiki/<Page>`) so a sub-page is linkable; add caching (IndexedDB
+     like docs); build the sidebar TOC from `parse.sections`.
+  4. Decide faction-scoping: the wiki is umbrella (currently routes under the active faction as
+     `#tribe/wiki`) — maybe make it a top-level `#wiki` route instead.
