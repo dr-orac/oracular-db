@@ -3,6 +3,22 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## T56 · Two-level masthead (umbrella row + faction-section row) — [now]
+User: split the nav into two hierarchy levels.
+- **Row 1 (umbrella, faction-agnostic):** HOME · FACTION▼ · WIKI as three consistent BOXED controls
+  (styled like the faction box). Only FACTION is a dropdown, so only it keeps the "FACTION" legend on
+  its border + the arrow; HOME and WIKI are plain boxed buttons (a new `.navbox`, same box style, no
+  legend/arrow). The Settings cog stays far-right.
+- **Row 2 (context, faction-scoped):** the current faction's sections — ROSTER + that faction's docs
+  (vary per faction) — active one highlighted. (`.navtab` tabs.)
+Logic: Row 1 = which umbrella destination / which faction; Row 2 = which section of this faction.
+Build: index.html masthead → `.titlebar` (primary-nav: home navbox + `.brand` faction box + wiki
+navbox; cog right) then `#topnav` moved BELOW as row 2. `renderNav()` renders row 2 = roster+docs only
+(drop Home/Wiki). A small renderer fills the Home/Wiki navboxes + toggles their active state by
+currentSection. Home landing stays clean (hide both rows on `body[data-section="home"]`, keep the cog);
+the two rows show on roster/doc/wiki views. Verify: switching faction updates row 2; Home/Wiki active
+states; desktop + mobile + chassis.
+
 ## T55 · Comprehensive accessibility pass — ROADMAPPED — see docs/ACCESSIBILITY-PLAN.md
 User: dark body text is too hard to read → need a **minimum brightness floor for text** while keeping
 **noticeably different brightness for hierarchy**, plus a **reasonable minimum font size**; wants a

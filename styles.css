@@ -373,6 +373,7 @@
   /* nav tabs + Theme button: raised physical buttons — beveled face, engraved caption,
      and an indicator LAMP (the one lawful glow on metal: it's a light, not phosphor) */
   body[data-frame="border"] .navtab,
+  body[data-frame="border"] .navbox,
   body[data-frame="border"] .titlebar .popwrap > .btn{
     background:var(--panel);                        /* FLAT face, hard pixel bevel */
     border:1px solid var(--panel-ink);
@@ -384,6 +385,7 @@
       0 2px 0 0 var(--panel-ink);                  /* hard base line */
   }
   body[data-frame="border"] .navtab:hover,
+  body[data-frame="border"] .navbox:hover,
   body[data-frame="border"] .titlebar .popwrap > .btn:hover{
     background:var(--panel-hi);
     color:var(--panel-ink);
@@ -393,7 +395,8 @@
     margin-right:9px; vertical-align:1px;
     background:#20201a; box-shadow:inset 0 1px 2px #000, 0 1px 0 var(--panel-hi);  /* unlit lamp */
   }
-  body[data-frame="border"] .navtab.active{
+  body[data-frame="border"] .navtab.active,
+  body[data-frame="border"] .navbox.active{
     background:var(--panel-lo);
     border-color:var(--panel-ink);
     color:var(--panel-ink);
@@ -467,7 +470,18 @@
   /* one header row: section tabs on the LEFT, the FACTION selector + the Settings cog pushed to the
      top-RIGHT. The cog is the far-right element. */
   .titlebar{ display:flex; align-items:center; gap:10px 16px; flex-wrap:wrap; }
-  .titlebar > .topnav{ margin-right:auto; }
+  /* ROW 1 umbrella nav — HOME · FACTION▼ · WIKI as consistent boxed controls, left-grouped (cog right) */
+  .primary-nav{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-right:auto; }
+  .navbox{ display:inline-flex; align-items:center; gap:9px; cursor:pointer;
+    background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg);
+    padding:9px 16px; font-family:var(--font-head); letter-spacing:1px; text-transform:uppercase;
+    transition:color .14s, border-color .14s, background .14s, box-shadow .14s; }
+  .navbox .navico{ width:22px; height:22px; flex:0 0 auto; display:inline-flex; }
+  .navbox .navico svg{ width:100%; height:100%; fill:currentColor; display:block; }
+  .navbox .navlabel{ font-size:15px; line-height:1; }
+  .navbox:hover{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2); }
+  .navbox.active{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
+    box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.35), 0 0 16px -7px rgba(var(--fg-rgb),.6); }
   .titlebar-right{ display:flex; align-items:center; gap:14px; margin-left:auto; }
 
   /* Settings — a large standalone cog glyph on the far right (it turns as you hover / while open) */
@@ -548,6 +562,7 @@
   /* ---------- top-level section nav (Roster + embedded docs) ---------- */
   /* section tabs live at the LEFT of the single header row (see .titlebar) */
   .topnav{ display:flex; gap:8px; flex-wrap:wrap; }
+  .masthead > #topnav{ margin-top:11px; }   /* ROW 2 sits below the titlebar (row 1) */
   .navtab{
     display:inline-flex; align-items:center; gap:9px;
     font-family:var(--font-head); font-size:20px; letter-spacing:1.5px; text-transform:uppercase;
@@ -583,8 +598,8 @@
   .home{ height:100%; min-height:0; overflow:auto; display:flex; flex-direction:column; }
   /* on the landing, the section tabs + faction selector are redundant (the cards + faction grid do
      that job), so hide them — home IS the navigation. The cog + the home content stay. */
-  body[data-section="home"] .titlebar > #topnav{ display:none; }
-  body[data-section="home"] .brand{ display:none; }
+  body[data-section="home"] .primary-nav{ display:none; }   /* home is the landing — the tiles ARE the nav */
+  body[data-section="home"] #topnav{ display:none; }        /* (both masthead rows hidden; only the cog stays) */
   /* with nav+brand gone the header holds only the cog — trim its tall breathing band + drop the
      divider so the hero sits high on the landing instead of below a strip of dead space. */
   body[data-section="home"]:not([data-frame="border"]) header{

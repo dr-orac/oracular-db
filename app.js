@@ -1939,14 +1939,25 @@ function renderHome(){
     `<span class="home-hero-tag">Multi-faction archive — choose a faction, then a section</span></div>`;
   el.innerHTML = hero + `<div class="home-tiles">` + facBox + sectionTiles + `</div>`;
 }
+/* ROW 2 (faction-scoped): this faction's own sections — Roster + its docs. Home + Wiki are umbrella
+   controls that live in ROW 1 (the primary nav), not here. */
 function renderNav(){
   const nav=$("#topnav"); if(!nav) return;
-  const tabs=[{id:"home", label:"Home"},{id:"roster", label:"Roster"}]
-    .concat(factionDocs().map(d=>({id:d.id, label:d.label})))
-    .concat([{id:"wiki", label:"Wiki"}]);   // universal — the umbrella Misfits wiki
+  const tabs=[{id:"roster", label:"Roster"}].concat(factionDocs().map(d=>({id:d.id, label:d.label})));
   nav.innerHTML = tabs.map(t=>
     `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}"><span class="navico">${NAV_ICONS[t.id]||NAV_ICONS._default}</span><span class="navlabel">${esc(t.label)}</span></button>`).join("");
-  nav.classList.remove("hidden");   // always show the nav (at least Roster) so it stays put across factions
+  nav.classList.remove("hidden");
+  renderPrimaryNav();
+}
+/* ROW 1 (umbrella): fill the HOME + WIKI boxes and mark the active one. (The FACTION box between them
+   is built by renderBrand(); the cog sits at the far right.) */
+function renderPrimaryNav(){
+  [["home","Home"],["wiki","Wiki"]].forEach(([id,label])=>{
+    const b=$("#nav-"+id); if(!b) return;
+    b.innerHTML=`<span class="navico">${NAV_ICONS[id]||NAV_ICONS._default}</span><span class="navlabel">${esc(label)}</span>`;
+    const on=currentSection===id;
+    b.classList.toggle("active", on); b.setAttribute("aria-current", on?"page":"false");
+  });
 }
 /* Re-render a Google Doc in the terminal theme. We fetch the doc's HTML export
    (a CORS-readable endpoint for link-shared docs) and rebuild it from a strict
@@ -2524,6 +2535,7 @@ function setSection(id){
     const on = b.dataset.section===id;
     b.classList.toggle("active", on); b.setAttribute("aria-selected", on);
   });
+  renderPrimaryNav();   // sync the ROW-1 HOME/WIKI active state
   const isHome = id==="home", isRoster = id==="roster";
   const home=$("#home"); if(home) home.classList.toggle("hidden", !isHome);
   $("#docview").classList.toggle("hidden", isRoster || isHome);
@@ -2545,6 +2557,10 @@ function setSection(id){
 }
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
+});
+/* ROW-1 umbrella boxes: HOME + WIKI navigate; the FACTION box is handled by wireFactionMenu */
+$("#primary-nav").addEventListener("click", e=>{
+  const b=e.target.closest(".navbox"); if(b) setSection(b.dataset.section);
 });
 /* home landing: faction boxes switch faction; section tiles navigate into their section */
 $("#home").addEventListener("click", e=>{
