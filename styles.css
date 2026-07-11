@@ -920,11 +920,12 @@
     background:var(--bg-panel); border:1px solid var(--green-faint);
     padding:6px 10px;
   }
-  /* the search input reads in a clean 17px mono (not the chunky display face) so the full
-     placeholder fits and the box matches the doc find box exactly — one search shape everywhere. */
-  .search input, #docfind{ font-family:"IBM Plex Mono", ui-monospace, "Share Tech Mono", monospace;
-    font-size:17px; line-height:1.25; }
+  /* the roster search matches the filter boxes below it — same faction body face + 17px — so the
+     whole list column reads consistently. (The doc-find box keeps a clean mono in the doc context.) */
+  #docfind{ font-family:"IBM Plex Mono", ui-monospace, "Share Tech Mono", monospace; }
+  .search input, #docfind{ font-size:17px; line-height:1.25; }
   .search input{
+    font-family:inherit;                 /* = --font-body, matching the .selctl filter boxes */
     flex:1; background:transparent; border:0; outline:0;
     color:var(--green-bright); text-shadow:var(--glow);
   }
@@ -992,10 +993,10 @@
      always keeps the lion's share. */
   .roster{ display:grid; grid-template-columns:var(--rail) 1fr; height:100%; min-height:0; }
   .listcol{ display:flex; flex-direction:column; min-height:0; min-width:0; border-right:1px solid var(--green-faint); }
-  /* filter + sort: one chunky segmented bar that runs end-to-end across the column, its outer edges
-     matching the search box above (left inset by --sp-2, right meeting the column divider). The two
-     boxes ABUT (shared border, no gap); no divider rule beneath them. */
-  .listctl{ flex:0 0 auto; display:flex; gap:0; padding:8px 0 8px var(--sp-2); }
+  /* filter + sort: two boxes running end-to-end across the column, their outer edges matching the
+     search box above (left inset by --sp-2, right meeting the column divider), with a small gap
+     between them; no divider rule beneath. */
+  .listctl{ flex:0 0 auto; display:flex; gap:6px; padding:8px 0 8px var(--sp-2); }
   /* in-theme custom dropdown (replaces native <select> — the popup is themed, not OS chrome).
      Reused wherever a select is needed; the two roster filters ABUT (shared border, no gap). */
   .selctl{ position:relative; flex:1 1 0; min-width:0; }
@@ -1003,7 +1004,7 @@
     background:var(--bg-panel); color:var(--green); border:1px solid var(--green-faint);
     font:inherit; font-size:17px; padding:11px 14px; text-shadow:var(--glow); cursor:pointer;
     text-align:left; transition:background .1s, color .1s; }
-  .selctl + .selctl .selctl-btn{ border-left:0; }   /* the two boxes ABUT — share one border, no gap */
+  /* each box keeps its own border now (a small gap sits between them — see .listctl) */
   .selctl-btn:hover, .selctl.open .selctl-btn{ background:var(--bg-panel-2); color:var(--green-bright); }
   .selctl-label{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .selctl-caret{ flex:0 0 auto; font-size:11px; line-height:1; color:var(--green); transition:transform .16s; }
