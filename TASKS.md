@@ -3,6 +3,17 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## T54 · MASTER faction sheet (tab per faction) — ROADMAPPED, NOT STARTED — see docs/MASTER-SHEET-PLAN.md
+User wants ONE master Google Sheet, a tab per faction, holding all Tribe + Brotherhood info,
+standardised where it overlaps (faction-specific extras kept, e.g. Spirit Animal = tribe-only), linked
+to the app; and asked if a live editable assistant↔sheet link is viable. Full plan in the doc. Key
+findings: **live READ is viable** (read_file_content / gviz — I always see the sheet + user edits);
+**live auto-WRITE is NOT** (no cell-update/batchUpdate tool; create_file makes a new single-tab file,
+can't patch cells) → the workable model is "read-live, propose-diffs"; a true write link needs the
+existing Apps Script backend (or a Sheets-API credential) the user would set up. NEVER touch
+CONFIG.sheetId. Blocked on the user answering the 5 open questions in the doc (P0 sign-off) before any
+file is created. Real schemas already read: Tribe 15 cols / 55 rows, Brotherhood 11 cols / 16 rows.
+
 ## FACTION ROSTER aligned to the wiki (2026-07-11)
 `FACTIONS` now mirrors the Misfits **wiki's own faction listing** (each with the wiki's signature
 colour, mapped to the nearest theme preset) + the Unity. 13 total: tribe(rust)·brotherhood(blue)·
