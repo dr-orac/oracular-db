@@ -935,8 +935,9 @@
     flex:1; background:transparent; border:0; outline:0;
     color:var(--green-bright); text-shadow:var(--glow);
   }
-  .search input::placeholder{ color:var(--green-dim); }
-  .search .prompt{ color:var(--green-dim); font-size:17px; }
+  /* placeholder + prompt read in the clear --green (like the filter boxes), not the muddy --dim */
+  .search input::placeholder{ color:var(--green); opacity:.9; }
+  .search .prompt{ color:var(--green); font-size:17px; }
   body.coming-soon .toolbar{ display:none; }   /* an unlinked faction has no roster to search or refresh */
   /* a11y skip-link: hidden until keyboard focus, then jumps past the header into the list */
   .skip-link{
