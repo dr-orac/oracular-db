@@ -2742,6 +2742,7 @@ function showState(title, sub, isError){
 
 async function load(isRefresh){
   document.body.classList.remove("coming-soon");
+  const _main=document.querySelector("main"); if(_main) _main.setAttribute("aria-busy","true");   // a11y: fetching
   if(!isRefresh) showState("ACCESSING PIP-LINK", "Establishing read-only link to the archive…");
   setLink(isRefresh?"RE-SYNCING…":"CONNECTING…");
   try{
@@ -2768,7 +2769,7 @@ async function load(isRefresh){
     showState("", `Could not read the sheet (<code>${esc(err.message)}</code>).<br><br>
       Make sure the Google Sheet is shared <b>“Anyone with the link → Viewer”</b>.
       Then hit <b>⟳ Refresh</b>. Nothing is ever written back to the sheet.`, true);
-  }
+  }finally{ if(_main) _main.setAttribute("aria-busy","false"); }   // a11y: fetch settled
 }
 
 /* ------------------------ boot sequence ------------------------ */

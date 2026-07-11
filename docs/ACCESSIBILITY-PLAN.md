@@ -39,9 +39,10 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
       the app survives browser zoom to 200% without clipping/overflow.
 
 ## Focus visibility
-- [ ] Audit keyboard-focus rings on every interactive element (nav tabs, faction box, cog, home cards,
-      section cards, wiki/doc links, form fields, steppers, modal close) — a visible, high-contrast
-      `:focus-visible` ring in BOTH screen and chassis modes. Some exist; make it universal + consistent.
+- [x] ✅ VERIFIED ADEQUATE. A global `:focus-visible{ outline:2px solid var(--fg-bright) }` rule covers
+      all interactive elements; keyboard Tab shows a clear bright ring, confirmed in BOTH screen and
+      chassis modes (home faction cells, section cards, nav). `.home-tile`/`.row` use a custom but
+      visible border+lift+glow focus treatment. No change needed. (Re-audit if new controls are added.)
 
 ## Keyboard navigation
 - [ ] Full tab order sanity pass; Esc closes overlays (done); add arrow-key nav within the faction menu
@@ -55,7 +56,7 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
 - [x] ✅ A polite **live region** for loading state. Roster already had one (`#state`). Added
       `#doc-announce` (dedicated sr-only, stable — the animated `#docstatus` repaints 12×/s so can't be
       one) firing once per state ("Loading document…" / "<page> loaded" / error), + `aria-busy` on
-      `#docreader` while loading (d7a76ae). Remaining: an `aria-busy` on the roster during its fetch.
+      `#docreader` while loading (d7a76ae). `aria-busy` on `main` during the roster fetch — DONE.
 - [ ] `aria-expanded` on all disclosure controls (faction/select dropdowns — done; audit others).
 
 ## Motion
