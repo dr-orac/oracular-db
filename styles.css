@@ -457,15 +457,16 @@
      panel sits at --edge, its rows are padded --sp-2). One clean left edge, breathing wider on
      big screens. */
   body:not([data-frame="border"]) header{ padding-left:calc(var(--edge) + var(--sp-2)); padding-right:calc(var(--edge) + var(--sp-2));
-    padding-top:calc(var(--bezel-in) + var(--sp-5)); }   /* clear the top bezel + healthy breathing above the title row */
+    padding-top:calc(var(--bezel-in) + var(--sp-5)); padding-bottom:var(--sp-5); }   /* clear the top bezel + breathing above AND below the divider */
   body:not([data-frame="border"]) main{ padding-left:var(--edge); padding-right:var(--edge); padding-bottom:var(--sp-4); }
   /* the header divider is a LONG horizontal rule, so it runs full-bleed out to the hairline (while the
      title/nav content stays inset by --edge). Drawn as a positioned rule instead of the border-bottom. */
   body:not([data-frame="border"]) header{ border-bottom:0; box-shadow:none; position:relative; }
   body:not([data-frame="border"]) header::after{
     content:""; position:absolute; left:var(--bezel-in); right:var(--bezel-in); bottom:0; height:0;
-    border-bottom:1px solid var(--fg-faint);
-    box-shadow:0 3px 0 -2px var(--fg-faint);   /* faux double-rule under the header */
+    border-bottom:1px solid var(--fg-dim);                      /* a touch brighter than faint */
+    box-shadow:0 0 10px 0 rgba(var(--fg-rgb),.42),             /* nice soft glow off the rule */
+      0 3px 0 -2px rgba(var(--fg-rgb),.3);                     /* faint faux double-rule */
   }
   /* one header row: section tabs on the LEFT, the FACTION selector + the Settings cog pushed to the
      top-RIGHT. The cog is the far-right element. */
@@ -486,9 +487,10 @@
 
   /* Settings — a large standalone cog glyph on the far right (it turns as you hover / while open) */
   .cogbtn{ flex:0 0 auto; display:inline-grid; place-items:center; width:46px; height:46px;
-    background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg);
+    background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg-bright);   /* brighter */
     cursor:pointer; padding:0; transition:color .12s, border-color .12s, background .12s, box-shadow .12s; }
-  .cogbtn .cog-ico{ width:28px; height:28px; fill:currentColor; transition:transform .5s cubic-bezier(.34,1.56,.64,1); }
+  .cogbtn .cog-ico{ width:30px; height:30px; fill:currentColor; transition:transform .5s cubic-bezier(.34,1.56,.64,1);
+    filter:drop-shadow(0 0 5px rgba(var(--fg-rgb),.5)); }   /* a little glow */
   .cogbtn:hover{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
     box-shadow:0 0 14px -4px rgba(var(--fg-rgb),.55); }
   .cogbtn:hover .cog-ico{ transform:rotate(60deg); }
@@ -562,7 +564,7 @@
   /* ---------- top-level section nav (Roster + embedded docs) ---------- */
   /* section tabs live at the LEFT of the single header row (see .titlebar) */
   .topnav{ display:flex; gap:8px; flex-wrap:wrap; }
-  .masthead > #topnav{ margin-top:11px; }   /* ROW 2 sits below the titlebar (row 1) */
+  .masthead > #topnav{ margin-top:16px; }   /* ROW 2 sits below the titlebar (row 1) — clear vertical gap between tiers */
   .navtab{
     display:inline-flex; align-items:center; gap:9px;
     font-family:var(--font-head); font-size:20px; letter-spacing:1.5px; text-transform:uppercase;
@@ -1003,6 +1005,14 @@
      inline styles; we re-render them as phosphor components that read better than the flat source. */
   .wikibody{ display:block; }
   .wikibody > *:first-child{ margin-top:0; }
+  /* the wiki packs sections tightly — open up the vertical rhythm for legibility (more air before each
+     heading + between blocks) without touching the Google-Doc reader's own spacing. */
+  .wikibody h2{ margin-top:2.9em; }
+  .wikibody h3, .wikibody h4{ margin-top:2.2em; }
+  .wikibody p, .wikibody ul, .wikibody ol{ margin-bottom:1.45em; }
+  .wikibody li{ margin:.4em 0; }
+  .wikibody .wiki-hero, .wikibody .wiki-callout, .wikibody .wiki-cardgrid, .wikibody .wiki-cols{ margin-bottom:28px; }
+  .wikibody h2 + .wiki-cardgrid, .wikibody h2 + .wiki-cols, .wikibody p + .wiki-cardgrid{ margin-top:1.4em; }
   /* faction↔wiki jump: shown when the open wiki page is one of our factions */
   .wikibody .wiki-factionjump{ margin:0 0 18px; }
   .wikibody .wiki-factionjump a{ display:inline-flex; align-items:center; gap:8px; padding:8px 16px;
@@ -1047,7 +1057,8 @@
   /* mirrors the header's horizontal padding so the search's rail-width box lines up exactly with
      the list column beneath it (the search reads as the head of that column). */
   .commandbar{ flex:0 0 auto; padding:0 16px; }
-  body:not([data-frame="border"]) .commandbar{ padding-left:calc(var(--edge) + var(--sp-2)); padding-right:calc(var(--edge) + var(--sp-2)); }
+  body:not([data-frame="border"]) .commandbar{ padding-left:calc(var(--edge) + var(--sp-2)); padding-right:calc(var(--edge) + var(--sp-2));
+    margin-top:var(--sp-4); }   /* breathing below the header divider */
   body[data-section="home"] .commandbar{ display:none; }
   .toolbar{
     margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; min-height:52px;
