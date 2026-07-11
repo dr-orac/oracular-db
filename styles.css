@@ -540,9 +540,10 @@
     background:var(--bg-panel-2); border:1px solid var(--fg);
     box-shadow:0 14px 34px -12px rgba(0,0,0,.85), 0 0 0 1px rgba(var(--fg-rgb),.15);
     transform-origin:top right;
-    opacity:0; transform:translateY(-8px) scaleY(.72); pointer-events:none;
-    transition:opacity .16s ease, transform .22s cubic-bezier(.2,.85,.3,1); }
-  .brand.open .faction-menu{ opacity:1; transform:none; pointer-events:auto; }
+    opacity:0; transform:translateY(-8px) scaleY(.72); pointer-events:none; visibility:hidden;
+    transition:opacity .16s ease, transform .22s cubic-bezier(.2,.85,.3,1), visibility 0s .22s; }   /* visibility flips AFTER the fade so the options leave the tab order when closed */
+  .brand.open .faction-menu{ opacity:1; transform:none; pointer-events:auto; visibility:visible;
+    transition:opacity .16s ease, transform .22s cubic-bezier(.2,.85,.3,1), visibility 0s; }
   .faction-opt{ display:flex; align-items:center; gap:11px;
     font-family:var(--font-head); font-size:18px; letter-spacing:1px; text-transform:uppercase;
     text-align:left; color:var(--fg-dim); background:transparent; border:0; cursor:pointer;

@@ -188,19 +188,46 @@ function renderBrand(){
       ).join("")+
     `</div>`;
 }
-/* one-time delegated wiring for the switcher — open/close the menu + select a faction. */
+/* one-time delegated wiring for the switcher — open/close + select, fully keyboard-navigable
+   (the listbox supports ↑/↓/Home/End, Esc returns focus to the button). */
 function wireFactionMenu(){
-  const closeMenu = () => { const el=document.querySelector(".brand.open"); if(el){ el.classList.remove("open");
-    const b=document.querySelector("#faction-btn"); if(b) b.setAttribute("aria-expanded","false"); } };
+  const brand = () => document.querySelector(".brand.has-switch");
+  const btn   = () => document.querySelector("#faction-btn");
+  const opts  = () => [...document.querySelectorAll("#faction-menu .faction-opt")];
+  const isOpen = () => !!document.querySelector(".brand.open");
+  const openMenu = (focusIdx) => {                          // focusIdx: number, or undefined = the active faction
+    const el=brand(); if(!el) return;
+    el.classList.add("open"); const b=btn(); if(b) b.setAttribute("aria-expanded","true");
+    const list=opts(); if(!list.length) return;
+    const i = typeof focusIdx==="number" ? focusIdx : Math.max(0, list.findIndex(o=>o.classList.contains("active")));
+    (list[(i+list.length)%list.length] || list[0]).focus();
+  };
+  const closeMenu = (refocus) => { const el=document.querySelector(".brand.open"); if(el){ el.classList.remove("open");
+    const b=btn(); if(b){ b.setAttribute("aria-expanded","false"); if(refocus) b.focus(); } } };
   document.addEventListener("click", e => {
     const opt = e.target.closest(".faction-opt");
     if(opt){ closeMenu(); applyFaction(opt.dataset.faction); return; }
-    const btn = e.target.closest("#faction-btn");
-    const el = document.querySelector(".brand.has-switch");
-    if(btn && el){ const open = el.classList.toggle("open"); btn.setAttribute("aria-expanded", open?"true":"false"); return; }
+    const b = e.target.closest("#faction-btn");
+    if(b && brand()){ isOpen() ? closeMenu() : (brand().classList.add("open"), b.setAttribute("aria-expanded","true")); return; }
     if(!e.target.closest(".faction-menu")) closeMenu();     // outside click
   });
-  document.addEventListener("keydown", e => { if(e.key==="Escape") closeMenu(); });
+  document.addEventListener("keydown", e => {
+    if(!brand()) return;                                    // single faction → no menu
+    if(e.key==="Escape"){ if(isOpen()){ closeMenu(true); e.preventDefault(); } return; }
+    const onBtn=e.target.closest("#faction-btn"), inMenu=e.target.closest("#faction-menu");
+    if(!onBtn && !inMenu) return;
+    const list=opts(); const focusAt=i=>{ const o=list[(i+list.length)%list.length]; if(o){ o.focus(); e.preventDefault(); } };
+    if(onBtn){                                              // from the trigger: ↓/↑ open + step into the list
+      if(e.key==="ArrowDown"){ isOpen() ? focusAt(0) : openMenu(0); e.preventDefault(); }
+      else if(e.key==="ArrowUp"){ isOpen() ? focusAt(list.length-1) : openMenu(list.length-1); e.preventDefault(); }
+      return;
+    }
+    const i=list.indexOf(document.activeElement);           // within the open listbox
+    if(e.key==="ArrowDown") focusAt(i+1);
+    else if(e.key==="ArrowUp") focusAt(i-1);
+    else if(e.key==="Home") focusAt(0);
+    else if(e.key==="End") focusAt(list.length-1);
+  });
 }
 
 /* Extra top-nav sections that embed a Google Doc (read-only, in the terminal frame).
