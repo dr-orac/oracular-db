@@ -3,6 +3,17 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## T55 · Comprehensive accessibility pass — ROADMAPPED — see docs/ACCESSIBILITY-PLAN.md
+User: dark body text is too hard to read → need a **minimum brightness floor for text** while keeping
+**noticeably different brightness for hierarchy**, plus a **reasonable minimum font size**; wants a
+comprehensive a11y pass. ✅ **Step 0 DONE this session:** raised `--fg-dim` (the dimmest TEXT colour)
+from ~5:1 to ~6.5:1 across all 11 themes, kept below `primary`/`bright` so hierarchy holds; confirmed
+`--fg-faint` is borders-only. Full roadmap in the doc covers: contrast audit (incl. CRT overlay +
+chassis metal + a High-Contrast mode on `prefers-contrast`), the font-size floor (raw 11/12px + `em`
+compounding below the 13px stated min), focus visibility, keyboard nav, ARIA + a live region for
+loading state, motion, touch targets, images, and a testing checklist. Sequenced, each item small +
+independently shippable.
+
 ## T54 · MASTER faction sheet (tab per faction) — ROADMAPPED, NOT STARTED — see docs/MASTER-SHEET-PLAN.md
 User wants ONE master Google Sheet, a tab per faction, holding all Tribe + Brotherhood info,
 standardised where it overlaps (faction-specific extras kept, e.g. Spirit Animal = tribe-only), linked

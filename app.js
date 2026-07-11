@@ -223,18 +223,21 @@ const MEDIA = {"big-brom-matlok": {"front": "media/big-brom-matlok-front.png"}, 
 /* `dim` is used for SECONDARY TEXT (labels, role sub-lines, meta), so each value is
    tuned to clear WCAG AA (≥4.5:1) against every background incl. the lightest (slate).
    `faint` is borders/rules ONLY — never text. (See the legibility-floor convention.) */
+/* `dim` is the DIMMEST colour used for TEXT (secondary/captions) — it carries a readability floor
+   (~6.5:1 on its bg, comfortably past WCAG AA 4.5), staying below `primary` for hierarchy. `faint`
+   is NON-TEXT only (borders/rules); it is intentionally sub-legible and must never colour prose. */
 const THEMES = {
-  green:   { name:"Green",   primary:"#3cff7a", bright:"#b6ffce", dim:"#21954d", faint:"#0f3a22", glow:"rgba(60,255,122,.55)" },
-  amber:   { name:"Amber",   primary:"#ffb642", bright:"#ffe0a3", dim:"#ac7726", faint:"#3a2a0e", glow:"rgba(255,182,66,.5)" },
-  gold:    { name:"Gold",    primary:"#e3c074", bright:"#ffe9b0", dim:"#957f48", faint:"#3a3018", glow:"rgba(227,192,116,.45)" },
-  blue:    { name:"Blue",    primary:"#5db4ff", bright:"#c8e8ff", dim:"#3786c7", faint:"#10304a", glow:"rgba(93,180,255,.5)" },
-  cyan:    { name:"Cyan",    primary:"#3ce0e0", bright:"#bdffff", dim:"#209090", faint:"#0f3a3a", glow:"rgba(60,224,224,.5)" },
-  white:   { name:"White",   primary:"#dbe3df", bright:"#ffffff", dim:"#7c8884", faint:"#2b322f", glow:"rgba(219,227,223,.35)" },
-  magenta: { name:"Magenta", primary:"#ff6cc0", bright:"#ffc8e8", dim:"#d44e9e", faint:"#3a1028", glow:"rgba(255,108,192,.5)" },
-  red:     { name:"Red",     primary:"#ff6a5c", bright:"#ffc6bf", dim:"#dd5146", faint:"#3a1410", glow:"rgba(255,106,92,.5)" },
-  orange:  { name:"Orange",  primary:"#ff8a3c", bright:"#ffceaa", dim:"#c66a26", faint:"#3a2210", glow:"rgba(255,138,60,.5)" },
-  purple:  { name:"Purple",  primary:"#b98cff", bright:"#e2ccff", dim:"#9a70de", faint:"#271042", glow:"rgba(185,140,255,.5)" },
-  rust:    { name:"Rust",    primary:"#e0a338", bright:"#ffd992", dim:"#a87d2b", faint:"#382a10", glow:"rgba(224,163,56,.5)" },
+  green:   { name:"Green",   primary:"#3cff7a", bright:"#b6ffce", dim:"#26aa56", faint:"#0f3a22", glow:"rgba(60,255,122,.55)" },
+  amber:   { name:"Amber",   primary:"#ffb642", bright:"#ffe0a3", dim:"#c3892e", faint:"#3a2a0e", glow:"rgba(255,182,66,.5)" },
+  gold:    { name:"Gold",    primary:"#e3c074", bright:"#ffe9b0", dim:"#ab9154", faint:"#3a3018", glow:"rgba(227,192,116,.45)" },
+  blue:    { name:"Blue",    primary:"#5db4ff", bright:"#c8e8ff", dim:"#4698dd", faint:"#10304a", glow:"rgba(93,180,255,.5)" },
+  cyan:    { name:"Cyan",    primary:"#3ce0e0", bright:"#bdffff", dim:"#27a3a3", faint:"#0f3a3a", glow:"rgba(60,224,224,.5)" },
+  white:   { name:"White",   primary:"#dbe3df", bright:"#ffffff", dim:"#97a19d", faint:"#2b322f", glow:"rgba(219,227,223,.35)" },
+  magenta: { name:"Magenta", primary:"#ff6cc0", bright:"#ffc8e8", dim:"#ea5eb0", faint:"#3a1028", glow:"rgba(255,108,192,.5)" },
+  red:     { name:"Red",     primary:"#ff6a5c", bright:"#ffc6bf", dim:"#f05f52", faint:"#3a1410", glow:"rgba(255,106,92,.5)" },
+  orange:  { name:"Orange",  primary:"#ff8a3c", bright:"#ffceaa", dim:"#df7830", faint:"#3a2210", glow:"rgba(255,138,60,.5)" },
+  purple:  { name:"Purple",  primary:"#b98cff", bright:"#e2ccff", dim:"#a87ced", faint:"#271042", glow:"rgba(185,140,255,.5)" },
+  rust:    { name:"Rust",    primary:"#e0a338", bright:"#ffd992", dim:"#bc8b30", faint:"#382a10", glow:"rgba(224,163,56,.5)" },
 };
 const COLOR_ORDER = ["green","amber","gold","rust","orange","red","magenta","purple","blue","cyan","white"];
 const BGS = {
