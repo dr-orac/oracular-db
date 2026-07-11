@@ -52,13 +52,18 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
       visible border+lift+glow focus treatment. No change needed. (Re-audit if new controls are added.)
 
 ## Keyboard navigation
-- [ ] Full tab order sanity pass; Esc closes overlays (done); add arrow-key nav within the faction menu
-      + roster list; verify the skip-link (exists) lands correctly; no focus traps in modals (focus
-      should cycle within an open modal and return on close).
+- [x] ✅ Faction dropdown fully keyboard-navigable (b7c57d4): ↑/↓ from the trigger open + step in,
+      arrows/Home/End move, Esc closes + refocuses the trigger; and the closed menu is now
+      `visibility:hidden` so its options leave the tab order (was opacity:0 — a hidden tab-trap).
+      Remaining: arrow-nav within the roster list; modal focus-trap verify (a MutationObserver handles it).
 
 ## ARIA / semantics
-- [ ] Heading order (one h1 per view; no skipped levels) across home/roster/doc/wiki.
-- [ ] Landmark roles (`banner`/`main`/`navigation`); `aria-current` on the active nav tab + faction.
+- [x] ✅ Heading order: the page had ZERO `<h1>`. Added ONE sr-only `#app-h1` in `<main>`, updated per
+      view by `setAppHeading()` — "The Tribe — Wiki", "Brotherhood of Steel — Roster", "Misfits Database
+      — Home". Content headings stay h2+, so the outline is clean (verified single h1).
+- [x] ✅ Landmarks present: `<header>` (banner), `<main>`, two labelled `<nav>`s ("Faction sections",
+      "Document contents"). `aria-current` — still TODO on the active nav tab / faction option.
+- [ ] `aria-current` on the active row-1 box + row-2 tab + faction option (partially done on the navbox).
 - [ ] Icon-only buttons have `aria-label` (cog does — audit the rest: camera/upload, doc steppers).
 - [x] ✅ A polite **live region** for loading state. Roster already had one (`#state`). Added
       `#doc-announce` (dedicated sr-only, stable — the animated `#docstatus` repaints 12×/s so can't be

@@ -116,6 +116,7 @@ function applyFaction(id){
   if(currentSection==="home") setSection("home");     // re-render the tiles for this faction's docs
   else if(currentSection!=="roster" && !factionDocs().some(d=>d.id===currentSection)) setSection("roster");
   else if(currentSection==="roster") showRosterFor(f);
+  setAppHeading();   // the H1 carries the faction name, so a switch refreshes it
   writeRoute();   // the URL carries the faction, so a switch updates it (e.g. #brotherhood/roster)
 }
 /* show the roster for a faction: its live data if the sheet is linked, else a themed
@@ -2585,7 +2586,17 @@ function setSection(id){
     if(id==="wiki"){ loadWiki(_wikiPage); }
     else { const doc=factionDocs().find(d=>d.id===id); if(doc) loadDoc(doc); }
   }
+  setAppHeading();
   writeRoute();   // reflect the section in the URL (character/heading is added by its own handler)
+}
+/* the page's single H1 (sr-only) — describes the current view for screen readers */
+function setAppHeading(){
+  const h=$("#app-h1"); if(!h) return;
+  if(currentSection==="home"){ h.textContent="Misfits Database — Home"; return; }
+  const label = currentSection==="roster" ? "Roster"
+    : currentSection==="wiki" ? "Wiki"
+    : (factionDocs().find(d=>d.id===currentSection)||{}).label || currentSection;
+  h.textContent = activeFaction().name + " — " + label;
 }
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
