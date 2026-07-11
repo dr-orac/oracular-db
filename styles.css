@@ -155,10 +155,16 @@
      metal bezel. Glass/curvature techniques reimplemented (not copied) from 32bitkid's
      "Fallout 3 Terminal" pen — technique credit in CREDITS.md (MIT). */
   body:not([data-frame="border"]){ border-radius:var(--bezel-radius); }   /* rounded screen corners (body already clips overflow) */
-  body:not([data-frame="border"])::before{     /* curved-glass reflection: faint light catch along the top */
+  /* curved-glass reflection: a layered light-catch near the top — nested white ellipses of
+     increasing intensity toward a focal band, so the glass reads as gently curved (32bitkid
+     "Fallout 3 Terminal" technique, reimplemented; kept subtle to protect legibility). */
+  body:not([data-frame="border"])::before{
     content:""; position:fixed; inset:0; pointer-events:none; z-index:9198;
     background:
-      radial-gradient(120% 15% at 50% -3%, rgba(255,255,255,.05), transparent 60%),
+      radial-gradient(ellipse 46% 13% at 50% 10%,  rgba(255,255,255,.06), transparent 70%),
+      radial-gradient(ellipse 40% 8%  at 50% 8%,   rgba(255,255,255,.08), transparent 66%),
+      radial-gradient(ellipse 34% 4.5% at 50% 6.5%, rgba(255,255,255,.10), transparent 62%),
+      radial-gradient(150% 20% at 50% -6%, rgba(0,0,0,.28), transparent 60%),
       radial-gradient(64% 8% at 50% -1%, rgba(var(--green-rgb),.05), transparent 55%);
   }
   /* the exterior border, built from the --bezel-* vars as concentric inset rings:

@@ -276,7 +276,9 @@ function applyColor(key){
   r.setProperty("--green",t.primary);  r.setProperty("--green-bright",t.bright);
   r.setProperty("--green-dim",t.dim);  r.setProperty("--green-faint",t.faint);
   r.setProperty("--green-rgb", hexToRgbTriplet(t.primary));   // translucent fills/glows follow the preset
-  r.setProperty("--glow","0 0 2px "+t.glow);     // softer glow for legibility
+  /* two-layer phosphor glow (32bitkid F3-terminal technique): a soft coloured bloom for the CRT
+     feel + a tight bright core that keeps the text crisp and legible under it. */
+  r.setProperty("--glow","0 0 1px "+t.bright+", 0 0 6px "+t.glow);
   /* image tint: rotate a sepia base (~40°) to THIS theme's hue; near-grey themes (white) desaturate */
   const {h:_hu, s:_sat}=hslOf(t.primary);
   r.setProperty("--img-hue", Math.round(_hu-40)+"deg");
