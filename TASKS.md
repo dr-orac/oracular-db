@@ -806,3 +806,34 @@ Three home-page polishes the user asked for after the wiki work:
      match. Verified desktop + mobile (single-column stack, no h-overflow).
   Untouched by request: T51's deeper tile texture/per-section accent (phosphor is monochrome by the
   two-surface law, so per-section colour was deliberately NOT added).
+
+# Batch 13 — Discord source + bezel glow (queued 2026-07-11)
+
+## T52 · Investigate integrating the Discord character/faction entries — INVESTIGATE-FIRST, DO NOT BUILD
+User: a Discord channel holds character + faction entries worth pulling into the database. Roadmap +
+investigate BEFORE any implementation; other tasks come first.
+Source: https://discord.com/channels/1471565853534322715/1485727049078542366
+  (guild 1471565853534322715, channel 1485727049078542366).
+⚠ ACCESS: Discord content is auth-gated — it CANNOT be fetched with WebFetch/curl (login + the app
+shell required). To read it, one of: (a) the user pastes/export a sample of the entries here; (b) use
+the logged-in Chrome surface (mcp__claude-in-chrome) to read the channel with the user's session
+(their call — it acts on their account); (c) a Discord API read with a bot token in the guild.
+Investigation to produce (a short written assessment, like T2/T15 — no code):
+  1. Sample the real entries — WHAT'S there (per-character fields? faction blurbs? free-form posts vs a
+     structured format / bot embeds / a pinned template?), how consistent, roughly how many.
+  2. Map it to our data model — do these become roster characters (→ the Sheets schema + FIELDS), or a
+     new "faction dossier" content type, or doc/wiki pages? Which factions do they cover?
+  3. Pick an integration PATH + cost:
+     - one-off manual: copy into a Sheet (fits the existing gviz roster flow — zero new code) — likely
+       the cheapest first step and keeps data READ-ONLY on our side;
+     - semi-automated: a small script/bot that reads the channel → writes a Sheet/JSON the app already
+       reads (never write to CONFIG.sheetId; a NEW sheet/source only);
+     - live: fetch at runtime — almost certainly needs a proxy/bot (no CORS, no public read) → heaviest.
+  4. Note freshness/ownership (who curates it, how often it changes) — that decides manual vs automated.
+Deliverable: `docs/DISCORD-SOURCE.md` (assessment + recommendation) + concrete follow-up task(s). No
+data written anywhere until the user approves the path. Sequence AFTER the current roadmap items.
+
+## T53 · Edge border — extra glow + widescreen/responsive — DONE-THIS-BATCH (see git)
+Make the exterior screen bezel (screen mode: `body:not([data-frame="border"])::after`, the `--bezel-*`
+concentric rings) EXTRA glowy — a brighter phosphor bloom around the theme hairline, especially read on
+the exterior edge — and verify it renders correctly + responsively on widescreen (and still mobile).
