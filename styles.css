@@ -1101,7 +1101,7 @@
     font-size:17px; letter-spacing:1px; text-transform:uppercase; color:var(--green-dim); text-shadow:none; }
   .card .card-top{ display:flex; gap:16px; align-items:flex-start; }
   .card .card-id{ min-width:0; }
-  .card .cname{ font-family:var(--font-head); font-size:30px; line-height:1.08; color:var(--green-bright); }
+  .card .cname{ font-family:var(--font-head); font-size:30px; line-height:1.08; color:var(--green-bright); text-shadow:var(--glow-strong); }
   .card .chon{ font-size:18px; color:var(--green); font-style:italic; margin-top:4px; }
   .card .crole{ font-size:18px; color:var(--green-dim); margin-top:8px; line-height:1.45; }
   .card .cmeta{ font-size:18px; color:var(--green-dim); margin-top:14px; line-height:1.55;
@@ -1217,7 +1217,7 @@
     border:0; padding:8px 11px; gap:8px; }
   .moremenu .btn:hover{ background:var(--bg-panel); color:var(--green-bright); }
   .doss-name{ font-family:var(--font-head); font-size:52px; line-height:1.04;
-    color:var(--green-bright); text-shadow:0 0 10px rgba(182,255,206,.4); }
+    color:var(--green-bright); text-shadow:var(--glow-strong); }
   .doss-hon{ font-size:18px; color:var(--green); font-style:italic; margin-top:10px; }
   /* role: a readable subtitle, NOT shouty all-caps (and consistent with the roster sub-line) */
   .doss-role{ font-size:17px; color:var(--green-dim); margin-top:7px; letter-spacing:.3px;
@@ -1286,7 +1286,7 @@
   /* spirit animal: the animal name as a subheading, with the sigil glowing inline
      just to the right of it (no medallion / frame — simple and lit). */
   .spirit-name{ font-family:var(--font-head); font-size:22px; letter-spacing:.5px;
-    color:var(--green-bright); margin-bottom:8px;
+    color:var(--green-bright); text-shadow:var(--glow-strong); margin-bottom:8px;
     display:flex; align-items:center; gap:.5em; }
   .spirit-glyph{ display:inline-flex; align-items:center; color:var(--green); }
   .spirit-glyph .ic{ width:1.15em; height:1.15em; stroke-width:1.1;
