@@ -853,12 +853,15 @@
     mix-blend-mode:multiply; opacity:.28; transition:opacity .25s; }
   .docreader .docfig-screen:hover::after{ opacity:0; }
   .docreader .docfig img{ display:block; width:100%; height:auto; opacity:1;
-    /* desaturate; the phosphor colour comes from the theme-tracking tint below (so doc images
-       match the portraits AND the active faction's colour — amber, red, blue…). */
-    filter:grayscale(1) brightness(1.16) contrast(1.12);   /* a touch brighter to offset the tint, without blowing out detail */
+    /* tint straight to the theme colour with ONE sepia→hue-rotate filter (matches the portraits
+       + the active faction's colour), instead of a flat multiply wash over grey. */
+    filter:sepia(.92) saturate(var(--img-sat,2.1)) brightness(1.14) contrast(1.04) hue-rotate(var(--img-hue,0deg));
     transition:opacity .3s, filter .3s; }
-  .docreader .docfig-tint{ position:absolute; inset:0; z-index:1; pointer-events:none;
-    background:var(--green); mix-blend-mode:multiply; opacity:.42; }   /* lighter tint → images keep their detail */
+  /* the old multiply wash is retired for photos/illustrations (the filter tints them now); it
+     stays ONLY for inverted line-art, which needs an overlay to colourise its white lines. */
+  .docreader .docfig-tint{ display:none; }
+  .docreader .docfig-invert .docfig-tint{ display:block; position:absolute; inset:0; z-index:1;
+    pointer-events:none; background:var(--green); mix-blend-mode:multiply; opacity:.42; }
   /* auto-detected line-art diagram (flow chart): INVERT it (dark lines on white → light lines on
      the dark screen); the tint above then colourises the light lines to the theme. Don't fade its
      edges or lay heavy scanlines over the linework. */
@@ -1121,12 +1124,11 @@
   .portrait img{
     width:100%; height:100%; object-fit:cover; display:block;
     image-rendering:pixelated;                 /* keep pixel-art sprites crisp */
-    filter:grayscale(1) brightness(1.32) contrast(1.3);   /* brighter than the old pale grey, detail intact under the tint */
+    /* tint straight to the theme colour with ONE filter (sepia→hue-rotate), instead of a flat
+       multiply wash over grey — keeps luminosity + detail, reads as a phosphor image. */
+    filter:sepia(.92) saturate(var(--img-sat,2.1)) brightness(1.12) contrast(1.05) hue-rotate(var(--img-hue,0deg));
   }
-  .portrait .tint{                 /* green phosphor wash */
-    position:absolute; inset:0; background:var(--green);
-    mix-blend-mode:multiply; opacity:.5; pointer-events:none;
-  }
+  .portrait .tint{ display:none; }   /* the filter now does the tinting; the multiply wash is retired */
   .portrait::after{                /* scanlines + vignette */
     content:""; position:absolute; inset:0; pointer-events:none; z-index:2;
     background:

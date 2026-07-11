@@ -257,12 +257,30 @@ function hexToRgbTriplet(hex){
   const n=parseInt(h,16);
   return isNaN(n) ? "60,255,122" : `${(n>>16)&255},${(n>>8)&255},${n&255}`;
 }
+/* hue (deg) + saturation (0–1) of a hex — used to tint monochrome images to the theme colour
+   (a single sepia+hue-rotate filter, cribbed from carterfromsl's NV Pip-Boy pen). */
+function hslOf(hex){
+  let h=(hex||"").replace("#","").trim();
+  if(h.length===3) h=h.split("").map(c=>c+c).join("");
+  const n=parseInt(h,16); if(isNaN(n)) return {h:0, s:0};
+  const r=((n>>16)&255)/255, g=((n>>8)&255)/255, b=(n&255)/255;
+  const mx=Math.max(r,g,b), mn=Math.min(r,g,b), d=mx-mn, l=(mx+mn)/2;
+  let hu=0, s=0;
+  if(d){ s=d/(1-Math.abs(2*l-1));
+    if(mx===r) hu=((g-b)/d)%6; else if(mx===g) hu=(b-r)/d+2; else hu=(r-g)/d+4;
+    hu=hu*60; if(hu<0) hu+=360; }
+  return {h:hu, s};
+}
 function applyColor(key){
   const t=THEMES[key]||THEMES.green, r=document.documentElement.style;
   r.setProperty("--green",t.primary);  r.setProperty("--green-bright",t.bright);
   r.setProperty("--green-dim",t.dim);  r.setProperty("--green-faint",t.faint);
   r.setProperty("--green-rgb", hexToRgbTriplet(t.primary));   // translucent fills/glows follow the preset
   r.setProperty("--glow","0 0 2px "+t.glow);     // softer glow for legibility
+  /* image tint: rotate a sepia base (~40°) to THIS theme's hue; near-grey themes (white) desaturate */
+  const {h:_hu, s:_sat}=hslOf(t.primary);
+  r.setProperty("--img-hue", Math.round(_hu-40)+"deg");
+  r.setProperty("--img-sat", _sat<0.2 ? "0" : "2.1");   // near-grey themes (white) desaturate rather than mis-tint
   localStorage.setItem(fkey("color"), key);   // colour override is remembered PER FACTION
   document.querySelectorAll("#color-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
