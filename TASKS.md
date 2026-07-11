@@ -494,6 +494,18 @@ in the terminal theme (matrix? per-character relationship lists? interactive gra
 Do the content-source generalisation (`{type, source}` groundwork) first. Its own context/design pass
 before building. Acceptance: TBD in the design pass.
 
+## T28 DESIGN PASS DONE (2026-07-11) — see docs/DESIGN-RELATIONSHIPS.md
+Assessed 3 presentations (A full matrix / B per-character dossier / C force-graph). RECOMMENDED **B**:
+a per-faction "Relations" section — pick a character (reuse the roster rail) → their relationships
+grouped by type (Family/Friend/Crush/Rival/Hatred/Acquaintance) as chips that link to each character's
+dossier; types shown by group header + glyph + emphasis (monochrome-safe); deep-link
+`#<faction>/relations/<slug>`. A themed **prototype shipped + screenshotted** (DOM-injected into the
+live theme; app source untouched) — desktop + mobile both read well. BLOCKERS before building:
+  (1) user confirms direction B (vs A/C), and section-vs-dossier-block (or both);
+  (2) a SAMPLE of Sheet B's real layout — sandbox can't reach gviz, so the parser (long-edges vs wide
+      N×N, directed vs mutual, full type list) must be locked against real rows first.
+Build plan (data adapter → section plumbing → renderer → styles → verify) is in the design doc.
+
 ## Note — T22 gate clarified
 "Lattice" = a UI builder linked to Substrate, providing standard HTML layouts to reduce parallelism /
 standardise building (in the Claude project folder). T22 (Misfits wiki reader) stays gated on Substrate
