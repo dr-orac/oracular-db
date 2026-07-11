@@ -184,8 +184,8 @@ element-id or CSS-var references remain. The screen-only view is byte-for-byte u
    Don't repoint it at the private working copy either (not world-readable; the site
    would show "could not reach the sheet").
 2. **Legibility floor.** Min text size 17px for prose/labels (short uppercase chip labels
-   like tags are an allowed ~15px exception). `--green-dim` is the darkest any *text* may be
-   (AA-contrast); `--green-faint` is borders only, never text. No glow on small text.
+   like tags are an allowed ~15px exception). `--fg-dim` is the darkest any *text* may be
+   (AA-contrast); `--fg-faint` is borders only, never text. No glow on small text.
 3. **Self-host everything.** No CDN. New fonts go in `fonts/` as `woff2` with an `@font-face`.
 4. **Soft edges for content, crisp for chrome** (see STYLE-GUIDE.md §3). Don't feather grids,
    modals, or form controls.

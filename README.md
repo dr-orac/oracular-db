@@ -100,8 +100,8 @@ commit; `--no-verify` to override). Full maintenance notes live in **MAINTENANCE
 
 ## Conventions worth knowing
 
-- **Legibility floor:** any real text uses at least `--green-dim` (≈4.6:1 contrast).
-  `--green-faint` is for borders/box-shadows only, never type.
+- **Legibility floor:** any real text uses at least `--fg-dim` (≈4.6:1 contrast).
+  `--fg-faint` is for borders/box-shadows only, never type.
 - **Frame modes** are driven by `body[data-frame]` (`screen` default, `border` experimental);
   text size by `body[data-textsize]`; fonts by `body[data-font-head]` + `body[data-font-body]`
   (headings and body faces are picked separately in the Theme popover — see `FACES` in app.js).

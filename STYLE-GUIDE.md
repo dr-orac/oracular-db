@@ -43,15 +43,20 @@ components you can read top to bottom.
 
 ## 1. Color tokens
 
-Four greens, three backgrounds, one rare warning accent. That's the entire palette. Resist
-adding more — depth comes from the *backgrounds*, not more hues.
+One foreground colour in four shades, three backgrounds, one rare warning accent. That's the
+entire palette. Resist adding more — depth comes from the *backgrounds*, not more hues.
+
+**`--fg` is the theme's FOREGROUND / phosphor colour — named for its ROLE, not a hue.** It is set
+per theme by `applyColor()` in app.js (amber, rust, blue, magenta… — the picker in Settings → Text
+Colour), so it is *not* fixed green. The values below are the DEFAULT (green) preset, shown to make
+the shade relationships concrete; every theme supplies its own primary/bright/dim/faint quartet.
 
 ```css
 :root{
-  --green:        #3cff7a;   /* primary phosphor — THE accent. Use sparingly. */
-  --green-bright: #b6ffce;   /* highlights, titles, the value you want read first */
-  --green-dim:    #21954d;   /* labels, secondary text — must clear WCAG-AA on every bg */
-  --green-faint:  #0f3a22;   /* borders, rules, hairlines — decoration only, never text */
+  --fg:        #3cff7a;   /* the phosphor colour — THE accent. Use sparingly. (per-theme) */
+  --fg-bright: #b6ffce;   /* brighter tint — highlights, titles, the value you want read first */
+  --fg-dim:    #21954d;   /* dimmer shade — labels, secondary text — must clear WCAG-AA on every bg */
+  --fg-faint:  #0f3a22;   /* faintest — borders, rules, hairlines — decoration only, never text */
   --bg:           #050a06;   /* deep terminal black-green (page) */
   --bg-panel:     #07140c;   /* panel fill (one step up from bg) */
   --bg-panel-2:   #0a1d11;   /* raised fill (hover, selected, feathered glow) */
@@ -61,9 +66,9 @@ adding more — depth comes from the *backgrounds*, not more hues.
 ```
 
 **The contract that keeps it readable:**
-- `--green-dim` is the *floor for text*. It is tuned to clear ~4.5:1 against the lightest
+- `--fg-dim` is the *floor for text*. It is tuned to clear ~4.5:1 against the lightest
   background it ever sits on. If you add a new lighter panel, re-check dim against it.
-- `--green-faint` is *never* used for text — only borders, rules, box-shadows. Contrast
+- `--fg-faint` is *never* used for text — only borders, rules, box-shadows. Contrast
   doesn't matter for a 1px hairline; it does for a glyph.
 - The three backgrounds are a ladder: `bg` < `bg-panel` < `bg-panel-2`. Elevation = one step
   up the ladder, not a new color.
@@ -107,11 +112,11 @@ body[data-textsize="xlarge"]      { font-size:26px; }
 ### Hierarchy (the actual ladder used)
 | Role | size | color | notes |
 |---|---|---|---|
-| Hero name | 52px | `--green-bright` | the one place a soft text-glow is allowed |
-| Section heading | ~19–23px | `--green-dim` | uppercase, wide tracking (2.5px), **no glow** |
-| Body prose | 18–23px | `--green` | line-height 1.6–1.8, measure ≤ ~58ch |
-| Labels / meta | 15–17px | `--green-dim` | uppercase, tracked, **no glow** |
-| Status chrome | 15px | `--green-dim` | dimmed (opacity .78), tracked |
+| Hero name | 52px | `--fg-bright` | the one place a soft text-glow is allowed |
+| Section heading | ~19–23px | `--fg-dim` | uppercase, wide tracking (2.5px), **no glow** |
+| Body prose | 18–23px | `--fg` | line-height 1.6–1.8, measure ≤ ~58ch |
+| Labels / meta | 15–17px | `--fg-dim` | uppercase, tracked, **no glow** |
+| Status chrome | 15px | `--fg-dim` | dimmed (opacity .78), tracked |
 
 ### The glow rule
 `text-shadow:var(--glow)` is on by default for body, but **stripped from all small/secondary
@@ -172,12 +177,12 @@ Key relationships:
 Dividers fade at the ends instead of butting hard into the edges:
 ```css
 /* a centered-label rule: ───────  LABEL  ─────── that fades outward */
-.rule::before{ content:""; flex:1; height:1px; background:linear-gradient(to right, transparent, var(--green-faint)); }
-.rule::after { content:""; flex:1; height:1px; background:linear-gradient(to left,  transparent, var(--green-faint)); }
+.rule::before{ content:""; flex:1; height:1px; background:linear-gradient(to right, transparent, var(--fg-faint)); }
+.rule::after { content:""; flex:1; height:1px; background:linear-gradient(to left,  transparent, var(--fg-faint)); }
 
 /* an internal separator inside a panel, fading at both ends */
 .subdivider{ border-top:1px solid; border-image:linear-gradient(to right,
-  transparent, var(--green-faint) 18%, var(--green-faint) 82%, transparent) 1; }
+  transparent, var(--fg-faint) 18%, var(--fg-faint) 82%, transparent) 1; }
 ```
 
 ### 3c. Scroll-edge fade
@@ -212,27 +217,27 @@ not *atmospheric*. Reserve the feather for the one or two hero surfaces.
 ### Tag / status chip — "data key with an LED"
 ```css
 .tag{ display:inline-flex; align-items:center; gap:7px;
-  font-size:15px; letter-spacing:1.5px; text-transform:uppercase; color:var(--green-bright);
-  padding:4px 11px 4px 9px; border:1px solid var(--green-faint);
+  font-size:15px; letter-spacing:1.5px; text-transform:uppercase; color:var(--fg-bright);
+  padding:4px 11px 4px 9px; border:1px solid var(--fg-faint);
   background:linear-gradient(180deg, rgba(60,255,122,.11), rgba(60,255,122,.025)); }
-.tag::before{ content:""; width:5px; height:5px; background:var(--green);
-  box-shadow:0 0 6px var(--green); }                       /* glowing LED marker */
-.tag:hover, .tag:focus-visible{ border-color:var(--green);
+.tag::before{ content:""; width:5px; height:5px; background:var(--fg);
+  box-shadow:0 0 6px var(--fg); }                       /* glowing LED marker */
+.tag:hover, .tag:focus-visible{ border-color:var(--fg);
   background:linear-gradient(180deg, rgba(60,255,122,.22), rgba(60,255,122,.07)); }
 ```
 A faint green-tinted fill + a glowing dot reads as a terminal readout; a plain outlined box
 reads as a generic web tag. Same effort, much better.
 
 ### Buttons
-Square corners (this aesthetic is pixel, not rounded). `--bg-panel` fill, `--green-faint`
-border, brighten to `--bg-panel-2` + `--green-bright` on hover. Confirmation feedback can
-*invert*: `.copied{ background:var(--green); color:var(--bg); text-shadow:none; }`.
+Square corners (this aesthetic is pixel, not rounded). `--bg-panel` fill, `--fg-faint`
+border, brighten to `--bg-panel-2` + `--fg-bright` on hover. Confirmation feedback can
+*invert*: `.copied{ background:var(--fg); color:var(--bg); text-shadow:none; }`.
 
 ### Selected list row — accent bar, not a fill
 Don't flood the row with bright green (shouty). Raise it one bg step and add a left accent:
 ```css
-.row.active{ background:var(--bg-panel-2); box-shadow:inset 3px 0 0 var(--green); }
-.row.active .row-name{ color:var(--green-bright); }
+.row.active{ background:var(--bg-panel-2); box-shadow:inset 3px 0 0 var(--fg); }
+.row.active .row-name{ color:var(--fg-bright); }
 ```
 
 ### Overflow ("More") menu — declutter rarely-used actions
@@ -242,7 +247,7 @@ them into one `⋯ More` button with an absolutely-positioned dropdown:
 .morewrap{ position:relative; }
 .moremenu{ display:none; position:absolute; right:0; top:calc(100% + 6px); z-index:30;
   flex-direction:column; min-width:170px; padding:5px;
-  background:var(--bg-panel-2); border:1px solid var(--green-faint);
+  background:var(--bg-panel-2); border:1px solid var(--fg-faint);
   box-shadow:0 10px 26px -10px rgba(0,0,0,.85); }
 .morewrap.open .moremenu{ display:flex; }
 ```
@@ -255,8 +260,8 @@ A responsive auto-fit grid; keys are dim+uppercase+tracked, values are bright. W
 column min so values read in full lines rather than hyphenating:
 ```css
 .idgrid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px 32px; }
-.idgrid .k{ font-size:17px; color:var(--green-dim); text-transform:uppercase; letter-spacing:1.5px; }
-.idgrid .v{ color:var(--green-bright); }
+.idgrid .k{ font-size:17px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:1.5px; }
+.idgrid .v{ color:var(--fg-bright); }
 ```
 
 ### Status strip — quiet chrome
@@ -322,7 +327,7 @@ the active background so mobile browser chrome matches.
 
 ## 8. Accessibility (the floors, restated as rules)
 
-- **Contrast:** body/labels ≥ 4.5:1; large text/decoration ≥ 3:1. Tune `--green-dim` against
+- **Contrast:** body/labels ≥ 4.5:1; large text/decoration ≥ 3:1. Tune `--fg-dim` against
   the *lightest* background it appears on, not the darkest.
 - **Min text size 17px** for prose and labels. Pixel fonts especially — "authentic but
   unreadable" is a bug. (Allowed exception: short uppercase *chip* labels like tags sit at

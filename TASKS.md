@@ -63,7 +63,7 @@ background refresh is invisible. Add subtle CSS-only activity indicators.
 - Apply to: (a) the statusline while `setLink()` shows an in-progress state
   (RE-SYNCING…/SAVING…/UPLOADING…), (b) optionally a tiny pulse next to `#syncinfo`
   while a background doc re-fetch is running.
-- Constraints: pure CSS animation, uses `var(--green*)` tokens only, honours
+- Constraints: pure CSS animation, uses `var(--fg*)` tokens only, honours
   `prefers-reduced-motion` (static fallback), 17px-legibility floor untouched,
   works on all 8 colour presets (spot-check green + amber + white).
 - Acceptance: indicators visible in preview during a manual ⟳ Refresh; no layout
@@ -333,7 +333,7 @@ comment-guard. Batch 3 is the consolidation ("join the system") + the doc-image 
 The "Join B" from the sitrep — the biggest single entropy drop. Replace the ~15 bespoke
 `apply*()` fns + hardcoded swatch containers with ONE `Prefs({schema})` driving
 `lib/prefs/prefs.js`. Keep localStorage keys (`"yuma-"+id`) so existing users don't lose
-settings; reuse derivation via custom `apply()` (colour→whole --green-* palette, bg→3 vars,
+settings; reuse derivation via custom `apply()` (colour→whole --fg-* palette, bg→3 vars,
 frametint, font-derived Auto text-size, font hover-preview). CRT toggle stores "1"/"0" + a
 body class today — handle in its apply. Sonnet drafts the schema + hard-case map; overseer
 refactors the apply fns to effect-only, wires init→prefs boot + reset→prefs.reset(), verifies
@@ -467,7 +467,7 @@ numbered lists unaffected; screenshot.
 ## T25 · Make multi-cell data tables more attractive — DESIGN / MEDIUM
 Real tables (lore Faction/Standing, roleplay Role/Description/Notes) use the plain `.doctable` style.
 Improve: distinct header row, comfortable cell padding, phosphor-tuned row rhythm/zebra, a subtle
-frame, graceful narrow-screen scroll (no page overflow). Theme-tracking (var(--green*)). MULTI-cell
+frame, graceful narrow-screen scroll (no page overflow). Theme-tracking (var(--fg*)). MULTI-cell
 only — 1×1 boxes are quotes (done). Acceptance: both tables look polished desktop + mobile, header
 clearly distinct, no h-overflow, before/after screenshots.
 
@@ -666,7 +666,7 @@ Principle (user): improve the SYSTEM as we go, don't generate entropy — extend
 `border-radius:22px`). From OUTSIDE in:
   1. Jet-black border **~1mm thicker** (≈ +4px → 12px → ~16px).
   2. A small **gap/padding** (screen-bg) between the black border and…
-  3. A **theme-coloured hairline** (~1px), rounded to follow the bezel radius (tracks `--green`).
+  3. A **theme-coloured hairline** (~1px), rounded to follow the bezel radius (tracks `--fg`).
   4. **Healthy padding** between that hairline and interior content.
   5. EXCEPTION: long horizontal rules (e.g. the header divider) may extend all the way OUT to the
      hairline, rather than stopping at the content inset.

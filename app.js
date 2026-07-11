@@ -250,7 +250,7 @@ const PRESET_MIGRATE = {
   typewriter:["typewriter","typewriter"], block:["block","block"],
 };
 
-/* "#3cff7a" -> "60,255,122" so rgba(var(--green-rgb), a) tracks the active preset. */
+/* "#3cff7a" -> "60,255,122" so rgba(var(--fg-rgb), a) tracks the active preset. */
 function hexToRgbTriplet(hex){
   let h=(hex||"").replace("#","").trim();
   if(h.length===3) h=h.split("").map(c=>c+c).join("");
@@ -273,9 +273,16 @@ function hslOf(hex){
 }
 function applyColor(key){
   const t=THEMES[key]||THEMES.green, r=document.documentElement.style;
-  r.setProperty("--green",t.primary);  r.setProperty("--green-bright",t.bright);
-  r.setProperty("--green-dim",t.dim);  r.setProperty("--green-faint",t.faint);
-  r.setProperty("--green-rgb", hexToRgbTriplet(t.primary));   // translucent fills/glows follow the preset
+  /* --fg = the theme's FOREGROUND / phosphor colour (pairs with --bg). It's whatever hue the
+     chosen theme sets — amber, rust, blue, green… — so it's named for its ROLE, not a colour.
+       --fg        the phosphor colour (primary text, accents, borders-lit)
+       --fg-bright brighter tint — headings, hovers, the "lit" state
+       --fg-dim    dimmer shade — secondary text (min ≈4.6:1, the legibility floor)
+       --fg-faint  faintest — hairlines/borders/box-shadows ONLY, never type
+       --fg-rgb    the same colour as an "r,g,b" triplet, for rgba(var(--fg-rgb), a) fills/glows */
+  r.setProperty("--fg",t.primary);  r.setProperty("--fg-bright",t.bright);
+  r.setProperty("--fg-dim",t.dim);  r.setProperty("--fg-faint",t.faint);
+  r.setProperty("--fg-rgb", hexToRgbTriplet(t.primary));   // translucent fills/glows follow the preset
   /* Two glow levels. --glow is the DEFAULT: a subtle tight halo that stays crisp on dark/secondary
      text (a wide bloom there just reads muddy). --glow-strong is the rich two-layer phosphor bloom
      (F3-terminal style) reserved for big BRIGHT display text, where the glow actually looks good. */
@@ -370,7 +377,7 @@ function applyCards(key){
   localStorage.setItem("yuma-cards", key);
   document.querySelectorAll("#cards-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
-/* Image colour — "screen" (default: green-phosphor monochrome, matching the terminal) or
+/* Image colour — "screen" (default: phosphor monochrome, matching the terminal) or
    "original" (true colour). Applies to doc images + character portraits. */
 function applyImgColor(key){
   if(key!=="original") key="screen";

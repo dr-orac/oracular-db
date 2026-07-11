@@ -34,7 +34,7 @@ review effort for design and trade-offs.
   sheet — the site reads it and nothing may ever write to it. Don't repoint the id.
   For previewing, don't edit the source — `preview.py` injects an override (localhost only).
 - **Legibility floor 17px** for prose/labels (short uppercase chips ~15px are an allowed
-  exception). `--green-dim` is the darkest any *text* may be; `--green-faint` is borders only;
+  exception). `--fg-dim` is the darkest any *text* may be; `--fg-faint` is borders only;
   no glow on small text.
 - **Self-host assets.** New fonts go in `fonts/` as woff2 + an `@font-face`; no CDN. Only ship
   fonts you're licensed to embed and redistribute (`selfcheck.py` flags orphan font files).
