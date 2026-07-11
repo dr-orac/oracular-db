@@ -27,9 +27,11 @@ decoration). Documented the token roles in `THEMES`.
       margin when enabled. This is exactly what the High-Contrast mode below fixes.
 - [ ] **Chassis metal text** (engraved `--panel-ink` on `--panel*`) — not covered by the phosphor audit;
       spot-check separately (lower priority — it's a deliberate engraved look).
-- [ ] **NEXT: add an optional High-Contrast mode** (honours `prefers-contrast: more` + a Settings
-      toggle): drop the scanline overlay, push `--fg-dim`→`--fg`, thicken focus rings. Small, high value
-      — the main remaining contrast win (addresses the CRT-overlay note above).
+- [x] ✅ **High-Contrast mode** — DONE. `body[data-contrast="high"]`: applyColor lifts `--fg-dim`→`--fg`
+      (secondary text to full phosphor) + `--fg-faint`→`--fg-dim` (borders); CSS drops the scanline
+      overlay + thickens the focus ring. A Settings toggle (`#contrast-toggle`), auto-on from OS
+      `prefers-contrast:more` when the user hasn't chosen, persisted in `mdb-contrast`, reset-aware.
+      Verified: toggle lifts/restores the palette + scanline both ways.
 
 ## Minimum font size
 Current tiers: body/reading prose **≥17px** (enforced via `--root-fs` floor + the text-size stepper +

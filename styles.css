@@ -116,6 +116,11 @@
       rgba(0,0,0,.28) 4px);
     mix-blend-mode:multiply;
   }
+  /* HIGH-CONTRAST mode (a11y): the dim/faint text tiers are lifted to full phosphor in JS; here we
+     drop the row-darkening scanline overlay (it's the one thing that presses effective contrast) and
+     thicken the focus ring. Keyed off body[data-contrast="high"]. */
+  body[data-contrast="high"] .scanlines{ display:none; }
+  body[data-contrast="high"] :focus-visible{ outline-width:3px; }
   .vignette{
     position:fixed; inset:0; z-index:9001; pointer-events:none;
     /* a gentle corner darkening, not a heavy tunnel — kept subtle so the screen edges

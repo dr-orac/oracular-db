@@ -326,8 +326,11 @@ function hslOf(hex){
     hu=hu*60; if(hu<0) hu+=360; }
   return {h:hu, s};
 }
+let _curColor = "green";   // remembered so a contrast-mode change can re-derive the palette
 function applyColor(key){
   const t=THEMES[key]||THEMES.green, r=document.documentElement.style;
+  _curColor = key;
+  const hc = document.body.dataset.contrast==="high";   // High-Contrast: lift the dim/faint tiers
   /* --fg = the theme's FOREGROUND / phosphor colour (pairs with --bg). It's whatever hue the
      chosen theme sets — amber, rust, blue, green… — so it's named for its ROLE, not a colour.
        --fg        the phosphor colour (primary text, accents, borders-lit)
@@ -336,7 +339,8 @@ function applyColor(key){
        --fg-faint  faintest — hairlines/borders/box-shadows ONLY, never type
        --fg-rgb    the same colour as an "r,g,b" triplet, for rgba(var(--fg-rgb), a) fills/glows */
   r.setProperty("--fg",t.primary);  r.setProperty("--fg-bright",t.bright);
-  r.setProperty("--fg-dim",t.dim);  r.setProperty("--fg-faint",t.faint);
+  r.setProperty("--fg-dim", hc ? t.primary : t.dim);    // HC: secondary text → full phosphor
+  r.setProperty("--fg-faint", hc ? t.dim : t.faint);    // HC: hairlines/borders one step brighter
   r.setProperty("--fg-rgb", hexToRgbTriplet(t.primary));   // translucent fills/glows follow the preset
   /* Two glow levels. --glow is the DEFAULT: a subtle tight halo that stays crisp on dark/secondary
      text (a wide bloom there just reads muddy). --glow-strong is the rich two-layer phosphor bloom
@@ -2619,6 +2623,16 @@ $("#crt-toggle").addEventListener("click", ()=>{
   $("#crt-toggle").classList.toggle("active", on);
   localStorage.setItem("mdb-crt", on?"1":"0");
 });
+/* High-Contrast mode (a11y): lift the dim/faint text tiers to full phosphor + drop the scanline
+   overlay + thicken focus rings (CSS keys off body[data-contrast="high"]). Auto-on when the OS
+   prefers-contrast:more is set (unless the user has chosen); a Settings toggle overrides. */
+function applyContrast(on, persist){
+  document.body.dataset.contrast = on ? "high" : "normal";
+  if(persist!==false){ try{ localStorage.setItem("mdb-contrast", on?"1":"0"); }catch(e){} }
+  const b=$("#contrast-toggle"); if(b){ b.textContent="High Contrast: "+(on?"ON":"OFF"); b.classList.toggle("active", on); }
+  applyColor(_curColor);   // re-derive --fg-dim / --fg-faint for the new mode
+}
+$("#contrast-toggle").addEventListener("click", ()=>{ applyContrast(document.body.dataset.contrast!=="high"); });
 
 $("#refresh").addEventListener("click", ()=>load(true));
 
@@ -2627,9 +2641,10 @@ $("#refresh").addEventListener("click", ()=>load(true));
 $("#reset-settings").addEventListener("click", ()=>{
   ["mdb-font","mdb-font-head","mdb-font-body","mdb-docfont-title","mdb-docfont-head",
    "mdb-docfont-body","mdb-color","mdb-bg",
-   "mdb-textsize","mdb-frame","mdb-frametint","mdb-sheen","mdb-crt","mdb-dosspanel","mdb-cards","mdb-imgcolor","mdb-bezel",
+   "mdb-textsize","mdb-frame","mdb-frametint","mdb-sheen","mdb-crt","mdb-dosspanel","mdb-cards","mdb-imgcolor","mdb-bezel","mdb-contrast",
    fkey("font-head"),fkey("font-body")   // clear THIS faction's font override → its signature reloads
   ].forEach(k=>localStorage.removeItem(k));
+  applyContrast(false);   // back to normal contrast (before applyColor so the palette is right)
   const _rf = factionFont(activeFaction());
   applyFontHead(_rf.head); applyFontBody(_rf.body);   // reset to the active faction's signature typeface
   applyTextSize("auto");                                 // size follows the font again
@@ -2925,6 +2940,12 @@ function runBoot(){
   ["title","head","body"].forEach(kind=>
     applyDocFont(kind, localStorage.getItem("mdb-docfont-"+kind) || DOC_FONT_DEFAULT[kind]));
   applyTextSize(localStorage.getItem("mdb-textsize") || "auto");  /* "auto" follows the body font; a stored manual size wins */
+  /* High-Contrast: a stored choice wins, else honour the OS prefers-contrast:more. Set BEFORE
+     applyColor so the palette derives its dim/faint tiers correctly on first paint. */
+  { const _hc=localStorage.getItem("mdb-contrast");
+    const _hcOn = _hc!=null ? _hc==="1" : !!(window.matchMedia && window.matchMedia("(prefers-contrast: more)").matches);
+    document.body.dataset.contrast = _hcOn ? "high" : "normal";
+    const _cb=$("#contrast-toggle"); if(_cb){ _cb.textContent="High Contrast: "+(_hcOn?"ON":"OFF"); _cb.classList.toggle("active", _hcOn); } }
   applyColor(_ap.color);
   applyBg(_ap.bg);
   applyFrame(localStorage.getItem("mdb-frame") || "screen");
