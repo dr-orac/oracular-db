@@ -17,6 +17,10 @@ Fonts have their own licence files in `fonts/`.
 
 ## Technique inspiration (no obligation — listed as a courtesy)
 
+- **Vault-Tec cog loader** — the data-loading indicator (a central ring throwing radar pings,
+  flanked by gear-tooth cog bars). Technique studied from the "Vaut-Tec Fallout loader" pen;
+  reimplemented from scratch in our own tokens and tinted to the active theme colour (the
+  `.vault-loader` block in styles.css), not the pen's fixed `#43FF03`.
 - **Embossed label-tape text** — effect studied from "Dymo style embossed text" by
   gillesv (codepen.io/gillesv/pen/WbeZXyb) and "Punch Label Dymo Effect" by getwestfall
   (codepen.io/getwestfall/pen/WNyzZOL); implemented from scratch with our own shadow
