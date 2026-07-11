@@ -1758,14 +1758,20 @@ const HOME_INFO = {
   _default: "An in-world document, rendered on the terminal.",
 };
 /* the home landing page: a full-height tile per section (icon + title + explainer). */
+const HOME_ARROW = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 9h9.2l-3.7-3.7L11 4l6 6-6 6-1.5-1.3L13.2 11H4z"/></svg>`;
 function renderHome(){
   const el=$("#home"); if(!el) return;
   const items=[{id:"roster",label:"Roster"}].concat(factionDocs().map(d=>({id:d.id,label:d.label})));
-  el.innerHTML = `<div class="home-tiles">`+ items.map(it=>
-    `<button class="home-tile" data-section="${escAttr(it.id)}">`+
-      `<span class="home-ico">${NAV_ICONS[it.id]||NAV_ICONS._default}</span>`+
-      `<span class="home-tile-title">${esc(it.label)}</span>`+
-      `<span class="home-tile-desc">${esc(HOME_INFO[it.id]||HOME_INFO._default)}</span>`+
+  el.innerHTML = `<div class="home-tiles">`+ items.map((it,i)=>
+    `<button class="home-tile" data-section="${escAttr(it.id)}" style="--i:${i}">`+
+      `<span class="home-tile-bar" aria-hidden="true"></span>`+
+      `<span class="home-tile-num" aria-hidden="true">${String(i+1).padStart(2,"0")}</span>`+
+      `<span class="home-tile-ico">${NAV_ICONS[it.id]||NAV_ICONS._default}</span>`+
+      `<span class="home-tile-body">`+
+        `<span class="home-tile-title">${esc(it.label)}</span>`+
+        `<span class="home-tile-desc">${esc(HOME_INFO[it.id]||HOME_INFO._default)}</span>`+
+      `</span>`+
+      `<span class="home-tile-cta" aria-hidden="true">Enter ${HOME_ARROW}</span>`+
     `</button>`).join("") + `</div>`;
 }
 function renderNav(){

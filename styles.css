@@ -559,34 +559,75 @@
      "The buttons ARE the home page, just elongated full height." Tiles fill the viewport and
      divide evenly by count; each is a big, obvious click target into that section. */
   .home{ height:100%; min-height:0; overflow:auto; }
-  .home-tiles{ display:flex; flex-direction:column; gap:10px; min-height:100%;
-    padding:10px; box-sizing:border-box; }
+  .home-tiles{ display:flex; flex-direction:column; gap:12px; min-height:100%;
+    padding:12px; box-sizing:border-box; }
+  /* each section is a full-height nav-CARD: left accent bar · framed icon · title+blurb · Enter CTA,
+     with a faded index watermark. Reads as a designed landing row, not a plain button. */
   .home-tile{
-    flex:1 1 0; min-height:120px;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:14px; text-align:center; padding:24px 28px;
+    flex:1 1 0; min-height:118px; position:relative; overflow:hidden; isolation:isolate;
+    display:flex; align-items:center; gap:30px; text-align:left;
+    padding:20px 44px 20px 28px;
     background:var(--bg-panel); color:var(--green);
-    border:1px solid var(--green-faint); cursor:pointer;
-    font-family:var(--font-head); position:relative; overflow:hidden;
-    transition:color .18s, border-color .18s, background .18s, box-shadow .18s, transform .12s;
+    border:1px solid var(--green-faint); cursor:pointer; font-family:var(--font-head);
+    transition:border-color .2s, background .2s, box-shadow .2s, transform .18s cubic-bezier(.2,.8,.3,1);
+    animation:hometile .42s cubic-bezier(.2,.8,.3,1) backwards; animation-delay:calc(var(--i,0) * 70ms);
   }
+  /* theme wash that sweeps in from the left on hover */
+  .home-tile::before{ content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:0;
+    background:linear-gradient(100deg, rgba(var(--green-rgb),.14), transparent 55%);
+    transition:opacity .25s; }
+  .home-tile > *{ position:relative; z-index:1; }
   .home-tile:hover, .home-tile:focus-visible{
-    color:var(--green-bright); border-color:var(--green);
-    background:var(--bg-panel-2); outline:none;
-    box-shadow:0 0 26px -8px rgba(var(--green-rgb),.5), inset 0 0 60px -40px rgba(var(--green-rgb),.6);
+    outline:none; border-color:var(--green); background:var(--bg-panel-2); transform:translateY(-3px);
+    box-shadow:0 16px 36px -20px rgba(0,0,0,.9), 0 0 30px -10px rgba(var(--green-rgb),.5),
+               inset 0 0 0 1px rgba(var(--green-rgb),.22);
   }
-  .home-tile:active{ transform:translateY(1px); }
-  .home-ico{ width:52px; height:52px; display:inline-flex; opacity:.92; }
-  .home-ico svg{ width:100%; height:100%; display:block; fill:currentColor;
-    filter:drop-shadow(0 0 10px rgba(var(--green-rgb),.35)); }
-  .home-tile-title{ font-size:clamp(20px, 3.4vw, 34px); letter-spacing:2px; text-transform:uppercase;
-    text-shadow:0 0 14px rgba(var(--green-rgb),.4); }
-  .home-tile-desc{ font-family:var(--font-body); font-size:clamp(13px, 1.5vw, 16px);
-    letter-spacing:.3px; color:var(--green-dim); max-width:52ch; line-height:1.5; }
+  .home-tile:hover::before, .home-tile:focus-visible::before{ opacity:1; }
+  .home-tile:active{ transform:translateY(-1px); }
+  /* left accent bar — lights up + grows on hover */
+  .home-tile-bar{ flex:0 0 auto; align-self:stretch; width:4px; margin:12px 0; border-radius:2px;
+    background:var(--green-faint); transition:background .2s, box-shadow .2s, width .2s; }
+  .home-tile:hover .home-tile-bar, .home-tile:focus-visible .home-tile-bar{
+    width:6px; background:var(--green); box-shadow:0 0 14px -1px rgba(var(--green-rgb),.85); }
+  /* icon in a framed square */
+  .home-tile-ico{ flex:0 0 auto; width:60px; height:60px; display:grid; place-items:center;
+    border:1px solid var(--green-faint); background:rgba(var(--green-rgb),.05);
+    transition:border-color .2s, background .2s, transform .2s, color .2s; }
+  .home-tile-ico svg{ width:34px; height:34px; fill:currentColor;
+    filter:drop-shadow(0 0 8px rgba(var(--green-rgb),.4)); }
+  .home-tile:hover .home-tile-ico, .home-tile:focus-visible .home-tile-ico{
+    border-color:var(--green); background:rgba(var(--green-rgb),.12); transform:scale(1.06); color:var(--green-bright); }
+  /* body */
+  .home-tile-body{ display:flex; flex-direction:column; gap:8px; min-width:0; flex:1 1 auto; }
+  .home-tile-title{ font-size:clamp(22px, 3.2vw, 36px); letter-spacing:2px; text-transform:uppercase;
+    line-height:1; text-shadow:0 0 14px rgba(var(--green-rgb),.4); }
+  .home-tile:hover .home-tile-title, .home-tile:focus-visible .home-tile-title{ color:var(--green-bright); }
+  .home-tile-desc{ font-family:var(--font-body); font-size:clamp(13px, 1.4vw, 16px);
+    letter-spacing:.3px; color:var(--green-dim); max-width:62ch; line-height:1.5; }
   .home-tile:hover .home-tile-desc, .home-tile:focus-visible .home-tile-desc{ color:var(--green); }
+  /* big faded index watermark */
+  .home-tile-num{ position:absolute; z-index:0; right:150px; top:50%; transform:translateY(-50%);
+    font-family:"Workbench","Gothic 821",sans-serif; font-size:clamp(56px, 8vw, 116px); line-height:1;
+    color:rgba(var(--green-rgb),.06); pointer-events:none; user-select:none; transition:color .25s; }
+  .home-tile:hover .home-tile-num, .home-tile:focus-visible .home-tile-num{ color:rgba(var(--green-rgb),.12); }
+  /* CTA — hidden until hover, then fades in + arrow slides */
+  .home-tile-cta{ flex:0 0 auto; display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--font-head); font-size:15px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--green-dim); opacity:0; transform:translateX(-6px);
+    transition:opacity .2s, transform .2s, color .2s; }
+  .home-tile-cta svg{ width:20px; height:20px; fill:currentColor; transition:transform .2s; }
+  .home-tile:hover .home-tile-cta, .home-tile:focus-visible .home-tile-cta{
+    color:var(--green-bright); opacity:1; transform:none; }
+  .home-tile:hover .home-tile-cta svg, .home-tile:focus-visible .home-tile-cta svg{ transform:translateX(5px); }
+  @keyframes hometile{ from{ opacity:0; transform:translateY(14px); } }
   @media (max-width:640px){
-    .home-tile{ padding:18px 16px; min-height:96px; gap:10px; }
-    .home-ico{ width:40px; height:40px; }
+    .home-tile{ gap:16px; padding:16px 18px; min-height:100px; }
+    .home-tile-ico{ width:46px; height:46px; } .home-tile-ico svg{ width:26px; height:26px; }
+    .home-tile-num, .home-tile-cta{ display:none; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .home-tile{ animation:none; transition:border-color .15s, background .15s; }
+    .home-tile:hover, .home-tile:focus-visible{ transform:none; }
   }
 
   /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */
