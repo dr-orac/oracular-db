@@ -2438,7 +2438,13 @@ $("#docreader").addEventListener("click", e=>{
   if(currentSection!=="wiki") return;
   const a=e.target.closest("a[href]"); if(!a) return;
   const p=wikiPageFromHref(a.href);
-  if(p){ e.preventDefault(); loadWiki(p); }
+  if(p){ e.preventDefault();
+    // push a history entry so the browser Back/Forward buttons step through visited wiki pages
+    // (loadWiki's writeRoute then no-ops since the hash already matches; route/back loads don't push)
+    const h="#wiki"+(p!==WIKI.home ? "/"+encodeURIComponent(p) : "");
+    if(location.hash!==h){ try{ history.pushState(null,"",h); }catch(err){} }
+    loadWiki(p);
+  }
 });
 
 /* ---- in-document find: highlight matches, step through them ---- */
