@@ -1033,7 +1033,7 @@
     color:var(--green-dim);
     font-family:var(--font-body); font-size:17px; font-weight:normal;
     letter-spacing:2.5px; text-transform:uppercase; text-shadow:none;
-    padding:16px 16px 4px var(--sp-2); display:flex; align-items:center; gap:8px;   /* left pad = --sp-2 so rail text aligns with the brand column (A) */
+    padding:16px 16px 4px var(--sp-4); display:flex; align-items:center; gap:8px;   /* left pad matches the rows below it */
   }
   .sectionhdr:first-child{ padding-top:8px; }
   /* roster list section labels ("The Tribe", "Friends of the Tribe", …) scroll away with the list —
@@ -1042,12 +1042,14 @@
   .sectionhdr::before{ content:"»"; color:var(--green); }
   .sectionhdr::after{ content:""; flex:1; height:0; border-top:1px dashed var(--green-faint); opacity:.7; }
   .row{
-    padding:8px 16px 8px var(--sp-2); cursor:pointer; border-bottom:1px solid rgba(15,58,34,.5);
+    padding:8px 16px 8px var(--sp-4); cursor:pointer; border-bottom:1px solid rgba(15,58,34,.5);
     display:flex; flex-direction:column; gap:1px;
   }
   .row:hover{ background:var(--bg-panel-2); }
-  /* selected row: calm raised panel + green left-accent bar (was a loud full-green fill) */
-  .row.active{ background:var(--bg-panel-2); box-shadow:inset 3px 0 0 var(--green); }
+  /* selected row: calm raised panel + green left-accent bar (was a loud full-green fill). The
+     highlight fades out to the right (transparent) so it reads as a soft sweep, not a hard block. */
+  .row.active{ background:linear-gradient(to right, var(--bg-panel-2) 42%, transparent);
+    box-shadow:inset 3px 0 0 var(--green); }
   .row.active .row-sub{ color:var(--green); opacity:1; }
   .row-name{ color:var(--green-bright); }
   .row.active .row-name{ color:var(--green-bright); }
