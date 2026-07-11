@@ -1649,6 +1649,10 @@
     .faction-box, .navbox{ gap:10px; }
     .faction-box{ padding:8px 10px 7px 13px; } .navbox{ padding:8px 13px; }
     .faction-ico, .navbox .navico{ width:27px; height:27px; }
+    /* promote the row-1 boxes into the titlebar flex so the cog flows WITH them (not on its own line) */
+    .primary-nav{ display:contents; }
+    .titlebar-right{ margin-left:0; }
+    body:not([data-frame="border"]) header{ padding-top:calc(var(--bezel-in) + var(--sp-3)); padding-bottom:var(--sp-3); }
     /* tame the big dossier headline so it doesn't wrap to 3 lines on a 375px column */
     .doss-name{ font-size:34px; line-height:1.05; }
     .field > .label, .spirit-name{ font-size:19px; }
