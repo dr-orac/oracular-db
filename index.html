@@ -199,6 +199,11 @@
       <!-- LOADING / ERROR -->
       <section id="state" class="state" aria-live="polite" aria-atomic="true">
         <div class="termbox state-box">
+          <div class="vault-loader" id="vault-loader" aria-hidden="true">
+            <span class="vault-ring"></span>
+            <span class="vault-cog vault-cog--l"></span>
+            <span class="vault-cog vault-cog--r"></span>
+          </div>
           <div class="loader" id="loadermsg">ACCESSING PIP-LINK<span class="cursor">&nbsp;</span></div>
           <p id="statesub">Establishing secure read-only link to the tribe archive…</p>
         </div>

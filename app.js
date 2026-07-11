@@ -2438,6 +2438,7 @@ function showState(title, sub, isError){
   $("#roster").classList.add("hidden");
   $("#cards").classList.add("hidden");
   $("#state").classList.remove("hidden");
+  document.body.classList.toggle("load-error", !!isError);   // hide the Vault-Tec loader on error
   $("#loadermsg").innerHTML = isError ? "⚠ LINK ERROR" : title+'<span class="cursor">&nbsp;</span>';
   $("#statesub").innerHTML = sub;
 }

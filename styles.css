@@ -1424,6 +1424,34 @@
 
   .state-box{ padding:28px 40px; display:flex; flex-direction:column; align-items:center; gap:12px;
     max-width:560px; }
+  /* Vault-Tec-style loader: a central ring throwing radar pings, flanked by gear-tooth bars (the
+     Vault-Tec cog silhouette). Tints to the active faction colour. Technique from the "Vaut-Tec
+     Fallout loader" pen — reimplemented in our own tokens. Hidden on error / coming-soon. */
+  .vault-loader{ position:relative; width:154px; height:92px; margin-bottom:6px; color:var(--green);
+    filter:drop-shadow(0 0 6px rgba(var(--green-rgb),.45)); }
+  .vault-ring{ position:absolute; top:50%; left:50%; width:50px; height:50px; margin:-25px 0 0 -25px;
+    border:5px solid currentColor; border-radius:50%; }
+  .vault-ring::before, .vault-ring::after{ content:""; position:absolute; inset:-5px;
+    border:inherit; border-radius:50%; animation:vaultping 1.6s cubic-bezier(.2,.6,.3,1) infinite; }
+  .vault-ring::after{ animation-delay:.55s; }
+  @keyframes vaultping{ 0%{ transform:scale(.9); opacity:.75; } 100%{ transform:scale(2.3); opacity:0; } }
+  /* three gear-tooth bars per side (the bar + its ::before/::after), rounded into trapezoids */
+  .vault-cog{ position:absolute; top:50%; height:13px; width:46px; margin-top:-6px;
+    background:currentColor; }
+  .vault-cog::before, .vault-cog::after{ content:""; position:absolute; height:inherit; width:33px;
+    background:inherit; }
+  .vault-cog::before{ top:-24px; } .vault-cog::after{ top:24px; }
+  .vault-cog--l{ left:6px; border-radius:32% 0 0 32%; }
+  .vault-cog--l::before{ left:13px; border-radius:38% 0 16% 38%; }
+  .vault-cog--l::after{ left:13px; border-radius:38% 16% 0 38%; }
+  .vault-cog--r{ right:6px; border-radius:0 32% 32% 0; }
+  .vault-cog--r::before{ right:13px; border-radius:0 38% 38% 16%; }
+  .vault-cog--r::after{ right:13px; border-radius:16% 38% 38% 0; }
+  body.coming-soon .vault-loader, body.load-error .vault-loader{ display:none; }
+  @media (prefers-reduced-motion:reduce){
+    .vault-ring::before{ animation:none; opacity:.4; transform:scale(1.6); }
+    .vault-ring::after{ display:none; }
+  }
 
   /* ---------- modal (card -> dossier) ---------- */
   .modal-back{
