@@ -513,13 +513,21 @@ design-led pieces. **Wiki (T35) is the eventual target — complete the rest fir
 - **Remove the Screen Density (comfortable/compact) control** — it does little; drop it (and its
   `body.compact` CSS / applyDensity) unless a real use surfaces.
 
-## T30 · Image rendering improvements — MEDIUM
+## T30 · Image rendering improvements — MEDIUM (fade-in + lazy DONE 2026-07-11)
 - **Brightness:** the theme-colourise multiply tint dims images — raise image brightness to
   compensate (portraits + doc figures), keeping the phosphor look. Tune per surface.
-- **Fade-in on scroll:** images currently pop in on hydration; add a subtle, attractive fade
-  (opacity/blur-in) as each scrolls into view.
-- **Lazy-load audit:** doc images already lazy-hydrate; assess extending lazy-load / decode hints
-  to roster portraits + card thumbs for perceived performance.
+  → largely handled by the sepia→hue-rotate filter's brightness(1.12/1.14) (fa68514); a final
+    by-eye tune on a live image with text is T37 (needs a real browser — Google data won't load in
+    the sandbox preview).
+- **Fade-in on scroll:** ✅ DONE — portraits now start opacity:0 + a slight scale and settle in on
+  `load` (`.imgok` added via onload; `.portrait img` transition), so a lazy portrait fades in as it
+  scrolls into view instead of popping. Doc figures already faded via the `.pending`→loaded opacity
+  transition — added a matching scale-in. Both reduced-motion-aware (transform dropped, gentle opacity
+  fade kept). Broken images still hide via the existing `onerror`→`.noimg`. Mechanism verified with an
+  injected test image (onload→`.imgok`→opacity 1 — no stuck-invisible); the live fade shows on the
+  deployed site (the sandbox can't reach Google's gviz/Docs endpoints to load real portraits/figures).
+- **Lazy-load audit:** ✅ portraits already carry `loading="lazy"`; added `decoding="async"` to match
+  the doc-figure hints. Card thumbs use the same `portraitHTML`, so they inherit it.
 
 ## T31 · Screen border redesign — MEDIUM / DESIGN
 - A **jet-black bezel** around the screen (like a real Apple display) + a **rounded hairline** line

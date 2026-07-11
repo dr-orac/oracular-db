@@ -1049,7 +1049,8 @@ const IC_EMBLEM = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l
 function portraitHTML(ch, cls){
   const src=(ch.photos&&(ch.photos.front||ch.photos.side)) || imageSrc(ch.fields.image);
   const img = src
-    ? `<img src="${escAttr(src)}" alt="${escAttr(ch.name)}" loading="lazy"
+    ? `<img src="${escAttr(src)}" alt="${escAttr(ch.name)}" loading="lazy" decoding="async"
+         onload="this.classList.add('imgok')"
          onerror="this.closest('.portrait').classList.add('noimg')">`
     : "";
   return `<div class="portrait ${cls||''} ${src?'':'noimg'}">

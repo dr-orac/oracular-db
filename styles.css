@@ -924,7 +924,8 @@
     /* tint straight to the theme colour with ONE sepia→hue-rotate filter (matches the portraits
        + the active faction's colour), instead of a flat multiply wash over grey. */
     filter:sepia(.92) saturate(var(--img-sat,2.1)) brightness(1.14) contrast(1.04) hue-rotate(var(--img-hue,0deg));
-    transition:opacity .3s, filter .3s; }
+    transform:none; transition:opacity .5s ease, filter .3s, transform .5s cubic-bezier(.2,.8,.3,1); }
+  .docreader .docfig-screen.pending img{ transform:scale(1.04); }   /* settle in as it hydrates */
   /* the old multiply wash is retired for photos/illustrations (the filter tints them now); it
      stays ONLY for inverted line-art, which needs an overlay to colourise its white lines. */
   .docreader .docfig-tint{ display:none; }
@@ -954,7 +955,12 @@
     animation:docrx 1.1s steps(2) infinite;
   }
   @keyframes docrx{ 50%{ opacity:.55; } }
-  @media (prefers-reduced-motion: reduce){ .docreader .docfig-screen.pending::before{ animation:none; } }
+  @media (prefers-reduced-motion: reduce){
+    .docreader .docfig-screen.pending::before{ animation:none; }
+    /* keep the gentle opacity fade, drop the scale/settle motion */
+    .portrait img, .portrait img.imgok,
+    .docreader .docfig img, .docreader .docfig-screen.pending img{ transform:none; }
+  }
   .docreader .docfig-cap{ max-width:74ch; margin:8px auto 0; font-family:"IBM Plex Mono", ui-monospace, monospace;
     font-size:var(--fs-note); letter-spacing:.5px; line-height:1.4; color:var(--fg-dim); text-shadow:none; }
   .docreader .docfig-cap::before{ content:"▐ "; color:var(--fg); }
@@ -1199,7 +1205,9 @@
     /* tint straight to the theme colour with ONE filter (sepia→hue-rotate), instead of a flat
        multiply wash over grey — keeps luminosity + detail, reads as a phosphor image. */
     filter:sepia(.92) saturate(var(--img-sat,2.1)) brightness(1.12) contrast(1.05) hue-rotate(var(--img-hue,0deg));
-  }
+    /* fade + settle in when the lazy image finishes loading (.imgok added on load) instead of popping */
+    opacity:0; transform:scale(1.05); transition:opacity .5s ease, transform .5s cubic-bezier(.2,.8,.3,1); }
+  .portrait img.imgok{ opacity:1; transform:none; }
   .portrait .tint{ display:none; }   /* the filter now does the tinting; the multiply wash is retired */
   .portrait::after{                /* scanlines + vignette */
     content:""; position:absolute; inset:0; pointer-events:none; z-index:2;
