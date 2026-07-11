@@ -791,3 +791,18 @@ STILL TO DO to make it good:
   4. ✅ FACTION-SCOPING DECIDED — wiki is now a TOP-LEVEL `#wiki` route (umbrella content), not
      `#<faction>/wiki`. The Wiki tab still appears in each faction's nav but shows the shared wiki.
   Verified live (both Main_Page and content pages render full-width, in-theme; console clean).
+
+## HOME fine-tuning (2026-07-11) — DONE (17e7a67, e2040bc, 7e1ae1b), user-picked
+Three home-page polishes the user asked for after the wiki work:
+  A. ✅ Trimmed the empty header band on `body[data-section="home"]` — nav+brand are hidden there, so
+     the header held only the cog above a tall breathing band + divider. Slimmed top padding to just
+     clear the bezel, dropped bottom padding + the divider on home → the hero sits high (header 101→68px).
+  B. ✅ Richer section cards — the index numeral was floating mid-card (`right:150px`) over an empty
+     right third. Anchored it to the right edge as a bold oversized index (brightens + drifts on hover),
+     and moved the "Enter →" CTA under the blurb (left-aligned, grows in on hover) so it no longer
+     overlaps the numeral. Resting cards read designed; hover is a clear CTA.
+  C. ✅ Evened the faction tiles — dropped the leading "The " on the compact picker tiles (NCR went
+     from a ragged 3-line wrap to a tidy 2) + uniform `min-height:52px` centred cells so both grid rows
+     match. Verified desktop + mobile (single-column stack, no h-overflow).
+  Untouched by request: T51's deeper tile texture/per-section accent (phosphor is monochrome by the
+  two-surface law, so per-section colour was deliberately NOT added).
