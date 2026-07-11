@@ -574,16 +574,30 @@
      "The buttons ARE the home page, just elongated full height." Tiles fill the viewport and
      divide evenly by count; each is a big, obvious click target into that section. */
   .home{ height:100%; min-height:0; overflow:auto; display:flex; flex-direction:column; }
-  /* top line: the faction picker — one icon+name box per faction, the active one lit */
-  .home-factions{ flex:0 0 auto; display:flex; flex-wrap:wrap; gap:8px; padding:12px 12px 0; }
-  .home-fac{ display:inline-flex; align-items:center; gap:9px; cursor:pointer; padding:8px 13px;
-    background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg); font-family:var(--font-head);
-    transition:color .14s, border-color .14s, background .14s, box-shadow .14s; }
-  .home-fac-ico{ flex:0 0 auto; width:30px; height:30px; display:inline-flex; }
+  /* the FACTION-PICKER box — a section-card-sized tile with a heading + a grid of factions inside.
+     Doubled class so it wins over the base .home-tile rules (which are defined AFTER this block). */
+  .home-tile.home-tile--factions{ flex-direction:column; align-items:stretch; gap:12px; cursor:default;
+    padding:18px 24px; }
+  .home-tile.home-tile--factions::before{ content:none; }   /* no whole-box hover wash — the cells are the targets */
+  .home-tile.home-tile--factions:hover, .home-tile.home-tile--factions:focus-visible{ transform:none;
+    border-color:var(--fg-faint); background:var(--bg-panel);
+    box-shadow:0 14px 30px -22px rgba(0,0,0,.8); }
+  .home-fac-head{ flex:0 0 auto; display:flex; flex-direction:column; gap:3px; }
+  .home-fac-title{ font-family:var(--font-head); font-size:clamp(18px,2.4vw,26px); letter-spacing:2px;
+    line-height:1; text-transform:uppercase; color:var(--fg-bright); text-shadow:var(--glow-strong); }
+  .home-fac-sub{ font-family:var(--font-body); font-size:clamp(12px,1.3vw,14px); letter-spacing:.3px;
+    color:var(--fg-dim); }
+  .home-fac-grid{ flex:1 1 auto; display:grid; gap:8px; align-content:center;
+    grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); }
+  .home-fac{ display:flex; align-items:center; gap:9px; cursor:pointer; padding:9px 12px; min-width:0;
+    text-align:left; background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg);
+    font-family:var(--font-head);
+    transition:color .14s, border-color .14s, background .14s, box-shadow .14s, transform .12s; }
+  .home-fac-ico{ flex:0 0 auto; width:28px; height:28px; display:inline-flex; }
   .home-fac-ico svg{ width:100%; height:100%; fill:currentColor; display:block; }
-  .home-fac-name{ font-size:14px; letter-spacing:1px; text-transform:uppercase; white-space:nowrap; }
+  .home-fac-name{ font-size:13px; letter-spacing:1px; line-height:1.15; text-transform:uppercase; min-width:0; }
   .home-fac:hover{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
-    box-shadow:0 0 14px -5px rgba(var(--fg-rgb),.5); }
+    box-shadow:0 0 14px -5px rgba(var(--fg-rgb),.5); transform:translateY(-1px); }
   .home-fac.active{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
     box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.4), 0 0 16px -6px rgba(var(--fg-rgb),.6); }
   .home-tiles{ flex:1 1 auto; display:flex; flex-direction:column; gap:12px; min-height:0;

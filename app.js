@@ -1855,17 +1855,25 @@ const HOME_ARROW = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 9h9.
 function renderHome(){
   const el=$("#home"); if(!el) return;
   const items=[{id:"roster",label:"Roster"}].concat(factionDocs().map(d=>({id:d.id,label:d.label})));
-  // top line: a faction picker — one icon+name box per faction, the active one lit (omitted if solo)
-  const facRow = FACTION_ORDER.length < 2 ? "" :
-    `<div class="home-factions" role="tablist" aria-label="Choose faction">`+
-      FACTION_ORDER.map(id =>
-        `<button class="home-fac${id===currentFaction?' active':''}" type="button" role="tab" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">`+
-          `<span class="home-fac-ico" aria-hidden="true">${FACTION_ICONS[id]||""}</span>`+
-          `<span class="home-fac-name">${esc(FACTIONS[id].name)}</span>`+
-        `</button>`).join("")+
+  // FIRST box (same footprint as a section card): a titled faction picker, factions subdivided into
+  // a grid inside it — "pick a faction to jump to its section". Omitted when there's only one faction.
+  const facBox = FACTION_ORDER.length < 2 ? "" :
+    `<div class="home-tile home-tile--factions" style="--i:0">`+
+      `<div class="home-fac-head">`+
+        `<span class="home-fac-title">Choose a Faction</span>`+
+        `<span class="home-fac-sub">Pick a faction below to open its roster, lore and roleplay guides.</span>`+
+      `</div>`+
+      `<div class="home-fac-grid" role="tablist" aria-label="Choose faction">`+
+        FACTION_ORDER.map(id =>
+          `<button class="home-fac${id===currentFaction?' active':''}" type="button" role="tab" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">`+
+            `<span class="home-fac-ico" aria-hidden="true">${FACTION_ICONS[id]||""}</span>`+
+            `<span class="home-fac-name">${esc(FACTIONS[id].name)}</span>`+
+          `</button>`).join("")+
+      `</div>`+
     `</div>`;
-  el.innerHTML = facRow + `<div class="home-tiles">`+ items.map((it,i)=>
-    `<button class="home-tile" data-section="${escAttr(it.id)}" style="--i:${i}">`+
+  const facN = facBox ? 1 : 0;   // section-card numbering + stagger start after the faction box
+  const sectionTiles = items.map((it,i)=>
+    `<button class="home-tile" data-section="${escAttr(it.id)}" style="--i:${i+facN}">`+
       `<span class="home-tile-bar" aria-hidden="true"></span>`+
       `<span class="home-tile-num" aria-hidden="true">${String(i+1).padStart(2,"0")}</span>`+
       `<span class="home-tile-ico">${NAV_ICONS[it.id]||NAV_ICONS._default}</span>`+
@@ -1874,7 +1882,8 @@ function renderHome(){
         `<span class="home-tile-desc">${esc(HOME_INFO[it.id]||HOME_INFO._default)}</span>`+
       `</span>`+
       `<span class="home-tile-cta" aria-hidden="true">Enter ${HOME_ARROW}</span>`+
-    `</button>`).join("") + `</div>`;
+    `</button>`).join("");
+  el.innerHTML = `<div class="home-tiles">` + facBox + sectionTiles + `</div>`;
 }
 function renderNav(){
   const nav=$("#topnav"); if(!nav) return;
