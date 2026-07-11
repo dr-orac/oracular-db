@@ -13,18 +13,23 @@ holds: **bright > fg > dim**, all comfortably readable. `--fg-faint` (1.2–1.6:
 (borders/rules) — verified it never colours prose (only borders, a decorative ⸻ rule, and underline
 decoration). Documented the token roles in `THEMES`.
 
-## Contrast — remaining
-- [ ] Audit EVERY text-colour usage against its actual background (there are 65 `color:var(--fg-dim)`
-      sites) — confirm all clear AA at their rendered size; flag any still-weak combos.
-- [ ] The **CRT scanline + vignette overlays** lower *effective* on-screen contrast — measure with them
-      on (default) and soften if they push borderline text under AA.
-- [ ] **Chassis metal text** is engraved dark-on-olive by design (two-surface law) — check
-      `--panel-ink` on `--panel*` meets AA; it's a separate contrast context from the phosphor screen.
-- [ ] Check specific pairs: `.dq` quoted-speech, links (`--fg-bright` underlined), input placeholders,
-      disabled states (`.stepbtn:disabled`), error text (`.docstatus.error`), the coming-soon copy,
-      `mark.docfind` highlight (bg vs text), wiki `.wiki-card`/`.wiki-callout` bodies.
-- [ ] Add an optional **High-Contrast mode** (honours `prefers-contrast: more`): drop the scanline,
-      push dim→fg, thicken focus rings. Small, high value.
+## Contrast — audited 2026-07-11 (Sonnet subagent), CLEAN
+- [x] ✅ Full static audit done. **No literal-colour text exists** — every text rule routes through the
+      theme vars. **No `--fg-dim` text below 4.5:1** (worst ~5.4:1 on the lightest panel bg, all 11
+      themes); `--fg` (primary) worst ~6.2:1 — all pass AA. Inverted/active pairs (7–15:1), placeholders
+      (~5.65:1 worst), `::selection`/`mark.docfind` translucent highlights — all clear.
+- [x] ✅ `--fg-faint` on text: only ONE, decorative — the `⸻` chapter-break glyph
+      (`.docreader h1.part::before/::after`, styles.css:829). Every other `--fg-faint` is border/underline
+      (non-text). Acceptable (a faded ornament, not prose).
+- [ ] The **CRT overlay** (scanlines ~28% multiply on alt rows + vignette; OFF by default) is the one
+      thing the audit can't measure statically — it presses the `--fg-dim` tier (its ~5.4:1 floor) and
+      the intentional low-contrast decoration (`.home-tile-num`, `.docquote::before`) closest to their
+      margin when enabled. This is exactly what the High-Contrast mode below fixes.
+- [ ] **Chassis metal text** (engraved `--panel-ink` on `--panel*`) — not covered by the phosphor audit;
+      spot-check separately (lower priority — it's a deliberate engraved look).
+- [ ] **NEXT: add an optional High-Contrast mode** (honours `prefers-contrast: more` + a Settings
+      toggle): drop the scanline overlay, push `--fg-dim`→`--fg`, thicken focus rings. Small, high value
+      — the main remaining contrast win (addresses the CRT-overlay note above).
 
 ## Minimum font size
 Current tiers: body/reading prose **≥17px** (enforced via `--root-fs` floor + the text-size stepper +
