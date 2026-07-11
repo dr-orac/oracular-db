@@ -1,11 +1,14 @@
 # Misfits Database (formerly the Yuma Tribe Roster / "The Tribe Database")
 
 A Fallout-style ("Pip-Boy" terminal) web viewer for SS14 RP factions. The **Misfits Database**
-is the umbrella: it hosts multiple factions (the Tribe, the Brotherhood of Steel, and more),
-each a config *skin* with its own brand, colour, fonts, sheet and docs — a masthead selector
-switches between them. Each faction reads a Google Sheet **live and read-only** and renders
-each character as a CRT dossier, with optional write-back (uploads / edits) via a Google Apps
-Script. (The source folder is still named `Yuma Tribe Roster` for history.)
+is the umbrella: it hosts the factions from the Misfits wiki's own faction listing (the Tribe,
+Brotherhood of Steel, NCR, Caesar's Legion, the Enclave, and more), each a config *skin* with its
+own brand, colour, fonts, sheet and docs — a masthead selector switches between them. Each faction
+reads a Google Sheet **live and read-only** and renders each character as a CRT dossier, with
+optional write-back (uploads / edits) via a Google Apps Script. Beyond rosters it also renders
+**Google Docs lore** and the **Misfits wiki** itself in the terminal theme (a `#wiki/<Page>`
+reader that re-skins the wiki's own layout). (The source folder is still named `Yuma Tribe Roster`
+for history.)
 
 No framework, no build step — three static files plus assets.
 
@@ -62,6 +65,8 @@ banners to jump around:
 - `data fetch / parseCSV / buildModel` — load and normalise the sheet
 - `rendering` — dossier, portrait, cards, roster, search highlight, empty state
 - `section nav / doc reader` — `DOCS` tabs that fetch + re-theme Google Docs (`docClean`/`styleTOC`)
+- `WIKI reader` — `loadWiki`/`renderWiki` fetch a MediaWiki page (CORS parse API) and re-skin its
+  own layout (hero / callouts / faction card grid / tables) as native components (`#wiki/<Page>`)
 - `photo upload` / `personal log` / `screenshots` — the write-back UIs
 - `events / keyboard / load / init` — wiring and startup
 

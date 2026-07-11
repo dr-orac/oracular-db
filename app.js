@@ -8,10 +8,14 @@
 
    MODULE MAP (search these banners to jump around):
      · CONFIG / EXTRA_CHARACTERS / MEDIA   — data sources & code-defined entries
+     · FACTIONS / FACTION_ICONS / FACTION_WIKI — the faction skins + per-faction prefs/appearance
      · themes (colour / background / font) — CSS-variable presets + persistence
      · CRT icon library                    — inline SVG sigils + spirit matcher
      · data fetch / parseCSV / buildModel  — load + normalise the sheet
-     · rendering                           — dossier, portrait, cards, roster
+     · rendering                           — dossier, portrait, cards, roster, home
+     · hash router                         — #home · #<faction>/<section>[/<target>] · #wiki/<Page>
+     · section nav / doc reader            — DOCS tabs; fetch + re-theme Google Docs (docClean/styleTOC)
+     · WIKI reader                         — loadWiki/renderWiki: re-skin a MediaWiki page in-theme
      · photo upload                        — single-photo upload modal + write-back
      · edit mode / icon picker             — write-back UIs (gated by passphrase)
      · events / keyboard / load / init     — wiring and startup

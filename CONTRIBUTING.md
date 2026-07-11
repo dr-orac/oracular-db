@@ -63,11 +63,15 @@ Most additions are one config entry — the app wires the rest.
   - `docs` — that faction's doc tabs, `[{ id, label, docId }, …]` (starts `[]` = no doc tabs).
 - **A brand-new faction.** Add another entry to `FACTIONS` (unique id) with `name` (switcher
   label), `brand` + `tagline` (masthead title), `theme` — a `{ color, bg }` pair of keys from the
-  palette (any key in `THEMES` / `BGS`), and `data`/`docs` as above — then add the id to
-  `FACTION_ORDER`. The masthead dropdown and the re-skin follow automatically; no other code.
+  palette (any key in `THEMES` / `BGS`), `font` — a `{ head, body }` pair of `FACES` keys, and
+  `data`/`docs` as above. Then:
+  - add the id to **`FACTION_ORDER`** (its position in the dropdown + home grid);
+  - add a glyph to **`FACTION_ICONS`** keyed by the id (a flat `fill:currentColor` inline SVG,
+    `viewBox="0 0 24 24"` — else the picker/home cell shows no icon);
+  - optionally add its wiki page to **`FACTION_WIKI`** (so the coming-soon screen links to it).
 
-  Then add your id to `FACTION_ORDER`. With two or more factions the masthead title becomes a
-  dropdown; selecting your faction re-skins the whole app and loads your roster. No other code.
+  With two or more factions the masthead title becomes a dropdown; selecting your faction re-skins
+  the whole app and loads its roster. No other code.
 
 ## Preview
 
