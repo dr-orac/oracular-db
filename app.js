@@ -48,21 +48,24 @@ const CONFIG = {
      theme   — a { color, bg } pair of keys from the Settings palette (THEMES / BGS)
      data    — { sheetId, gid } for THIS faction's roster (gid "" = the first tab) */
 /* The faction roster mirrors the Misfits wiki's own faction listing (each with its signature colour),
-   plus the Unity. tribe + brotherhood have live sheet data; the rest are "coming soon" until linked. */
+   plus the Unity. tribe + brotherhood have live sheet data; the rest are "coming soon" until linked.
+   No per-faction FONT: switching faction changing the interface typeface read as jumpy — every faction
+   uses the classic Fallout font (FACTION_FONT_DEFAULT). Per-faction differences live in the CONTENT
+   (data, colour, docs). Users can still pick fonts in Settings (remembered per faction). */
 const FACTIONS = {
-  tribe:       { name:"The Tribe",                   brand:"THE TRIBE DATABASE",      tagline:"// PIP-LINK",     theme:{color:"rust",    bg:"warm"},     font:{head:"fallout",   body:"fallout"},   data:{sheetId:CONFIG.sheetId, gid:CONFIG.gid}, docs:[] /* set to DOCS below */ },
-  brotherhood: { name:"Brotherhood of Steel",        brand:"BROTHERHOOD OF STEEL",    tagline:"// CODEX-LINK",   theme:{color:"blue",    bg:"cool"},     font:{head:"monofonto", body:"sharetech"}, data:{sheetId:"1hG6V1ddnlr8jZZm8Rg0jJ4360WrH7zUD-TvNqaPkuUg", gid:"735572717"}, docs:[] },
-  ncr:         { name:"New California Republic",      brand:"NEW CALIFORNIA REPUBLIC", tagline:"// RANGER-NET",   theme:{color:"gold",    bg:"warm"},     font:{head:"terminal",  body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
-  legion:      { name:"Caesar's Legion",             brand:"CAESAR'S LEGION",         tagline:"// TRVE-NET",     theme:{color:"red",     bg:"warm"},     font:{head:"block",     body:"sharetech"}, data:{sheetId:"", gid:""}, docs:[] },
-  enclave:     { name:"The Enclave",                 brand:"THE ENCLAVE",             tagline:"// EYEBOT-NET",   theme:{color:"white",   bg:"slate"},    font:{head:"fixedsys",  body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
-  vault:       { name:"Vault Dwellers",              brand:"VAULT DWELLERS",          tagline:"// VAULT-NET",    theme:{color:"purple",  bg:"cool"},     font:{head:"overseer",  body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
-  followers:   { name:"Followers of the Apocalypse", brand:"FOLLOWERS OF THE APOCALYPSE", tagline:"// SCRIBE-NET", theme:{color:"cyan",  bg:"cool"},     font:{head:"plex",      body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
-  townsfolk:   { name:"Townsfolk",                   brand:"TOWNSFOLK",               tagline:"// BAZAAR-NET",   theme:{color:"white",   bg:"slate"},    font:{head:"plex",      body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
-  wastelanders:{ name:"Wastelanders",                brand:"WASTELANDERS",            tagline:"// DRIFTER-NET",  theme:{color:"amber",   bg:"warm"},     font:{head:"terminal",  body:"sharetech"}, data:{sheetId:"", gid:""}, docs:[] },
-  outlaws:     { name:"Outlaws",                     brand:"OUTLAWS",                 tagline:"// RAIDER-NET",   theme:{color:"orange",  bg:"warm"},     font:{head:"block",     body:"sharetech"}, data:{sheetId:"", gid:""}, docs:[] },
-  synthetics:  { name:"Synthetics",                  brand:"SYNTHETICS",              tagline:"// AUTO-NET",     theme:{color:"magenta", bg:"black"},    font:{head:"fixedsys",  body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
-  supermutants:{ name:"Super Mutants",               brand:"SUPER MUTANTS",           tagline:"// MUTANT-NET",   theme:{color:"green",   bg:"phosphor"}, font:{head:"block",     body:"sharetech"}, data:{sheetId:"", gid:""}, docs:[] },
-  unity:       { name:"The Unity",                   brand:"THE UNITY",               tagline:"// FEV-NET",      theme:{color:"green",   bg:"phosphor"}, font:{head:"fallout",   body:"plex"},      data:{sheetId:"", gid:""}, docs:[] },
+  tribe:       { name:"The Tribe",                   brand:"THE TRIBE DATABASE",      tagline:"// PIP-LINK",     theme:{color:"rust",    bg:"warm"},     data:{sheetId:CONFIG.sheetId, gid:CONFIG.gid}, docs:[] /* set to DOCS below */ },
+  brotherhood: { name:"Brotherhood of Steel",        brand:"BROTHERHOOD OF STEEL",    tagline:"// CODEX-LINK",   theme:{color:"blue",    bg:"cool"},     data:{sheetId:"1hG6V1ddnlr8jZZm8Rg0jJ4360WrH7zUD-TvNqaPkuUg", gid:"735572717"}, docs:[] },
+  ncr:         { name:"New California Republic",      brand:"NEW CALIFORNIA REPUBLIC", tagline:"// RANGER-NET",   theme:{color:"gold",    bg:"warm"},     data:{sheetId:"", gid:""}, docs:[] },
+  legion:      { name:"Caesar's Legion",             brand:"CAESAR'S LEGION",         tagline:"// TRVE-NET",     theme:{color:"red",     bg:"warm"},     data:{sheetId:"", gid:""}, docs:[] },
+  enclave:     { name:"The Enclave",                 brand:"THE ENCLAVE",             tagline:"// EYEBOT-NET",   theme:{color:"white",   bg:"slate"},    data:{sheetId:"", gid:""}, docs:[] },
+  vault:       { name:"Vault Dwellers",              brand:"VAULT DWELLERS",          tagline:"// VAULT-NET",    theme:{color:"purple",  bg:"cool"},     data:{sheetId:"", gid:""}, docs:[] },
+  followers:   { name:"Followers of the Apocalypse", brand:"FOLLOWERS OF THE APOCALYPSE", tagline:"// SCRIBE-NET", theme:{color:"cyan",  bg:"cool"},     data:{sheetId:"", gid:""}, docs:[] },
+  townsfolk:   { name:"Townsfolk",                   brand:"TOWNSFOLK",               tagline:"// BAZAAR-NET",   theme:{color:"white",   bg:"slate"},    data:{sheetId:"", gid:""}, docs:[] },
+  wastelanders:{ name:"Wastelanders",                brand:"WASTELANDERS",            tagline:"// DRIFTER-NET",  theme:{color:"amber",   bg:"warm"},     data:{sheetId:"", gid:""}, docs:[] },
+  outlaws:     { name:"Outlaws",                     brand:"OUTLAWS",                 tagline:"// RAIDER-NET",   theme:{color:"orange",  bg:"warm"},     data:{sheetId:"", gid:""}, docs:[] },
+  synthetics:  { name:"Synthetics",                  brand:"SYNTHETICS",              tagline:"// AUTO-NET",     theme:{color:"magenta", bg:"black"},    data:{sheetId:"", gid:""}, docs:[] },
+  supermutants:{ name:"Super Mutants",               brand:"SUPER MUTANTS",           tagline:"// MUTANT-NET",   theme:{color:"green",   bg:"phosphor"}, data:{sheetId:"", gid:""}, docs:[] },
+  unity:       { name:"The Unity",                   brand:"THE UNITY",               tagline:"// FEV-NET",      theme:{color:"green",   bg:"phosphor"}, data:{sheetId:"", gid:""}, docs:[] },
 };
 /* each faction's page on the Misfits wiki (the wiki's own faction listing) — used to offer a
    "read about this faction on the wiki" link even before its roster is linked. Unity has no page. */
@@ -2879,7 +2882,15 @@ function runBoot(){
   if(_gH && !localStorage.getItem(fkey("font-head"))) localStorage.setItem(fkey("font-head"), _gH);
   if(_gB && !localStorage.getItem(fkey("font-body"))) localStorage.setItem(fkey("font-body"), _gB);
   localStorage.removeItem("mdb-font-head"); localStorage.removeItem("mdb-font-body");
-  /* each faction loads in ITS signature look (Tribe = Fallouty + rust/yellow), unless overridden for that faction */
+  /* the per-faction signature FONT was removed (switching faction changing the interface typeface read
+     as jumpy) — every faction now uses the classic Fallout font. Clear, ONCE, the stale per-faction
+     font overrides the old signature defaults auto-persisted, so the classic font takes effect for
+     existing browsers too. A deliberate Settings font choice made AFTER this still persists per faction. */
+  if(!localStorage.getItem("mdb-migr-fontreset")){
+    Object.keys(localStorage).filter(k=>/^mdb-font-(head|body)-/.test(k)).forEach(k=>localStorage.removeItem(k));
+    localStorage.setItem("mdb-migr-fontreset","1");
+  }
+  /* each faction loads in the classic Fallout font + its signature colour, unless a font is overridden for it */
   const _ap = factionAppearance(currentFaction);
   applyFontHead(_ap.head);
   applyFontBody(_ap.body);  /* sets a font-derived size if none stored */
