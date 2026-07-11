@@ -70,9 +70,9 @@ def main():
     if os.path.exists(live_index):
         with open(live_index, encoding="utf-8") as f:
             doc = f.read()
-        inject = (f'<script>window.YUMA_SHEET_OVERRIDE="{sheet}";'
+        inject = (f'<script>window.MDB_SHEET_OVERRIDE="{sheet}";'
                   f'/* preview-only override injected by tools/preview.py — source is untouched */</script>')
-        if "YUMA_SHEET_OVERRIDE" not in doc:
+        if "MDB_SHEET_OVERRIDE" not in doc:
             doc = doc.replace("</head>", "  " + inject + "\n</head>", 1)
             with open(live_index, "w", encoding="utf-8") as f:
                 f.write(doc)

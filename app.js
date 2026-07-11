@@ -59,7 +59,7 @@ function factionFont(f){ return (f && f.font) || FACTION_FONT_DEFAULT; }
 /* ---- per-faction preferences (colour / bg / font are all remembered PER FACTION) ----
    One key builder + one resolver, so the "stored override, else this faction's signature"
    logic lives in ONE place instead of being re-spelled in applyFaction / init / refreshCur. */
-function fkey(aspect, f){ return "yuma-"+aspect+"-"+(f||currentFaction); }
+function fkey(aspect, f){ return "mdb-"+aspect+"-"+(f||currentFaction); }
 function factionAppearance(id){
   const f = FACTIONS[id] || activeFaction(), ff = factionFont(f);
   return {
@@ -75,7 +75,7 @@ function factionAppearance(id){
 const FACTION_ORDER = ["brotherhood","vault","legion","bazaar","tribe","enclave","unity","ncr"];
 const DEFAULT_FACTION = "tribe";   // the only faction with data today — new visitors start here
 let currentFaction = DEFAULT_FACTION;
-try{ const _f = localStorage.getItem("yuma-faction"); if(_f && FACTIONS[_f]) currentFaction = _f; }catch(e){}
+try{ const _f = localStorage.getItem("mdb-faction"); if(_f && FACTIONS[_f]) currentFaction = _f; }catch(e){}
 function activeFaction(){ return FACTIONS[currentFaction] || FACTIONS[DEFAULT_FACTION]; }
 function factionDocs(){ return activeFaction().docs || []; }         // this faction's doc tabs
 function factionLinked(f){ return /^[A-Za-z0-9_-]{20,}$/.test((f && f.data && f.data.sheetId) || ""); }
@@ -84,7 +84,7 @@ function factionLinked(f){ return /^[A-Za-z0-9_-]{20,}$/.test((f && f.data && f.
 function applyFaction(id){
   if(!FACTIONS[id]) return;
   currentFaction = id;
-  try{ localStorage.setItem("yuma-faction", id); }catch(e){}
+  try{ localStorage.setItem("mdb-faction", id); }catch(e){}
   const f = FACTIONS[id], ap = factionAppearance(id);   // this faction's look: its overrides, else its signature
   applyColor(ap.color); applyBg(ap.bg); applyFontHead(ap.head); applyFontBody(ap.body);
   renderBrand();
@@ -94,6 +94,7 @@ function applyFaction(id){
   if(currentSection==="home") setSection("home");     // re-render the tiles for this faction's docs
   else if(currentSection!=="roster" && !factionDocs().some(d=>d.id===currentSection)) setSection("roster");
   else if(currentSection==="roster") showRosterFor(f);
+  writeRoute();   // the URL carries the faction, so a switch updates it (e.g. #brotherhood/roster)
 }
 /* show the roster for a faction: its live data if the sheet is linked, else a themed
    "coming soon" placeholder (so an unlinked faction never renders blank or another
@@ -259,7 +260,7 @@ const DOC_FONT_DEFAULT = { title:"block", head:"fallout", body:"plex" };
 /* full swatch-container ids (kept as complete literals so tools/selfcheck.py can verify
    them, and so no partial "#docfont-" string trips its id-reference check) */
 const DOC_FONT_WRAP = { title:"docfont-title-swatches", head:"docfont-head-swatches", body:"docfont-body-swatches" };
-/* legacy single-preset key (pre-rebuild "yuma-font") → [head, body] migration */
+/* legacy single-preset key (pre-rebuild "mdb-font") → [head, body] migration */
 const PRESET_MIGRATE = {
   fallout:["fallout","fallout"], falloutplex:["fallout","plex"], fixedsys:["fixedsys","fixedsys"],
   monofonto:["monofonto","plex"], terminal:["terminal","sharetech"], plex:["plex","plex"],
@@ -344,7 +345,7 @@ function applyDocFont(kind, key){
   if(!DOC_FONT_ORDERS[kind].includes(key)) key=DOC_FONT_DEFAULT[kind];
   const f=FACES[key]||FACES[DOC_FONT_DEFAULT[kind]];
   document.documentElement.style.setProperty("--doc-font-"+kind, f.css);
-  localStorage.setItem("yuma-docfont-"+kind, key);
+  localStorage.setItem("mdb-docfont-"+kind, key);
   const wrap=document.getElementById(DOC_FONT_WRAP[kind]);
   if(wrap) wrap.querySelectorAll(".swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
@@ -363,19 +364,19 @@ function wireFontPreview(wrap, cssVar, dataAttr){
 function applyFrame(key){
   if(key!=="border") key="screen";                 // only two modes; default clean screen
   document.body.dataset.frame = key;
-  localStorage.setItem("yuma-frame", key);
+  localStorage.setItem("mdb-frame", key);
   document.querySelectorAll("#frame-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 function applyFrameTint(key){
   if(key!=="theme") key="olive";                    // olive = authentic fixed palette
   document.body.dataset.frametint = key;
-  localStorage.setItem("yuma-frametint", key);
+  localStorage.setItem("mdb-frametint", key);
   document.querySelectorAll("#frametint-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 function applyGlass(key){
   if(key!=="on") key="off";                         // off by default (legibility)
   document.body.dataset.sheen = key;
-  localStorage.setItem("yuma-sheen", key);
+  localStorage.setItem("mdb-sheen", key);
   document.querySelectorAll("#glass-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 /* dossier "focus panel" — the soft pool of light behind the dossier header. On by default;
@@ -383,7 +384,7 @@ function applyGlass(key){
 function applyDossPanel(key){
   if(key!=="off") key="on";
   document.body.dataset.dosspanel = key;
-  localStorage.setItem("yuma-dosspanel", key);
+  localStorage.setItem("mdb-dosspanel", key);
   document.querySelectorAll("#dosspanel-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 /* Cards view — how many cards per row. "auto" = responsive fill; 2/3/4 = fixed (wide screens
@@ -391,7 +392,7 @@ function applyDossPanel(key){
 function applyCards(key){
   if(!["auto","2","3","4"].includes(key)) key="auto";
   document.body.dataset.cards = key;
-  localStorage.setItem("yuma-cards", key);
+  localStorage.setItem("mdb-cards", key);
   document.querySelectorAll("#cards-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 /* Image colour — "screen" (default: phosphor monochrome, matching the terminal) or
@@ -399,21 +400,21 @@ function applyCards(key){
 function applyImgColor(key){
   if(key!=="original") key="screen";
   document.body.dataset.imgcolor = key;
-  localStorage.setItem("yuma-imgcolor", key);
+  localStorage.setItem("mdb-imgcolor", key);
   document.querySelectorAll("#imgcolor-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 /* the always-on jet-black monitor bezel (screen mode) — toggleable off for a flush, borderless screen. */
 function applyBezel(key){
   if(key!=="off") key="on";
   document.body.dataset.bezel = key;
-  localStorage.setItem("yuma-bezel", key);
+  localStorage.setItem("mdb-bezel", key);
   document.querySelectorAll("#bezel-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 /* BODY faces whose glyphs render small per-px → default to the "large" text size.
    (The user's explicit Text Size choice is persisted and wins over this default.
    Fallouty fills most of the em, so it reads large already at "comfortable".) */
 const SMALL_FONTS = new Set(["fixedsys","terminal","sharetech","ticker","block"]);
-/* Text size is a numeric px stepper with a hard legibility floor. Stored ("yuma-textsize") as
+/* Text size is a numeric px stepper with a hard legibility floor. Stored ("mdb-textsize") as
    "auto" (font-aware default — pixel faces render small, so they START larger) or an ABSOLUTE px
    string. Absolute sizes are decoupled from the font, so switching face never swings the size. */
 const TS_MIN=17, TS_MAX=30;
@@ -425,14 +426,14 @@ function bodyFontKey(){ return document.body.dataset.fontBody
   || factionFont(activeFaction()).body; }
 /* the effective root font-size (px): "auto" → font-derived, else the clamped stored number */
 function effectiveTextPx(){
-  const s=localStorage.getItem("yuma-textsize");
+  const s=localStorage.getItem("mdb-textsize");
   if(!s || s==="auto") return autoSizeForFont(bodyFontKey());
   const n=parseInt(s,10);
   return isNaN(n) ? autoSizeForFont(bodyFontKey()) : Math.min(TS_MAX, Math.max(TS_MIN, n));
 }
 /* apply the size to the page (--root-fs drives body font-size) + refresh the stepper UI */
 function renderTextSize(){
-  const px=effectiveTextPx(), isAuto=(localStorage.getItem("yuma-textsize")||"auto")==="auto";
+  const px=effectiveTextPx(), isAuto=(localStorage.getItem("mdb-textsize")||"auto")==="auto";
   document.documentElement.style.setProperty("--root-fs", px+"px");
   const v=$("#textsize-value"); if(v) v.textContent = isAuto ? px+"px · Auto" : px+"px";
   const dec=$("#textsize-dec"), inc=$("#textsize-inc"), au=$("#textsize-auto");
@@ -443,11 +444,11 @@ function renderTextSize(){
 /* ± commits an ABSOLUTE size (so a later font change won't move it); floored at TS_MIN */
 function stepTextSize(delta){
   const px=Math.min(TS_MAX, Math.max(TS_MIN, effectiveTextPx()+delta));
-  localStorage.setItem("yuma-textsize", String(px)); renderTextSize();
+  localStorage.setItem("mdb-textsize", String(px)); renderTextSize();
 }
 /* kept for init/reset: pass "auto" or an absolute px */
 function applyTextSize(choice){
-  localStorage.setItem("yuma-textsize", (choice==null ? "auto" : String(choice)));
+  localStorage.setItem("mdb-textsize", (choice==null ? "auto" : String(choice)));
   renderTextSize();
 }
 function buildSettings(){
@@ -611,8 +612,8 @@ function portraitSigil(ch){
     : `${svgIcon('silhouette','figure')}<span class="noid"><b>No ID</b></span>`;
 }
 /* per-character icon: explicit (sheet Icon column or local pick) else spirit-derived */
-function localIcons(){ try{ return JSON.parse(localStorage.getItem("yuma-icons")||"{}"); }catch{ return {}; } }
-function setLocalIcon(slug,key){ const m=localIcons(); m[slug]=key; lsSetData("yuma-icons", JSON.stringify(m)); }
+function localIcons(){ try{ return JSON.parse(localStorage.getItem("mdb-icons")||"{}"); }catch{ return {}; } }
+function setLocalIcon(slug,key){ const m=localIcons(); m[slug]=key; lsSetData("mdb-icons", JSON.stringify(m)); }
 function iconForChar(ch){
   return explicitIcon(ch) || spiritIconKey(ch.fields.spirit||"");
 }
@@ -667,7 +668,7 @@ const EDIT_FIELDS = [
 ];
 
 /* ------------------------ data fetch ------------------------ */
-/* Effective sheet id. A `?sheet=<id>` URL param (or a 'yuma-sheet-override' localStorage
+/* Effective sheet id. A `?sheet=<id>` URL param (or a 'mdb-sheet-override' localStorage
    value) takes precedence over CONFIG.sheetId. This lets the PREVIEW point at a public
    mirror sheet WITHOUT editing the source file — so syncing app.js can no longer clobber
    the real sheet id. Production deploys just use CONFIG.sheetId (no param = no override).
@@ -676,14 +677,14 @@ function effectiveSheetId(){
   const ok = v => typeof v === "string" && /^[A-Za-z0-9_-]{20,}$/.test(v);
   try{
     // injected by tools/preview.py into the SERVED copy only — never present in the repo file
-    if(ok(window.YUMA_SHEET_OVERRIDE)) return window.YUMA_SHEET_OVERRIDE;
+    if(ok(window.MDB_SHEET_OVERRIDE)) return window.MDB_SHEET_OVERRIDE;
     // ?sheet= / localStorage overrides are DEV-ONLY. Honouring them on the deployed site would
     // let a crafted link render an arbitrary spreadsheet under this site's own URL (content
     // spoofing on a trusted origin), so they only apply when served from localhost.
     if(/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)){
       const p = new URLSearchParams(location.search).get("sheet");
       if(ok(p)) return p;                                // explicit per-load override
-      const ls = localStorage.getItem("yuma-sheet-override");
+      const ls = localStorage.getItem("mdb-sheet-override");
       if(ok(ls)) return ls;
     }
   }catch(e){ /* sandboxed / no storage — fall through to the faction / configured id */ }
@@ -842,23 +843,23 @@ function lsSetData(key, val){
   try{ localStorage.setItem(key, val); return true; }
   catch(e){ toast("⚠ Device storage is full — this won't survive a reload. Remove some saved photos/screenshots first."); return false; }
 }
-function localPhotos(){ try{ return JSON.parse(localStorage.getItem("yuma-photos")||"{}"); }catch{ return {}; } }
+function localPhotos(){ try{ return JSON.parse(localStorage.getItem("mdb-photos")||"{}"); }catch{ return {}; } }
 function setLocalPhoto(slug, slot, src){
   const m=localPhotos(); (m[slug]=m[slug]||{})[slot]=src;
-  lsSetData("yuma-photos", JSON.stringify(m));
+  lsSetData("mdb-photos", JSON.stringify(m));
 }
 function clearLocalPhoto(slug, slot){            // after a successful sheet write, the sheet is canonical
-  const m=localPhotos(); if(m[slug]){ delete m[slug][slot]; lsSetData("yuma-photos", JSON.stringify(m)); }
+  const m=localPhotos(); if(m[slug]){ delete m[slug][slot]; lsSetData("mdb-photos", JSON.stringify(m)); }
 }
-function localLogs(){ try{ return JSON.parse(localStorage.getItem("yuma-logs")||"{}"); }catch{ return {}; } }
+function localLogs(){ try{ return JSON.parse(localStorage.getItem("mdb-logs")||"{}"); }catch{ return {}; } }
 function addLocalLog(slug, entry){
   const m=localLogs(); (m[slug]=m[slug]||[]).push(entry);
-  lsSetData("yuma-logs", JSON.stringify(m));
+  lsSetData("mdb-logs", JSON.stringify(m));
 }
-function localShots(){ try{ return JSON.parse(localStorage.getItem("yuma-shots")||"{}"); }catch{ return {}; } }
+function localShots(){ try{ return JSON.parse(localStorage.getItem("mdb-shots")||"{}"); }catch{ return {}; } }
 function addLocalShot(slug, src){
   const m=localShots(); (m[slug]=m[slug]||[]).push(src);
-  lsSetData("yuma-shots", JSON.stringify(m));
+  lsSetData("mdb-shots", JSON.stringify(m));
 }
 
 /* ------------------------ rendering ------------------------ */
@@ -1386,6 +1387,7 @@ function renderRoster(){
   const doss=$("#dossier");
   doss.innerHTML = sel ? dossierHTML(sel)
     : `<div class="empty-doss termbox">// NO UNIT SELECTED</div>`;
+  openPendingChar();   // a deep-linked character opens once the model has rendered (no-op otherwise)
 }
 
 function renderCards(){
@@ -1425,7 +1427,7 @@ function selectIndex(i){
   state.selected=i; renderRoster();
   $("#dossier").scrollTop=0;
   const c=state.model.characters[i];
-  if(c) history.replaceState(null,"","#c="+c.slug);
+  if(c) writeRoute(c.slug);
 }
 
 $("#cards").addEventListener("click", e=>{
@@ -1492,8 +1494,8 @@ function gotoChar(slug){
 
 /* shared edit passphrase, kept per-tab; the real secret lives in the Apps Script */
 function getPass(force){
-  let p = force ? null : sessionStorage.getItem("yuma-pass");
-  if(!p){ p = prompt("Enter the tribe edit passphrase to make changes:") || ""; if(p) sessionStorage.setItem("yuma-pass", p); }
+  let p = force ? null : sessionStorage.getItem("mdb-pass");
+  if(!p){ p = prompt("Enter the tribe edit passphrase to make changes:") || ""; if(p) sessionStorage.setItem("mdb-pass", p); }
   return p;
 }
 
@@ -1524,7 +1526,7 @@ async function saveEdit(slug, container){
       action:"setFields", usename: ch.fields.usename || ch.name, pass, fields:changes
     })});
     const out=await res.json();
-    if(out.error==="unauthorized"){ sessionStorage.removeItem("yuma-pass"); throw new Error("wrong passphrase — try again"); }
+    if(out.error==="unauthorized"){ sessionStorage.removeItem("mdb-pass"); throw new Error("wrong passphrase — try again"); }
     if(!out.ok) throw new Error(out.error||("could not write: "+(out.missed||[]).join(", ")));
     Object.assign(ch.fields, localUpdates);
     if(localUpdates.usename) ch.name=localUpdates.usename;
@@ -1601,7 +1603,7 @@ async function savePhoto(slug, slot, dataUrl, filename){
       usename: ch.fields.usename || ch.name, filename: filename||"photo", dataUrl
     })});
     const out=await res.json();
-    if(out.error==="unauthorized"){ sessionStorage.removeItem("yuma-pass"); throw new Error("wrong passphrase"); }
+    if(out.error==="unauthorized"){ sessionStorage.removeItem("mdb-pass"); throw new Error("wrong passphrase"); }
     if(!out.ok) throw new Error(out.error||"upload rejected by server");
     ch.photos[slot]=out.url || dataUrl; clearLocalPhoto(slug, slot);     // sheet is now canonical
     setLink("ONLINE"); refreshUploadSlots(); refreshDossier(ch);
@@ -1632,7 +1634,7 @@ async function saveLog(slug, cont){
       action:"addLog", pass, usename: ch.fields.usename || ch.name, text
     })});
     const out=await res.json();
-    if(out.error==="unauthorized"){ sessionStorage.removeItem("yuma-pass"); throw new Error("wrong passphrase"); }
+    if(out.error==="unauthorized"){ sessionStorage.removeItem("mdb-pass"); throw new Error("wrong passphrase"); }
     if(!out.ok) throw new Error(out.error||"server rejected the entry");
     setLink("ONLINE");                                 // success: sheet is canonical (no local copy → no dupes)
   }catch(err){ addLocalLog(slug, entry); setLink("OFFLINE", true); toast("Log saved on this device only: "+err.message); }
@@ -1652,7 +1654,7 @@ async function saveShot(slug, dataUrl, filename){
       action:"addShot", pass, usename: ch.fields.usename || ch.name, filename: filename||"shot", dataUrl
     })});
     const out=await res.json();
-    if(out.error==="unauthorized"){ sessionStorage.removeItem("yuma-pass"); throw new Error("wrong passphrase"); }
+    if(out.error==="unauthorized"){ sessionStorage.removeItem("mdb-pass"); throw new Error("wrong passphrase"); }
     if(!out.ok) throw new Error(out.error||"upload rejected by server");
     if(out.url){ const i=ch.shots.lastIndexOf(dataUrl); if(i>=0) ch.shots[i]=out.url; }
     setLink("ONLINE"); refreshDossier(ch);             // success: sheet is canonical (no local copy → no dupes)
@@ -1685,22 +1687,67 @@ function fileToDataURL(file, maxDim, mime){
   });
 }
 
-/* ---------- permalink routing (#c=slug, or ?c=slug from a shared/stub link) ---------- */
-function openFromHash(){
-  if(!state.model) return false;
-  const m=(location.hash||"").match(/#c=([^&]+)/)
-       || (location.search||"").match(/[?&]c=([^&]+)/);   // crawler-friendly ?c= (used by OG stubs)
-  if(!m) return false;
-  let slug; try{ slug=decodeURIComponent(m[1]); }catch{ return false; }   // malformed %-escape in a shared link
-  const idx=state.model.characters.findIndex(c=>c.slug===slug);
-  if(idx<0) return false;
+/* ---------- URL deep-linking (hash router) ----------------------------------------------
+   The URL reflects the current view so any of it can be linked to. HASH-based on purpose: it's
+   entirely client-side — no server round-trip, no extra loading, no 404 on static hosting.
+     #home                              the landing page
+     #<faction>/<section>[/<target>]    e.g. #tribe/roster · #tribe/lore
+     #tribe/roster/big-brom-matlok      a character   ·  #tribe/lore/<heading>  a doc section
+   Legacy #c=<slug> / ?c=<slug> (the c/ OG stubs) still resolve. */
+let _routing = false;         // true while WE apply a route → our own hash writes don't loop back
+let _pendingTarget = null;    // a character/heading slug to open once its view has rendered
+function slugify(s){ return (s||"").toString().toLowerCase().trim()
+  .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); }
+/* write the current view to the URL (target = character slug in roster, or heading slug in a doc) */
+function writeRoute(target){
+  if(_routing) return;
+  const h = currentSection==="home" ? "home"
+          : currentFaction + "/" + currentSection + (target ? "/"+target : "");
+  const full = "#" + h;
+  if(location.hash !== full){ try{ history.replaceState(null,"",full); }catch(e){} }
+}
+/* parse the current hash → {faction?, section, target?} (understands the legacy #c=/?c= form) */
+function parseRoute(){
+  const leg = (location.hash||"").match(/^#c=([^&]+)/) || (location.search||"").match(/[?&]c=([^&]+)/);
+  if(leg){ let s=""; try{ s=decodeURIComponent(leg[1]); }catch(e){} return { section:"roster", target:s }; }
+  const raw = (location.hash||"").replace(/^#\/?/, "");
+  if(!raw || raw==="home") return { section:"home" };
+  const p = raw.split("/").filter(Boolean).map(x=>{ try{ return decodeURIComponent(x); }catch(e){ return x; } });
+  return FACTIONS[p[0]] ? { faction:p[0], section:p[1], target:p[2] }
+                        : { section:p[0], target:p[1] };
+}
+/* apply the URL to the app: faction → section → target */
+function applyRoute(){
+  const r = parseRoute();
+  _routing = true;
+  try{
+    if(r.faction && FACTIONS[r.faction] && r.faction!==currentFaction) applyFaction(r.faction);
+    let sec = r.section || "home";
+    if(sec!=="home" && sec!=="roster" && !factionDocs().some(d=>d.id===sec)) sec="roster";
+    if(sec!==currentSection) setSection(sec);
+    _pendingTarget = r.target || null;
+    if(sec==="roster") openPendingChar();   // doc anchors are consumed by loadDoc when it finishes
+  } finally { _routing = false; }
+}
+/* open the pending character once the roster model is loaded (re-tried after each roster render) */
+function openPendingChar(){
+  if(!_pendingTarget || currentSection!=="roster" || !state.model) return;
+  const idx = state.model.characters.findIndex(c=>c.slug===_pendingTarget);
+  if(idx<0){ _pendingTarget=null; return; }
+  _pendingTarget=null;
   if(state.view!=="roster") setView("roster");
   state.selected=idx; renderRoster();
-  const active=$("#list .row.active"); if(active) active.scrollIntoView({block:"nearest"});
+  const a=$("#list .row.active"); if(a) a.scrollIntoView({block:"nearest"});
   $("#dossier").scrollTop=0;
-  return true;
 }
-window.addEventListener("hashchange", openFromHash);
+/* scroll a freshly-rendered doc to the heading whose slug matches the pending target */
+function scrollPendingAnchor(){
+  if(!_pendingTarget) return;
+  const want=_pendingTarget; _pendingTarget=null;
+  const h=[...$("#docreader").querySelectorAll("h1,h2,h3,h4")].find(x=>slugify(x.textContent)===want);
+  if(h) requestAnimationFrame(()=>h.scrollIntoView({block:"start"}));
+}
+window.addEventListener("hashchange", ()=>{ if(!_routing) applyRoute(); });
 $("#modalclose").addEventListener("click", ()=>$("#modalback").classList.remove("open"));
 $("#modalback").addEventListener("click", e=>{ if(e.target.id==="modalback") $("#modalback").classList.remove("open"); });
 document.addEventListener("keydown", e=>{
@@ -1780,7 +1827,7 @@ function setView(v){
   state.view=v;
   $("#view-roster").classList.toggle("active", v==="roster");
   $("#view-cards").classList.toggle("active", v==="cards");
-  localStorage.setItem("yuma-view", v);
+  localStorage.setItem("mdb-view", v);
   render();
 }
 
@@ -1991,6 +2038,7 @@ function trackDocSection(){
   const toc=$("#doctoc"); let act=null;
   toc.querySelectorAll("a").forEach(a=>{ const on = cur && a.dataset.h===cur.id; a.classList.toggle("active", on); if(on) act=a; });
   if(act) act.scrollIntoView({block:"nearest"});
+  writeRoute(cur ? slugify(cur.textContent) : "");   // the URL follows the section you're reading
 }
 $("#doctoc").addEventListener("click", e=>{
   const a=e.target.closest("a"); if(!a) return; e.preventDefault();
@@ -2012,7 +2060,7 @@ let _docImgSink = null;                                       // collects extrac
 
 /* minimal IndexedDB k/v — never throws, resolves null / no-ops when unavailable */
 function idbGet(key){ return new Promise(res=>{ try{
-  const r=indexedDB.open("yuma-docdb",1);
+  const r=indexedDB.open("mdb-docdb",1);
   r.onupgradeneeded=()=>r.result.createObjectStore("kv");
   r.onerror=()=>res(null);
   r.onsuccess=()=>{ const db=r.result; try{
@@ -2022,7 +2070,7 @@ function idbGet(key){ return new Promise(res=>{ try{
   }catch(e){ res(null); db.close(); } };
 }catch(e){ res(null); } }); }
 function idbSet(key,val){ try{
-  const r=indexedDB.open("yuma-docdb",1);
+  const r=indexedDB.open("mdb-docdb",1);
   r.onupgradeneeded=()=>r.result.createObjectStore("kv");
   r.onsuccess=()=>{ const db=r.result;
     try{ db.transaction("kv","readwrite").objectStore("kv").put(val,key); }catch(e){}
@@ -2153,6 +2201,7 @@ function renderPreparedDoc(reader, prepared, doc){
   hydrateDocImages(reader, prepared.images||[]);              // images stream in on approach
   styleTOC(reader);
   buildDocSidebar(reader);
+  scrollPendingAnchor();   // a deep-linked doc section scrolls into view now that the doc is rendered
   trackDocSection();
   reader.dataset.docid = doc.id;
   resetDocFind();                                             // fresh doc → clear any stale find state
@@ -2281,6 +2330,7 @@ function setSection(id){
     const doc=factionDocs().find(d=>d.id===id);
     if(doc) loadDoc(doc);
   }
+  writeRoute();   // reflect the section in the URL (character/heading is added by its own handler)
 }
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
@@ -2339,7 +2389,7 @@ $("#crt-toggle").addEventListener("click", ()=>{
   const on=document.body.classList.toggle("crt");
   $("#crt-toggle").textContent="Scanlines: "+(on?"ON":"OFF");
   $("#crt-toggle").classList.toggle("active", on);
-  localStorage.setItem("yuma-crt", on?"1":"0");
+  localStorage.setItem("mdb-crt", on?"1":"0");
 });
 
 $("#refresh").addEventListener("click", ()=>load(true));
@@ -2347,9 +2397,9 @@ $("#refresh").addEventListener("click", ()=>load(true));
 /* Reset all Theme-popover settings to defaults (font, colour, bg, text size,
    frame, frame tint, screen glass, CRT). Doesn't touch character data / icons / photos. */
 $("#reset-settings").addEventListener("click", ()=>{
-  ["yuma-font","yuma-font-head","yuma-font-body","yuma-docfont-title","yuma-docfont-head",
-   "yuma-docfont-body","yuma-color","yuma-bg",
-   "yuma-textsize","yuma-frame","yuma-frametint","yuma-sheen","yuma-crt","yuma-dosspanel","yuma-cards","yuma-imgcolor","yuma-bezel",
+  ["mdb-font","mdb-font-head","mdb-font-body","mdb-docfont-title","mdb-docfont-head",
+   "mdb-docfont-body","mdb-color","mdb-bg",
+   "mdb-textsize","mdb-frame","mdb-frametint","mdb-sheen","mdb-crt","mdb-dosspanel","mdb-cards","mdb-imgcolor","mdb-bezel",
    fkey("font-head"),fkey("font-body")   // clear THIS faction's font override → its signature reloads
   ].forEach(k=>localStorage.removeItem(k));
   const _rf = factionFont(activeFaction());
@@ -2361,7 +2411,7 @@ $("#reset-settings").addEventListener("click", ()=>{
   applyCards("auto"); applyImgColor("screen"); applyBezel("on");
   document.body.classList.add("crt");
   $("#crt-toggle").textContent="Scanlines: ON"; $("#crt-toggle").classList.add("active");
-  localStorage.setItem("yuma-crt","1");
+  localStorage.setItem("mdb-crt","1");
   refreshCur();
   toast("Settings reset to defaults.");
 });
@@ -2445,7 +2495,7 @@ async function setCharacterIcon(slug, key){
         action:"setIcon", usename: ch.fields.usename || ch.name, pass, icon:key
       })});
       const out=await res.json();
-      if(out.error==="unauthorized"){ sessionStorage.removeItem("yuma-pass"); throw new Error("wrong passphrase"); }
+      if(out.error==="unauthorized"){ sessionStorage.removeItem("mdb-pass"); throw new Error("wrong passphrase"); }
       if(!out.ok) throw new Error(out.error||"could not save icon");
       setLink("ONLINE");
     }catch(err){
@@ -2498,7 +2548,7 @@ async function load(isRefresh){
     if(state.selected>=model.characters.length) state.selected=0;
     setLink("ONLINE");
     render();
-    if(!isRefresh) openFromHash();        // honour a permalink on first load
+    if(!isRefresh) openPendingChar();     // honour a deep-linked character on first load
   }catch(err){
     setLink("OFFLINE", true);
     // a failed REFRESH keeps the last good roster on screen (don't blank working data
@@ -2522,8 +2572,8 @@ async function load(isRefresh){
 function runBoot(){
   const boot=$("#boot"); if(!boot) return;
   const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if(reduce || sessionStorage.getItem("yuma-booted")) return;   // once per session, never if reduced-motion
-  sessionStorage.setItem("yuma-booted","1");
+  if(reduce || sessionStorage.getItem("mdb-booted")) return;   // once per session, never if reduced-motion
+  sessionStorage.setItem("mdb-booted","1");
   const el=$("#boot-text"); el.innerHTML="";
   boot.classList.add("run");
   let done=false, timers=[], sweepTimer=null;
@@ -2618,42 +2668,42 @@ function runBoot(){
 (function init(){
   runBoot();
   buildSettings();
-  /* one-time migration: old single-preset "yuma-font" key → separate head/body faces */
-  const legacyFont = localStorage.getItem("yuma-font");
-  if(legacyFont && !localStorage.getItem("yuma-font-head")){
+  /* one-time migration: old single-preset "mdb-font" key → separate head/body faces */
+  const legacyFont = localStorage.getItem("mdb-font");
+  if(legacyFont && !localStorage.getItem("mdb-font-head")){
     const [mh,mb] = PRESET_MIGRATE[legacyFont] || ["fallout","fallout"];
-    localStorage.setItem("yuma-font-head", mh); localStorage.setItem("yuma-font-body", mb);
+    localStorage.setItem("mdb-font-head", mh); localStorage.setItem("mdb-font-body", mb);
   }
-  localStorage.removeItem("yuma-font");
+  localStorage.removeItem("mdb-font");
   /* fonts are now remembered PER FACTION (like colours); fold any legacy GLOBAL head/body
      choice into the current faction's key once, then retire the global keys. */
-  const _gH=localStorage.getItem("yuma-font-head"), _gB=localStorage.getItem("yuma-font-body");
+  const _gH=localStorage.getItem("mdb-font-head"), _gB=localStorage.getItem("mdb-font-body");
   if(_gH && !localStorage.getItem(fkey("font-head"))) localStorage.setItem(fkey("font-head"), _gH);
   if(_gB && !localStorage.getItem(fkey("font-body"))) localStorage.setItem(fkey("font-body"), _gB);
-  localStorage.removeItem("yuma-font-head"); localStorage.removeItem("yuma-font-body");
+  localStorage.removeItem("mdb-font-head"); localStorage.removeItem("mdb-font-body");
   /* each faction loads in ITS signature look (Tribe = Fallouty + rust/yellow), unless overridden for that faction */
   const _ap = factionAppearance(currentFaction);
   applyFontHead(_ap.head);
   applyFontBody(_ap.body);  /* sets a font-derived size if none stored */
   ["title","head","body"].forEach(kind=>
-    applyDocFont(kind, localStorage.getItem("yuma-docfont-"+kind) || DOC_FONT_DEFAULT[kind]));
-  applyTextSize(localStorage.getItem("yuma-textsize") || "auto");  /* "auto" follows the body font; a stored manual size wins */
+    applyDocFont(kind, localStorage.getItem("mdb-docfont-"+kind) || DOC_FONT_DEFAULT[kind]));
+  applyTextSize(localStorage.getItem("mdb-textsize") || "auto");  /* "auto" follows the body font; a stored manual size wins */
   applyColor(_ap.color);
   applyBg(_ap.bg);
-  applyFrame(localStorage.getItem("yuma-frame") || "screen");
-  applyFrameTint(localStorage.getItem("yuma-frametint") || "olive");
-  applyGlass(localStorage.getItem("yuma-sheen") || "off");
-  applyDossPanel(localStorage.getItem("yuma-dosspanel") || "on");
-  applyCards(localStorage.getItem("yuma-cards") || "auto");
-  applyImgColor(localStorage.getItem("yuma-imgcolor") || "screen");
-  applyBezel(localStorage.getItem("yuma-bezel") || "on");
-  const crtOn = localStorage.getItem("yuma-crt") !== "0";
+  applyFrame(localStorage.getItem("mdb-frame") || "screen");
+  applyFrameTint(localStorage.getItem("mdb-frametint") || "olive");
+  applyGlass(localStorage.getItem("mdb-sheen") || "off");
+  applyDossPanel(localStorage.getItem("mdb-dosspanel") || "on");
+  applyCards(localStorage.getItem("mdb-cards") || "auto");
+  applyImgColor(localStorage.getItem("mdb-imgcolor") || "screen");
+  applyBezel(localStorage.getItem("mdb-bezel") || "on");
+  const crtOn = localStorage.getItem("mdb-crt") !== "0";
   document.body.classList.toggle("crt", crtOn);
   $("#crt-toggle").textContent = "Scanlines: " + (crtOn ? "ON" : "OFF");
   $("#crt-toggle").classList.toggle("active", crtOn);
-  const v=localStorage.getItem("yuma-view"); if(v) setView(v);
+  const v=localStorage.getItem("mdb-view"); if(v) setView(v);
   refreshCur();                      // fill the popover's collapsed-group value lines
   renderBrand(); wireFactionMenu();  // masthead = plain title (1 faction) or a switcher (2+)
   renderNav();                       // build the active faction's Home + Roster + docs section tabs
-  setSection("home");                // land on the home page (big section tiles); roster loads on demand
+  applyRoute();                      // land on the view named in the URL (defaults to #home)
 })();

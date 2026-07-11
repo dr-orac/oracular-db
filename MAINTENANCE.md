@@ -51,7 +51,7 @@ remote-data path, what was fixed, what was deferred and why. Read it before touc
 | dossier pieces | portrait, spirit, S.P.E.C.I.A.L, connections, log, shots |
 | section nav / doc reader | `renderNav()`, `setSection()`, `loadDoc()`, `docClean()`, `styleTOC()` (see below) |
 | delegated events | one document click handler dispatches all in-content buttons |
-| theme | `apply*()` setters, persisted in `localStorage` (`yuma-*`), Theme popover. Fonts: `FACES` catalogue, **headings + body picked separately** (`applyFontHead`/`applyFontBody`, `data-font-head`/`data-font-body`); legacy `yuma-font` preset key migrates once via `PRESET_MIGRATE` |
+| theme | `apply*()` setters, persisted in `localStorage` (`mdb-*`), Theme popover. Fonts: `FACES` catalogue, **headings + body picked separately** (`applyFontHead`/`applyFontBody`, `data-font-head`/`data-font-body`); legacy `mdb-font` preset key migrates once via `PRESET_MIGRATE` |
 | edit / upload | optional write-back paths (only active when `webAppUrl` set) |
 | boot | RobCo type-on intro, skippable, reduced-motion aware, hard timeout |
 
@@ -92,7 +92,7 @@ How it works:
   is fetchable client-side — no backend, no iframe.
 - **Performance model** (the export inlines images as base64 — measured ~99% of the bytes;
   the text is <100KB): `prepareDoc()` caches the parsed+cleaned doc in memory AND
-  **IndexedDB** (`yuma-docdb`), so the multi-MB download happens once per device; later
+  **IndexedDB** (`mdb-docdb`), so the multi-MB download happens once per device; later
   opens are local with a background re-fetch when >15 min stale. Base64 images are
   **stripped into a side-table** and lazily hydrated as they scroll near
   (`hydrateDocImages` — IntersectionObserver primary + a rect-check pass on render/scroll,
@@ -164,7 +164,7 @@ design; see the `DOC_HEAD_FACES` comment in app.js). If you remove the chassis, 
   the ≤760px media query.
 - **app.js** — delete `applyFrame()` and `applyFrameTint()`; in `buildSettings()` delete the
   `#frame-swatches` + `#frametint-swatches` innerHTML/click wiring; in `refreshCur()` delete
-  the `#cur-frame` line; in the reset handler drop `"yuma-frame"`/`"yuma-frametint"` from the
+  the `#cur-frame` line; in the reset handler drop `"mdb-frame"`/`"mdb-frametint"` from the
   key list and the `applyFrame("screen"); applyFrameTint("olive");` calls; in `init()` remove
   the two `applyFrame(…)/applyFrameTint(…)` calls.
 - **index.html** — delete the `Frame` `<details class="popgrp">` group in the Theme popover
@@ -207,11 +207,11 @@ python3 tools/preview.py            # rebuilds serve.py + /tmp/yuma-live from so
 # then (re)start the 'yuma-roster' preview server and open  /  (no query needed)
 ```
 
-**Why it just works:** `preview.py` injects `window.YUMA_SHEET_OVERRIDE="<mirror id>"` into
+**Why it just works:** `preview.py` injects `window.MDB_SHEET_OVERRIDE="<mirror id>"` into
 the **served** `index.html` only (the `/tmp` copy — the source is never touched), and
 `effectiveSheetId()` honors it. So the preview reads the mirror at **any** URL, including a
-bare reload. Precedence in `effectiveSheetId()`: `window.YUMA_SHEET_OVERRIDE` →
-(**localhost only:** `?sheet=<id>` URL param → `localStorage.yuma-sheet-override`) →
+bare reload. Precedence in `effectiveSheetId()`: `window.MDB_SHEET_OVERRIDE` →
+(**localhost only:** `?sheet=<id>` URL param → `localStorage.mdb-sheet-override`) →
 `CONFIG.sheetId`. The localhost gate is a security measure — on the deployed site a crafted
 `?sheet=` link would render an arbitrary spreadsheet under our URL (see the audit doc); in
 production only `CONFIG.sheetId` applies. (Historically we hand-edited the sheet id on every
