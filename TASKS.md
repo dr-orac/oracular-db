@@ -620,6 +620,20 @@ NOT DONE (deferred): typed relationship categories (Family/Friend/Crush/Rival/Ha
 field has no type column, so cards are untyped. If/when Sheet B (or a type column) lands, group cards
 by type per the design doc.
 
+## T59 · Wiki integration — move Tribe Lore + Roleplay Guide onto the MediaWiki — see docs/WIKI-INTEGRATION.md
+User now has DIRECT edit access to the admins' MediaWiki. Plan: make the wiki the single source of truth
+for the lore/guide (retire the Google Docs for them), app reads via the existing `loadWiki` reader.
+Blocking app change: **`loadWiki` currently STRIPS all images** (`img,figure,.thumb` removed — "the wiki
+has no images"); that must flip to keep + theme them (absolute `src` via `wikiAbs`, framed figures, img
+duotone) before any wiki image shows in the app. Then generalise the section source
+(`{kind:"wiki",page}` vs `{kind:"gdoc",docId}`, `setSection` dispatch) and point the Tribe's Lore +
+Roleplay tabs at their wiki pages. Recommended page layout: subpages `The_Tribe/Lore` +
+`The_Tribe/Roleplay_Guide` (1 page = 1 tab). Sequence: (me) ship image un-strip+theming (useful alone,
+verify on a real image-bearing page) → (user) create pages + paste content + upload images → (me)
+source-model + flip tabs → (both) tune `renderWiki` for new structures. Full MediaWiki how-to (editing,
+wikitext, image upload/embed, licensing caveat: originals/owned only — no trademarked or AI art) is in
+the design doc.
+
 ## Note — T22 gate clarified
 "Lattice" = a UI builder linked to Substrate, providing standard HTML layouts to reduce parallelism /
 standardise building (in the Claude project folder). T22 (Misfits wiki reader) stays gated on Substrate
