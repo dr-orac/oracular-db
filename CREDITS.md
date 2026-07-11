@@ -34,3 +34,9 @@ Fonts have their own licence files in `fonts/`.
   (codepen.io/32bitkid/pen/DrXOVg); reimplemented from scratch with our own tokens (the
   `body::before`/`body::after` screen layers in styles.css). Our fill stays far darker than
   the pen's `#131`.
+- **Theme-tinting monochrome images with one CSS filter** — tinting portraits + doc images to
+  the active phosphor colour via `sepia()` + `hue-rotate()` (instead of a multiply overlay).
+  Technique studied from "Working Fallout New Vegas Pip-Boy" by carterfromsl
+  (codepen.io/carterfromsl/pen/OJjxXKJ); implemented our own way — the hue-rotate is computed
+  from each theme's colour at runtime (`hslOf` → `--img-hue`/`--img-sat` in app.js), not a
+  hard-coded per-theme class as in the pen.
