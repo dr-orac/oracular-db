@@ -177,6 +177,7 @@
        widescreen displays (the structural black/gap/hairline rings stay a fixed physical size). */
     box-shadow:
       inset 0 0 clamp(26px,3.6vmax,58px) rgba(var(--fg-rgb),.20),              /* EXTERIOR phosphor halo — glows over the outer edge */
+      inset 0 0 9px var(--bezel-in) rgba(var(--fg-rgb),.42),                   /* OUTER glow of the hairline — sits ABOVE the black band so the line glows on its outer side too */
       inset 0 0 0 var(--bezel-black) #000,                                     /* jet-black band */
       inset 0 0 0 calc(var(--bezel-black) + var(--bezel-gap)) var(--bg),       /* screen-bg gap (trims the hairline) */
       inset 0 0 0 var(--bezel-in) var(--fg-bright),                            /* bright theme-coloured hairline */
