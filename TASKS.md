@@ -3,7 +3,29 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
-## T56 · Two-level masthead (umbrella row + faction-section row) — [now]
+## T57 · Profile photos + Cards mode redesign — ROADMAPPED (design pass, best verified on live data)
+User wants the character photos treated better. ⚠ Can't verify in the dev sandbox (roster data =
+Google Sheets, network-blocked here) — implement carefully + verify on the LIVE site / with the user.
+- **Upload affordance:** replace the little CAMERA icon on the portrait with a simple **PLUS (+)** — it
+  reads as "add your own picture" (the upload button is `.upbtn` in `portraitHTML`, app.js; its SVG is
+  the camera glyph). [The plus swap is trivial and shipped first; the rest is the design pass.]
+- **Bigger, better photos:** the portraits should be LARGER and better implemented/laid out, especially
+  in **Cards** mode — the card photo should be a prominent, well-cropped image, not a small thumb.
+- **Fewer cards per row by DEFAULT:** the cards grid packs too many per row; widen the min column so
+  each card + its photo is bigger and everything reads with more space + legibility. (The grid is
+  `grid-template-columns:repeat(auto-fill, minmax(…))` on `.cards` in styles.css — raise the minmax.)
+- Keep the phosphor tint + the CRT frame; mind mobile. Acceptance: cards read spacious + legible, photos
+  prominent, plus-to-upload obvious; verified on the live site.
+
+## T58 · Menu tiers — consistent + harmonious sizing/appearance — ROADMAPPED (design/taste pass)
+After the two-level masthead (T56), spend a focused pass making each tier read as a coherent system:
+the row-1 boxes (HOME/FACTION/WIKI) and row-2 section tabs should share a consistent box height, padding
+rhythm, icon size, and type scale so the two rows feel like one designed unit (not two ad-hoc bars).
+Align the box heights, unify the icon sizes, pick one padding scale, and balance the row-1 vs row-2
+weight (row 1 slightly more prominent as the umbrella level). Also revisit the mobile wrap (row 1 can
+get tall). Taste-gated — present before/after.
+
+## T56 · Two-level masthead (umbrella row + faction-section row) — DONE (d4a8053)
 User: split the nav into two hierarchy levels.
 - **Row 1 (umbrella, faction-agnostic):** HOME · FACTION▼ · WIKI as three consistent BOXED controls
   (styled like the faction box). Only FACTION is a dropdown, so only it keeps the "FACTION" legend on

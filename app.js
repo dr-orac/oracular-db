@@ -1080,7 +1080,8 @@ function imageSrc(val){
 }
 
 /* flat Pip-Boy glyphs for the portrait actions (fill:currentColor). */
-const IC_CAMERA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 4h5.6l1.3 2H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.9l1.3-2Zm2.8 4.8a4.6 4.6 0 1 0 0 9.2 4.6 4.6 0 0 0 0-9.2Zm0 2a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2Z"/></svg>';
+/* the portrait "add your own picture" affordance — a simple PLUS (reads as "add", clearer than a camera) */
+const IC_PLUS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3h3v7.5H21v3h-7.5V21h-3v-7.5H3v-3h7.5z"/></svg>';
 const IC_EMBLEM = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l7.5 2.8v5.5c0 4.6-3.2 7.9-7.5 9.7-4.3-1.8-7.5-5.1-7.5-9.7V5.3L12 2.5Z"/></svg>';
 /* CRT-treated portrait frame (used in dossier + cards). cls = size modifier. */
 function portraitHTML(ch, cls){
@@ -1093,7 +1094,7 @@ function portraitHTML(ch, cls){
   return `<div class="portrait ${cls||''} ${src?'':'noimg'}">
       ${img}<span class="tint"></span>
       <span class="sigil">${portraitSigil(ch)}</span>
-      <button class="upbtn" data-slug="${esc(ch.slug)}" title="Add / change photo" aria-label="Add or change photo">${IC_CAMERA}</button>
+      <button class="upbtn" data-slug="${esc(ch.slug)}" title="Add / change photo" aria-label="Add or change photo">${IC_PLUS}</button>
       <button class="iconbtn" data-slug="${esc(ch.slug)}" title="Choose a sigil icon" aria-label="Choose a sigil icon">${IC_EMBLEM}</button>
     </div>`;
 }
