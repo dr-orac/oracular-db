@@ -989,10 +989,10 @@
      always keeps the lion's share. */
   .roster{ display:grid; grid-template-columns:var(--rail) 1fr; height:100%; min-height:0; }
   .listcol{ display:flex; flex-direction:column; min-height:0; min-width:0; border-right:1px solid var(--green-faint); }
-  /* filter + sort: one chunky segmented bar spanning the column — the boxes ABUT (shared 1px
-     borders, no gaps) rather than floating as separate pills. Less busy, easier to hit. */
-  .listctl{ flex:0 0 auto; display:flex; gap:0; padding:8px var(--sp-2) 0; border-bottom:1px solid var(--green-faint);
-    background:linear-gradient(180deg, rgba(255,255,255,.02), transparent); }
+  /* filter + sort: one chunky segmented bar that runs end-to-end across the column, its outer edges
+     matching the search box above (left inset by --sp-2, right meeting the column divider). The two
+     boxes ABUT (shared border, no gap); no divider rule beneath them. */
+  .listctl{ flex:0 0 auto; display:flex; gap:0; padding:8px 0 8px var(--sp-2); }
   /* in-theme custom dropdown (replaces native <select> — the popup is themed, not OS chrome).
      Reused wherever a select is needed; the two roster filters ABUT (shared border, no gap). */
   .selctl{ position:relative; flex:1 1 0; min-width:0; }
@@ -1032,6 +1032,9 @@
     padding:16px 16px 4px var(--sp-2); display:flex; align-items:center; gap:8px;   /* left pad = --sp-2 so rail text aligns with the brand column (A) */
   }
   .sectionhdr:first-child{ padding-top:8px; }
+  /* roster list section labels ("The Tribe", "Friends of the Tribe", …) scroll away with the list —
+     they don't need to pin. (The doc-TOC "» CONTENTS" header keeps its stickiness.) */
+  .list .sectionhdr{ position:static; }
   .sectionhdr::before{ content:"»"; color:var(--green); }
   .sectionhdr::after{ content:""; flex:1; height:0; border-top:1px dashed var(--green-faint); opacity:.7; }
   .row{
