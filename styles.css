@@ -475,11 +475,9 @@
   .primary-nav{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-right:auto; }
   .navbox{ display:inline-flex; align-items:center; gap:9px; cursor:pointer;
     background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg);
-    padding:9px 16px; font-family:var(--font-head); letter-spacing:1px; text-transform:uppercase;
+    padding:9px 18px; font-family:var(--font-head); letter-spacing:1.2px; text-transform:uppercase;
     transition:color .14s, border-color .14s, background .14s, box-shadow .14s; }
-  .navbox .navico{ width:22px; height:22px; flex:0 0 auto; display:inline-flex; }
-  .navbox .navico svg{ width:100%; height:100%; fill:currentColor; display:block; }
-  .navbox .navlabel{ font-size:15px; line-height:1; }
+  .navbox .navlabel{ font-size:16px; line-height:1; }   /* icon uses the shared .navico (22px) — one tier scale */
   .navbox:hover{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2); }
   .navbox.active{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
     box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.35), 0 0 16px -7px rgba(var(--fg-rgb),.6); }
@@ -567,9 +565,9 @@
   .masthead > #topnav{ margin-top:16px; }   /* ROW 2 sits below the titlebar (row 1) — clear vertical gap between tiers */
   .navtab{
     display:inline-flex; align-items:center; gap:9px;
-    font-family:var(--font-head); font-size:20px; letter-spacing:1.5px; text-transform:uppercase;
+    font-family:var(--font-head); font-size:16px; letter-spacing:1.2px; text-transform:uppercase;
     color:var(--fg-dim); background:linear-gradient(180deg, var(--bg-panel-2), var(--bg-panel));
-    cursor:pointer; border:1px solid var(--fg-faint); padding:9px 20px; line-height:1;
+    cursor:pointer; border:1px solid var(--fg-faint); padding:9px 18px; line-height:1;
     transition:color .12s, background .12s, border-color .12s, box-shadow .12s;
   }
   .navtab:hover{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
@@ -580,7 +578,7 @@
   }
   /* flat 2D Fallout-style glyph per tab — inherits currentColor, so it dims/brightens with the
      label and inverts to the screen colour on the active (filled) tab. */
-  .navico{ flex:0 0 auto; width:24px; height:24px; display:inline-flex; }
+  .navico{ flex:0 0 auto; width:22px; height:22px; display:inline-flex; }   /* one icon size across both menu tiers */
   .navico svg{ width:100%; height:100%; display:block; fill:currentColor; }
   /* on a doc section, hide the roster-only chrome (search / view toggle / refresh / status) */
   /* command-bar slot in the header: the roster toolbar shows on the roster, the doc find bar
