@@ -2314,7 +2314,7 @@ async function loadWiki(page){
     if(!html) throw new Error(j && j.error ? j.error.info : "no content");
     const tmp=document.createElement("div"); tmp.innerHTML=html;
     tmp.querySelectorAll(".mw-editsection,.toc,#toc,.mw-empty-elt,style,script,.navbox,.metadata,.noprint,sup.reference,img,figure,.thumb")
-      .forEach(e=>e.remove());                                // drop MediaWiki chrome + images (text-first trial)
+      .forEach(e=>e.remove());                                // drop MediaWiki chrome (the wiki has no images)
     // MediaWiki uses TABLES for page layout (the Main Page is one big grid) — flatten them to a
     // linear flow (innermost-first) so the text reads normally instead of squeezed into columns.
     for(let g=0; g<60; g++){
@@ -2325,6 +2325,16 @@ async function loadWiki(page){
         while(c.firstChild) d.appendChild(c.firstChild); box.appendChild(d); });
       leaf.replaceWith(box);
     }
+    // docClean drops <div> (keeps only its children), so sibling styled boxes (the Main Page's
+    // hand-built banners, and the flattened table cells above) would merge into one text run.
+    // Convert every leaf div (one with no block children) to a <p> so each stays its own line.
+    tmp.querySelectorAll("div").forEach(d=>{
+      if(!d.querySelector("div,p,ul,ol,table,h1,h2,h3,h4,h5,h6,blockquote,hr,li")){
+        const p=document.createElement("p");
+        while(d.firstChild) p.appendChild(d.firstChild);
+        d.replaceWith(p);
+      }
+    });
     tmp.querySelectorAll("a[href]").forEach(a=>a.setAttribute("href", wikiAbs(a.getAttribute("href"))));
     docBoldClasses=new Set(); docItalicClasses=new Set(); docTitleCount=0; _docImgSink=null;   // reset docClean state
     // docClean strips block wrappers (divs), so wiki content comes back as loose inline/text runs.
