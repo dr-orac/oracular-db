@@ -52,8 +52,10 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
 - [ ] Heading order (one h1 per view; no skipped levels) across home/roster/doc/wiki.
 - [ ] Landmark roles (`banner`/`main`/`navigation`); `aria-current` on the active nav tab + faction.
 - [ ] Icon-only buttons have `aria-label` (cog does — audit the rest: camera/upload, doc steppers).
-- [ ] A polite **live region** for the loading/sync status ("RE-SYNCING…", "RECEIVING IMAGE") so screen
-      readers announce state changes; `aria-busy` on the roster/doc while loading.
+- [x] ✅ A polite **live region** for loading state. Roster already had one (`#state`). Added
+      `#doc-announce` (dedicated sr-only, stable — the animated `#docstatus` repaints 12×/s so can't be
+      one) firing once per state ("Loading document…" / "<page> loaded" / error), + `aria-busy` on
+      `#docreader` while loading (d7a76ae). Remaining: an `aria-busy` on the roster during its fetch.
 - [ ] `aria-expanded` on all disclosure controls (faction/select dropdowns — done; audit others).
 
 ## Motion
