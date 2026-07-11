@@ -63,8 +63,9 @@ Most additions are one config entry — the app wires the rest.
   - `docs` — that faction's doc tabs, `[{ id, label, docId }, …]` (starts `[]` = no doc tabs).
 - **A brand-new faction.** Add another entry to `FACTIONS` (unique id) with `name` (switcher
   label), `brand` + `tagline` (masthead title), `theme` — a `{ color, bg }` pair of keys from the
-  palette (any key in `THEMES` / `BGS`), `font` — a `{ head, body }` pair of `FACES` keys, and
-  `data`/`docs` as above. Then:
+  palette (any key in `THEMES` / `BGS`), and `data`/`docs` as above. (No `font` — the interface uses
+  the classic Fallout font for every faction; per-faction identity is colour + content, not typeface.)
+  Then:
   - add the id to **`FACTION_ORDER`** (its position in the dropdown + home grid);
   - add a glyph to **`FACTION_ICONS`** keyed by the id (a flat `fill:currentColor` inline SVG,
     `viewBox="0 0 24 24"` — else the picker/home cell shows no icon);

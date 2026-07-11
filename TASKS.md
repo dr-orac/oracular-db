@@ -459,9 +459,10 @@ page renders in-theme, internal links navigate in-app, no h-overflow, sanitised 
 - **Faction-scoped `relabelTribe`** — the global "Yuma Tribe"→"Tribe" rewrite would wrongly
   rebrand a linked faction's data; gate it to the tribe (or make relabel a per-faction config).
   Latent only — no effect until a non-tribe faction links a sheet.
-- **Per-faction visual style beyond colour** — the vision is "distinct colour AND visual style";
-  today factions differ by colour+bg only. Consider a per-faction accent (heading font / frame
-  treatment) so factions read distinct beyond hue.
+- **Per-faction visual style beyond colour** — factions differ by colour+bg (+ their own content).
+  NOTE: per-faction FONTS were tried and REVERTED (the interface jumping on switch read as broken —
+  see T38) — the interface font is fixed classic Fallout. Any future "distinct visual style" idea must
+  keep the CHROME stable; per-faction variation belongs in the CONTENT (below the header divider).
 
 ## Done this session (2026-07-10, later): removed the ONLINE/UNITS/SYNC status line; command bar
 ## + rail no longer shift between views (docbar moved to header); nav always shows; doc images +
@@ -640,7 +641,15 @@ The 4-edge fade + ~10% side buffers shipped. `.docfig img` brightness(1.16)/cont
 (test an image WITH text / a screenshot). Balance: bright enough to survive the multiply tint, not so
 bright it blows midtones to uniform colour. Portrait uses brightness(1.32)/contrast(1.3) + tint .5.
 
-## T38 · Per-faction signature fonts + rename the iconic "Fallouty" face — SMALL/MED [now]
+## T38 · Per-faction signature fonts — ⛔ REVERTED 2026-07-11 (kept: the "Fallouty" rename)
+UPDATE: per-faction fonts were REMOVED (657db57). User: the interface typeface jumping on faction
+switch "doesn't work" — every faction now uses the classic Fallout font (FACTION_FONT_DEFAULT);
+per-faction identity is colour + content, not typeface. The `font` field is gone from FACTIONS; a
+one-time migration (`mdb-migr-fontreset`) clears the stale per-faction font overrides; the Settings
+font controls still work (a deliberate choice persists per faction). The FACES "Fallouty" rename +
+the doc-reader fonts stay. Original (now-superseded) spec below.
+
+## T38 (original spec — superseded) · Per-faction signature fonts + rename "Fallouty" — SMALL/MED
 The app font (head + body) should differ per faction, giving each its own typographic identity —
 loaded automatically when the faction loads, exactly like its signature COLOUR already does (per-
 faction keys, user override remembered per faction). The iconic Fallout-1/2 pixel face is the
