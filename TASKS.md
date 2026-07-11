@@ -42,7 +42,16 @@ currentSection. Home landing stays clean (hide both rows on `body[data-section="
 the two rows show on roster/doc/wiki views. Verify: switching faction updates row 2; Home/Wiki active
 states; desktop + mobile + chassis.
 
-## T55 · Comprehensive accessibility pass — ROADMAPPED — see docs/ACCESSIBILITY-PLAN.md
+## T55 · Comprehensive accessibility pass — LARGELY DONE (see docs/ACCESSIBILITY-PLAN.md for the checklist)
+Shipped this session: text-brightness floor (--fg-dim) · font-size floor · loading live regions +
+aria-busy (doc/wiki + roster) · focus visibility (verified) · contrast audit (subagent — clean) ·
+**High-Contrast mode** (prefers-contrast + Settings toggle) · faction-dropdown keyboard nav (+ fixed a
+hidden tab-trap) · a single per-view **H1** + landmarks · icon-only labels (clean) · reduced-motion
+(comprehensive). REMAINING (minor): touch targets (already meet WCAG 2.2 AA 24px; the comfort 44px
+trades off against the compact mobile masthead) · roster-list arrow-nav · modal focus-trap verify
+(a MutationObserver handles it) · chassis-metal contrast spot-check · a final axe/screen-reader pass
+(needs a real environment). The original ask + full checklist:
+
 User: dark body text is too hard to read → need a **minimum brightness floor for text** while keeping
 **noticeably different brightness for hierarchy**, plus a **reasonable minimum font size**; wants a
 comprehensive a11y pass. ✅ **Step 0 DONE this session:** raised `--fg-dim` (the dimmest TEXT colour)
