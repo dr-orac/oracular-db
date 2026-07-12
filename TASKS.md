@@ -567,7 +567,12 @@ Facts gathered up front (build on these; don't re-derive):
 - Sheet B `1oJUOBuiDdjCo62ko39LWtqBtyt81ZLLgpE1iFIkltF0` gid 879658166 = a RELATIONSHIP MATRIX
   (characters × relationship types: Acquaintance/Friend/Crush/Family/Rival/Hatred…), not a roster.
 
-## T23 · TOC — all headings + legible, attractive formatting — SMALL
+## T23 · TOC — all headings + legible, attractive formatting — ✅ DONE (verified 2026-07-12)
+`buildDocSidebar` collects the full **h1–h4** outline (not just h1/h2); `.doctoc` base is **17px** (tl1
+19px, others inherit 17 — nothing below the floor) with per-level indent + the active accent. Verified on
+the live wiki: all 7 headings collected across tl2/tl3, none < 17px.
+
+### original spec
 The sidebar CONTENTS rail drops sub-headings and is too small. (1) `buildDocSidebar`: collect h1–h3
 (add `tl3`), judge whether h4 is worth including from the real docs. (2) Raise sizes: no TOC entry
 below the 17px floor (tl2 is 15px today); scale slightly by level (tl1 largest) but never < 17px.
