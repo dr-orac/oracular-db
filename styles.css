@@ -1091,6 +1091,11 @@
      inline styles; we re-render them as phosphor components that read better than the flat source. */
   .wikibody{ display:block; }
   .wikibody > *:first-child{ margin-top:0; }
+  /* T70 — the wiki reads a little WIDER than a lore doc: its tables, card grids and link-dense prose use
+     the room (a bare doc keeps the tighter 74ch measure). loadWiki tags the reader data-docid="wiki:…". */
+  .docreader[data-docid^="wiki:"]{ grid-template-columns:1fr min(84ch, 100%) 1fr; }
+  /* link-dense wiki prose reads better with a clearer underline than a lore doc's faint one */
+  .docreader[data-docid^="wiki:"] .wikibody a{ text-decoration-color:var(--fg-dim); }
   /* the wiki packs sections tightly — open up the vertical rhythm for legibility (more air before each
      heading + between blocks) without touching the Google-Doc reader's own spacing. */
   .wikibody h2{ margin-top:2.9em; }
