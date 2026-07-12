@@ -129,6 +129,27 @@
       rgba(0,0,0,0) 68%, rgba(0,0,0,.22) 100%);
     box-shadow:inset 0 0 120px 8px rgba(0,0,0,.28);
   }
+  /* faction-switch CRT re-tune (triggered by crtRetune(): body.crt-retune for ~0.48s). A bright scanline
+     sweeps down while the whole app briefly desaturates + dims (signal loss) then the new phosphor colour
+     blooms back — masking the theme-colour swap. Reduced-motion → nothing plays. */
+  #crtwipe{ position:fixed; inset:0; z-index:9050; pointer-events:none; overflow:hidden; opacity:0; }
+  body.crt-retune #crtwipe{ opacity:1; }
+  #crtwipe::before{ content:""; position:absolute; left:0; right:0; top:-18px; height:18px;
+    background:linear-gradient(rgba(var(--fg-rgb),0), rgba(var(--fg-rgb),.5) 55%, rgba(var(--fg-rgb),0));
+    box-shadow:0 0 30px 6px rgba(var(--fg-rgb),.35); }
+  body.crt-retune #crtwipe::before{ animation:crtsweep .44s ease-out; }
+  @keyframes crtsweep{ from{ top:-18px; } to{ top:100%; } }
+  body.crt-retune .app{ animation:crtretune .44s ease-out; }
+  @keyframes crtretune{
+    0%{ filter:none; }
+    10%{ filter:brightness(1.22) saturate(.2) contrast(1.04); }   /* white-ish signal blip */
+    22%{ filter:brightness(.72) saturate(.45); }                   /* brief signal-loss dim (not a black-out) */
+    34%{ filter:brightness(1.1) saturate(.92); }                   /* new colour blooms back */
+    100%{ filter:none; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    body.crt-retune #crtwipe, body.crt-retune #crtwipe::before, body.crt-retune .app{ animation:none; opacity:0; filter:none; }
+  }
   /* optional behind-glass sheen — off by default, kept faint to protect legibility */
   .glass{
     position:fixed; inset:0; z-index:6500; pointer-events:none;

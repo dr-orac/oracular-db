@@ -104,8 +104,21 @@ function factionDocs(){ return activeFaction().docs || []; }         // this fac
 function factionLinked(f){ return /^[A-Za-z0-9_-]{20,}$/.test((f && f.data && f.data.sheetId) || ""); }
 /* switch faction: apply its skin (colour + bg + brand), persist it, and reload the
    roster only if this faction's data sheet differs from the current one. */
+/* CRT "re-tune" transition on a faction switch: a brief signal-loss flicker (desaturate + dim), a bright
+   scanline sweeps down, and the new faction's phosphor colour blooms back in — masking the colour swap.
+   Reduced-motion → no-op (the swap is instant). */
+let _retuneTimer=null;
+function crtRetune(){
+  if(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const b=document.body;
+  b.classList.remove("crt-retune"); void b.offsetWidth;   // restart the animation if one is mid-play
+  b.classList.add("crt-retune");
+  clearTimeout(_retuneTimer);
+  _retuneTimer=setTimeout(()=>b.classList.remove("crt-retune"), 480);
+}
 function applyFaction(id){
   if(!FACTIONS[id]) return;
+  const changed = currentFaction !== id;
   currentFaction = id;
   try{ localStorage.setItem("mdb-faction", id); }catch(e){}
   const f = FACTIONS[id], ap = factionAppearance(id);   // this faction's look: its overrides, else its signature
@@ -119,6 +132,7 @@ function applyFaction(id){
   else if(currentSection==="roster") showRosterFor(f);
   setAppHeading();   // the H1 carries the faction name, so a switch refreshes it
   writeRoute();   // the URL carries the faction, so a switch updates it (e.g. #brotherhood/roster)
+  if(changed) crtRetune();   // play the CRT re-tune only on an actual change of faction
 }
 /* show the roster for a faction: its live data if the sheet is linked, else a themed
    "coming soon" placeholder (so an unlinked faction never renders blank or another
