@@ -48,6 +48,14 @@ degrading cleanly, table/scroll behaviour, touch spacing. Produce a short findin
 methodically (one commit per coherent fix). Note: roster/cards/relations need live data to fully judge —
 do those on the live site; chrome/home/wiki are sandbox-verifiable.
 
+**Sandbox audit DONE 2026-07-12 — chrome/home/wiki CLEAN.** Swept the masthead + home + wiki at 1280 /
+1024 / 768 / 480 / 375 / 320: no document h-overflow, no clipping, clean wraps. Specifics: cog collapses
+to icon-only below 1080 (label pill above); row-2 wraps cleanly and the T61 connectors correctly hide
+below 860 (never cross a wrapped row); home keeps its equal frame + the faction grid reflows 3→2→1 cols;
+wiki hero wraps + wide tables scroll in-container. No fixes needed. **STILL OWED (live site):** roster
+(list+dossier), cards, relations at the width ladder + the border-frame chassis mode — need real roster
+data, flaky in the sandbox.
+
 ### T64 · Contributor comprehensibility + navigability pass — CORE DONE 2026-07-12 (docs)
 Done: README got a **"New here? Read in this order"** front-door (README → newest HANDOFF → MAINTENANCE →
 CONTRIBUTING → TASKS) + the hard rules up top; the `app.js` **MODULE MAP** banner + README "where things
