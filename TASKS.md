@@ -3,6 +3,21 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## 🆕 Queued 2026-07-12 (batch 2)
+
+### T65 · Home redesign — Wiki on top, two-column faction↔sections split — ✅ DONE 2026-07-12
+New hierarchy (user): **Wiki at the very top** (umbrella, spans all factions), then a **two-column** split
+below — **left = faction picker** ("Choose a Faction"), **right = the SELECTED faction's sections**
+(Roster · Relations · its docs; NOT Wiki, which is now up top), updating live as you pick a faction. Faction
+entries **stretch full-width** and divide across rows evenly. Genuine improvement (explicit faction→section
+master-detail, uses horizontal space, helps the no-scroll fit), not a shuffle. Lower entropy: retire the old
+`.home-tile`/`.home-hero` CSS + markup. Responsive: columns stack on mobile (Wiki → factions → sections).
+
+### T66 · Exterior glow should fade to pure black / transparent at the edge — ROADMAPPED [separate]
+The outer bezel glow still doesn't die cleanly at the screen edge — it should fade to **pure black (or
+transparent, for robustness)** as it reaches the very edge. Rework the `--bezel-*` / exterior `::after`
+glow layers so the outermost stop is black/transparent, no lingering halo at the frame boundary.
+
 ## 🆕 Queued 2026-07-12 (user batch — do in this order)
 
 ### T60 · Settings cog → steampunk gear + a "Settings" label when there's room — SMALL [next]

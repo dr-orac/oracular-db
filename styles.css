@@ -662,135 +662,116 @@
   body[data-section="home"]:not([data-frame="border"]) .titlebar-right{
     position:absolute; top:var(--edge); right:var(--edge); margin-left:0; z-index:30; }
   body[data-section="home"]:not([data-frame="border"]) main{ padding:var(--edge); }
-  /* landing hero — the umbrella brand + a one-line "what to do". Height scales with the viewport
-     (clamp on vh) so the whole landing can fit without scrolling on shorter screens. */
-  .home-hero{ flex:0 0 auto; text-align:center; padding:clamp(2px,1.2vh,12px) 24px 2px; }
-  .home-hero-brand{ display:block; font-family:var(--font-head);   /* the classic Fallout face */
-    font-size:clamp(26px,4.4vw,46px); letter-spacing:2px; line-height:1;
-    color:var(--fg-bright); text-shadow:var(--glow-strong); }
-  .home-hero-tag{ display:block; margin-top:clamp(2px,.6vh,6px); font-family:var(--font-body); font-size:13px;
-    letter-spacing:2px; text-transform:uppercase; color:var(--fg-dim); }
-  /* the FACTION-PICKER box — a section-card-sized tile with a heading + a grid of factions inside.
-     Doubled class so it wins over the base .home-tile rules (which are defined AFTER this block). */
-  .home-tile.home-tile--factions{ flex:0 0 auto; flex-direction:column; align-items:stretch; gap:clamp(6px,1vh,12px);
-    cursor:default; padding:clamp(10px,1.4vh,18px) 22px; overflow:visible; }   /* NEVER shrinks — the grid always shows every faction; space is reclaimed from the section tiles + compact cells instead */
-  .home-tile.home-tile--factions::before{ content:none; }   /* no whole-box hover wash — the cells are the targets */
-  .home-tile.home-tile--factions:hover, .home-tile.home-tile--factions:focus-visible{ transform:none;
-    border-color:var(--fg-faint); background:var(--bg-panel);
-    box-shadow:0 14px 30px -22px rgba(0,0,0,.8); }
-  .home-fac-head{ flex:0 0 auto; display:flex; flex-direction:column; gap:3px; }
-  .home-fac-title{ font-family:var(--font-head); font-size:clamp(18px,2.4vw,26px); letter-spacing:2px;
-    line-height:1; text-transform:uppercase; color:var(--fg-bright); text-shadow:var(--glow-strong); }
-  .home-fac-sub{ font-family:var(--font-body); font-size:clamp(12px,1.3vw,14px); letter-spacing:.3px;
+  /* Laid out by HIERARCHY: a TOP row (brand + the umbrella Wiki), then a two-column LOWER split —
+     faction picker (left) · the picked faction's own sections (right). See renderHome(). */
+  /* ── TOP: brand wordmark + a wide, prominent Wiki entry (spans every faction → sits above them) ── */
+  .home-top{ flex:0 0 auto; display:flex; align-items:stretch; gap:clamp(10px,1.4vw,16px);
+    padding-bottom:clamp(8px,1.4vh,16px); }
+  .home-brand{ flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; gap:2px;
+    padding-right:clamp(8px,1.4vw,16px); }
+  .home-brand-name{ font-family:var(--font-head); font-size:clamp(22px,3vw,40px); letter-spacing:1.5px;
+    line-height:1; color:var(--fg-bright); text-shadow:var(--glow-strong); white-space:nowrap; }
+  .home-brand-tag{ font-family:var(--font-body); font-size:12px; letter-spacing:2px; text-transform:uppercase;
     color:var(--fg-dim); }
-  .home-fac-grid{ flex:1 1 auto; display:grid; gap:6px; align-content:center;
-    grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); }
-  .home-fac{ display:flex; align-items:center; gap:10px; cursor:pointer; padding:0 13px; min-width:0;
-    min-height:clamp(40px,5.2vh,52px);   /* uniform cell height so a 1-line and a 2-line name read as the same tile */
-    text-align:left; background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg);
-    font-family:var(--font-head);
+  .home-wiki{ flex:1 1 auto; display:flex; align-items:center; gap:clamp(12px,1.6vw,22px); text-align:left;
+    padding:clamp(9px,1.5vh,17px) clamp(16px,1.8vw,26px); cursor:pointer; font-family:var(--font-head);
+    background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg);
+    transition:border-color .18s, background .18s, box-shadow .18s, transform .16s; }
+  .home-wiki:hover, .home-wiki:focus-visible{ outline:none; border-color:var(--fg); background:var(--bg-panel-2);
+    transform:translateY(-2px); box-shadow:0 0 26px -10px rgba(var(--fg-rgb),.5), inset 0 0 0 1px rgba(var(--fg-rgb),.2); }
+  .home-wiki-ico{ flex:0 0 auto; width:clamp(38px,4vw,52px); height:clamp(38px,4vw,52px); display:grid; place-items:center;
+    border:1px solid var(--fg-faint); background:rgba(var(--fg-rgb),.05); transition:border-color .18s, color .18s; }
+  .home-wiki-ico svg{ width:62%; height:62%; fill:currentColor; }
+  .home-wiki:hover .home-wiki-ico{ border-color:var(--fg); color:var(--fg-bright); }
+  .home-wiki-body{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .home-wiki-title{ font-size:clamp(19px,2.4vw,30px); letter-spacing:2px; text-transform:uppercase; line-height:1;
+    color:var(--fg-bright); text-shadow:var(--glow); }
+  .home-wiki-desc{ font-family:var(--font-body); font-size:clamp(12px,1.2vw,15px); color:var(--fg-dim);
+    letter-spacing:.3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .home-wiki-cta{ flex:0 0 auto; display:inline-flex; align-items:center; gap:7px; font-size:13px;
+    letter-spacing:2px; text-transform:uppercase; color:var(--fg-bright); opacity:.7; }
+  .home-wiki-cta svg{ width:16px; height:16px; fill:currentColor; transition:transform .2s; }
+  .home-wiki:hover .home-wiki-cta{ opacity:1; }  .home-wiki:hover .home-wiki-cta svg{ transform:translateX(4px); }
+
+  /* ── LOWER: two columns — faction picker (left) · the picked faction's sections (right) ── */
+  .home-cols{ flex:1 1 auto; min-height:0; display:grid; gap:clamp(10px,1.4vw,16px);
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+  .home-cols--solo{ grid-template-columns:1fr; }   /* single-faction build → just the sections */
+  .home-col{ min-height:0; display:flex; flex-direction:column; }
+  .home-col-head{ flex:0 0 auto; display:flex; align-items:center; gap:9px; margin:0 0 clamp(6px,1vh,12px);
+    font-family:var(--font-head); font-size:clamp(15px,1.8vw,21px); letter-spacing:2px; text-transform:uppercase;
+    color:var(--fg-bright); text-shadow:var(--glow); }
+  .home-col-ico{ flex:0 0 auto; width:1.25em; height:1.25em; display:inline-flex; }
+  .home-col-ico svg{ width:100%; height:100%; fill:currentColor; }
+
+  /* faction grid — cells STRETCH to fill their row + row height; an odd last cell spans full width */
+  .home-fac-grid{ flex:1 1 auto; min-height:0; display:grid; gap:6px;
+    grid-template-columns:repeat(2, minmax(0,1fr)); grid-auto-rows:1fr; }
+  .home-fac:last-child:nth-child(odd){ grid-column:1 / -1; }
+  .home-fac{ display:flex; align-items:center; gap:10px; cursor:pointer; padding:4px 13px; min-width:0;
+    min-height:clamp(36px,4.8vh,52px); text-align:left; background:var(--bg-panel); border:1px solid var(--fg-faint);
+    color:var(--fg); font-family:var(--font-head);
     transition:color .14s, border-color .14s, background .14s, box-shadow .14s, transform .12s; }
-  .home-fac-ico{ flex:0 0 auto; width:28px; height:28px; display:inline-flex; }
+  .home-fac-ico{ flex:0 0 auto; width:26px; height:26px; display:inline-flex; }
   .home-fac-ico svg{ width:100%; height:100%; fill:currentColor; display:block; }
-  .home-fac-name{ font-size:13px; letter-spacing:.6px; line-height:1.2; text-transform:uppercase; min-width:0; }
+  .home-fac-name{ font-size:13px; letter-spacing:.6px; line-height:1.15; text-transform:uppercase; min-width:0;
+    overflow-wrap:break-word; }
   .home-fac:hover{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
     box-shadow:0 0 14px -5px rgba(var(--fg-rgb),.5); transform:translateY(-1px); }
   .home-fac.active{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
-    box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.4), 0 0 16px -6px rgba(var(--fg-rgb),.6); }
-  .home-tiles{ flex:1 1 auto; display:flex; flex-direction:column; gap:clamp(6px,1vh,12px); min-height:0;
-    padding:clamp(6px,1vh,12px); box-sizing:border-box; }
-  /* each section is a full-height nav-CARD: left accent bar · framed icon · title+blurb · Enter CTA,
-     with a faded index watermark. Reads as a designed landing row, not a plain button. */
-  .home-tile{
-    flex:1 1 0; min-height:clamp(58px, 8vh, 118px); position:relative; overflow:hidden; isolation:isolate;
-    display:flex; align-items:center; gap:clamp(16px,2vw,30px); text-align:left;
-    padding:clamp(10px,1.4vh,20px) clamp(24px,3vw,44px) clamp(10px,1.4vh,20px) clamp(18px,2vw,28px);
-    background:var(--bg-panel); color:var(--fg);
+    box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.45), 0 0 16px -6px rgba(var(--fg-rgb),.6); }
+
+  /* section cards — richer than a faction cell; fill the right column's height evenly */
+  .home-sec-list{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; justify-content:center;
+    gap:clamp(6px,1vh,12px); }   /* centred so a faction with few sections doesn't leave a lopsided gap */
+  .home-sec{ flex:1 1 0; min-height:clamp(50px,7vh,96px); max-height:clamp(104px,17vh,150px); position:relative; overflow:hidden;
+    display:flex; align-items:center; gap:clamp(12px,1.4vw,20px); text-align:left;
+    padding:clamp(8px,1.2vh,16px) clamp(14px,1.6vw,22px); background:var(--bg-panel); color:var(--fg);
     border:1px solid var(--fg-faint); cursor:pointer; font-family:var(--font-head);
-    transition:border-color .2s, background .2s, box-shadow .2s, transform .18s cubic-bezier(.2,.8,.3,1);
-    animation:hometile .42s cubic-bezier(.2,.8,.3,1) backwards; animation-delay:calc(var(--i,0) * 70ms);
-  }
-  /* theme wash that sweeps in from the left on hover */
-  .home-tile::before{ content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:0;
-    background:linear-gradient(100deg, rgba(var(--fg-rgb),.14), transparent 55%);
-    transition:opacity .25s; }
-  .home-tile > *{ position:relative; z-index:1; }
-  .home-tile:hover, .home-tile:focus-visible{
-    outline:none; border-color:var(--fg); background:var(--bg-panel-2); transform:translateY(-3px);
-    box-shadow:0 16px 36px -20px rgba(0,0,0,.9), 0 0 30px -10px rgba(var(--fg-rgb),.5),
-               inset 0 0 0 1px rgba(var(--fg-rgb),.22);
-  }
-  .home-tile:hover::before, .home-tile:focus-visible::before{ opacity:1; }
-  .home-tile:active{ transform:translateY(-1px); }
-  /* left accent bar — lights up + grows on hover */
-  .home-tile-bar{ flex:0 0 auto; align-self:stretch; width:4px; margin:12px 0; border-radius:2px;
-    background:var(--fg-faint); transition:background .2s, box-shadow .2s, width .2s; }
-  .home-tile:hover .home-tile-bar, .home-tile:focus-visible .home-tile-bar{
-    width:6px; background:var(--fg); box-shadow:0 0 14px -1px rgba(var(--fg-rgb),.85); }
-  /* icon in a framed square */
-  .home-tile-ico{ flex:0 0 auto; width:clamp(44px,6.5vh,68px); height:clamp(44px,6.5vh,68px); display:grid; place-items:center;
+    transition:border-color .18s, background .18s, box-shadow .18s, transform .16s;
+    animation:hometile .4s cubic-bezier(.2,.8,.3,1) backwards; animation-delay:calc(var(--i,0) * 55ms); }
+  .home-sec:hover, .home-sec:focus-visible{ outline:none; border-color:var(--fg); background:var(--bg-panel-2);
+    transform:translateY(-2px); box-shadow:0 0 26px -10px rgba(var(--fg-rgb),.5), inset 0 0 0 1px rgba(var(--fg-rgb),.2); }
+  .home-sec-ico{ flex:0 0 auto; width:clamp(38px,5vh,54px); height:clamp(38px,5vh,54px); display:grid; place-items:center;
     border:1px solid var(--fg-faint); background:rgba(var(--fg-rgb),.05);
-    transition:border-color .2s, background .2s, transform .2s, color .2s; }
-  .home-tile-ico svg{ width:62%; height:62%; fill:currentColor;
-    filter:drop-shadow(0 0 8px rgba(var(--fg-rgb),.4)); }
-  .home-tile:hover .home-tile-ico, .home-tile:focus-visible .home-tile-ico{
-    border-color:var(--fg); background:rgba(var(--fg-rgb),.12); transform:scale(1.06); color:var(--fg-bright); }
-  /* body */
-  .home-tile-body{ display:flex; flex-direction:column; gap:clamp(3px,.6vh,8px); min-width:0; flex:1 1 auto; }
-  .home-tile-title{ font-size:clamp(19px, 2.7vw, 34px); letter-spacing:2px; text-transform:uppercase;
-    line-height:1; text-shadow:0 0 14px rgba(var(--fg-rgb),.4); }
-  .home-tile:hover .home-tile-title, .home-tile:focus-visible .home-tile-title{ color:var(--fg-bright); }
-  /* clamp the blurb to at most 2 lines so a shrunk tile never overflows/clips awkwardly */
-  .home-tile-desc{ font-family:var(--font-body); font-size:clamp(13px, 1.35vw, 16px);
-    letter-spacing:.3px; color:var(--fg-dim); max-width:62ch; line-height:1.4;
-    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
-  .home-tile:hover .home-tile-desc, .home-tile:focus-visible .home-tile-desc{ color:var(--fg); }
-  /* big faded index watermark — anchored to the right edge so it fills the card's right third as a
-     deliberate oversized numeral (not a number floating mid-card). Brightens + drifts left on hover. */
-  .home-tile-num{ position:absolute; z-index:0; right:clamp(18px,3.5vw,40px); top:50%;
-    transform:translateY(-50%);
-    font-family:"Workbench","Gothic 821",sans-serif; font-size:clamp(60px, 8.5vw, 124px); line-height:1;
-    color:rgba(var(--fg-rgb),.085); pointer-events:none; user-select:none;
-    transition:color .25s, right .25s, text-shadow .25s; }
-  .home-tile:hover .home-tile-num, .home-tile:focus-visible .home-tile-num{
-    color:rgba(var(--fg-rgb),.17); right:clamp(24px,4.5vw,52px);
-    text-shadow:0 0 30px rgba(var(--fg-rgb),.25); }
-  /* CTA — sits under the blurb (left-aligned so it never fights the right-edge numeral); collapses
-     to zero height at rest and grows in on hover, keeping the resting card clean. */
-  .home-tile-cta{ align-self:flex-start; display:inline-flex; align-items:center; gap:8px;
-    font-family:var(--font-head); font-size:14px; letter-spacing:2px; text-transform:uppercase;
-    color:var(--fg-bright); overflow:hidden; max-height:0; opacity:0; transform:translateY(4px);
-    transition:opacity .2s, transform .2s, max-height .2s, margin-top .2s; }
-  .home-tile-cta svg{ width:18px; height:18px; fill:currentColor; transition:transform .2s; }
-  .home-tile:hover .home-tile-cta, .home-tile:focus-visible .home-tile-cta{
-    opacity:1; transform:none; max-height:2em; margin-top:2px; }
-  .home-tile:hover .home-tile-cta svg, .home-tile:focus-visible .home-tile-cta svg{ transform:translateX(5px); }
-  /* SHORT viewports: trim to one description line + a smaller hero title so the whole landing packs
-     into the screen without scrolling (the tiles shrink; a one-line blurb keeps them clean, not clipped). */
-  @media (max-height:840px){
-    .home-tile-desc{ -webkit-line-clamp:1; }
-    .home-hero-brand{ font-size:clamp(24px,3.4vw,36px); }
-    .home-hero-tag{ font-size:12px; }
-    .home-tile-title{ font-size:clamp(18px,2.3vw,28px); }
-    .home-tile-ico{ width:clamp(40px,5.4vh,56px); height:clamp(40px,5.4vh,56px); }
+    transition:border-color .18s, background .18s, color .18s, transform .18s; }
+  .home-sec-ico svg{ width:60%; height:60%; fill:currentColor; filter:drop-shadow(0 0 8px rgba(var(--fg-rgb),.35)); }
+  .home-sec:hover .home-sec-ico{ border-color:var(--fg); background:rgba(var(--fg-rgb),.12); color:var(--fg-bright); transform:scale(1.05); }
+  .home-sec-body{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:clamp(2px,.5vh,6px); }
+  .home-sec-title{ font-size:clamp(18px,2.2vw,28px); letter-spacing:1.5px; text-transform:uppercase; line-height:1;
+    text-shadow:0 0 14px rgba(var(--fg-rgb),.4); }
+  .home-sec:hover .home-sec-title{ color:var(--fg-bright); }
+  .home-sec-desc{ font-family:var(--font-body); font-size:clamp(12px,1.2vw,15px); letter-spacing:.3px;
+    color:var(--fg-dim); line-height:1.4; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
+  .home-sec:hover .home-sec-desc{ color:var(--fg); }
+  .home-sec-cta{ flex:0 0 auto; align-self:center; display:inline-flex; color:var(--fg-bright); opacity:0;
+    transform:translateX(-4px); transition:opacity .18s, transform .18s; }
+  .home-sec-cta svg{ width:20px; height:20px; fill:currentColor; }
+  .home-sec:hover .home-sec-cta, .home-sec:focus-visible .home-sec-cta{ opacity:.9; transform:none; }
+
+  @keyframes hometile{ from{ opacity:0; transform:translateY(12px); } }
+
+  /* SHORT viewports: one-line blurbs + slightly smaller headings so the whole landing fits, no scroll */
+  @media (max-height:820px){
+    .home-sec-desc{ -webkit-line-clamp:1; }
+    .home-brand-name{ font-size:clamp(20px,2.6vw,32px); }
+    .home-sec-title{ font-size:clamp(17px,2vw,24px); }
   }
-  @keyframes hometile{ from{ opacity:0; transform:translateY(14px); } }
-  @media (max-width:640px){
-    /* mobile: keep the landing as close to no-scroll as 13 factions + 5 sections allow — a 2-col
-       faction grid (not 1), compact tiles, one-line blurbs. overflow:auto still catches the smallest
-       phones gracefully rather than clipping. */
-    .home-fac-grid{ grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px; }
-    .home-fac{ min-height:clamp(38px,5.4vh,48px); padding:0 11px; gap:8px; }
-    .home-fac-name{ font-size:11px; overflow-wrap:break-word; }
-    .home-tile{ gap:14px; padding:9px 16px; min-height:clamp(58px,8.2vh,92px); }
-    .home-tile-ico{ width:clamp(40px,5.6vh,50px); height:clamp(40px,5.6vh,50px); }
-    .home-tile-desc{ -webkit-line-clamp:1; }
-    .home-tile-title{ font-size:clamp(19px,5.4vw,26px); }
-    .home-tile-num, .home-tile-cta{ display:none; }
+  /* NARROW: stack the top (brand over wiki) and the two columns (factions over sections) */
+  @media (max-width:720px){
+    .home-top{ flex-direction:column; }
+    .home-brand{ padding-right:0; align-items:center; text-align:center; }
+    .home-cols{ grid-template-columns:1fr; }
+    .home-fac-grid{ grid-auto-rows:auto; }
+    .home-sec{ flex:0 0 auto; }
+  }
+  @media (max-width:420px){
+    .home-fac-name{ font-size:11px; }
+    .home-sec-desc{ -webkit-line-clamp:1; }
   }
   @media (prefers-reduced-motion:reduce){
-    .home-tile{ animation:none; transition:border-color .15s, background .15s; }
-    .home-tile:hover, .home-tile:focus-visible{ transform:none; }
+    .home-sec{ animation:none; }
+    .home-wiki:hover, .home-sec:hover, .home-fac:hover{ transform:none; }
   }
 
   /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */

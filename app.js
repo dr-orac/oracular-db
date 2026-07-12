@@ -2123,50 +2123,64 @@ const NAV_ICONS = {
 const HOME_INFO = {
   roster:   "Every member — dossiers, appearance, and story. Search, filter, browse.",
   relations:"Who knows whom — allies, rivals, kin. Follow the web from any character.",
-  lore:     "The world and beliefs of the tribe — customs, spirits, and how things work.",
-  roleplay: "How to play well — voice, accent, conflict, and etiquette at the fire.",
+  lore:     "The world, beliefs, and history — customs and how things work.",
+  roleplay: "How to play the faction well — voice, conflict, and etiquette.",
   wiki:     "The Misfits wiki — factions, gameplay, crafting, survival and more.",
   _default: "An in-world document, rendered on the terminal.",
 };
 /* the home landing page: a full-height tile per section (icon + title + explainer). */
 const HOME_ARROW = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 9h9.2l-3.7-3.7L11 4l6 6-6 6-1.5-1.3L13.2 11H4z"/></svg>`;
+/* The landing, laid out by HIERARCHY (not a flat list):
+   · TOP — the umbrella brand + the WIKI (spans all factions, so it sits above the faction stuff).
+   · LOWER-LEFT — the faction picker.
+   · LOWER-RIGHT — the SELECTED faction's own sections (Roster · Relations · its docs), updating live as
+     you pick a faction on the left. A two-column master–detail: choose a faction, see what it offers. */
 function renderHome(){
   const el=$("#home"); if(!el) return;
-  const items=[{id:"roster",label:"Roster"},{id:"relations",label:"Relations"}].concat(factionDocs().map(d=>({id:d.id,label:d.label})))
-    .concat([{id:"wiki",label:"Wiki"}]);   // universal umbrella wiki, alongside the faction sections
-  // FIRST box (same footprint as a section card): a titled faction picker, factions subdivided into
-  // a grid inside it — "pick a faction to jump to its section". Omitted when there's only one faction.
-  const facBox = FACTION_ORDER.length < 2 ? "" :
-    `<div class="home-tile home-tile--factions" style="--i:0">`+
-      `<div class="home-fac-head">`+
-        `<span class="home-fac-title">Choose a Faction</span>`+
-        `<span class="home-fac-sub">Pick a faction below to open its roster, lore and roleplay guides.</span>`+
-      `</div>`+
+  const f = activeFaction();
+  const single = FACTION_ORDER.length < 2;
+
+  // TOP: brand wordmark + a wide, prominent WIKI entry
+  const top = `<div class="home-top">`+
+    `<div class="home-brand"><span class="home-brand-name">Misfits Database</span>`+
+      `<span class="home-brand-tag">Multi-faction archive</span></div>`+
+    `<button class="home-wiki" type="button" data-section="wiki" aria-label="Open the wiki">`+
+      `<span class="home-wiki-ico">${NAV_ICONS.wiki}</span>`+
+      `<span class="home-wiki-body"><span class="home-wiki-title">Wiki</span>`+
+        `<span class="home-wiki-desc">${esc(HOME_INFO.wiki)}</span></span>`+
+      `<span class="home-wiki-cta" aria-hidden="true">Open ${HOME_ARROW}</span>`+
+    `</button>`+
+  `</div>`;
+
+  // LOWER-LEFT: the faction picker (omitted when there's only one faction)
+  const left = single ? "" :
+    `<section class="home-col home-col--factions" aria-label="Choose a faction">`+
+      `<h2 class="home-col-head">Choose a Faction</h2>`+
       `<div class="home-fac-grid" role="tablist" aria-label="Choose faction">`+
         FACTION_ORDER.map(id =>
           `<button class="home-fac${id===currentFaction?' active':''}" type="button" role="tab" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">`+
             `<span class="home-fac-ico" aria-hidden="true">${FACTION_ICONS[id]||""}</span>`+
-            `<span class="home-fac-name">${esc(FACTIONS[id].name.replace(/^The\s+/i,""))}</span>`+  // compact: drop the "The" so tiles line up
+            `<span class="home-fac-name">${esc(FACTIONS[id].name.replace(/^The\s+/i,""))}</span>`+
           `</button>`).join("")+
       `</div>`+
-    `</div>`;
-  const facN = facBox ? 1 : 0;   // section-card numbering + stagger start after the faction box
-  const sectionTiles = items.map((it,i)=>
-    `<button class="home-tile" data-section="${escAttr(it.id)}" style="--i:${i+facN}">`+
-      `<span class="home-tile-bar" aria-hidden="true"></span>`+
-      `<span class="home-tile-num" aria-hidden="true">${String(i+1).padStart(2,"0")}</span>`+
-      `<span class="home-tile-ico">${NAV_ICONS[it.id]||NAV_ICONS._default}</span>`+
-      `<span class="home-tile-body">`+
-        `<span class="home-tile-title">${esc(it.label)}</span>`+
-        `<span class="home-tile-desc">${esc(HOME_INFO[it.id]||HOME_INFO._default)}</span>`+
-        `<span class="home-tile-cta" aria-hidden="true">Enter ${HOME_ARROW}</span>`+
-      `</span>`+
+    `</section>`;
+
+  // LOWER-RIGHT: the selected faction's sections (Roster · Relations · its docs — NOT Wiki; that's on top)
+  const sections = [{id:"roster",label:"Roster"},{id:"relations",label:"Relations"}]
+    .concat(factionDocs().map(d=>({id:d.id,label:d.label})));
+  const secCards = sections.map((s,i)=>
+    `<button class="home-sec" type="button" data-section="${escAttr(s.id)}" style="--i:${i}">`+
+      `<span class="home-sec-ico">${NAV_ICONS[s.id]||NAV_ICONS._default}</span>`+
+      `<span class="home-sec-body"><span class="home-sec-title">${esc(s.label)}</span>`+
+        `<span class="home-sec-desc">${esc(HOME_INFO[s.id]||HOME_INFO._default)}</span></span>`+
+      `<span class="home-sec-cta" aria-hidden="true">${HOME_ARROW}</span>`+
     `</button>`).join("");
-  // landing hero — the umbrella brand (the per-faction masthead selector is hidden on home, so this
-  // carries the identity). No section tabs here either: the cards below ARE the navigation.
-  const hero = `<div class="home-hero"><span class="home-hero-brand">Misfits Database</span>`+
-    `<span class="home-hero-tag">Multi-faction archive — choose a faction, then a section</span></div>`;
-  el.innerHTML = hero + `<div class="home-tiles">` + facBox + sectionTiles + `</div>`;
+  const right = `<section class="home-col home-col--sections" aria-label="${escAttr(f.name)} sections">`+
+    `<h2 class="home-col-head"><span class="home-col-ico" aria-hidden="true">${FACTION_ICONS[currentFaction]||""}</span>${esc(f.name)}</h2>`+
+    `<div class="home-sec-list">${secCards}</div>`+
+  `</section>`;
+
+  el.innerHTML = top + `<div class="home-cols${single?' home-cols--solo':''}">` + left + right + `</div>`;
 }
 /* ROW 2 (faction-scoped): this faction's own sections — Roster + its docs. Home + Wiki are umbrella
    controls that live in ROW 1 (the primary nav), not here. */
@@ -2846,10 +2860,12 @@ $("#topnav").addEventListener("click", e=>{
 $("#primary-nav").addEventListener("click", e=>{
   const b=e.target.closest(".navbox"); if(b) setSection(b.dataset.section);
 });
-/* home landing: faction boxes switch faction; section tiles navigate into their section */
+/* home landing: a faction cell (left) SELECTS the faction — re-skins + re-renders home so the right
+   column shows that faction's sections, without leaving home. A section card (right) or the Wiki (top)
+   navigates into that section. */
 $("#home").addEventListener("click", e=>{
   const fac=e.target.closest(".home-fac"); if(fac){ applyFaction(fac.dataset.faction); return; }
-  const t=e.target.closest(".home-tile"); if(t) setSection(t.dataset.section);
+  const sec=e.target.closest(".home-sec, .home-wiki"); if(sec) setSection(sec.dataset.section);
 });
 /* prefetch a doc the moment its tab is hovered or focused (just-in-time cache warming) */
 ["pointerover","focusin"].forEach(ev => $("#topnav").addEventListener(ev, e=>{
