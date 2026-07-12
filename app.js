@@ -2605,22 +2605,21 @@ function wikiClean(el){ wikiLeafDivsToP(el); return docClean(el); }
 function normaliseWikiImages(root){
   const clean=(src,cap)=>{ const i=document.createElement("img"); i.setAttribute("src",src); if(cap) i.setAttribute("alt",cap); return i; };
   const capOf=el=>el?el.textContent.replace(/\s+/g," ").trim():"";
-  // galleries → a plain run of images (drop the grid chrome)
-  root.querySelectorAll("ul.gallery").forEach(gal=>{
-    const box=document.createElement("div");
-    gal.querySelectorAll("img").forEach(img=>{
-      const abs=wikiAbs(img.getAttribute("src")); if(!abs) return;
-      box.appendChild(clean(abs, capOf(img.closest(".gallerybox") && img.closest(".gallerybox").querySelector(".gallerytext"))));
-    });
-    gal.replaceWith(box);
-  });
-  // thumbs / figures / inline images → one clean <img>
+  // ONE pass: each image, whatever its wrapper (gallery box, thumb figure, or bare), becomes one clean
+  // <img> carrying an absolute src + its caption. Replace the outermost relevant wrapper so the File:
+  // link + magnify chrome go with it.
   root.querySelectorAll("img").forEach(img=>{
     const abs=wikiAbs(img.getAttribute("src"));
     if(!abs){ img.remove(); return; }
+    const gbox=img.closest(".gallerybox");
     const fig=img.closest("figure, .thumb, .thumbinner");
-    const cap=capOf(fig && fig.querySelector("figcaption, .thumbcaption")) || (img.getAttribute("alt")||"").trim();
-    (fig || img).replaceWith(clean(abs, cap));
+    const cap = gbox ? capOf(gbox.querySelector(".gallerytext"))
+                     : capOf(fig && fig.querySelector("figcaption, .thumbcaption")) || (img.getAttribute("alt")||"").trim();
+    (gbox || fig || img).replaceWith(clean(abs, cap));
+  });
+  // the gallery <ul>s are now just grid chrome around the clean images → unwrap them
+  root.querySelectorAll("ul.gallery").forEach(gal=>{
+    const box=document.createElement("div"); while(gal.firstChild) box.appendChild(gal.firstChild); gal.replaceWith(box);
   });
 }
 /* clear the loading state on plain-src (wiki) figures once each image settles — the doc path only
