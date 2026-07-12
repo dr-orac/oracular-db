@@ -290,7 +290,12 @@ flagged **NEEDS-INPUT / BLOCKED**; do the unblocked ones first, in roughly the o
 Softened `.vignette` (was radial .55 + inset 160/30 .7 → now radial .22 @68% + inset
 120/8 .28) so scanline mode doesn't crowd the screen edges. Committed.
 
-## T10 · Selective text selection — SMALL
+## T10 · Selective text selection — ✅ DONE (completed + extended to Relations 2026-07-12)
+The `.app` shell is `user-select:none`; only copy-worthy content is re-enabled to `text`: the doc/wiki
+reader, dossier field bodies/values (incl. `.lead-desc`), card fields, and the Relations panel prose
+(`.rel-name`/`.rel-sub`/`.rel-carddesc`). Verified by computed `user-select`: chrome = none, content =
+text (proven against the `.app` none baseline, not just inheritance).
+
 Right now everything is selectable (browser default; only two stray `user-select:none`
 rules exist). Flip it: **chrome is not selectable; only copy-worthy content is.**
 - Set `user-select:none` broadly on the app shell (e.g. on `.app`, or `body`), then

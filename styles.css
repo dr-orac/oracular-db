@@ -235,8 +235,10 @@
   .idcell .v,
   .doss-name, .doss-hon, .doss-role,
   .spirit-name, .spirit-body,
+  .lead-desc,
   .logbody,
   .cname, .chon, .crole, .cmeta, .capp,
+  .rel-name, .rel-sub, .rel-carddesc,
   input, textarea{
     -webkit-user-select:text; user-select:text;
   }
