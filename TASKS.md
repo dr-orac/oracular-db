@@ -3,6 +3,24 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## 🆕 Queued 2026-07-12 (batch 4 — roadmapped, NOT built)
+
+### T71 · Settings: reading-width for Google Doc + wiki content — ROADMAPPED (do NOT build yet)
+Add a **prefs control to choose the reading-measure width** of the doc reader (Google Docs) and the wiki,
+and give the DEFAULT **a little more padding/breathing** than today. Plan (for a fresh context):
+- Introduce a CSS var, e.g. `--doc-measure` (default ~**80ch**, slightly roomier than today's 74ch), and use
+  it in `.docreader{ grid-template-columns:1fr min(var(--doc-measure),100%) 1fr }`. The wiki's current
+  `.docreader[data-docid^="wiki:"]{ …84ch… }` becomes `var(--doc-measure-wiki)` (default a touch wider, ~88ch).
+- A Settings control (mirror the text-size stepper / a `.swatches` row) offering ~3–4 presets
+  (Narrow ≈70ch · Medium ≈80ch · Wide ≈92ch · Full) — set the var(s) on `:root`, persist in
+  `localStorage` (`mdb-doc-width`), restore on init, reset-aware (add to the reset list + `applyDefaults`).
+- **Default padding bump:** `.docscroll` side padding is 40px today → the default should read a little
+  airier (bump to ~48–56px, or fold into the measure). Keep it **well-responsive** — the mobile
+  `.docscroll{ padding:8px 16px 60px }` stays tight; the measure clamps via `min(…,100%)` so it never
+  overflows; verify at the width ladder.
+- Acceptance: a Settings width control changes doc + wiki measure live, persists, resets; default is a
+  touch roomier than now; no h-overflow at any width; screenshot narrow + wide.
+
 ## 🆕 Queued 2026-07-12 (batch 3 — do in this order)
 
 ### T67 · Home alignment restructure — Wiki full-width under the brand — ✅ DONE
@@ -118,7 +136,15 @@ their way and make a safe first change without reading everything.
   (515af6d), 13px text floor (3c9d1d3). Remaining a11y items are verification-only (see ACCESSIBILITY-PLAN).
 - **T59 wiki integration** planned (`docs/WIKI-INTEGRATION.md`) + a live wiki **sitemap**. App side ready;
   blocked on the user creating the pages (under **Wasteland Tribes**) + sharing titles.
-- Open: **T52 Discord source** (auth-gated), **T54 master sheet** (user P0), **T19** prefs migration.
+- **LATER 2026-07-12 (design session, all pushed):** a11y (T55) fully closed; contributor front-door +
+  backlog reconciliation (T10/T23/T1); wiki categorisation guide; **cog→gear** (T60); **masthead connector**
+  brighter+arrowheads (T61/T68); **HOME rebuilt** as a two-column launcher — Wiki full-width on top,
+  faction picker left, that faction's sections right, aligned + fits no-scroll (T65/T67); **CRT
+  faction-switch transition** (T69, reduced-motion-gated); **wiki reader wider** (T70); OG card `?v=2`
+  Discord-cache fix. Details in `docs/HANDOFF-2026-07-12.md` §2b.
+- Open/ready: **T62 live wiki sitemap** (approved, ready), **T66 outer-glow→black**, **T71 doc/wiki
+  reading-width pref** (roadmapped). Blocked: **T52 Discord** (auth-gated), **T54 master sheet** (user P0),
+  **T19** prefs migration.
 
 ## T57 · Profile photos + Cards mode redesign — ROADMAPPED (design pass, best verified on live data)
 User wants the character photos treated better. ⚠ Can't verify in the dev sandbox (roster data =
