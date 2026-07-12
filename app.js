@@ -1266,7 +1266,7 @@ function relationsPanelHTML(ch, graph){
                  .filter(Boolean).join(" · ");
   let html = `<header class="rel-head">`+
       `<div class="rel-head-main">`+
-        `<h2 class="rel-name" id="app-relname">${esc(ch.name)}</h2>`+
+        `<h2 class="rel-name">${esc(ch.name)}</h2>`+
         (sub?`<div class="rel-sub">${esc(sub)}</div>`:"")+
       `</div>`+
       `<button class="btn rel-dossier" data-slug="${escAttr(ch.slug)}" type="button" title="Open ${esc(ch.name)}’s full dossier">Open dossier ▸</button>`+
@@ -1322,19 +1322,24 @@ function renderRelations(){
       inSec.map(c=>{
         const deg=new Set([...(graph.fwd[c.slug]||[]), ...(graph.back[c.slug]||[])]).size;
         const on=c.slug===sel.slug;
-        return `<button class="rel-railitem${on?' active':''}" data-slug="${escAttr(c.slug)}" role="option" aria-selected="${on}">`+
+        // options are non-focusable (tabindex=-1); the listbox rail is the single tab stop and
+        // tracks the active option via aria-activedescendant (same pattern as the roster #list).
+        return `<div class="rel-railitem${on?' active':''}" id="rel-opt-${escAttr(c.slug)}" data-slug="${escAttr(c.slug)}" role="option" aria-selected="${on}" tabindex="-1">`+
           `<span class="rel-railname">${esc(c.name)}</span>`+
           (deg?`<span class="rel-raildeg" title="${deg} connection${deg===1?'':'s'}">${deg}</span>`:"")+
-        `</button>`;
+        `</div>`;
       }).join("")+`</div>`;
   }).join("");
   $("#rel-rail").innerHTML = rail;
+  $("#rel-rail").setAttribute("aria-activedescendant", sel ? "rel-opt-"+sel.slug : "");
   $("#rel-panel").innerHTML = relationsPanelHTML(sel, graph);
   const active=$("#rel-rail .rel-railitem.active"); if(active) active.scrollIntoView({block:"nearest"});
 }
 
 /* re-centre the web on a character (from the rail or any in-panel cross-link). Kept in the
-   Relations view — the "Open dossier" button is the explicit hop to the roster. */
+   Relations view — the "Open dossier" button is the explicit hop to the roster.
+   NB: `state.selected` is shared with the roster (deliberate continuity — the character you
+   last looked at in one view is the one the other opens on). */
 function relationsSelect(slug){
   const idx=state.model.characters.findIndex(c=>c.slug===slug);
   if(idx<0) return;
@@ -1347,6 +1352,16 @@ $("#relations").addEventListener("click", e=>{
   if(dos){ setSection("roster"); gotoChar(dos.dataset.slug); return; }
   const nav=e.target.closest(".xref, .rel-railitem");
   if(nav && nav.dataset.slug){ e.stopPropagation(); relationsSelect(nav.dataset.slug); }
+});
+/* rail keyboard nav — parity with the roster listbox (arrows/Home/End/Page move the selection). */
+$("#rel-rail").addEventListener("keydown", e=>{
+  const slugs=[...$("#rel-rail").querySelectorAll(".rel-railitem")].map(el=>el.dataset.slug);
+  if(!slugs.length) return;
+  const sel=state.model && state.model.characters[state.selected];
+  const pos=listboxStep(e.key, slugs.length, sel ? slugs.indexOf(sel.slug) : -1);
+  if(pos<0) return;
+  e.preventDefault();
+  relationsSelect(slugs[pos]);
 });
 
 /* personal-log: just a label + ＋ when empty; entries + hidden composer when used */
@@ -1643,24 +1658,31 @@ $("#list").addEventListener("click", e=>{
   const row=e.target.closest(".row"); if(!row) return;
   selectIndex(+row.dataset.idx);
 });
+/* shared listbox arrow-key math: given a nav key, the list length, and the current position,
+   return the new position — or -1 if the key isn't a navigation key. Used by both the roster
+   #list and the Relations rail so the two listboxes step identically and can't drift. */
+function listboxStep(key, len, pos){
+  const PAGE=10;
+  if(len<=0) return -1;
+  if(pos<0) return (key==="ArrowUp"||key==="End"||key==="PageUp") ? len-1 : 0;   // nothing selected → an end
+  switch(key){
+    case "ArrowDown": return Math.min(len-1, pos+1);
+    case "ArrowUp":   return Math.max(0, pos-1);
+    case "PageDown":  return Math.min(len-1, pos+PAGE);
+    case "PageUp":    return Math.max(0, pos-PAGE);
+    case "Home":      return 0;
+    case "End":       return len-1;
+    default:          return -1;                                                  // not a nav key
+  }
+}
 /* keyboard nav for the roster listbox (aria-activedescendant pattern — focus stays on #list,
    arrows move the selected row). Steps through the rows in DISPLAY order (section + sort), which
    isn't the global character order, so read the rendered rows rather than the model index. */
 $("#list").addEventListener("keydown", e=>{
-  if(e.key!=="ArrowDown" && e.key!=="ArrowUp" && e.key!=="Home" && e.key!=="End" &&
-     e.key!=="PageDown" && e.key!=="PageUp") return;
   const idxs=[...$("#list").querySelectorAll(".row")].map(r=>+r.dataset.idx);
-  if(!idxs.length) return;
+  const pos=listboxStep(e.key, idxs.length, idxs.indexOf(state.selected));
+  if(pos<0) return;
   e.preventDefault();
-  let pos=idxs.indexOf(state.selected);
-  const PAGE=10;
-  if(pos<0) pos=(e.key==="ArrowUp"||e.key==="End"||e.key==="PageUp") ? idxs.length-1 : 0;
-  else if(e.key==="ArrowDown") pos=Math.min(idxs.length-1, pos+1);
-  else if(e.key==="ArrowUp")   pos=Math.max(0, pos-1);
-  else if(e.key==="PageDown")  pos=Math.min(idxs.length-1, pos+PAGE);
-  else if(e.key==="PageUp")    pos=Math.max(0, pos-PAGE);
-  else if(e.key==="Home")      pos=0;
-  else if(e.key==="End")       pos=idxs.length-1;
   selectIndex(idxs[pos]);
   const a=$("#list .row.active"); if(a) a.scrollIntoView({block:"nearest"});
 });
