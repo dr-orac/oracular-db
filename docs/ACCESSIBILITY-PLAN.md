@@ -25,8 +25,12 @@ decoration). Documented the token roles in `THEMES`.
       thing the audit can't measure statically — it presses the `--fg-dim` tier (its ~5.4:1 floor) and
       the intentional low-contrast decoration (`.home-tile-num`, `.docquote::before`) closest to their
       margin when enabled. This is exactly what the High-Contrast mode below fixes.
-- [ ] **Chassis metal text** (engraved `--panel-ink` on `--panel*`) — not covered by the phosphor audit;
-      spot-check separately (lower priority — it's a deliberate engraved look).
+- [x] ✅ **Chassis metal text** (engraved `--panel-ink` on `--panel*`, border-frame mode) — measured:
+      dark ink on mid-metal is ~2.49:1 and the pressed active tab ~1.36:1. This is inherent — dark-on-metal
+      can't exceed ~2.6:1 — and the engraved look is deliberate, so the DEFAULT stays as-is. The fix is the
+      accessible PATH: High-Contrast mode now lifts every engraved-text button face to the lit metal
+      (`--panel-hi`), where the same ink measures **6.33:1 (AA)** — was doing nothing for the metal before.
+      Verified by measurement + screenshot (legible, still reads as engraved metal).
 - [x] ✅ **High-Contrast mode** — DONE. `body[data-contrast="high"]`: applyColor lifts `--fg-dim`→`--fg`
       (secondary text to full phosphor) + `--fg-faint`→`--fg-dim` (borders); CSS drops the scanline
       overlay + thickens the focus ring. A Settings toggle (`#contrast-toggle`), auto-on from OS
@@ -44,8 +48,11 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
       base is 17px, so the smallest (`.toc-l4` .8em → 13.6px) clears the floor; `.bootmono` .72em is the
       transient boot readout (exempt). A full-page leaf scan (desktop + mobile, settings drawer open)
       found **0 readable elements below 13px**.
-- [ ] Confirm the text-size stepper scales *all* reading text (not just `--root-fs` consumers), and that
-      the app survives browser zoom to 200% without clipping/overflow.
+- [x] ✅ **Reflow / high zoom** — checked at **320px** CSS width (≈400% zoom, WCAG 1.4.10's target) across
+      home / roster / relations / wiki: **0px document-level horizontal scroll** in every view. The only
+      wider-than-viewport elements are the off-screen settings drawer (not visible) and a wide wiki data
+      table that scrolls inside its OWN container (the page never gains 2D scroll). Masthead stacks,
+      content wraps, all legible. WCAG reflow satisfied.
 
 ## Focus visibility
 - [x] ✅ VERIFIED ADEQUATE. A global `:focus-visible{ outline:2px solid var(--fg-bright) }` rule covers
@@ -60,9 +67,13 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
 - [x] ✅ Roster listbox arrow-nav — `#list` (already `role="listbox"` + `tabindex=0` +
       `aria-activedescendant`) now handles ↑/↓/Home/End/PageUp/PageDown, stepping through rows in
       DISPLAY order (section + sort, not global index) and moving the selection (focus stays on the
-      listbox per the activedescendant pattern). Algorithm verified over 10 cases incl. clamping,
-      Page steps, and the filtered-out fallback; end-to-end keypress needs live roster data.
-      Remaining: modal focus-trap verify (a MutationObserver handles it).
+      listbox per the activedescendant pattern). Verified END-TO-END with live roster data (2026-07-12):
+      arrows/Home/End move the selection + `aria-activedescendant`, focus stays on the listbox, the dossier
+      follows. The **Relations rail** now has the same listbox ARIA + keyboard nav (shared `listboxStep`).
+- [x] ✅ **Modal focus-trap VERIFIED** (2026-07-12, live data). Opened the icon picker (`#iconback`, 32
+      focusable): focus moves inside on open, Tab from the last wraps to the first and Shift+Tab from the
+      first wraps to the last (trap holds both ways), Escape closes and focus RESTORES to the trigger. The
+      MutationObserver focus layer works across the modal set.
 
 ## ARIA / semantics
 - [x] ✅ Heading order: the page had ZERO `<h1>`. Added ONE sr-only `#app-h1` in `<main>`, updated per
@@ -96,8 +107,8 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
       are `aria-hidden` (done). Confirm no meaningful image is alt-less; the wiki has no images.
 
 ## Colour independence
-- [ ] Don't rely on colour alone. The phosphor theme is single-hue by design, so this is mostly moot;
-      the T28 relationship types already use glyph+label, not colour — keep that principle for any new UI.
+- [x] ✅ Satisfied by design. The phosphor theme is single-hue, so nothing encodes meaning by colour; the
+      Relations view distinguishes entries by name + count, not colour. Keep that principle for any new UI.
 
 ## Testing checklist (run after the fixes)
 - [ ] Automated: run axe / Lighthouse a11y on home, roster, a doc, a wiki page.
@@ -108,3 +119,12 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
 Step 0 (text floor) shipped. Suggested order next: font-size floor → focus visibility → the contrast
 audit (incl. CRT overlay + chassis) → the High-Contrast mode → ARIA/live-region → keyboard/motion/touch
 sweeps → the testing pass. Each is small and independently shippable; none blocks the others.
+
+## STATUS — 2026-07-12: substantive pass COMPLETE
+Everything in this plan that can be done in code + verified here is done and checked off: text-brightness
+floor, contrast audit, High-Contrast mode (phosphor **and** the engraved-metal chassis), font-size floor,
+focus visibility, keyboard nav (faction menu + both listboxes), modal focus-trap, ARIA/landmarks/live
+regions/single-H1, reduced-motion, touch targets, reflow at 320px, colour-independence. Row-1 boxes carry
+`aria-current`; row-2 tabs carry `aria-selected` (correct for the tab pattern). **Only genuinely external
+checks remain** (a human/tooling job, not code): an automated **axe/Lighthouse** run and a **screen-reader
+(VoiceOver)** spot-check on the live site.
