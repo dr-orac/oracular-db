@@ -1983,3 +1983,15 @@
   @media (prefers-reduced-motion: reduce){
     .btn, .seg button, .navtab, .tag, .chip, .card, .swatch, .mini, .row, .docreader a, .doctoc a{ transition:none; }
   }
+
+  /* --- Touch targets (WCAG 2.5.5): key controls meet ~44px on small/touch screens.
+     Appended last so it wins over the base sizes by source order. --- */
+  @media (max-width:760px){
+    .cogbtn{ width:44px; height:44px; }              /* was 40 on mobile */
+    .sd-close{ min-width:44px; min-height:44px; }    /* settings ✕ */
+    .swatch{ min-height:44px; }                       /* text-size / theme / face pickers */
+    #textsize-swatches .swatch{ min-width:44px; justify-content:center; }   /* narrow (A / A+) — widen to 44 */
+    .docfind-btn{ min-width:44px; min-height:44px; } /* in-doc find ▲ ▼ */
+    .mini{ min-width:44px; min-height:44px; }         /* dossier ＋ (add log / shot) */
+    .btn.close{ min-height:44px; }                    /* modal ✕ Close */
+  }

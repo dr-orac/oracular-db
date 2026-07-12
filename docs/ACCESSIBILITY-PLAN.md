@@ -83,8 +83,11 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
       (earlier). No un-tamed animation found. (Boot sequence is JS-gated on reduced-motion.)
 
 ## Touch targets (mobile)
-- [ ] Interactive controls ≥ ~44×44px on mobile (text-size steppers, modal close ×, doc-find buttons,
-      small nav). Some are currently smaller.
+- [x] ✅ Interactive controls ≥ 44×44px on mobile. Measured the small ones at 375px and found several
+      under: cog 40, settings ✕ 36×30, swatches 42×34. A `@media (max-width:760px)` block (appended last
+      so it wins by source order) now floors the cog, settings ✕, `.swatch` (incl. narrow text-size
+      swatches → min-width 44 + centred), `.docfind-btn`, `.mini`, and modal `.btn.close` to 44px.
+      Verified: cog / ✕ / all text-size swatches now 44×44; settings drawer still reads clean.
 
 ## Images / non-text
 - [ ] Portraits carry `alt` = character name; doc figures use `alt` as the caption; decorative SVG icons
