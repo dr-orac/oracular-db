@@ -3,6 +3,51 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## 🆕 Queued 2026-07-12 (user batch — do in this order)
+
+### T60 · Settings cog → steampunk gear + a "Settings" label when there's room — SMALL [next]
+The cog icon reads as a **sun** (a ring + radiating spokes). Redesign it as a proper mechanical **gear**:
+a toothed rim (square/mechanical teeth, ~8) + a real centre hole. Keep it a single `currentColor` inline
+SVG, `viewBox="0 0 24 24"`, tracks the theme + the existing glow. Then **show a "SETTINGS" text label
+next to the cog when the viewport is wide enough** (collapse to icon-only when the masthead gets tight —
+a min-width media query), styled like the nav labels. Keep the 44px touch target. Verify: gear reads as a
+cog on desktop + mobile, label appears only when there's space, no masthead overflow.
+
+### T61 · Row-2 tabs "settle into" the hierarchy + connector lines from the FACTION box — SMALL/MED [design]
+Two parts, both about making the row-1 > row-2 hierarchy obvious:
+1. **Settle row-2 in.** Don't shrink the label TEXT (keep it legible); instead reduce the tabs' visual
+   WEIGHT so they read as a clear sub-level of the big row-1 boxes — lighter/thinner frame, less chrome,
+   tighter/lower-profile buttons, calmer background. They should feel subordinate to the FACTION box, not
+   peer to it.
+2. **Connector lines.** Add subtle **orthogonal (square-elbow) flow-chart connectors** dropping from the
+   FACTION box down into the row-2 tabs, so it's visually clear row-2 = the selected faction's sections.
+   Thin, theme-coloured, low-key. **Responsive-safe:** show ONLY when row-2 is a single row; hide when it
+   wraps/stacks (mobile) so lines never cross into empty space. Verify desktop + a couple of widths.
+
+### T62 · Show the wiki SITEMAP inside the app — MED [feature]
+Surface the wiki structure (the 46-page map: Main Page → Factions / Weapons / Crafting / Survival /
+Rules; nesting Weapons→Ranged/Melee) as an in-theme view. **Placement (recommended):** the **Wiki section
+LANDING** — opening Wiki with no specific page shows the sitemap/index; clicking a node loads that page in
+the reader. (Home stays the faction launcher; at most add a small "Browse the wiki ▸" link from home.)
+Build the tree in the terminal theme (reuse the structure already mapped; ideally derive it live from the
+MediaWiki API — category tree + hub-page links — with a static fallback so it survives offline). Mark
+planned/redlink nodes distinctly. Verify in the sandbox (wiki host is reachable).
+
+### T63 · Whole-site RESPONSIVENESS pass — MED/LARGE [design, methodical]
+A comprehensive responsive audit + fixes across ALL views (home, roster, cards, relations, doc, wiki,
+settings) at a ladder of widths (≥1440, 1024, 768, 480, 375, 320) AND the chassis frame modes. Catch:
+overflow/clipping, cramped or oversized controls, masthead wrap quality, the row-2 connectors (T61)
+degrading cleanly, table/scroll behaviour, touch spacing. Produce a short findings list, then fix
+methodically (one commit per coherent fix). Note: roster/cards/relations need live data to fully judge —
+do those on the live site; chrome/home/wiki are sandbox-verifiable.
+
+### T64 · Contributor comprehensibility + navigability pass — MED [docs, for the people who'll assist]
+Make the repo easy for a new collaborator to pick up: a proper README front-door (what it is, run it,
+where things live, how to add a faction/character/doc, the hard rules), a clear map from the handoff →
+MAINTENANCE → TASKS → CONTRIBUTING (no overlap/contradiction), and a top-of-`app.js` orientation comment /
+banner-comment index so the single big file is navigable. Prune stale docs. Goal: someone new can find
+their way and make a safe first change without reading everything.
+
 ## ✅ Shipped 2026-07-12 (see `docs/HANDOFF-2026-07-12.md`)
 - **T28 Relations view — BUILT** (4588bec): per-faction relationship web from the roster's Relationships
   field. Live-data verification still owed.
