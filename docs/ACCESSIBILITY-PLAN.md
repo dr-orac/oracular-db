@@ -37,11 +37,13 @@ decoration). Documented the token roles in `THEMES`.
 Current tiers: body/reading prose **≥17px** (enforced via `--root-fs` floor + the text-size stepper +
 the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hint` **13px** (stated
 "absolute minimum"). Gaps:
-- [ ] **Raw 11px / 12px** usages (e.g. `.faction-legend` 11px, a couple of labels) dip BELOW the stated
-      13px minimum — review: bump to ≥12–13px, or justify (short all-caps letter-spaced labels read
-      larger than body at the same px, but 11px is low). Prefer the `--fs-*` tokens over raw px.
-- [ ] **Relative `em` sizes** (`.8em`, `.85em`, `.95em`, `.72em`) can compound below the floor inside an
-      already-small parent — audit the computed px at each and clamp to the floor.
+- [x] ✅ **Raw sub-13px text** fixed. `.faction-legend` (the only sub-floor *screen text*) 12px → `--fs-hint`
+      (13px). The remaining raw small values are exempt: `.selctl-caret` 11px is a decorative ▾ glyph (an
+      icon, not prose) and the 12px in the `@media print` block is paper-only.
+- [x] ✅ **Relative `em` sizes** audited by MEASURING the computed px in a rendered page: the doc reader
+      base is 17px, so the smallest (`.toc-l4` .8em → 13.6px) clears the floor; `.bootmono` .72em is the
+      transient boot readout (exempt). A full-page leaf scan (desktop + mobile, settings drawer open)
+      found **0 readable elements below 13px**.
 - [ ] Confirm the text-size stepper scales *all* reading text (not just `--root-fs` consumers), and that
       the app survives browser zoom to 200% without clipping/overflow.
 

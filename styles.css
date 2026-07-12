@@ -510,8 +510,8 @@
   /* the "FACTION" legend rides the top border, fieldset-style */
   .faction-legend{ position:absolute; top:0; left:13px; transform:translateY(-52%); padding:0 6px;
     background:var(--bg);                             /* masks the border behind the word */
-    font-family:var(--font-body); font-size:12px; letter-spacing:2.5px; text-transform:uppercase;
-    color:var(--fg-bright); text-shadow:none; }       /* legible, not a dim whisper */
+    font-family:var(--font-body); font-size:var(--fs-hint); letter-spacing:2.5px; text-transform:uppercase;
+    color:var(--fg-bright); text-shadow:none; }       /* legible, not a dim whisper (≥13px floor) */
   .faction-name, .navbox .navlabel{ font-family:"Workbench","Gothic 821",sans-serif; font-size:22px; line-height:1;
     letter-spacing:.5px; text-transform:uppercase; white-space:nowrap;
     text-shadow:0 0 6px rgba(var(--fg-rgb),.4); }
