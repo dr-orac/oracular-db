@@ -3,6 +3,29 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## 🆕 Queued 2026-07-12 (batch 3 — do in this order)
+
+### T67 · Home alignment restructure — Wiki full-width under the brand — ✅ DONE
+The brand + Wiki side-by-side reads as a mish-mash (Wiki's left edge lines up with nothing). Stack it:
+**"Misfits Database" (top-left) → a FULL-WIDTH Wiki bar directly below it → the two columns** — so Wiki's
+left/right edges line up with the columns and nothing hangs in space. Everything left-aligns to one edge;
+columns line up. Then a full **responsive size check** across the ladder with **all fonts responsive**
+(clamp/vw), using whitespace well.
+
+### T68 · Masthead flow-chart connector — brighter, contained, arrowheads — ✅ DONE
+The T61 connector should be **brighter/clearer**; the horizontal bus **stretches too far left (runs under
+Home)** — contain it to the faction→tabs span; and add small **arrowheads on the riser bottoms** (pointing
+into each tab) to show flow.
+
+### T69 · Faction-switch transition — a CRT retune (not a plain fade) — ✅ DONE
+On applyFaction, add a short **CRT-style transition** (recommend: a quick flicker / signal-reacquire —
+brief dim-through-dark + a scanline sweep as the new faction colour blooms in) rather than a plain
+fade-to-black. Fast (~250ms), reduced-motion-aware (instant swap).
+
+### T70 · Wiki reader — wider + better visual legibility — ✅ DONE (wider + links; more polish possible)
+The wiki reader can afford to be **a little wider**. Also improve its rendering + legibility: measure/line
+length, heading rhythm, spacing, link styling — make long wiki pages read cleanly.
+
 ## 🆕 Queued 2026-07-12 (batch 2)
 
 ### T65 · Home redesign — Wiki on top, two-column faction↔sections split — ✅ DONE 2026-07-12
