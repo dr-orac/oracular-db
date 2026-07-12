@@ -611,24 +611,29 @@
      label and inverts to the screen colour on the active (filled) tab. */
   .navico{ flex:0 0 auto; width:22px; height:22px; display:inline-flex; }   /* ROW-2 section-tab icon (ROW-1 boxes use 32px via .navbox .navico) */
   .navico svg{ width:100%; height:100%; display:block; fill:currentColor; }
-  /* ---------- T61: flow-chart connectors — row 2 hangs off the FACTION box ----------
-     A subtle org-chart cue: a STEM drops from the FACTION box to a horizontal BUS above row 2, and a
-     RISER drops from the bus to each section tab (the active tab's riser brightens). Shown only on the
-     wide, single-row masthead in the screen frame, so the lines never cross into empty/wrapped space.
-     #topnav shrinks to its tabs (fit-content) so the bus spans exactly the tab group. */
+  /* ---------- T61/T68: flow-chart connectors — row 2 hangs off the FACTION box ----------
+     A STEM drops from the FACTION box to a horizontal BUS above row 2, and a RISER (tipped with a small
+     down-ARROWHEAD, to show flow) drops from the bus into each section tab; the active tab's is brightest.
+     The bus FADES OUT at both ends so it reads as emanating from the faction rather than hard-running left
+     under Home. Shown only on the wide single-row masthead in the screen frame. #topnav shrinks to its
+     tabs (fit-content) so the bus spans exactly the tab group. */
   @media (min-width:860px){
     body:not([data-frame="border"]):not([data-section="home"]) #topnav{ position:relative; width:fit-content; max-width:100%; }
-    body:not([data-frame="border"]):not([data-section="home"]) #topnav::before{      /* the bus */
-      content:""; position:absolute; left:0; right:0; top:-8px; height:1px;
-      background:rgba(var(--fg-rgb),.5); pointer-events:none; }
+    body:not([data-frame="border"]):not([data-section="home"]) #topnav::before{      /* the bus — brighter, ends faded */
+      content:""; position:absolute; left:0; right:0; top:-9px; height:1px; pointer-events:none;
+      background:linear-gradient(90deg, transparent, rgba(var(--fg-rgb),.85) 20%, rgba(var(--fg-rgb),.85) 80%, transparent); }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab{ position:relative; }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab::before{       /* bus → tab riser */
-      content:""; position:absolute; left:50%; top:-8px; width:1px; height:8px;
-      transform:translateX(-50%); background:rgba(var(--fg-rgb),.5); pointer-events:none; }
+      content:""; position:absolute; left:50%; top:-9px; width:1px; height:6px;
+      transform:translateX(-50%); background:rgba(var(--fg-rgb),.8); pointer-events:none; }
+    body:not([data-frame="border"]):not([data-section="home"]) .navtab::after{        /* riser arrowhead (points into the tab) */
+      content:""; position:absolute; left:50%; top:-4px; transform:translateX(-50%); pointer-events:none;
+      border-left:3px solid transparent; border-right:3px solid transparent; border-top:4px solid rgba(var(--fg-rgb),.8); }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::before{ background:var(--fg); }
+    body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::after{ border-top-color:var(--fg); }
     body:not([data-frame="border"]):not([data-section="home"]) .faction-box::after{   /* FACTION box → bus stem */
       content:""; position:absolute; left:50%; top:100%; width:1px; height:9px;
-      transform:translateX(-50%); background:rgba(var(--fg-rgb),.5); pointer-events:none; }
+      transform:translateX(-50%); background:rgba(var(--fg-rgb),.85); pointer-events:none; }
   }
   /* on a doc section, hide the roster-only chrome (search / view toggle / refresh / status) */
   /* command-bar slot in the header: the roster toolbar shows on the roster, the doc find bar
