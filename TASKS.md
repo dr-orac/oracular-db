@@ -5,6 +5,31 @@ Work top-to-bottom unless told otherwise. **One task = one commit.**
 
 ## 🆕 Queued 2026-07-12 (batch 4 — roadmapped, NOT built)
 
+### T73 · BUG — TOC click sometimes leaves the view "stuck" — ROADMAPPED (do NOT build yet)
+**Symptom (user, 2026-07-12):** clicking a heading in the doc/wiki **Table of Contents** sometimes leaves
+the view **stuck** — it doesn't scroll to the target (or scrolls partway and jams), and the reader can feel
+frozen until you nudge it. Intermittent, not every click. Investigate + fix (for a fresh context):
+- **Repro first:** doc reader AND wiki reader; long docs vs short; a TOC click immediately after switching
+  docs (load race?); rapid successive clicks; clicking a heading that's an image-heavy section (layout
+  still settling → wrong scroll offset). Note which cases stick.
+- **Likely suspects to check:**
+  - **Scroll target resolved before layout settles** — if the TOC handler does `el.scrollIntoView()` /
+    sets `scrollTop` while images/fonts are still loading, the computed offset is stale and it lands
+    wrong or no-ops. Consider anchoring by id + waiting for `requestAnimationFrame`/`load`, or
+    re-measuring. (Ties to the doc-image lazy-load.)
+  - **Smooth-scroll interrupted** — a `behavior:"smooth"` scroll cancelled by a re-render (route write,
+    faction retune, doc reflow) can abort mid-animation and leave it parked. Check whether `writeRoute`
+    or a re-render fires on TOC click and clobbers the scroll.
+  - **Heading id mismatch** — the TOC anchor id vs the actual heading id (slug collisions, duplicate
+    headings, re-slugged on re-render) → `getElementById` returns null → silent no-op that *looks* stuck.
+  - **The scroll container** — confirm the handler scrolls the right element (`.docscroll` vs window vs
+    `.docreader`); scrolling the wrong node does nothing.
+- **Instrument:** log the click target id, the resolved element, and the scroll container's
+  scrollTop before/after in the sandbox to see which failure it is.
+- Acceptance: TOC clicks reliably scroll to the heading in both doc + wiki readers, including right after a
+  doc switch and on image-heavy pages; no stuck/frozen state; keyboard activation works too; verify at the
+  width ladder + reduced-motion (instant vs smooth).
+
 ### T72 · Fullscreen / focus mode for the doc + wiki reader — ROADMAPPED (do NOT build yet)
 A **"minimalist writing-app" focus mode** for the Google-Doc reader and the wiki reader: hide all the
 chrome (masthead rows, rails, bezel/frame) and show **only the content**, with a small **fullscreen
@@ -84,6 +109,19 @@ master-detail, uses horizontal space, helps the no-scroll fit), not a shuffle. L
 The outer bezel glow still doesn't die cleanly at the screen edge — it should fade to **pure black (or
 transparent, for robustness)** as it reaches the very edge. Rework the `--bezel-*` / exterior `::after`
 glow layers so the outermost stop is black/transparent, no lingering halo at the frame boundary.
+
+**Still open (observed 2026-07-12, screenshot):** the halo persists — there's a wide amber gradient
+bleeding out into the dark surround (most visible along the bottom), and the **rounded black corners
+read as disconnected** from the frame because nothing crisp defines the edge. Two-part fix:
+- **Make the outer glow subtler** — pull back the exterior glow's spread/opacity so it's a tight,
+  low-intensity rim, not a broad wash. It should read as a faint edge-light, not a lamp behind the panel.
+- **Add a small jet-black border all the way around** — a thin, pure-`#000` frame band hugging the
+  screen edge (outermost layer), so the glow terminates against solid black and the **curved black
+  corners become intentional** (the border + corner radius are the same shape, so the rounding reads as
+  a deliberate bezel cut rather than a stray dark blob). Order matters: content → subtle rim glow →
+  jet-black border as the final outermost stop.
+- Acceptance: no soft amber halo bleeding into the surround at any edge; a crisp black border rings the
+  whole screen; the rounded corners look like part of the frame; screenshot all four edges + a corner.
 
 ## 🆕 Queued 2026-07-12 (user batch — do in this order)
 
