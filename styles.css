@@ -199,19 +199,17 @@
   body:not([data-frame="border"])::after{
     content:""; position:fixed; inset:0; pointer-events:none; z-index:9200;
     border-radius:var(--bezel-radius);
-    /* Rings paint first-on-top. The bloom layers use vmax so the phosphor halo scales up on large /
-       widescreen displays (the structural black/gap/hairline rings stay a fixed physical size). */
+    /* Rings paint FIRST-ON-TOP, so the outermost jet-black band is listed first and nothing tints it —
+       the glow layers sit UNDER it and can only bleed INBOARD of the hairline, never out over the black
+       border. The bloom uses vmax so the phosphor halo scales up on large / widescreen displays (the
+       structural black/gap/hairline rings stay a fixed physical size). */
     box-shadow:
-      /* a subtle GLOW coming off the hairline: blur == spread means NO solid fill — the colour peaks
-         at the line and fades to nothing by the outer edge, so the black band stays black (a solid
-         spread here would flat-tint the whole band). */
-      inset 0 0 var(--bezel-in) var(--bezel-in) rgba(var(--fg-rgb),.22),
-      inset 0 0 0 var(--bezel-black) #000,                                     /* jet-black band */
+      inset 0 0 0 var(--bezel-black) #000,                                     /* jet-black border — OUTERMOST, always solid (defines the rounded bezel edge) */
       inset 0 0 0 calc(var(--bezel-black) + var(--bezel-gap)) var(--bg),       /* screen-bg gap (trims the hairline) */
       inset 0 0 0 var(--bezel-in) var(--fg-bright),                            /* bright theme-coloured hairline */
-      inset 0 0 6px var(--bezel-in) rgba(var(--fg-rgb),.65),                   /* tight crisp glow hugging the hairline */
-      inset 0 0 clamp(22px,3vmax,50px) var(--bezel-in) rgba(var(--fg-rgb),.36),/* wide phosphor bloom inward */
-      inset 0 0 clamp(96px,12vmax,168px) 46px rgba(0,0,0,.22);                 /* soft corner shade → hint of curvature */
+      inset 0 0 5px var(--bezel-in) rgba(var(--fg-rgb),.42),                   /* tight crisp glow hugging the hairline (inboard only) */
+      inset 0 0 clamp(16px,2vmax,34px) var(--bezel-in) rgba(var(--fg-rgb),.20),/* gentle phosphor bloom inward — subtler + tighter than before */
+      inset 0 0 clamp(96px,12vmax,168px) 46px rgba(0,0,0,.20);                 /* soft corner shade → hint of curvature */
   }
   /* Settings → Screen Bezel: OFF removes the jet-black border + rounding + reflection */
   body[data-bezel="off"]{ border-radius:0; }
