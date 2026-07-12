@@ -506,6 +506,24 @@ function applyBezel(key){
   localStorage.setItem("mdb-bezel", key);
   document.querySelectorAll("#bezel-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
+/* Reading Width (T71) — the reading measure of the doc + wiki readers. Each preset sets both
+   --doc-measure and --doc-measure-wiki on :root (the wiki runs a touch wider); "full" spans the
+   whole reading pane. min(…,100%) in the CSS keeps every preset overflow-safe on narrow screens. */
+const DOC_WIDTHS = {
+  narrow: { doc:"66ch",  wiki:"74ch"  },
+  medium: { doc:"78ch",  wiki:"88ch"  },   // default — a touch roomier than the old 74/84
+  wide:   { doc:"92ch",  wiki:"102ch" },
+  full:   { doc:"100%",  wiki:"100%"  },
+};
+function applyDocWidth(key){
+  if(!DOC_WIDTHS[key]) key="medium";
+  const w=DOC_WIDTHS[key], r=document.documentElement.style;
+  r.setProperty("--doc-measure", w.doc);
+  r.setProperty("--doc-measure-wiki", w.wiki);
+  document.body.dataset.docwidth = key;
+  localStorage.setItem("mdb-docwidth", key);
+  document.querySelectorAll("#docwidth-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
+}
 /* BODY faces whose glyphs render small per-px → default to the "large" text size.
    (The user's explicit Text Size choice is persisted and wins over this default.
    Fallouty fills most of the em, so it reads large already at "comfortable".) */
@@ -604,6 +622,9 @@ function buildSettings(){
   document.querySelector("#bezel-swatches").innerHTML =
     [["on","On"],["off","Off"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#bezel-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyBezel(b.dataset.key); });
+  document.querySelector("#docwidth-swatches").innerHTML =
+    [["narrow","Narrow"],["medium","Medium"],["wide","Wide"],["full","Full"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
+  document.querySelector("#docwidth-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDocWidth(b.dataset.key); });
   document.querySelector("#color-swatches").innerHTML = COLOR_ORDER.map(k=>
     `<button class="swatch" data-key="${k}">${THEMES[k].name}</button>`).join("");
   document.querySelector("#bg-swatches").innerHTML = BG_ORDER.map(k=>
@@ -2980,7 +3001,7 @@ $("#refresh").addEventListener("click", ()=>load(true));
 $("#reset-settings").addEventListener("click", ()=>{
   ["mdb-font","mdb-font-head","mdb-font-body","mdb-docfont-title","mdb-docfont-head",
    "mdb-docfont-body","mdb-color","mdb-bg",
-   "mdb-textsize","mdb-frame","mdb-frametint","mdb-sheen","mdb-crt","mdb-dosspanel","mdb-cards","mdb-imgcolor","mdb-bezel","mdb-contrast",
+   "mdb-textsize","mdb-frame","mdb-frametint","mdb-sheen","mdb-crt","mdb-dosspanel","mdb-cards","mdb-imgcolor","mdb-bezel","mdb-docwidth","mdb-contrast",
    fkey("font-head"),fkey("font-body")   // clear THIS faction's font override → its signature reloads
   ].forEach(k=>localStorage.removeItem(k));
   applyContrast(false);   // back to normal contrast (before applyColor so the palette is right)
@@ -2990,7 +3011,7 @@ $("#reset-settings").addEventListener("click", ()=>{
   ["title","head","body"].forEach(kind=>applyDocFont(kind, DOC_FONT_DEFAULT[kind]));
   applyColor("green"); applyBg("phosphor");
   applyFrame("screen"); applyFrameTint("olive"); applyGlass("off"); applyDossPanel("on");
-  applyCards("auto"); applyImgColor("screen"); applyBezel("on");
+  applyCards("auto"); applyImgColor("screen"); applyBezel("on"); applyDocWidth("medium");
   document.body.classList.add("crt");
   $("#crt-toggle").textContent="Scanlines: ON"; $("#crt-toggle").classList.add("active");
   localStorage.setItem("mdb-crt","1");
@@ -3294,6 +3315,7 @@ function runBoot(){
   applyCards(localStorage.getItem("mdb-cards") || "auto");
   applyImgColor(localStorage.getItem("mdb-imgcolor") || "screen");
   applyBezel(localStorage.getItem("mdb-bezel") || "on");
+  applyDocWidth(localStorage.getItem("mdb-docwidth") || "medium");
   const crtOn = localStorage.getItem("mdb-crt") !== "0";
   document.body.classList.toggle("crt", crtOn);
   $("#crt-toggle").textContent = "Scanlines: " + (crtOn ? "ON" : "OFF");

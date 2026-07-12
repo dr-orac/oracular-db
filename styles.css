@@ -59,6 +59,10 @@
        Always clears --bezel-in so content never crowds the border; grows on large displays. */
     --edge: clamp(38px, 4.6vw, 90px);
     --rail: clamp(312px, 26vw, 432px);   /* the left index column (roster rail) — the search sits over it */
+    /* Reading measure for the doc + wiki readers — the Settings "Reading Width" control (T71) rewrites
+       these on :root; the wiki runs a touch wider than Google Docs. min(…,100%) keeps them overflow-safe. */
+    --doc-measure:      78ch;
+    --doc-measure-wiki: 88ch;
   }
 
   *{ box-sizing:border-box; }
@@ -853,7 +857,7 @@
   .docfind-wrap:not(.has-value) .docfind-count,
   .docfind-wrap:not(.has-value) .docfind-btn{ display:none; }
   .docbody{ flex:1 1 auto; min-height:0; display:flex; }
-  .docscroll{ flex:1 1 auto; min-height:0; min-width:0; overflow:auto; padding:8px 40px 80px;
+  .docscroll{ flex:1 1 auto; min-height:0; min-width:0; overflow:auto; padding:8px 50px 80px;
     -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 14px); mask-image:linear-gradient(to bottom, transparent 0, #000 14px); }
   .docstatus{ color:var(--fg-dim); padding:30px 0; font-size:17px; }
   .docstatus.error{ color:var(--amber); }
@@ -901,7 +905,7 @@
      reading pane so text-on-image "bleeds into the screen". The 1fr rails + min(74ch,100%)
      centre track keep the prose exactly where max-width:auto used to, with zero h-overflow. */
   .docreader{
-    display:grid; grid-template-columns:1fr min(74ch, 100%) 1fr;
+    display:grid; grid-template-columns:1fr min(var(--doc-measure), 100%) 1fr;
     font-family:var(--doc-font-body, "IBM Plex Mono", ui-monospace, "Share Tech Mono", monospace);
     font-size:17px; line-height:1.85; letter-spacing:.2px; color:var(--fg); }
   .docreader > *{ grid-column:2; min-width:0; }   /* everything sits in the centre measure… */
@@ -1091,7 +1095,7 @@
   .wikibody > *:first-child{ margin-top:0; }
   /* T70 — the wiki reads a little WIDER than a lore doc: its tables, card grids and link-dense prose use
      the room (a bare doc keeps the tighter 74ch measure). loadWiki tags the reader data-docid="wiki:…". */
-  .docreader[data-docid^="wiki:"]{ grid-template-columns:1fr min(84ch, 100%) 1fr; }
+  .docreader[data-docid^="wiki:"]{ grid-template-columns:1fr min(var(--doc-measure-wiki), 100%) 1fr; }
   /* link-dense wiki prose reads better with a clearer underline than a lore doc's faint one */
   .docreader[data-docid^="wiki:"] .wikibody a{ text-decoration-color:var(--fg-dim); }
   /* the wiki packs sections tightly — open up the vertical rhythm for legibility (more air before each
