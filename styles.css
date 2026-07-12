@@ -499,17 +499,25 @@
   .titlebar-right{ display:flex; align-items:center; gap:14px; margin-left:auto; }
 
   /* Settings — a large standalone cog glyph on the far right (it turns as you hover / while open) */
-  .cogbtn{ flex:0 0 auto; display:inline-grid; place-items:center; width:46px; height:46px;
+  .cogbtn{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; gap:9px;
+    width:46px; height:46px;   /* icon-only square by default; grows to a labelled pill when there's room */
     background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg-bright);   /* brighter */
     cursor:pointer; padding:0; transition:color .12s, border-color .12s, background .12s, box-shadow .12s; }
-  .cogbtn .cog-ico{ width:30px; height:30px; fill:currentColor; transition:transform .5s cubic-bezier(.34,1.56,.64,1);
+  .cogbtn .cog-ico{ flex:0 0 auto; width:30px; height:30px; fill:currentColor; transition:transform .5s cubic-bezier(.34,1.56,.64,1);
     filter:drop-shadow(0 0 5px rgba(var(--fg-rgb),.5)); }   /* a little glow */
+  .cog-label{ display:none; font-family:var(--font-head); font-size:16px; letter-spacing:2px;
+    text-transform:uppercase; line-height:1; white-space:nowrap; }   /* revealed only when the masthead has room */
   .cogbtn:hover{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
     box-shadow:0 0 14px -4px rgba(var(--fg-rgb),.55); }
   .cogbtn:hover .cog-ico{ transform:rotate(60deg); }
   .cogbtn[aria-expanded="true"]{ color:var(--bg); background:var(--fg); border-color:var(--fg); }
   .cogbtn[aria-expanded="true"] .cog-ico{ transform:rotate(120deg); }
   .cogbtn:active{ transform:translateY(1px); }
+  /* wide viewports: bring the SETTINGS label back and grow the cog into a pill */
+  @media (min-width:1080px){
+    .cogbtn{ width:auto; min-width:46px; padding:0 17px 0 13px; }
+    .cog-label{ display:inline-block; }
+  }
 
   /* FACTION selector — a labelled panel showing the current faction + a big Fallout arrow; the whole
      box is the dropdown trigger. (Single faction → a static plate.) */
