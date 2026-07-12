@@ -15,6 +15,12 @@ No framework, no build step — three static files plus assets.
 **Live:** https://dr-orac.github.io/oracular-db/ (GitHub Pages, repo `dr-orac/oracular-db`,
 deploys automatically on push to `main`).
 
+> **New here? Read in this order:** this README → the newest `docs/HANDOFF-*.md` (current state +
+> the sandbox gotchas) → `MAINTENANCE.md` (internals + invariants) → `CONTRIBUTING.md` (house rules).
+> The live backlog is `TASKS.md`. To add a faction/character/doc, see CONTRIBUTING's "Adding things"
+> — most additions are one config entry. **Hard rules:** never write to the tribe's source sheet; no
+> AI-generated signals in the repo; one task = one commit; `python3 tools/selfcheck.py` must be clean.
+
 ---
 
 ## How it works (30-second version)
@@ -45,8 +51,9 @@ c/                per-character Open-Graph stubs for rich Discord embeds (genera
 tools/            dev scripts — selfcheck.py (integrity linter), preview.py (rebuild
                   the local preview), regenerate c/ stubs / OG card / roster dump,
                   git-hooks/ (pre-commit guard)
-docs/             CRT theme guide + portable crt-theme.css + AUDIT-2026-07-02.md
-                  (security audit: every innerHTML sink + the Apps Script backend)
+docs/             design + planning docs. START with the newest HANDOFF-*.md (current state +
+                  gotchas); then ACCESSIBILITY-PLAN, WIKI-INTEGRATION, MASTER-SHEET-PLAN,
+                  DESIGN-RELATIONSHIPS, AUDIT-2026-07-02 (security), the CRT theme guide
 
 CONTRIBUTING.md   house rules — self-review, anti-entropy, run selfcheck, conventions
 MAINTENANCE.md    how it's built + how not to break it (read this first when resuming)
@@ -64,9 +71,12 @@ banners to jump around:
 - `CRT icon library` — inline SVG spirit sigils + the spirit-text → icon matcher
 - `data fetch / parseCSV / buildModel` — load and normalise the sheet
 - `rendering` — dossier, portrait, cards, roster, search highlight, empty state
+- `Relations view` — `renderRelations` builds a character's relationship web from the roster's
+  Relationships field (rail + panel; a per-faction `relations` section, no extra data source)
 - `section nav / doc reader` — `DOCS` tabs that fetch + re-theme Google Docs (`docClean`/`styleTOC`)
 - `WIKI reader` — `loadWiki`/`renderWiki` fetch a MediaWiki page (CORS parse API) and re-skin its
-  own layout (hero / callouts / faction card grid / tables) as native components (`#wiki/<Page>`)
+  own layout (hero / callouts / faction card grid / tables) as native components (`#wiki/<Page>`);
+  `normaliseWikiImages` keeps + themes any images the page carries
 - `photo upload` / `personal log` / `screenshots` — the write-back UIs
 - `events / keyboard / load / init` — wiring and startup
 

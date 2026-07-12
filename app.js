@@ -13,9 +13,10 @@
      · CRT icon library                    — inline SVG sigils + spirit matcher
      · data fetch / parseCSV / buildModel  — load + normalise the sheet
      · rendering                           — dossier, portrait, cards, roster, home
-     · hash router                         — #home · #<faction>/<section>[/<target>] · #wiki/<Page>
+     · Relations view                      — renderRelations: a character's relationship web from roster data
+     · hash router                         — #home · #<faction>/<section>[/<target>] (roster·relations·doc) · #wiki/<Page>
      · section nav / doc reader            — DOCS tabs; fetch + re-theme Google Docs (docClean/styleTOC)
-     · WIKI reader                         — loadWiki/renderWiki: re-skin a MediaWiki page in-theme
+     · WIKI reader                         — loadWiki/normaliseWikiImages/renderWiki: re-skin a MediaWiki page (with images) in-theme
      · photo upload                        — single-photo upload modal + write-back
      · edit mode / icon picker             — write-back UIs (gated by passphrase)
      · events / keyboard / load / init     — wiring and startup

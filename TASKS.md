@@ -41,7 +41,14 @@ degrading cleanly, table/scroll behaviour, touch spacing. Produce a short findin
 methodically (one commit per coherent fix). Note: roster/cards/relations need live data to fully judge —
 do those on the live site; chrome/home/wiki are sandbox-verifiable.
 
-### T64 · Contributor comprehensibility + navigability pass — MED [docs, for the people who'll assist]
+### T64 · Contributor comprehensibility + navigability pass — CORE DONE 2026-07-12 (docs)
+Done: README got a **"New here? Read in this order"** front-door (README → newest HANDOFF → MAINTENANCE →
+CONTRIBUTING → TASKS) + the hard rules up top; the `app.js` **MODULE MAP** banner + README "where things
+live" now include the Relations view + the wiki-image pipeline; the `docs/` pointer names the HANDOFF as
+the current-state doc. Earlier this session MAINTENANCE.md (module map) + CONTRIBUTING.md were also brought
+current. Remaining (minor, optional): a deeper dedup pass across the doc set + pruning long-superseded
+docs. Original spec below.
+
 Make the repo easy for a new collaborator to pick up: a proper README front-door (what it is, run it,
 where things live, how to add a faction/character/doc, the hard rules), a clear map from the handoff →
 MAINTENANCE → TASKS → CONTRIBUTING (no overlap/contradiction), and a top-of-`app.js` orientation comment /
