@@ -2428,6 +2428,23 @@ $("#doctoc").addEventListener("click", e=>{
   const a=e.target.closest("a"); if(!a) return; e.preventDefault();
   tocScrollTo(docHeads[+a.dataset.i]);                              // scroll to the element, not an id lookup
 });
+
+/* Focus (fullscreen) mode for the reader (T72) — a minimalist "zen" state that hides all app chrome
+   (masthead, section tabs, docbar, the contents rail) so only the document is left, toggled from the
+   button in the top-right. In-app body[data-focus="doc"] (NOT the OS Fullscreen API), so it composites
+   with the CRT frame; not persisted — it's a momentary per-view mode. Exit: the button, Esc, or any
+   navigation (setSection calls exitDocFocus). */
+function docFocusOn(){ return document.body.dataset.focus==="doc"; }
+function setDocFocus(on){
+  if(on && $("#docview").classList.contains("hidden")) return;     // only meaningful while the reader shows
+  document.body.dataset.focus = on ? "doc" : "";
+  const btn=$("#docfs"); if(btn) btn.setAttribute("aria-pressed", on ? "true" : "false");
+}
+function exitDocFocus(){ if(docFocusOn()) setDocFocus(false); }
+$("#docfs").addEventListener("click", ()=> setDocFocus(!docFocusOn()));
+document.addEventListener("keydown", e=>{                          // Esc leaves focus (only when it's on, so other Esc handlers still work)
+  if(e.key==="Escape" && docFocusOn()){ e.preventDefault(); setDocFocus(false); }
+});
 /* ---- doc cache (memory + IndexedDB) + lazy image hydration ----
    Google's export inlines every image as base64 — measured: ~99% of the payload is
    images, the actual text is under 100KB. Two-part strategy:
@@ -2875,6 +2892,7 @@ function focusDocFind(i){
 function stepDocFind(dir){ if(_docFindMatches.length) focusDocFind(_docFindIdx+dir); }
 function setSection(id){
   if(id!=="home" && id!=="roster" && id!=="relations" && id!=="wiki" && !factionDocs().some(d=>d.id===id)) id="roster";
+  exitDocFocus();                          // leaving/entering any view drops the reader's focus mode
   currentSection = id;
   document.body.setAttribute("data-section", id);
   document.querySelectorAll("#topnav .navtab").forEach(b=>{

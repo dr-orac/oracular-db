@@ -822,6 +822,30 @@
 
   /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */
   .docview{ position:relative; display:flex; flex-direction:column; height:100%; min-height:0; padding:0; gap:10px; }   /* command bar now lives in the header; the TOC/content sit right under it, like the roster rail */
+
+  /* ---- Focus (fullscreen) mode (T72) ---- a minimalist "zen" reader: the toggle sits subtly in the
+     top-right of the reading pane; clicking it (or Esc) hides ALL app chrome so only the document
+     remains. In-app state (body[data-focus="doc"]), NOT the OS Fullscreen API, so it composites with
+     the CRT frame. The button lives inside #docview, so it only exists in the doc/wiki reader. */
+  .docfs{ position:absolute; top:12px; right:16px; z-index:20; width:44px; height:44px; display:grid; place-items:center;
+    background:color-mix(in srgb, var(--bg-panel) 80%, transparent); border:1px solid var(--fg-faint); color:var(--fg-dim);
+    cursor:pointer; opacity:.4; transition:opacity .16s, color .16s, border-color .16s, background .16s, transform .12s; }
+  .docfs:hover, .docfs:focus-visible{ opacity:1; color:var(--fg-bright); border-color:var(--fg);
+    background:var(--bg-panel-2); transform:translateY(-1px); outline:none; }
+  .docfs-ico{ display:inline-flex; } .docfs-ico svg{ width:20px; height:20px; display:block; }
+  .docfs-exit{ display:none; }
+  body[data-focus="doc"] .docfs-enter{ display:none; }
+  body[data-focus="doc"] .docfs-exit{ display:inline-flex; }
+  body[data-focus="doc"] .docfs{ opacity:.55; }   /* a touch more present in focus so the way out is findable */
+  /* hide every chrome surface — the masthead (header), the doc command bar (find + Docs link), and
+     the contents rail — leaving only the document + the focus toggle. */
+  body[data-focus="doc"] .app > header,
+  body[data-focus="doc"] .commandbar{ display:none; }
+  body[data-focus="doc"] .doctoc{ display:none; }
+  @media (prefers-reduced-motion: no-preference){
+    body[data-focus="doc"] #docview{ animation:docfocusin .22s ease-out; }
+    @keyframes docfocusin{ from{ opacity:.45; } to{ opacity:1; } }
+  }
   /* reading-progress marker + back-to-top (long docs): a circular ring whose arc fills with how
      far you've read (Medium-style, bottom-right); the centre arrow jumps to the top on click.
      Fades in once you've started reading. One control does both jobs. */
