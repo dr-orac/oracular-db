@@ -5,6 +5,32 @@ Work top-to-bottom unless told otherwise. **One task = one commit.**
 
 ## 🆕 Queued 2026-07-12 (batch 4 — roadmapped, NOT built)
 
+### T72 · Fullscreen / focus mode for the doc + wiki reader — ROADMAPPED (do NOT build yet)
+A **"minimalist writing-app" focus mode** for the Google-Doc reader and the wiki reader: hide all the
+chrome (masthead rows, rails, bezel/frame) and show **only the content**, with a small **fullscreen
+toggle in the top-right of the content area** that sits subtly and brightens on hover; clicking it again
+or pressing **Esc** exits. Plan (for a fresh context):
+- **Trigger button:** a `.docfs-btn` in the top-right of the reader's content area (doc + wiki only —
+  gate on `#docview`/reader being active, not on home/roster/relations). Use the **classic fullscreen
+  glyph** (four corner brackets pointing outward; the "exit" state = four brackets pointing inward).
+  Position `absolute`/`sticky` top-right within `.docscroll`; low opacity at rest (~.35), full on
+  hover/focus; 44px hit target (a11y floor); `aria-pressed`, `aria-label="Fullscreen"`.
+- **Focus state:** toggle `body[data-focus="doc"]` (NOT the OS Fullscreen API — this is an in-app
+  "zen" mode so it composites cleanly with the CRT frame and never trips browser fullscreen quirks).
+  In that state, CSS hides `.primary-nav`, `#topnav`, any rail, and drops the bezel/vignette; the
+  `.docreader`/`.docscroll` expands to (near) the full viewport with the roomy reading measure
+  (dovetails with **T71**'s `--doc-measure`). Keep a comfortable max-width so lines don't run wall-to-wall.
+- **Exit paths:** the button (now showing the inward "exit" glyph), **Esc** key (add a `keydown`
+  listener that clears `data-focus` only when set — don't swallow Esc elsewhere), and any route change
+  (leaving the reader clears focus). Persist? **No** — focus is a per-view momentary mode, not a pref;
+  do not write it to `localStorage`.
+- **Motion/a11y:** a quick, reduced-motion-aware transition (chrome fades out, content settles);
+  respect `prefers-reduced-motion` (instant). Ensure focus is trapped/returned sensibly (button stays
+  reachable; Esc restores). Verify keyboard-only entry+exit.
+- Acceptance: fullscreen button appears **only** in doc/wiki view, top-right, subtle→bright on hover;
+  click hides all chrome to show content only; click-again **and** Esc exit; route change exits; no
+  h-overflow; screenshot both states; works at the width ladder + reduced-motion.
+
 ### T71 · Settings: reading-width for Google Doc + wiki content — ROADMAPPED (do NOT build yet)
 Add a **prefs control to choose the reading-measure width** of the doc reader (Google Docs) and the wiki,
 and give the DEFAULT **a little more padding/breathing** than today. Plan (for a fresh context):
