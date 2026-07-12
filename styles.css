@@ -416,6 +416,20 @@
     background:var(--fg);
     box-shadow:0 0 7px var(--fg), inset 0 0 1px rgba(0,0,0,.35);                /* lamp lit */
   }
+  /* A11Y — High-Contrast mode on the engraved-metal chassis. The default border-frame look is a
+     deliberately low-contrast one: dark ink on mid-metal is ~2.5:1 (engraving reads by RELIEF, not
+     colour, and dark-on-metal can't exceed ~2.6:1 by nature). The phosphor High-Contrast overrides
+     don't touch the metal, so a contrast-needing user in this mode got nothing. Fix: lift every
+     engraved-text button face to the LIT metal (--panel-hi), where the same ink measures ~6.3:1 (AA).
+     Active tabs stay legible via the pressed bevel + lit lamp, not a darker face. */
+  body[data-contrast="high"][data-frame="border"] .navtab,
+  body[data-contrast="high"][data-frame="border"] .navbox,
+  body[data-contrast="high"][data-frame="border"] .titlebar .popwrap > .btn,
+  body[data-contrast="high"][data-frame="border"] .navtab.active,
+  body[data-contrast="high"][data-frame="border"] .navbox.active,
+  body[data-contrast="high"][data-frame="border"] .cogbtn{
+    background:var(--panel-hi);
+  }
   /* the FACTION selector reads as a phosphor READOUT recessed INTO the metal (two-surface law:
      data on a screen, inset in the housing) — a dark inset panel with an inverted pixel bevel. */
   body[data-frame="border"] .faction-box{
