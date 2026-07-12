@@ -618,8 +618,8 @@
   body[data-section="home"]:not([data-frame="border"]) main{ padding:var(--edge); }
   /* landing hero — the umbrella brand + a one-line "what to do" */
   .home-hero{ flex:0 0 auto; text-align:center; padding:14px 24px 2px; }
-  .home-hero-brand{ display:block; font-family:"Workbench","Gothic 821",sans-serif;
-    font-size:clamp(26px,4.4vw,42px); letter-spacing:1px; line-height:1;
+  .home-hero-brand{ display:block; font-family:var(--font-head);   /* the classic Fallout face */
+    font-size:clamp(30px,5vw,50px); letter-spacing:2px; line-height:1;
     color:var(--fg-bright); text-shadow:var(--glow-strong); }
   .home-hero-tag{ display:block; margin-top:6px; font-family:var(--font-body); font-size:13px;
     letter-spacing:2px; text-transform:uppercase; color:var(--fg-dim); }
