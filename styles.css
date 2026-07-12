@@ -662,17 +662,18 @@
   body[data-section="home"]:not([data-frame="border"]) .titlebar-right{
     position:absolute; top:var(--edge); right:var(--edge); margin-left:0; z-index:30; }
   body[data-section="home"]:not([data-frame="border"]) main{ padding:var(--edge); }
-  /* landing hero — the umbrella brand + a one-line "what to do" */
-  .home-hero{ flex:0 0 auto; text-align:center; padding:14px 24px 2px; }
+  /* landing hero — the umbrella brand + a one-line "what to do". Height scales with the viewport
+     (clamp on vh) so the whole landing can fit without scrolling on shorter screens. */
+  .home-hero{ flex:0 0 auto; text-align:center; padding:clamp(2px,1.2vh,12px) 24px 2px; }
   .home-hero-brand{ display:block; font-family:var(--font-head);   /* the classic Fallout face */
-    font-size:clamp(30px,5vw,50px); letter-spacing:2px; line-height:1;
+    font-size:clamp(26px,4.4vw,46px); letter-spacing:2px; line-height:1;
     color:var(--fg-bright); text-shadow:var(--glow-strong); }
-  .home-hero-tag{ display:block; margin-top:6px; font-family:var(--font-body); font-size:13px;
+  .home-hero-tag{ display:block; margin-top:clamp(2px,.6vh,6px); font-family:var(--font-body); font-size:13px;
     letter-spacing:2px; text-transform:uppercase; color:var(--fg-dim); }
   /* the FACTION-PICKER box — a section-card-sized tile with a heading + a grid of factions inside.
      Doubled class so it wins over the base .home-tile rules (which are defined AFTER this block). */
-  .home-tile.home-tile--factions{ flex:0 0 auto; flex-direction:column; align-items:stretch; gap:12px;
-    cursor:default; padding:18px 24px; overflow:visible; }   /* sized to the grid so all factions always show */
+  .home-tile.home-tile--factions{ flex:0 0 auto; flex-direction:column; align-items:stretch; gap:clamp(6px,1vh,12px);
+    cursor:default; padding:clamp(10px,1.4vh,18px) 22px; overflow:visible; }   /* NEVER shrinks — the grid always shows every faction; space is reclaimed from the section tiles + compact cells instead */
   .home-tile.home-tile--factions::before{ content:none; }   /* no whole-box hover wash — the cells are the targets */
   .home-tile.home-tile--factions:hover, .home-tile.home-tile--factions:focus-visible{ transform:none;
     border-color:var(--fg-faint); background:var(--bg-panel);
@@ -682,10 +683,10 @@
     line-height:1; text-transform:uppercase; color:var(--fg-bright); text-shadow:var(--glow-strong); }
   .home-fac-sub{ font-family:var(--font-body); font-size:clamp(12px,1.3vw,14px); letter-spacing:.3px;
     color:var(--fg-dim); }
-  .home-fac-grid{ flex:1 1 auto; display:grid; gap:8px; align-content:center;
+  .home-fac-grid{ flex:1 1 auto; display:grid; gap:6px; align-content:center;
     grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); }
   .home-fac{ display:flex; align-items:center; gap:10px; cursor:pointer; padding:0 13px; min-width:0;
-    min-height:52px;   /* uniform cell height so a 1-line and a 2-line name read as the same tile */
+    min-height:clamp(40px,5.2vh,52px);   /* uniform cell height so a 1-line and a 2-line name read as the same tile */
     text-align:left; background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg);
     font-family:var(--font-head);
     transition:color .14s, border-color .14s, background .14s, box-shadow .14s, transform .12s; }
@@ -696,14 +697,14 @@
     box-shadow:0 0 14px -5px rgba(var(--fg-rgb),.5); transform:translateY(-1px); }
   .home-fac.active{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
     box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.4), 0 0 16px -6px rgba(var(--fg-rgb),.6); }
-  .home-tiles{ flex:1 1 auto; display:flex; flex-direction:column; gap:12px; min-height:0;
-    padding:12px; box-sizing:border-box; }
+  .home-tiles{ flex:1 1 auto; display:flex; flex-direction:column; gap:clamp(6px,1vh,12px); min-height:0;
+    padding:clamp(6px,1vh,12px); box-sizing:border-box; }
   /* each section is a full-height nav-CARD: left accent bar · framed icon · title+blurb · Enter CTA,
      with a faded index watermark. Reads as a designed landing row, not a plain button. */
   .home-tile{
-    flex:1 1 0; min-height:118px; position:relative; overflow:hidden; isolation:isolate;
-    display:flex; align-items:center; gap:30px; text-align:left;
-    padding:20px 44px 20px 28px;
+    flex:1 1 0; min-height:clamp(58px, 8vh, 118px); position:relative; overflow:hidden; isolation:isolate;
+    display:flex; align-items:center; gap:clamp(16px,2vw,30px); text-align:left;
+    padding:clamp(10px,1.4vh,20px) clamp(24px,3vw,44px) clamp(10px,1.4vh,20px) clamp(18px,2vw,28px);
     background:var(--bg-panel); color:var(--fg);
     border:1px solid var(--fg-faint); cursor:pointer; font-family:var(--font-head);
     transition:border-color .2s, background .2s, box-shadow .2s, transform .18s cubic-bezier(.2,.8,.3,1);
@@ -727,20 +728,22 @@
   .home-tile:hover .home-tile-bar, .home-tile:focus-visible .home-tile-bar{
     width:6px; background:var(--fg); box-shadow:0 0 14px -1px rgba(var(--fg-rgb),.85); }
   /* icon in a framed square */
-  .home-tile-ico{ flex:0 0 auto; width:68px; height:68px; display:grid; place-items:center;
+  .home-tile-ico{ flex:0 0 auto; width:clamp(44px,6.5vh,68px); height:clamp(44px,6.5vh,68px); display:grid; place-items:center;
     border:1px solid var(--fg-faint); background:rgba(var(--fg-rgb),.05);
     transition:border-color .2s, background .2s, transform .2s, color .2s; }
-  .home-tile-ico svg{ width:42px; height:42px; fill:currentColor;
+  .home-tile-ico svg{ width:62%; height:62%; fill:currentColor;
     filter:drop-shadow(0 0 8px rgba(var(--fg-rgb),.4)); }
   .home-tile:hover .home-tile-ico, .home-tile:focus-visible .home-tile-ico{
     border-color:var(--fg); background:rgba(var(--fg-rgb),.12); transform:scale(1.06); color:var(--fg-bright); }
   /* body */
-  .home-tile-body{ display:flex; flex-direction:column; gap:8px; min-width:0; flex:1 1 auto; }
-  .home-tile-title{ font-size:clamp(22px, 3.2vw, 36px); letter-spacing:2px; text-transform:uppercase;
+  .home-tile-body{ display:flex; flex-direction:column; gap:clamp(3px,.6vh,8px); min-width:0; flex:1 1 auto; }
+  .home-tile-title{ font-size:clamp(19px, 2.7vw, 34px); letter-spacing:2px; text-transform:uppercase;
     line-height:1; text-shadow:0 0 14px rgba(var(--fg-rgb),.4); }
   .home-tile:hover .home-tile-title, .home-tile:focus-visible .home-tile-title{ color:var(--fg-bright); }
-  .home-tile-desc{ font-family:var(--font-body); font-size:clamp(13px, 1.4vw, 16px);
-    letter-spacing:.3px; color:var(--fg-dim); max-width:62ch; line-height:1.5; }
+  /* clamp the blurb to at most 2 lines so a shrunk tile never overflows/clips awkwardly */
+  .home-tile-desc{ font-family:var(--font-body); font-size:clamp(13px, 1.35vw, 16px);
+    letter-spacing:.3px; color:var(--fg-dim); max-width:62ch; line-height:1.4;
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
   .home-tile:hover .home-tile-desc, .home-tile:focus-visible .home-tile-desc{ color:var(--fg); }
   /* big faded index watermark — anchored to the right edge so it fills the card's right third as a
      deliberate oversized numeral (not a number floating mid-card). Brightens + drifts left on hover. */
@@ -762,10 +765,27 @@
   .home-tile:hover .home-tile-cta, .home-tile:focus-visible .home-tile-cta{
     opacity:1; transform:none; max-height:2em; margin-top:2px; }
   .home-tile:hover .home-tile-cta svg, .home-tile:focus-visible .home-tile-cta svg{ transform:translateX(5px); }
+  /* SHORT viewports: trim to one description line + a smaller hero title so the whole landing packs
+     into the screen without scrolling (the tiles shrink; a one-line blurb keeps them clean, not clipped). */
+  @media (max-height:840px){
+    .home-tile-desc{ -webkit-line-clamp:1; }
+    .home-hero-brand{ font-size:clamp(24px,3.4vw,36px); }
+    .home-hero-tag{ font-size:12px; }
+    .home-tile-title{ font-size:clamp(18px,2.3vw,28px); }
+    .home-tile-ico{ width:clamp(40px,5.4vh,56px); height:clamp(40px,5.4vh,56px); }
+  }
   @keyframes hometile{ from{ opacity:0; transform:translateY(14px); } }
   @media (max-width:640px){
-    .home-tile{ gap:16px; padding:16px 18px; min-height:100px; }
-    .home-tile-ico{ width:46px; height:46px; } .home-tile-ico svg{ width:26px; height:26px; }
+    /* mobile: keep the landing as close to no-scroll as 13 factions + 5 sections allow — a 2-col
+       faction grid (not 1), compact tiles, one-line blurbs. overflow:auto still catches the smallest
+       phones gracefully rather than clipping. */
+    .home-fac-grid{ grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px; }
+    .home-fac{ min-height:clamp(38px,5.4vh,48px); padding:0 11px; gap:8px; }
+    .home-fac-name{ font-size:11px; overflow-wrap:break-word; }
+    .home-tile{ gap:14px; padding:9px 16px; min-height:clamp(58px,8.2vh,92px); }
+    .home-tile-ico{ width:clamp(40px,5.6vh,50px); height:clamp(40px,5.6vh,50px); }
+    .home-tile-desc{ -webkit-line-clamp:1; }
+    .home-tile-title{ font-size:clamp(19px,5.4vw,26px); }
     .home-tile-num, .home-tile-cta{ display:none; }
   }
   @media (prefers-reduced-motion:reduce){
