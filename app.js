@@ -2356,25 +2356,56 @@ function buildDocSidebar(reader){
   // reuse the roster's own section-header component so the two index rails share one
   // element (»-prefix + trailing dashed rule come with the class) — not a parallel style.
   toc.innerHTML = '<div class="sectionhdr">CONTENTS</div>' + docHeads.map((h,i)=>{
-    if(!h.id) h.id="doch-"+i;                                   // ensure a jump target
-    return `<a href="#${escAttr(h.id)}" class="tl${h.tagName[1]}" data-h="${escAttr(h.id)}">${esc(h.textContent.trim())}</a>`;
+    if(!h.id) h.id="doch-"+i;                                   // ensure a jump target (URL / in-doc anchors)
+    // data-i scrolls to the ELEMENT by its index in docHeads — immune to duplicate ids that Google's
+    // export can emit (getElementById would return the first match → jump to the wrong heading). data-h
+    // stays for the current-section highlight in trackDocSection.
+    return `<a href="#${escAttr(h.id)}" class="tl${h.tagName[1]}" data-i="${i}" data-h="${escAttr(h.id)}">${esc(h.textContent.trim())}</a>`;
   }).join("");
 }
 /* update the sticky "current section" label + sidebar highlight as the doc scrolls */
 function trackDocSection(){
   if(!docHeads.length){ $("#docnow").textContent=""; return; }
   const scTop=$("#docscroll").getBoundingClientRect().top;
-  let cur=null;
-  for(const h of docHeads){ if(h.getBoundingClientRect().top - scTop <= 90) cur=h; else break; }
+  let cur=null, curIdx=-1;
+  for(let i=0;i<docHeads.length;i++){ if(docHeads[i].getBoundingClientRect().top - scTop <= 90){ cur=docHeads[i]; curIdx=i; } else break; }
   $("#docnow").textContent = cur ? "› "+cur.textContent.trim() : "";
   const toc=$("#doctoc"); let act=null;
-  toc.querySelectorAll("a").forEach(a=>{ const on = cur && a.dataset.h===cur.id; a.classList.toggle("active", on); if(on) act=a; });
+  // match by index (not id) so duplicate export ids can't highlight two entries at once
+  toc.querySelectorAll("a").forEach(a=>{ const on = (+a.dataset.i)===curIdx; a.classList.toggle("active", on); if(on) act=a; });
   if(act) act.scrollIntoView({block:"nearest"});
   writeRoute(cur ? slugify(cur.textContent) : "");   // the URL follows the section you're reading
 }
+/* Scroll the reader to a heading and KEEP it pinned once the smooth scroll settles. A one-shot
+   smooth scrollIntoView can land short when lazy images hydrate mid-flight and shift the target
+   (the classic "TOC click gets stuck" bug) — so after the animation ends (scrollend, with a timeout
+   fallback for Safari) we snap exactly onto the heading. If the user takes over the scroll (wheel /
+   touch / keys) we abandon the snap so we never yank them back. Rapid clicks drop the prior snap. */
+let _tocCleanup=null;
+function tocScrollTo(t){
+  if(!t) return;
+  const sc=$("#docscroll");
+  if(_tocCleanup) _tocCleanup();                                   // cancel any prior pending snap (stale target)
+  let done=false, snapT=null;
+  const cleanup=()=>{ if(done) return; done=true; clearTimeout(snapT);
+    sc.removeEventListener("scrollend", settle);
+    window.removeEventListener("wheel", onUser, true);
+    window.removeEventListener("touchstart", onUser, true);
+    window.removeEventListener("keydown", onUser, true);
+    _tocCleanup=null; };
+  const settle=()=>{ if(done) return; cleanup(); t.scrollIntoView({block:"start"}); };  // snap exactly onto the heading
+  const onUser=()=>{ cleanup(); };                                 // user grabbed the scroll → leave them be
+  _tocCleanup=cleanup;
+  t.scrollIntoView({behavior:"smooth", block:"start"});            // animate (instant under reduced-motion)
+  sc.addEventListener("scrollend", settle);
+  window.addEventListener("wheel", onUser, {passive:true, capture:true});
+  window.addEventListener("touchstart", onUser, {passive:true, capture:true});
+  window.addEventListener("keydown", onUser, true);
+  snapT=setTimeout(settle, 650);                                   // fallback where scrollend is unsupported
+}
 $("#doctoc").addEventListener("click", e=>{
   const a=e.target.closest("a"); if(!a) return; e.preventDefault();
-  const t=document.getElementById(a.dataset.h); if(t) t.scrollIntoView({behavior:"smooth", block:"start"});
+  tocScrollTo(docHeads[+a.dataset.i]);                              // scroll to the element, not an id lookup
 });
 /* ---- doc cache (memory + IndexedDB) + lazy image hydration ----
    Google's export inlines every image as base64 — measured: ~99% of the payload is
