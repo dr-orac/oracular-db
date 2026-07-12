@@ -43,15 +43,20 @@ remote-data path, what was fixed, what was deferred and why. Read it before touc
 | Region | What it does |
 |---|---|
 | `CONFIG` | sheet id, gid, defaultSection, webAppUrl |
-| `DOCS` | top-nav tabs that embed Google Docs (see "Doc reader" below) |
-| `EXTRA_CHARACTERS` | code-defined dossiers not in the sheet (visitors etc.) |
+| `FACTIONS` | multi-faction config map + `FACTION_ORDER` / `FACTION_ICONS` / `FACTION_WIKI`. `activeFaction()`, `applyFaction()`, `factionAppearance()`, `fkey()`. Only linked factions (non-empty `data.sheetId`) show data; others → a themed "coming soon" |
+| `DOCS` | the tribe's doc tabs (Google Docs) — other factions start with `docs:[]` (see "Doc reader" below) |
+| `EXTRA_CHARACTERS` | code-defined dossiers not in the sheet (visitors etc.), each tagged with its `faction` |
 | `FIELDS` / `ID_ORDER` / `BLOCK_ORDER` | the **data contract** (see below) |
-| data fetch | `effectiveSheetId()`, `sheetUrl()`, `parseCSV()`, model build |
+| data fetch | `effectiveSheetId()`, `sheetUrl()`, `parseCSV()`, model build; `buildNameIndex()` + `buildConnections()` (the cross-link / mention graph) |
 | render | `render()` (try/caught), `renderRoster()`, `renderCards()`, `dossierHTML()` |
 | dossier pieces | portrait, spirit, S.P.E.C.I.A.L, connections, log, shots |
-| section nav / doc reader | `renderNav()`, `setSection()`, `loadDoc()`, `docClean()`, `styleTOC()` (see below) |
+| masthead (2 rows) | row 1 = Home / **FACTION box** / Wiki + cog (`renderPrimaryNav()`, `renderBrand()`, `wireFactionMenu()`); row 2 = this faction's sections (`renderNav()`) |
+| section routing | `setSection()` dispatches: home · roster · **relations** · wiki · a faction doc. Hash router `applyRoute`/`writeRoute`/`parseRoute`/`openPendingChar` |
+| relations view | `renderRelations()`, `relationsGraph()`, `relationsPanelHTML()`, `parseRelationshipEntries()` — a character's web from the roster's Relationships field. Shares `state.selected` + the `listboxStep()` keyboard helper with the roster list |
+| doc reader | `loadDoc()` → `docClean()` (strict whitelist; strips `<div>`; themes `<img>` as `.docfig`), `styleTOC()`, `buildDocSidebar()` (see below) |
+| wiki reader | `loadWiki()` → `normaliseWikiImages()` (keep + absolutise images) → `renderWiki()` (re-skin MediaWiki structure) → `wikiClean()`/`docClean()`; internal links browse in-app |
 | delegated events | one document click handler dispatches all in-content buttons |
-| theme | `apply*()` setters, persisted in `localStorage` (`mdb-*`), Theme popover. Fonts: `FACES` catalogue, **headings + body picked separately** (`applyFontHead`/`applyFontBody`, `data-font-head`/`data-font-body`); legacy `mdb-font` preset key migrates once via `PRESET_MIGRATE` |
+| theme | `apply*()` setters, persisted in `localStorage` (`mdb-*`, per-faction where relevant). Fonts: `FACES` catalogue, **headings + body picked separately** (`applyFontHead`/`applyFontBody`, `data-font-head`/`data-font-body`); legacy `mdb-font` preset key migrates once via `PRESET_MIGRATE`. Frame modes `data-frame`, `data-contrast="high"` (a11y) |
 | edit / upload | optional write-back paths (only active when `webAppUrl` set) |
 | boot | RobCo type-on intro, skippable, reduced-motion aware, hard timeout |
 
@@ -111,8 +116,9 @@ How it works:
   (caches them in `docHeads`); `trackDocSection()` (one rAF-throttled `#docscroll` scroll
   handler, shared with back-to-top) updates the sticky "current section" breadcrumb (`#docnow`)
   and the sidebar's active highlight. Sidebar + breadcrumb are wide-screen-only.
-- `setSection()` toggles roster vs doc; `render()` is guarded by `currentSection` so a refresh
-  never clobbers the open doc. Roster-only chrome hides via `body[data-section]`.
+- `setSection()` switches between home · roster · relations · wiki · a faction doc (see the module
+  map); `render()` is guarded by `currentSection` so a refresh never clobbers the open doc/wiki.
+  Section-specific chrome hides via `body[data-section]`.
 
 **Fragility / future-proofing:** the reader depends on Google's `export?format=html` output
 shape — heading `id="h.…"` anchors (TOC jumps), `<span style="font-weight/font-style">` for

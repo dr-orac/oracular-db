@@ -33,9 +33,10 @@ review effort for design and trade-offs.
 - **Data is read-only.** `CONFIG.sheetId` points at the tribe's original source-of-truth
   sheet — the site reads it and nothing may ever write to it. Don't repoint the id.
   For previewing, don't edit the source — `preview.py` injects an override (localhost only).
-- **Legibility floor 17px** for prose/labels (short uppercase chips ~15px are an allowed
-  exception). `--fg-dim` is the darkest any *text* may be; `--fg-faint` is borders only;
-  no glow on small text.
+- **Legibility floor.** Prose/reading text **≥17px**; use `--fs-note` (14px) for captions/tags/counts
+  and `--fs-hint` (13px) as the **absolute minimum** for any text — nothing readable below 13px (prefer
+  the `--fs-*` tokens over raw px). `--fg-dim` is the darkest any *text* may be; `--fg-faint` is borders
+  only; no glow on small text. Keep controls ≥44px on touch.
 - **Self-host assets.** New fonts go in `fonts/` as woff2 + an `@font-face`; no CDN. Only ship
   fonts you're licensed to embed and redistribute (`selfcheck.py` flags orphan font files).
 - **Tokens over literals.** Prefer `var(--..)` so a theme change propagates.
@@ -71,8 +72,10 @@ Most additions are one config entry — the app wires the rest.
     `viewBox="0 0 24 24"` — else the picker/home cell shows no icon);
   - optionally add its wiki page to **`FACTION_WIKI`** (so the coming-soon screen links to it).
 
-  With two or more factions the masthead title becomes a dropdown; selecting your faction re-skins
-  the whole app and loads its roster. No other code.
+  With two or more factions the masthead's **FACTION box** (row 1, between Home and Wiki) becomes a
+  dropdown; picking your faction re-skins the whole app and loads its roster. Each faction automatically
+  gets a **Roster**, a **Relations** view (derived from the roster's Relationships field — no config),
+  and a tab per entry in its `docs`. No other code.
 
 ## Preview
 
