@@ -1028,6 +1028,23 @@ Investigation to produce (a short written assessment, like T2/T15 — no code):
 Deliverable: `docs/DISCORD-SOURCE.md` (assessment + recommendation) + concrete follow-up task(s). No
 data written anywhere until the user approves the path. Sequence AFTER the current roadmap items.
 
+### T52 — ACCESS re-checked 2026-07-12 (still can't pull; path decided)
+- **The dev browser blocks `discord.com` by policy** — can't even open the channel here, let alone read
+  it. WebFetch/curl also fail (auth wall). So NO data has ever been pulled, and it can't be from this
+  environment. The user confirmed "own tab at the very top for now" as the desired placement.
+- **A static, no-backend site cannot live-read a private Discord channel** either — there's no server to
+  hold a bot token and no public/CORS read API. So "live fetch" is off the table for this app by design.
+- **Recommended path = get it into the existing data model, not live.** Best: a server admin/mod runs an
+  export (e.g. the open-source DiscordChatExporter → JSON) once → we transform it into either the roster
+  Sheets flow or a static `discord.json` the app reads. ToS-clean (admin-driven, their own server),
+  reproducible, no secrets. For a handful of entries, manual copy into a Sheet is even cheaper.
+- **Faction-per-faction filtering feasibility is UNKNOWN until we see a sample** — it hinges entirely on
+  whether each entry carries a faction signal (a per-faction thread/forum-post, a role tag, or a "Faction:"
+  field). If yes, filtering is trivial; if it's a flat free-form stream, it needs manual tagging. **Ask
+  the user for a small sample export before designing the view or the tab.**
+- **Do NOT scaffold an empty top-level Discord tab yet** — without the data shape it's premature entropy
+  (same discipline as the wiki lore/roleplay flip). Design the ingest + view once a sample lands.
+
 ## T53 · Edge border — extra glow + widescreen/responsive — DONE-THIS-BATCH (see git)
 Make the exterior screen bezel (screen mode: `body:not([data-frame="border"])::after`, the `--bezel-*`
 concentric rings) EXTRA glowy — a brighter phosphor bloom around the theme hairline, especially read on
