@@ -24,7 +24,14 @@ Two parts, both about making the row-1 > row-2 hierarchy obvious:
    Thin, theme-coloured, low-key. **Responsive-safe:** show ONLY when row-2 is a single row; hide when it
    wraps/stacks (mobile) so lines never cross into empty space. Verify desktop + a couple of widths.
 
-### T62 · Show the wiki SITEMAP inside the app — MED [feature]
+### T62 · Show the wiki SITEMAP inside the app — MED [feature] — APPROACH DECIDED: LIVE from categories
+User has wiki edit access + is doing a categorisation pass (see `docs/WIKI-CATEGORISATION.md` for the exact
+checklist). So build the sitemap **live from the MediaWiki category tree** (`Category:Nuclear-14` → section
+subcats → members) — self-updating, no hand-maintained map. Include an **"Uncategorised" fallback bucket**
+so a not-yet-tagged page is still listed, never silently dropped. Placement: the **Wiki landing**. Build
+after (or against the partial state of) the categorisation pass. (Original static-map plan below is the
+fallback if categorisation stalls.)
+
 Surface the wiki structure (the 46-page map: Main Page → Factions / Weapons / Crafting / Survival /
 Rules; nesting Weapons→Ranged/Melee) as an in-theme view. **Placement (recommended):** the **Wiki section
 LANDING** — opening Wiki with no specific page shows the sitemap/index; clicking a node loads that page in
