@@ -669,16 +669,16 @@
   body[data-section="home"]:not([data-frame="border"]) main{ padding:var(--edge); }
   /* Laid out by HIERARCHY: a TOP row (brand + the umbrella Wiki), then a two-column LOWER split —
      faction picker (left) · the picked faction's own sections (right). See renderHome(). */
-  /* ── TOP: brand wordmark + a wide, prominent Wiki entry (spans every faction → sits above them) ── */
-  .home-top{ flex:0 0 auto; display:flex; align-items:stretch; gap:clamp(10px,1.4vw,16px);
-    padding-bottom:clamp(8px,1.4vh,16px); }
-  .home-brand{ flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; gap:2px;
-    padding-right:clamp(8px,1.4vw,16px); }
-  .home-brand-name{ font-family:var(--font-head); font-size:clamp(22px,3vw,40px); letter-spacing:1.5px;
-    line-height:1; color:var(--fg-bright); text-shadow:var(--glow-strong); white-space:nowrap; }
-  .home-brand-tag{ font-family:var(--font-body); font-size:12px; letter-spacing:2px; text-transform:uppercase;
-    color:var(--fg-dim); }
-  .home-wiki{ flex:1 1 auto; display:flex; align-items:center; gap:clamp(12px,1.6vw,22px); text-align:left;
+  /* ── TOP (stacked, one clean left edge): the brand, then a FULL-WIDTH Wiki bar directly below it so
+        its edges line up with the two columns beneath — nothing hangs in space. ── */
+  .home-brand{ flex:0 0 auto; display:flex; flex-direction:column; gap:clamp(1px,.5vh,3px);
+    margin-bottom:clamp(8px,1.3vh,15px); }
+  .home-brand-name{ font-family:var(--font-head); font-size:clamp(24px,3.2vw,44px); letter-spacing:1.5px;
+    line-height:1; color:var(--fg-bright); text-shadow:var(--glow-strong); }
+  .home-brand-tag{ font-family:var(--font-body); font-size:clamp(11px,1vw,13px); letter-spacing:2px;
+    text-transform:uppercase; color:var(--fg-dim); }
+  .home-wiki{ flex:0 0 auto; margin-bottom:clamp(12px,1.8vh,22px);
+    display:flex; align-items:center; gap:clamp(12px,1.6vw,22px); text-align:left;
     padding:clamp(9px,1.5vh,17px) clamp(16px,1.8vw,26px); cursor:pointer; font-family:var(--font-head);
     background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg);
     transition:border-color .18s, background .18s, box-shadow .18s, transform .16s; }
@@ -693,7 +693,7 @@
     color:var(--fg-bright); text-shadow:var(--glow); }
   .home-wiki-desc{ font-family:var(--font-body); font-size:clamp(12px,1.2vw,15px); color:var(--fg-dim);
     letter-spacing:.3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .home-wiki-cta{ flex:0 0 auto; display:inline-flex; align-items:center; gap:7px; font-size:13px;
+  .home-wiki-cta{ flex:0 0 auto; display:inline-flex; align-items:center; gap:7px; font-size:clamp(11px,1.1vw,14px);
     letter-spacing:2px; text-transform:uppercase; color:var(--fg-bright); opacity:.7; }
   .home-wiki-cta svg{ width:16px; height:16px; fill:currentColor; transition:transform .2s; }
   .home-wiki:hover .home-wiki-cta{ opacity:1; }  .home-wiki:hover .home-wiki-cta svg{ transform:translateX(4px); }
@@ -720,7 +720,7 @@
     transition:color .14s, border-color .14s, background .14s, box-shadow .14s, transform .12s; }
   .home-fac-ico{ flex:0 0 auto; width:24px; height:24px; display:inline-flex; }
   .home-fac-ico svg{ width:100%; height:100%; fill:currentColor; display:block; }
-  .home-fac-name{ font-size:13px; letter-spacing:.6px; line-height:1.15; text-transform:uppercase; min-width:0;
+  .home-fac-name{ font-size:clamp(11px,1.05vw,14px); letter-spacing:.6px; line-height:1.15; text-transform:uppercase; min-width:0;
     overflow-wrap:break-word; }
   .home-fac:hover{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
     box-shadow:0 0 14px -5px rgba(var(--fg-rgb),.5); transform:translateY(-1px); }
@@ -764,8 +764,6 @@
   }
   /* NARROW: stack the top (brand over wiki) and the two columns (factions over sections) */
   @media (max-width:720px){
-    .home-top{ flex-direction:column; }
-    .home-brand{ padding-right:0; align-items:center; text-align:center; }
     .home-cols{ grid-template-columns:1fr; }
     /* stacked → compact the cells so the taller single column still fits the phone */
     .home-fac{ min-height:clamp(40px,5vh,48px); }
@@ -773,7 +771,6 @@
     .home-sec-desc{ -webkit-line-clamp:1; }
   }
   @media (max-width:420px){
-    .home-fac-name{ font-size:11px; }
     .home-sec-desc{ -webkit-line-clamp:1; }
   }
   @media (prefers-reduced-motion:reduce){

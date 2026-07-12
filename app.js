@@ -2140,17 +2140,16 @@ function renderHome(){
   const f = activeFaction();
   const single = FACTION_ORDER.length < 2;
 
-  // TOP: brand wordmark + a wide, prominent WIKI entry
-  const top = `<div class="home-top">`+
-    `<div class="home-brand"><span class="home-brand-name">Misfits Database</span>`+
+  // TOP (stacked, all left-aligned to the same edge): the brand wordmark, then a FULL-WIDTH Wiki bar
+  // directly below it so its edges line up with the two columns underneath — nothing hangs in space.
+  const top = `<div class="home-brand"><span class="home-brand-name">Misfits Database</span>`+
       `<span class="home-brand-tag">Multi-faction archive</span></div>`+
     `<button class="home-wiki" type="button" data-section="wiki" aria-label="Open the wiki">`+
       `<span class="home-wiki-ico">${NAV_ICONS.wiki}</span>`+
       `<span class="home-wiki-body"><span class="home-wiki-title">Wiki</span>`+
         `<span class="home-wiki-desc">${esc(HOME_INFO.wiki)}</span></span>`+
       `<span class="home-wiki-cta" aria-hidden="true">Open ${HOME_ARROW}</span>`+
-    `</button>`+
-  `</div>`;
+    `</button>`;
 
   // LOWER-LEFT: the faction picker (omitted when there's only one faction)
   const left = single ? "" :
