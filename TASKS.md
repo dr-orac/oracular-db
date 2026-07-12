@@ -3,6 +3,18 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## ✅ Shipped 2026-07-12 (see `docs/HANDOFF-2026-07-12.md`)
+- **T28 Relations view — BUILT** (4588bec): per-faction relationship web from the roster's Relationships
+  field. Live-data verification still owed.
+- **Wiki images render** (a5e90ad): the reader no longer strips images — unblocks the wiki lore/roleplay
+  move (T59). Wiki has 0 images today; verified synthetically.
+- **T57 cards layout** (0491f68), **home equal-frame** (4f8173a), **Fallout title font** (1afb83f).
+- **T55 accessibility — substantive pass COMPLETE**: roster arrow-nav (11741e9), 44px touch targets
+  (515af6d), 13px text floor (3c9d1d3). Remaining a11y items are verification-only (see ACCESSIBILITY-PLAN).
+- **T59 wiki integration** planned (`docs/WIKI-INTEGRATION.md`) + a live wiki **sitemap**. App side ready;
+  blocked on the user creating the pages (under **Wasteland Tribes**) + sharing titles.
+- Open: **T52 Discord source** (auth-gated), **T54 master sheet** (user P0), **T19** prefs migration.
+
 ## T57 · Profile photos + Cards mode redesign — ROADMAPPED (design pass, best verified on live data)
 User wants the character photos treated better. ⚠ Can't verify in the dev sandbox (roster data =
 Google Sheets, network-blocked here) — implement carefully + verify on the LIVE site / with the user.
