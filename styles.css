@@ -646,6 +646,11 @@
      "The buttons ARE the home page, just elongated full height." Tiles fill the viewport and
      divide evenly by count; each is a big, obvious click target into that section. */
   .home{ height:100%; min-height:0; overflow:auto; display:flex; flex-direction:column; }
+  /* centre the whole landing vertically with balanced breathing room — the spacers grow into free
+     space when the content fits and collapse to 0 when it doesn't (so a short screen scrolls from the
+     top instead of clipping). Content is right-sized (below), not stretched to fill. */
+  .home::before{ content:""; flex:1 1 0; min-height:0; }
+  .home::after{ content:""; flex:1.25 1 0; min-height:0; }
   /* on the landing, the section tabs + faction selector are redundant (the cards + faction grid do
      that job), so hide them — home IS the navigation. The cog + the home content stay. */
   body[data-section="home"] .primary-nav{ display:none; }   /* home is the landing — the tiles ARE the nav */
@@ -694,7 +699,7 @@
   .home-wiki:hover .home-wiki-cta{ opacity:1; }  .home-wiki:hover .home-wiki-cta svg{ transform:translateX(4px); }
 
   /* ── LOWER: two columns — faction picker (left) · the picked faction's sections (right) ── */
-  .home-cols{ flex:1 1 auto; min-height:0; display:grid; gap:clamp(10px,1.4vw,16px);
+  .home-cols{ flex:0 1 auto; min-height:0; display:grid; gap:clamp(12px,1.6vw,22px); align-items:start;
     grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
   .home-cols--solo{ grid-template-columns:1fr; }   /* single-faction build → just the sections */
   .home-col{ min-height:0; display:flex; flex-direction:column; }
@@ -704,15 +709,16 @@
   .home-col-ico{ flex:0 0 auto; width:1.25em; height:1.25em; display:inline-flex; }
   .home-col-ico svg{ width:100%; height:100%; fill:currentColor; }
 
-  /* faction grid — cells STRETCH to fill their row + row height; an odd last cell spans full width */
-  .home-fac-grid{ flex:1 1 auto; min-height:0; display:grid; gap:6px;
-    grid-template-columns:repeat(2, minmax(0,1fr)); grid-auto-rows:1fr; }
+  /* faction grid — a tight, even grid of chips (right-sized to their content, NOT stretched tall);
+     cells fill their column WIDTH, an odd last cell spans the full width. */
+  .home-fac-grid{ flex:0 0 auto; display:grid; gap:8px;
+    grid-template-columns:repeat(2, minmax(0,1fr)); grid-auto-rows:auto; }
   .home-fac:last-child:nth-child(odd){ grid-column:1 / -1; }
-  .home-fac{ display:flex; align-items:center; gap:10px; cursor:pointer; padding:4px 13px; min-width:0;
-    min-height:clamp(36px,4.8vh,52px); text-align:left; background:var(--bg-panel); border:1px solid var(--fg-faint);
+  .home-fac{ display:flex; align-items:center; gap:11px; cursor:pointer; padding:0 14px; min-width:0;
+    min-height:clamp(44px,5.6vh,56px); text-align:left; background:var(--bg-panel); border:1px solid var(--fg-faint);
     color:var(--fg); font-family:var(--font-head);
     transition:color .14s, border-color .14s, background .14s, box-shadow .14s, transform .12s; }
-  .home-fac-ico{ flex:0 0 auto; width:26px; height:26px; display:inline-flex; }
+  .home-fac-ico{ flex:0 0 auto; width:24px; height:24px; display:inline-flex; }
   .home-fac-ico svg{ width:100%; height:100%; fill:currentColor; display:block; }
   .home-fac-name{ font-size:13px; letter-spacing:.6px; line-height:1.15; text-transform:uppercase; min-width:0;
     overflow-wrap:break-word; }
@@ -722,11 +728,10 @@
     box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.45), 0 0 16px -6px rgba(var(--fg-rgb),.6); }
 
   /* section cards — richer than a faction cell; fill the right column's height evenly */
-  .home-sec-list{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; justify-content:center;
-    gap:clamp(6px,1vh,12px); }   /* centred so a faction with few sections doesn't leave a lopsided gap */
-  .home-sec{ flex:1 1 0; min-height:clamp(50px,7vh,96px); max-height:clamp(104px,17vh,150px); position:relative; overflow:hidden;
-    display:flex; align-items:center; gap:clamp(12px,1.4vw,20px); text-align:left;
-    padding:clamp(8px,1.2vh,16px) clamp(14px,1.6vw,22px); background:var(--bg-panel); color:var(--fg);
+  .home-sec-list{ flex:0 0 auto; display:flex; flex-direction:column; gap:clamp(8px,1.1vh,13px); }
+  .home-sec{ flex:0 0 auto; min-height:clamp(72px,9.5vh,100px); position:relative; overflow:hidden;
+    display:flex; align-items:center; gap:clamp(13px,1.4vw,20px); text-align:left;
+    padding:clamp(9px,1.3vh,16px) clamp(15px,1.7vw,22px); background:var(--bg-panel); color:var(--fg);
     border:1px solid var(--fg-faint); cursor:pointer; font-family:var(--font-head);
     transition:border-color .18s, background .18s, box-shadow .18s, transform .16s;
     animation:hometile .4s cubic-bezier(.2,.8,.3,1) backwards; animation-delay:calc(var(--i,0) * 55ms); }
@@ -762,8 +767,10 @@
     .home-top{ flex-direction:column; }
     .home-brand{ padding-right:0; align-items:center; text-align:center; }
     .home-cols{ grid-template-columns:1fr; }
-    .home-fac-grid{ grid-auto-rows:auto; }
-    .home-sec{ flex:0 0 auto; }
+    /* stacked → compact the cells so the taller single column still fits the phone */
+    .home-fac{ min-height:clamp(40px,5vh,48px); }
+    .home-sec{ min-height:clamp(62px,8vh,84px); }
+    .home-sec-desc{ -webkit-line-clamp:1; }
   }
   @media (max-width:420px){
     .home-fac-name{ font-size:11px; }
