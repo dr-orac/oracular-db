@@ -591,23 +591,45 @@
   /* section tabs live at the LEFT of the single header row (see .titlebar) */
   .topnav{ display:flex; gap:8px; flex-wrap:wrap; }
   .masthead > #topnav{ margin-top:16px; }   /* ROW 2 sits below the titlebar (row 1) — clear vertical gap between tiers */
+  /* ROW 2 is a SUB-level of row 1: same label size (legibility) but a lighter, flatter treatment —
+     a flat outline, not a raised gradient panel — so the tabs read as subordinate to the big row-1
+     boxes rather than as peers. The active state mirrors row-1's subtle active (not a loud solid fill,
+     which would out-shout its own parent). */
   .navtab{
     display:inline-flex; align-items:center; gap:9px;
     font-family:var(--font-head); font-size:16px; letter-spacing:1.2px; text-transform:uppercase;
-    color:var(--fg-dim); background:linear-gradient(180deg, var(--bg-panel-2), var(--bg-panel));
-    cursor:pointer; border:1px solid var(--fg-faint); padding:9px 18px; line-height:1;
+    color:var(--fg-dim); background:transparent;
+    cursor:pointer; border:1px solid var(--fg-faint); padding:7px 15px; line-height:1;
     transition:color .12s, background .12s, border-color .12s, box-shadow .12s;
   }
-  .navtab:hover{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
-    box-shadow:0 0 12px -6px rgba(var(--fg-rgb),.55); }
+  .navtab:hover{ color:var(--fg-bright); border-color:var(--fg-dim); background:var(--bg-panel-2); }
   .navtab.active{
-    color:var(--bg); background:var(--fg); border-color:var(--fg); text-shadow:none;
-    box-shadow:0 0 16px -3px rgba(var(--fg-rgb),.55);
+    color:var(--fg-bright); background:var(--bg-panel-2); border-color:var(--fg); text-shadow:var(--glow);
+    box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.22);
   }
   /* flat 2D Fallout-style glyph per tab — inherits currentColor, so it dims/brightens with the
      label and inverts to the screen colour on the active (filled) tab. */
   .navico{ flex:0 0 auto; width:22px; height:22px; display:inline-flex; }   /* ROW-2 section-tab icon (ROW-1 boxes use 32px via .navbox .navico) */
   .navico svg{ width:100%; height:100%; display:block; fill:currentColor; }
+  /* ---------- T61: flow-chart connectors — row 2 hangs off the FACTION box ----------
+     A subtle org-chart cue: a STEM drops from the FACTION box to a horizontal BUS above row 2, and a
+     RISER drops from the bus to each section tab (the active tab's riser brightens). Shown only on the
+     wide, single-row masthead in the screen frame, so the lines never cross into empty/wrapped space.
+     #topnav shrinks to its tabs (fit-content) so the bus spans exactly the tab group. */
+  @media (min-width:860px){
+    body:not([data-frame="border"]):not([data-section="home"]) #topnav{ position:relative; width:fit-content; max-width:100%; }
+    body:not([data-frame="border"]):not([data-section="home"]) #topnav::before{      /* the bus */
+      content:""; position:absolute; left:0; right:0; top:-8px; height:1px;
+      background:rgba(var(--fg-rgb),.5); pointer-events:none; }
+    body:not([data-frame="border"]):not([data-section="home"]) .navtab{ position:relative; }
+    body:not([data-frame="border"]):not([data-section="home"]) .navtab::before{       /* bus → tab riser */
+      content:""; position:absolute; left:50%; top:-8px; width:1px; height:8px;
+      transform:translateX(-50%); background:rgba(var(--fg-rgb),.5); pointer-events:none; }
+    body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::before{ background:var(--fg); }
+    body:not([data-frame="border"]):not([data-section="home"]) .faction-box::after{   /* FACTION box → bus stem */
+      content:""; position:absolute; left:50%; top:100%; width:1px; height:9px;
+      transform:translateX(-50%); background:rgba(var(--fg-rgb),.5); pointer-events:none; }
+  }
   /* on a doc section, hide the roster-only chrome (search / view toggle / refresh / status) */
   /* command-bar slot in the header: the roster toolbar shows on the roster, the doc find bar
      shows on a document — one at a time, same position. The statusline keeps its HEIGHT on docs
