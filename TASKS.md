@@ -153,8 +153,14 @@ The specs below remain as the record of what each task covered.
 
 ---
 
-## T1 · Terminal activity indicators (screen surface) — SMALL
+## T1 · Terminal activity indicators (screen surface) — ⛔ OBSOLETE (premise removed)
+The statusline this task targeted is GONE — `setLink()` is now a no-op stub and there's no statusline
+element. Loading states are already shown by the `#state` loader ("ACCESSING PIP-LINK" + animated glyph),
+the doc-loader sweep bar (`startDocLoader`), and the boot sequence — all CSS/JS, reduced-motion-aware.
+Nothing to add. (The dead `setLink` stub + its ~2 call sites are harmless leftover entropy — remove
+opportunistically if touching `load()`.)
 
+### original spec (no longer applies)
 The statusline says "RE-SYNCING…" / "SAVING…" as plain text; the doc reader's
 background refresh is invisible. Add subtle CSS-only activity indicators.
 
