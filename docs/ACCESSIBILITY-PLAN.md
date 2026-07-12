@@ -55,7 +55,12 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
 - [x] ✅ Faction dropdown fully keyboard-navigable (b7c57d4): ↑/↓ from the trigger open + step in,
       arrows/Home/End move, Esc closes + refocuses the trigger; and the closed menu is now
       `visibility:hidden` so its options leave the tab order (was opacity:0 — a hidden tab-trap).
-      Remaining: arrow-nav within the roster list; modal focus-trap verify (a MutationObserver handles it).
+- [x] ✅ Roster listbox arrow-nav — `#list` (already `role="listbox"` + `tabindex=0` +
+      `aria-activedescendant`) now handles ↑/↓/Home/End/PageUp/PageDown, stepping through rows in
+      DISPLAY order (section + sort, not global index) and moving the selection (focus stays on the
+      listbox per the activedescendant pattern). Algorithm verified over 10 cases incl. clamping,
+      Page steps, and the filtered-out fallback; end-to-end keypress needs live roster data.
+      Remaining: modal focus-trap verify (a MutationObserver handles it).
 
 ## ARIA / semantics
 - [x] ✅ Heading order: the page had ZERO `<h1>`. Added ONE sr-only `#app-h1` in `<main>`, updated per

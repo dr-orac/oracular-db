@@ -1643,6 +1643,27 @@ $("#list").addEventListener("click", e=>{
   const row=e.target.closest(".row"); if(!row) return;
   selectIndex(+row.dataset.idx);
 });
+/* keyboard nav for the roster listbox (aria-activedescendant pattern — focus stays on #list,
+   arrows move the selected row). Steps through the rows in DISPLAY order (section + sort), which
+   isn't the global character order, so read the rendered rows rather than the model index. */
+$("#list").addEventListener("keydown", e=>{
+  if(e.key!=="ArrowDown" && e.key!=="ArrowUp" && e.key!=="Home" && e.key!=="End" &&
+     e.key!=="PageDown" && e.key!=="PageUp") return;
+  const idxs=[...$("#list").querySelectorAll(".row")].map(r=>+r.dataset.idx);
+  if(!idxs.length) return;
+  e.preventDefault();
+  let pos=idxs.indexOf(state.selected);
+  const PAGE=10;
+  if(pos<0) pos=(e.key==="ArrowUp"||e.key==="End"||e.key==="PageUp") ? idxs.length-1 : 0;
+  else if(e.key==="ArrowDown") pos=Math.min(idxs.length-1, pos+1);
+  else if(e.key==="ArrowUp")   pos=Math.max(0, pos-1);
+  else if(e.key==="PageDown")  pos=Math.min(idxs.length-1, pos+PAGE);
+  else if(e.key==="PageUp")    pos=Math.max(0, pos-PAGE);
+  else if(e.key==="Home")      pos=0;
+  else if(e.key==="End")       pos=idxs.length-1;
+  selectIndex(idxs[pos]);
+  const a=$("#list .row.active"); if(a) a.scrollIntoView({block:"nearest"});
+});
 function selectIndex(i){
   state.selected=i; renderRoster();
   $("#dossier").scrollTop=0;
