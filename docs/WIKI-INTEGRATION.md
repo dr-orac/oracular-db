@@ -208,6 +208,50 @@ Prose. '''Label:''' short lead-ins read as mini-headings in the app.
 The Roleplay Guide already opens with *"A first draft, by Big Brom Matlok"* + a *"Your First Steps in the
 Tribe"* section — keep that shape; just let the `==` headings carry the structure (not bold-as-heading).
 
+## Page architecture — hub + two deep pages (avoids the wall of text)
+
+Yes — putting everything on one page would be huge. Use a **hub-and-spoke** shape (3 pages):
+
+- **`The_Tribe`** (the hub) — the existing faction page. Keep ALL the text that's already there. ADD an
+  **"above the line" key-info** block near the top: a tight overview integrating the *essential* lore a
+  reader needs at a glance (who the tribe is, where, what they believe, how they're led). Then two big
+  link-cards to the deep pages.
+- **`The_Tribe/Lore`** — the full Lore Guide (converted from the Google Doc).
+- **`The_Tribe/Roleplay_Guide`** — the full Roleplay Guide.
+
+### "Above the line" key info — how to add without deleting
+- **Don't delete** existing hub text. Add a new `== Overview ==` (or `== The Tribe at a Glance ==`) section
+  high on the page and fold the *essential* points of the lore into it — a few short paragraphs or a
+  `'''Label:'''` list (Home, Beliefs, Leadership, Territory…). The full detail still lives on the Lore page.
+- **Reconcile conflicts by softening, not cutting.** Where the old text says the chief *controls*
+  everything, reword to the *established* culture: the chief **influences / guides / holds sway**, within
+  the tribe's customs and councils — rather than absolute control. Keep the original sentence's intent,
+  just adjust the claim so it matches current canon. (Leave a hidden note if useful:
+  `<!-- reconciled: chief now influences within tribal custom, not absolute control -->`.)
+
+### The two big link-cards (renders as themed squares in the app)
+Paste this on the **hub** page where you want the two prominent buttons. It's a **single-row, two-cell
+table with coloured cells** — on the wiki it shows two coloured panels; in the app it re-skins to two
+themed card-squares side by side (verified). Mentioning the faction name pulls in the tribe glyph
+automatically; drop the name if you'd rather no icon.
+```mediawiki
+{| style="width:100%; border-collapse:separate; border-spacing:14px;"
+|-
+| style="width:50%; background:#241a0e; border:2px solid #b6702a; padding:20px; text-align:center; vertical-align:top;" |
+'''[[The_Tribe/Lore|◈ TRIBE LORE]]'''
+
+The full history, beliefs, and customs of the tribe.
+| style="width:50%; background:#241a0e; border:2px solid #b6702a; padding:20px; text-align:center; vertical-align:top;" |
+'''[[The_Tribe/Roleplay_Guide|◈ ROLEPLAY GUIDE]]'''
+
+How to play the tribe well — voice, conflict, and etiquette.
+|}
+```
+Notes: the `[[…]]` links become **in-app navigation** (tapping a card's link opens that page in the reader,
+no page reload). The wiki background/border colours are yours to pick — in the app they're re-themed to the
+phosphor palette, so choose colours that read on the *wiki* itself. Keep each card's first line short (it
+renders as the card heading) and the rest as a one-line description.
+
 ## After the pages exist — tell me
 I flip the Tribe's **Lore** and **Roleplay** tabs from the Google-Doc source to the wiki pages (source model
 + 2-line config change, WIKI-INTEGRATION "App changes" step 2–3) and verify they render in-theme. The row-2
