@@ -2869,8 +2869,10 @@ async function fetchWikiSitemap(signal){
 function sitemapHTML(groups){
   // links are real wiki-host URLs so the #docreader click handler intercepts them → in-app loadWiki
   const link=t=>`<li><a class="sitemap-link" href="${escAttr("https://"+WIKI.host+"/index.php/"+encodeURIComponent(t.replace(/ /g,"_")))}">${esc(t)}</a></li>`;
+  // section header is a role=heading DIV (not an <h3>) so it keeps heading semantics for screen readers
+  // WITHOUT buildDocSidebar (which selects h1–h4) pulling each sitemap section into the contents rail.
   const sec=g=>`<section class="sitemap-sec${g.cat?"":" sitemap-sec--misc"}">`+
-      `<h3 class="sitemap-sec-head">${esc(g.label)}<span class="sitemap-count">${g.pages.length}</span></h3>`+
+      `<div class="sitemap-sec-head" role="heading" aria-level="3">${esc(g.label)}<span class="sitemap-count">${g.pages.length}</span></div>`+
       `<ul class="sitemap-list">${g.pages.map(link).join("")}</ul>`+
     `</section>`;
   return `<div class="wiki-sitemap"><h2 class="sitemap-title">Wiki Map</h2>`+
