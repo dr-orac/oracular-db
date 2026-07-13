@@ -261,7 +261,27 @@ rail, etc. Make it ONE entropy-free rule: a selector line with a subtle glow ema
 - Acceptance: one shared selector-line rule with a rightward glow; used in ≥3 places (roster row, doc TOC,
   a rail); consistent look, thickness driven by the var; screenshots of the motif in 2+ places.
 
-### T78 · Site-wide subtle OUTER glow on boxes — DESIGN [SMALL-MED]
+### T78 · Site-wide subtle OUTER glow on boxes — ✅ SHIPPED 2026-07-13 (reworked)
+First pass defined `--box-glow` but with a -14px spread that made it invisible; user flagged it. Reworked
+the token to a wide soft bloom + faint edge seat (`0 0 24px -8px .34, 0 0 2px 0 .12`) so doc tables, wiki
+cards/callouts and home tiles all carry a visible-but-subtle outer glow. One token, all boxes. Verified live.
+
+### T95 · "Dossier" folder-tab styling for boxed content — DESIGN [MED, thematic]
+The user likes the classic **manila-folder / dossier tab sticking out of the top edge** of a panel — reads
+as a physical case file, which fits the terminal-archive theme. Roadmap it where it's tactically useful and
+looks good (do NOT paste tabs on every box — pick the spots where a "file" metaphor is earned):
+- **Best fits:** the roster **character dossier** panel (relations detail / a future full dossier view — the
+  "OPEN DOSSIER" affordance already exists); wiki **faction pages** (a tab reading the faction name);
+  possibly the doc reader header (a tab with the doc title). AVOID on small/utility boxes (buttons, filter
+  inputs, home tiles) — the metaphor doesn't fit and it'd add noise.
+- **Approach (entropy-free):** ONE reusable construct — a `.dossier` wrapper whose `::before` draws a tab
+  notched out of the top-left (or a data-attr for the label text), sharing the panel's border + `--box-glow`
+  + phosphor palette so it's not a bolt-on. Tab shape via border + a small clipped corner (a 2px pixel-step
+  bevel would match the Fallout chunk aesthetic better than a smooth radius). Must stay legible in light +
+  dark and at mobile width (tab wraps/hides gracefully if the box goes full-bleed).
+- Acceptance: a single dossier-tab component applied to 2–3 earned surfaces; consistent with the theme
+  tokens (no new one-off colours); screenshots across widths. Pairs conceptually with a fuller character
+  **dossier view** if/when that lands.
 The data tables carry a nice subtle outer glow (`.doctable{ box-shadow:0 0 22px -14px rgba(var(--fg-rgb),.45) }`).
 Generalise that as a consistent, entropy-free "box glow" across boxed components: wiki cards, callouts,
 hero, faction cards, dossier panels, settings groups, the roster/relations panels, etc.
@@ -270,6 +290,26 @@ hero, faction cards, dossier panels, settings groups, the roster/relations panel
   existing borders; don't double up where a glow already exists.
 - Acceptance: boxes across roster + wiki share one subtle outer glow, defined in one place; no heavy/uneven
   glows; light + dark themes both fine; screenshots.
+
+### T96 · Search upgrade — toward "best-in-class" find/search — DESIGN [MED, optional]
+Today: the roster search is a live substring filter over names/roles/notes; the doc find is a substring
+highlighter with next/prev + a count. Both are fine, but best-in-class search adds a few cheap, high-value
+layers (all doable client-side, no backend — fits the static site):
+- **Fuzzy / typo-tolerant matching** so "matlok"≈"matlock", "califrnia"≈"california". A tiny embedded
+  matcher (Fuse.js-style bitap, or a hand-rolled subsequence + Levenshtein-≤1 scorer) — no network.
+- **Ranked results, not just filtered** — weight name-hit > role-hit > notes-hit, prefix > mid-word, whole-
+  word > partial; sort by score. The roster currently shows all matches unordered.
+- **Scope beyond the current view** — a global palette (⌘K/`/`) that searches ALL factions + wiki pages +
+  doc sections at once and deep-links (the hash router already supports `#faction/section/target` and
+  `#wiki/Page`), so search becomes the primary nav. This is the biggest UX jump.
+- **Match affordances** — highlight the matched substring in each result row (roster), keyboard up/down +
+  Enter to open, "no results" empty state, recent/most-viewed when the box is empty.
+- **Doc find niceties** — whole-word + case toggles, wrap-around (already), match-in-collapsed-section
+  reveal, and scroll-spy of the current match in the TOC rail.
+Keep it entropy-free: ONE scorer + ONE result-row component reused by roster and the global palette.
+Acceptance: fuzzy+ranked roster search; a global ⌘K palette across factions/wiki/docs that deep-links;
+shared scorer; verified live. (Ordering: after the current design polish; the global palette is the
+headline feature.)
 
 ### T81 · Tables must render FULLY — no lateral scrollbar; reflow to multi-row — DESIGN [LARGE, robust]
 Wide data tables currently get a horizontal scrollbar (`.doctable{ overflow-x:auto }`). Instead they should
