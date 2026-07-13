@@ -793,6 +793,10 @@ const EDIT_FIELDS = [
    The id is validated (Google sheet ids are long base64url-ish strings) so junk is ignored. */
 function effectiveSheetId(){
   const ok = v => typeof v === "string" && /^[A-Za-z0-9_-]{20,}$/.test(v);
+  // A faction with its OWN sheet (different from the default/tribe) ALWAYS uses it. The preview override +
+  // ?sheet= only stand in for the DEFAULT sheet — they must never mask a linked faction (that made every
+  // faction show the tribe's roster in the preview, since the override is the tribe's sheet).
+  try{ const fs = activeFaction().data.sheetId; if(ok(fs) && fs !== CONFIG.sheetId) return fs; }catch(e){}
   try{
     // injected by tools/preview.py into the SERVED copy only — never present in the repo file
     if(ok(window.MDB_SHEET_OVERRIDE)) return window.MDB_SHEET_OVERRIDE;
