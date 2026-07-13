@@ -2157,6 +2157,21 @@ const NAV_ICONS = {
   wiki:    '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16Z"/><path d="M4 12h16M12 4c2.6 2.2 2.6 13.8 0 16M12 4c-2.6 2.2-2.6 13.8 0 16" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
   _default:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6V3Zm7 1.5V8h3.5L13 4.5Z"/></svg>',
 };
+/* T75/T76 — per-category icons for the weapon/armor "hub" nav chips (shared across those pages). Flat
+   currentColor, matched to NAV_ICONS. Keyed by the chip label, lower-cased. */
+const WEAPON_ICONS = {
+  "weapons hub":'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2 5.5 5.8.3-4.5 3.7 1.5 5.6L12 19l-4.8 3.1 1.5-5.6L4.2 7.8 10 7.5z"/></svg>',
+  "ranged":'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="1.8"/></svg>',
+  "small guns":'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h14a1 1 0 0 1 1 1v3h-3v-2h-6l-1.4 3H6a3 3 0 0 1-3-3z"/><path d="M6.5 15l1.5-3h2.2l-1.5 4a1 1 0 0 1-1 .7H7a1 1 0 0 1-.9-1.4z"/></svg>',
+  "big guns":'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9h11V7h5v2h4v4h-4v2h-5v-2H7l-1 3H3a1 1 0 0 1-1-1z"/><circle cx="15.5" cy="11" r="1.1" fill="var(--bg,#000)"/></svg>',
+  "laser":'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 13.5h5.2L7 22l11-13.5h-6z"/></svg>',
+  "plasma":'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.6"/><path d="M12 3.5c3.6 2.2 3.6 15 0 17M12 3.5c-3.6 2.2-3.6 15 0 17M3.5 12h17" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>',
+  "melee":'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3 10 13.5l-1.4-1.4L19 1.6zM8.9 14.6l1.5 1.5-2.6 2.6-2.2.6.6-2.2z"/><path d="M4.2 18.4 2 20.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  "one-handed":'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 9.7 12h4.6zM10.2 13h3.6v1.6h-3.6z"/><path d="M11.2 14.6h1.6V20l-.8 2-.8-2z"/></svg>',
+  "two-handed":'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.1 2h1.8v20h-1.8z"/><path d="M12.6 3.4c3.1-1.7 6.4-.3 7 4-3.7 1.8-5.6.9-7-1.3z"/><path d="M11.4 3.4c-3.1-1.7-6.4-.3-7 4 3.7 1.8 5.6.9 7-1.3z"/></svg>',
+  "explosives":'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11.5" cy="14.5" r="6"/><path d="M9.5 6h4v3.2h-4z"/><path d="M13.5 7.2 17 4l1 1-2.6 3.4z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M17 4h3M18.5 2.5v3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
+  "other":'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M4 6h16v14H4Zm2.2 2.2v9.6h11.6V8.2Z"/><path d="M9 6v14M15 6v14M4 10.5h16" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>',
+};
 /* one-line explainer per section, shown on the home tiles */
 const HOME_INFO = {
   roster:   "Every member — dossiers, appearance, and story. Search, filter, browse.",
@@ -2451,6 +2466,14 @@ function prepareStackTables(root){
     if(navRow && rows.length<=2){
       box.setAttribute("data-navflow","");
       rows.forEach(r=>{ if(r!==navRow && r.cells.length===1) r.cells[0].classList.add("dt-banner"); });
+      // T75/T76 — give each category chip its icon (matched on the chip label)
+      [...navRow.cells].forEach(c=>{
+        const ico=WEAPON_ICONS[c.textContent.trim().toLowerCase()];
+        if(ico && !c.querySelector(".dt-chip-ico")){
+          const s=document.createElement("span"); s.className="dt-chip-ico"; s.setAttribute("aria-hidden","true");
+          s.innerHTML=ico; c.insertBefore(s, c.firstChild);
+        }
+      });
       return;
     }
     if(rows.length<2){ return; }

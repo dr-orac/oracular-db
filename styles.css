@@ -1190,7 +1190,10 @@
   .docreader .doctable[data-navflow] td.dt-banner{ width:100%; text-align:center; background:rgba(var(--fg-rgb),.09);
     color:var(--fg-bright); font-family:var(--font-head); text-transform:uppercase; letter-spacing:1px;
     font-size:.92em; margin-bottom:8px; border:0; }
+  .docreader .doctable[data-navflow] td:not(.dt-banner){ display:flex; align-items:center; gap:8px; }
   .docreader .doctable[data-navflow] td a{ text-decoration:none; }
+  .docreader .doctable[data-navflow] .dt-chip-ico{ flex:0 0 auto; width:1.15em; height:1.15em; display:inline-flex; color:var(--fg); }
+  .docreader .doctable[data-navflow] .dt-chip-ico svg{ width:100%; height:100%; fill:currentColor; }
 
   /* ---------- WIKI native components (renderWiki re-skins the MediaWiki landing structure) ----------
      The source wiki hand-builds a hero banner, callouts, a faction card grid and column layouts with
