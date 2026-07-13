@@ -2852,7 +2852,11 @@ async function fetchWikiSitemap(signal){
   const groups=SITEMAP_SECTIONS.map(s=>({ label:s.label, cat:s.cat, pages:[] }));
   const byCat=Object.fromEntries(groups.map(g=>[g.cat,g]));
   const misc=[];
+  // the app already KNOWS its factions (FACTION_WIKI), so group those pages under Factions even before
+  // the wiki tags them Category:Factions — the map is useful now, and category tagging is still honoured.
+  const factionPages=new Set(Object.values(FACTION_WIKI).map(t=>t.replace(/_/g," ")));
   items.forEach(it=>{
+    if(factionPages.has(it.title)){ byCat["Factions"].pages.push(it.title); return; }
     const sec=SITEMAP_SECTIONS.find(s=>it.cats.has(s.cat));   // first curated match wins (order = priority)
     (sec ? byCat[sec.cat].pages : misc).push(it.title);
   });
