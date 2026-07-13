@@ -957,7 +957,7 @@
   .docreader{
     display:grid; grid-template-columns:1fr min(var(--doc-measure), 100%) 1fr;
     font-family:var(--doc-font-body, "IBM Plex Mono", ui-monospace, "Share Tech Mono", monospace);
-    font-size:17px; line-height:1.85; letter-spacing:.2px; color:var(--fg); }
+    font-size:17px; line-height:1.75; letter-spacing:.2px; color:var(--fg); }
   .docreader > *{ grid-column:2; min-width:0; }   /* everything sits in the centre measure… */
   .docreader > :first-child{ margin-top:0; }
   /* Google Docs "Title" paragraph style — first becomes the doc masthead, rest become subtitles */
@@ -1209,8 +1209,8 @@
   .wikibody h2{ margin-top:1.9em; padding-top:.85em; border-top:1px solid rgba(var(--fg-rgb),.16); }
   .wikibody > h2:first-child{ border-top:0; padding-top:0; }
   .wikibody h3, .wikibody h4{ margin-top:1.7em; }
-  .wikibody p, .wikibody ul, .wikibody ol{ margin-bottom:1.45em; }
-  .wikibody li{ margin:.4em 0; }
+  .wikibody p, .wikibody ul, .wikibody ol{ margin-bottom:1.3em; }   /* proportionate to the 1.75 line-height */
+  .wikibody li{ margin:.45em 0; }
   .wikibody .wiki-hero, .wikibody .wiki-callout, .wikibody .wiki-cardgrid, .wikibody .wiki-cols{ margin-bottom:28px; }
   .wikibody h2 + .wiki-cardgrid, .wikibody h2 + .wiki-cols, .wikibody p + .wiki-cardgrid{ margin-top:1.4em; }
   /* faction↔wiki jump: shown when the open wiki page is one of our factions */
