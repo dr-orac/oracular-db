@@ -14,3 +14,7 @@ tools/__pycache__/
 
 # generated dev snapshot (regenerated via tools/dump-roster.js) — rots, not tracked
 tools/roster-dump.json
+
+# Raw user-supplied reference material can be large or proprietary. Keep reviewed, compact
+# project assets in their intended tracked locations instead.
+added files by user/
