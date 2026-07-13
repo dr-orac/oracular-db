@@ -935,7 +935,7 @@
   .doclink:hover{ color:var(--fg-bright); }
   .docfind-wrap:focus-within{ border-color:var(--fg); }
   .docfind-wrap.no-match{ border-color:var(--amber); }
-  .docfind-ico{ color:var(--fg-dim); font-size:16px; flex:0 0 auto; }
+  .docfind-ico{ color:var(--fg-bright); font-size:16px; flex:0 0 auto; text-shadow:0 0 9px rgba(var(--fg-rgb),.6); }
   #docfind{ flex:1; min-width:0; background:transparent; border:0; outline:0; color:var(--fg-bright);
     text-shadow:var(--glow); }   /* font-family + size come from the shared search-box rule */
   #docfind::placeholder{ color:var(--fg-dim); }
@@ -1347,9 +1347,16 @@
   /* ---------- command bar (search / view / find) — BELOW the header divider line ---------- */
   /* mirrors the header's horizontal padding so the search's rail-width box lines up exactly with
      the list column beneath it (the search reads as the head of that column). */
-  .commandbar{ flex:0 0 auto; padding:0 16px; }
-  body:not([data-frame="border"]) .commandbar{ padding-left:calc(var(--edge) + var(--sp-2)); padding-right:calc(var(--edge) + var(--sp-2));
-    margin-top:var(--sp-4); }   /* breathing below the header divider */
+  /* COMMAND LINE — relocated to the BOTTOM (order:2), sitting above the status line (order:3): a terminal
+     "prompt" zone. The status bar (order:3) is source-after main; giving both an order pins the sequence
+     content → command line → status line regardless of source order. */
+  .commandbar{ flex:0 0 auto; order:2; position:relative; padding:9px 16px 7px; }
+  .statusbar{ order:3; }
+  body:not([data-frame="border"]) .commandbar{ padding-left:calc(var(--edge) + var(--sp-2)); padding-right:calc(var(--edge) + var(--sp-2)); margin-top:0; }
+  /* a glowing, edge-faded rule above the command line (matches the status-bar + hr motif) */
+  .commandbar::before{ content:""; position:absolute; left:var(--edge, 30px); right:var(--edge, 30px); top:0; height:1px;
+    background:linear-gradient(to right, transparent, rgba(var(--fg-rgb),.34) 10%, rgba(var(--fg-rgb),.34) 90%, transparent);
+    box-shadow:0 0 9px rgba(var(--fg-rgb),.26); }
   /* home is the landing (tiles ARE the nav); Relations has its own rail picker — neither
      needs the command bar (roster search / doc-find), so drop it in both. */
   body[data-section="home"] .commandbar,
@@ -1373,7 +1380,9 @@
   }
   /* placeholder + prompt read in the clear --fg (like the filter boxes), not the muddy --dim */
   .search input::placeholder{ color:var(--fg); opacity:.9; }
-  .search .prompt{ color:var(--fg); font-size:17px; }
+  /* command-line CRT feel: the prompt glyph glows, and the input box blooms softly on focus */
+  .search .prompt{ color:var(--fg-bright); font-size:17px; font-weight:700; text-shadow:0 0 9px rgba(var(--fg-rgb),.65); }
+  .search:focus-within, .docfind-wrap:focus-within{ box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.5), 0 0 16px -4px rgba(var(--fg-rgb),.6); }
   body.coming-soon .toolbar{ display:none; }   /* an unlinked faction has no roster to search or refresh */
   /* coming-soon → offer the faction's wiki page meanwhile */
   .coming-wiki{ margin-top:18px; }
