@@ -914,24 +914,35 @@
      top-right of the reading pane; clicking it (or Esc) hides ALL app chrome so only the document
      remains. In-app state (body[data-focus="doc"]), NOT the OS Fullscreen API, so it composites with
      the CRT frame. The button lives inside #docview, so it only exists in the doc/wiki reader. */
-  .docfs{ position:absolute; top:12px; right:16px; z-index:20; width:44px; height:44px; display:grid; place-items:center;
-    background:color-mix(in srgb, var(--bg-panel) 80%, transparent); border:1px solid var(--fg-faint); color:var(--fg-dim);
-    cursor:pointer; opacity:.4; transition:opacity .16s, color .16s, border-color .16s, background .16s, transform .12s; }
+  .docfs{ position:absolute; top:14px; right:16px; z-index:20; width:46px; height:46px; display:grid; place-items:center;
+    background:var(--bg-panel-2); border:1px solid var(--fg-dim); color:var(--fg);
+    cursor:pointer; opacity:.82; box-shadow:0 0 14px -6px rgba(var(--fg-rgb),.6);
+    transition:opacity .16s, color .16s, border-color .16s, background .16s, transform .12s, box-shadow .16s; }
   .docfs:hover, .docfs:focus-visible{ opacity:1; color:var(--fg-bright); border-color:var(--fg);
-    background:var(--bg-panel-2); transform:translateY(-1px); outline:none; }
-  .docfs-ico{ display:inline-flex; } .docfs-ico svg{ width:20px; height:20px; display:block; }
+    background:var(--bg-panel-2); transform:translateY(-1px); box-shadow:0 0 18px -3px rgba(var(--fg-rgb),.7); outline:none; }
+  .docfs-ico{ display:inline-flex; filter:drop-shadow(0 0 5px rgba(var(--fg-rgb),.45)); } .docfs-ico svg{ width:23px; height:23px; display:block; }
   .docfs-exit{ display:none; }
   body[data-focus="doc"] .docfs-enter{ display:none; }
   body[data-focus="doc"] .docfs-exit{ display:inline-flex; }
-  body[data-focus="doc"] .docfs{ opacity:.55; }   /* a touch more present in focus so the way out is findable */
+  body[data-focus="doc"] .docfs{ opacity:.9; }   /* clearly present in focus so the way out is obvious */
   /* hide every chrome surface — the masthead (header), the doc command bar (find + Docs link), and
      the contents rail — leaving only the document + the focus toggle. */
   body[data-focus="doc"] .app > header,
   body[data-focus="doc"] .commandbar{ display:none; }
   body[data-focus="doc"] .doctoc{ display:none; }
-  @media (prefers-reduced-motion: no-preference){
-    body[data-focus="doc"] #docview{ animation:docfocusin .22s ease-out; }
-    @keyframes docfocusin{ from{ opacity:.45; } to{ opacity:1; } }
+  /* GENEROUS top breathing room: with the masthead gone, the document would otherwise jam against the top
+     bezel. Give it a big, viewport-relative top inset so the reader feels like a calm full page. The focus
+     toggle stays pinned near the top-right (absolute) so it's unaffected. */
+  body[data-focus="doc"] #docview{ padding-top:clamp(52px, 8.5vh, 104px); }
+  /* CRT power-on: the picture snaps open from a bright horizontal scan-line, blooms, then settles — the
+     classic tube warm-up. Gated on the app's Reduce-Motion toggle (matches the rest of the CRT motion,
+     which is on by default and only the toggle disables it — not the system pref). */
+  body[data-focus="doc"]:not([data-reducemotion="on"]) #docview{ animation:docfocusin .42s cubic-bezier(.2,.85,.25,1); transform-origin:center; }
+  @keyframes docfocusin{
+    0%{   opacity:0; transform:scaleY(.012); filter:brightness(2.6) saturate(.3); }
+    22%{  opacity:1; transform:scaleY(.05);  filter:brightness(2.2) saturate(.4); }   /* the bright scan-line */
+    55%{  transform:scaleY(1); filter:brightness(1.5) saturate(.8); }                  /* unfurl + bloom */
+    100%{ transform:none; filter:none; }
   }
   /* reading-progress marker + back-to-top (long docs): a circular ring whose arc fills with how
      far you've read (Medium-style, bottom-right); the centre arrow jumps to the top on click.
