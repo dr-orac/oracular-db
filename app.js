@@ -3985,7 +3985,10 @@ function runBoot(){
   refreshCur();                      // fill the popover's collapsed-group value lines
   renderBrand(); wireFactionMenu();  // masthead = plain title (1 faction) or a switcher (2+)
   renderNav();                       // build the active faction's Home + Roster + docs section tabs
-  applyRoute();                      // land on the view named in the URL (defaults to #home)
+  // guarded: a fresh load directly on #paperwork routes before that block's const initialises (TDZ);
+  // catching here prevents the throw from halting the rest of the script — the paperwork block's own
+  // load-order guard then renders it. Normal loads never throw, so this is a no-op for them.
+  try{ applyRoute(); }catch(e){}     // land on the view named in the URL (defaults to #home)
 })();
 
 /* ============================ T96 · GLOBAL COMMAND PALETTE (⌘K / Ctrl-K) ============================
@@ -4113,3 +4116,7 @@ function renderPaperwork(){
     const pre=$("#pw-preview"); if(pre) pre.textContent=t.render(_pwVals);
   });
 })();
+// First-load safety: init's applyRoute() runs before this block's `const` initialises, so a page loaded
+// directly on #paperwork throws a TDZ error mid-setSection (leaving the loader up + form empty). Re-render
+// now that the templates exist, and clear the loader the aborted branch left showing.
+if(currentSection==="paperwork"){ renderPaperwork(); const _s=$("#state"); if(_s) _s.classList.add("hidden"); }
