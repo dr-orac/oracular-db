@@ -2258,18 +2258,30 @@ function renderNav(){
 function positionConnector(){
   const nav=$("#topnav"); if(!nav) return;
   const tabs=nav.querySelectorAll(".navtab");
-  if(tabs.length<2 || !nav.offsetWidth){ nav.style.removeProperty("--bus-l"); nav.style.removeProperty("--bus-r"); return; }
+  if(tabs.length<2 || !nav.offsetWidth){
+    ["--bus-l","--bus-r","--busA-l","--busA-r"].forEach(p=>nav.style.removeProperty(p)); return; }
   const first=tabs[0], last=tabs[tabs.length-1];
   let lo=first.offsetLeft + first.offsetWidth/2;                      // first riser (offsetParent = #topnav)
   let hi=last.offsetLeft + last.offsetWidth/2;                        // last riser
   // MAGNET: also reach the FACTION-BOX centre (where the stem drops) so the stem always lands ON the bus,
   // whatever the tab count / however the two rows line up — otherwise a wide faction box over few tabs
   // leaves the stem dangling in space beside the bus.
+  let fcx=null;
   const fbox=document.querySelector(".faction-box");
   if(fbox){ const fr=fbox.getBoundingClientRect(), nr=nav.getBoundingClientRect();
-    const fcx=fr.left + fr.width/2 - nr.left; lo=Math.min(lo,fcx); hi=Math.max(hi,fcx); }
+    fcx=fr.left + fr.width/2 - nr.left; lo=Math.min(lo,fcx); hi=Math.max(hi,fcx); }
   nav.style.setProperty("--bus-l", (Math.round(lo)-1)+"px");         // -1px so the bus meets the outer risers
   nav.style.setProperty("--bus-r", (Math.round(nav.offsetWidth-hi)-1)+"px");
+  // LIT CHANNEL: the highlighted bus segment runs from the stem (faction centre) to the ACTIVE tab's riser,
+  // so the eye traces faction → selected section as one bright, glowing path. Positioned here (not in CSS)
+  // because it depends on measured tab centres; re-run by setSection() whenever the active tab changes.
+  const act=nav.querySelector(".navtab.active");
+  if(act && fcx!=null){
+    const acx=act.offsetLeft + act.offsetWidth/2;
+    const aLo=Math.min(fcx,acx), aHi=Math.max(fcx,acx);
+    nav.style.setProperty("--busA-l", (Math.round(aLo)-1)+"px");
+    nav.style.setProperty("--busA-r", (Math.round(nav.offsetWidth-aHi)-1)+"px");
+  }else{ nav.style.removeProperty("--busA-l"); nav.style.removeProperty("--busA-r"); }
 }
 /* Keep the bus aligned to the risers ROBUSTLY: the tab labels use a web font, so the tabs REFLOW after
    the font loads (and on zoom / window resize) — recomputing only once at render left the bus ends short.
@@ -3170,6 +3182,7 @@ function setSection(id){
     const on = b.dataset.section===id;
     b.classList.toggle("active", on); b.setAttribute("aria-selected", on);
   });
+  positionConnector();  // move the lit faction→selection channel to the new active tab
   renderPrimaryNav();   // sync the ROW-1 HOME/WIKI active state
   const isHome = id==="home", isRoster = id==="roster", isRelations = id==="relations";
   const home=$("#home"); if(home) home.classList.toggle("hidden", !isHome);

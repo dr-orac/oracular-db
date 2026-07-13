@@ -698,23 +698,32 @@
        weight; --ah-half × --ah-tall = arrowhead size. */
     body:not([data-frame="border"]):not([data-section="home"]){
       --conn-w:1.5px; --bus-top:18px;
-      --ah-half:clamp(4.4px,0.6vw,5.4px); --ah-tall:clamp(5.8px,0.75vw,7px); }
+      --ah-half:clamp(4.4px,0.6vw,5.4px); --ah-tall:clamp(5.8px,0.75vw,7px);
+      /* two connector states. --conn-dim = the UNSELECTED lines: keyed to the unselected-tab shade
+         (--fg-dim) but nudged a hair brighter so they never fade to invisibility. --conn-lit = the
+         SELECTED channel (faction→active section): full phosphor + a soft glow so it reads as live. */
+      --conn-dim:rgba(var(--fg-rgb),.6); --conn-lit:var(--fg);
+      --conn-glow:0 0 6px rgba(var(--fg-rgb),.55); }
     body:not([data-frame="border"]):not([data-section="home"]) #topnav{ position:relative; width:fit-content; max-width:100%; }
     body:not([data-frame="border"]):not([data-section="home"]) #topnav::before{      /* the bus — spans exactly the outer RISERS (first→last tab centre), set by positionConnector() */
-      content:""; position:absolute; left:var(--bus-l,0); right:var(--bus-r,0); top:calc(-1 * var(--bus-top)); height:var(--conn-w); pointer-events:none;
-      background:rgba(var(--fg-rgb),.85); }   /* solid line (no end fade) — the bus is contained to the riser span, so it needs no fade */
+      content:""; position:absolute; left:var(--bus-l,0); right:var(--bus-r,0); top:calc(-1 * var(--bus-top)); height:var(--conn-w); pointer-events:none; z-index:0;
+      background:var(--conn-dim); }   /* solid dim line — the bus is contained to the riser span, so it needs no fade */
+    body:not([data-frame="border"]):not([data-section="home"]) #topnav::after{       /* LIT segment: faction stem → active riser, sits on top of the dim bus */
+      content:""; position:absolute; left:var(--busA-l,0); right:var(--busA-r,0); top:calc(-1 * var(--bus-top)); height:var(--conn-w); pointer-events:none; z-index:1;
+      background:var(--conn-lit); box-shadow:var(--conn-glow); }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab{ position:relative; }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab::before{       /* bus → tab riser (vertical line) */
       content:""; position:absolute; left:50%; top:calc(-1 * var(--bus-top)); width:var(--conn-w); height:calc(var(--bus-top) - var(--ah-tall) + 2px);
-      transform:translateX(-50%); background:rgba(var(--fg-rgb),.8); pointer-events:none; }
+      transform:translateX(-50%); background:var(--conn-dim); pointer-events:none; }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab::after{        /* riser arrowhead (points into the tab) */
       content:""; position:absolute; left:50%; top:calc(-1 * var(--ah-tall)); transform:translateX(-50%); pointer-events:none;
-      border-left:var(--ah-half) solid transparent; border-right:var(--ah-half) solid transparent; border-top:var(--ah-tall) solid rgba(var(--fg-rgb),.8); }
-    body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::before{ background:var(--fg); }
-    body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::after{ border-top-color:var(--fg); }
-    body:not([data-frame="border"]):not([data-section="home"]) .faction-box::after{   /* FACTION box → bus stem — spans the row gap up to the bus (which sits --bus-top above row 2) */
+      border-left:var(--ah-half) solid transparent; border-right:var(--ah-half) solid transparent; border-top:var(--ah-tall) solid var(--conn-dim); }
+    /* the ACTIVE tab's riser + arrowhead complete the lit channel — full phosphor + matching glow */
+    body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::before{ background:var(--conn-lit); box-shadow:var(--conn-glow); }
+    body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::after{ border-top-color:var(--conn-lit); filter:drop-shadow(var(--conn-glow)); }
+    body:not([data-frame="border"]):not([data-section="home"]) .faction-box::after{   /* FACTION box → bus stem — always lit: it's the head of the channel */
       content:""; position:absolute; left:50%; top:100%; width:var(--conn-w); height:calc(var(--row-gap) - var(--bus-top) + 3px);
-      transform:translateX(-50%); background:rgba(var(--fg-rgb),.85); pointer-events:none; }
+      transform:translateX(-50%); background:var(--conn-lit); box-shadow:var(--conn-glow); pointer-events:none; }
   }
   /* on a doc section, hide the roster-only chrome (search / view toggle / refresh / status) */
   /* command-bar slot in the header: the roster toolbar shows on the roster, the doc find bar
