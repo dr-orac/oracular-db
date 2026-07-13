@@ -52,3 +52,11 @@ Fonts have their own licence files in `fonts/`.
   **CC BY 3.0** (https://creativecommons.org/licenses/by/3.0/). Recoloured to `currentColor`
   (fill via CSS); the path is otherwise unmodified. All other faction / nav / weapon icons are
   original hand-authored SVGs. (See `docs/LEGAL-SWEEP.md` for the icon-sourcing policy.)
+
+## Fonts
+
+Web-embedded font licences are tracked in `docs/LEGAL-SWEEP.md`. Attributions required by their licences:
+
+- **Fallouty** — © Sébastien Caisse ("Red!"), 2002. Used under the font's own licence (free to use,
+  modify and redistribute with credit). The "Fallouty" display face used across the UI.
+- Additional bundled faces are SIL OFL / CC0 / Apache (see `docs/LEGAL-SWEEP.md` for the per-font table).

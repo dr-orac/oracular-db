@@ -10,9 +10,16 @@ T92 (CRT/motion pref) → T88 (icons, once T89 clears sources) → **T86 the Map
 sessions). T89 is a strong subagent candidate (see "Subagents" note at the bottom of this batch).
 
 **✅ SHIPPED 2026-07-13:** T90 (find-bar padding), T87 (TOC hierarchy + legibility floor), T91 (glowing
-edge-faded `<hr>` with a centred ◈ flourish), T92 (CRT on by default + Reduce Motion toggle), and a BUG FIX
-(a linked faction now loads its own sheet, not the tribe's — the preview override was masking every faction).
-**Still open:** T88, T89, T86, T94, T93.
+edge-faded `<hr>` with a centred ◈ flourish), T92 (CRT on by default + Reduce Motion toggle), **T89**
+(`docs/LEGAL-SWEEP.md` — licensing/IP risk map). Plus fixes/polish: a linked faction now loads its OWN sheet
+(the preview override was masking every faction with the tribe's roster); the flow-chart stem now magnets to
+the bus (was dangling for few-tab factions); the profile + reveals on hover only; better faction icons
+(Roster=dog tag, Lore=tome, Roleplay=masks, Legion=game-icons bull [CC BY, attributed], Followers=rod+atom);
+and the developer signature (bottom-right corner). **Partial:** T88 (icon vocabulary — the Legion bull is
+the first library-sourced icon; more to come, now unblocked by T89). **Still open:** T86 (Map — now
+UNBLOCKED), T94 (Events tab), T93 (Discord pipeline — needs the user's setup + samples).
+**⚠ From T89, needs the user's decision:** two bundled fonts (Monofonto, Gothic 821 Cn) are a licensing
+risk with OFL fallbacks already in-repo — swap or licence; see `docs/LEGAL-SWEEP.md`.
 
 ### T86 · NEW "Map" tab — Fallout wasteland map, US + Wendover regional — LARGE [feature]
 A new top-level **Map** tab (row 1, alongside Home / Wiki; route `#map`), rebuilt from scratch to be
