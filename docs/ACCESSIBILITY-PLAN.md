@@ -13,7 +13,7 @@ holds: **bright > fg > dim**, all comfortably readable. `--fg-faint` (1.2–1.6:
 (borders/rules) — verified it never colours prose (only borders, a decorative ⸻ rule, and underline
 decoration). Documented the token roles in `THEMES`.
 
-## Contrast — audited 2026-07-11 (Sonnet subagent), CLEAN
+## Contrast — audited 2026-07-11, CLEAN
 - [x] ✅ Full static audit done. **No literal-colour text exists** — every text rule routes through the
       theme vars. **No `--fg-dim` text below 4.5:1** (worst ~5.4:1 on the lightest panel bg, all 11
       themes); `--fg` (primary) worst ~6.2:1 — all pass AA. Inverted/active pairs (7–15:1), placeholders

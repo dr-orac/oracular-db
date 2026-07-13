@@ -157,9 +157,9 @@ A new top-level **Events** tab (row 1, alongside Home / Wiki / Map; route `#even
 - Acceptance: an Events tab listing upcoming events from the chosen source, sorted by date, themed +
   responsive, with a graceful empty/loading state; verify with sample data.
 
-### Subagents — where to spawn Sonnet to save tokens (user question)
+### Delegation — where to offload heavy read/research work to save tokens (user question)
 GOOD candidates (research / read-heavy / parallelisable, little live-browser verification):
-- **T89 legality sweep** — web research + synthesis → a doc. Ideal Sonnet subagent.
+- **T89 legality sweep** — web research + synthesis → a doc. Ideal to delegate.
 - **T88 icon sourcing** — browse game-icons.net etc., shortlist + describe candidates per category.
 - **T86 map DATA** — compile the Fallout location list (coords/faction/timeline) as structured data.
 - Broad read-only **codebase audits / exploration** (find-all-usages, entropy scans).
@@ -703,8 +703,8 @@ one `FACTIONS` entry + `FACTION_ORDER` + a `FACTION_ICONS` glyph (recipe in CONT
   trademark).
 - 🔜 **Executing now, in order:** **T18 (layout + proportion) → T12 (metal)** — sequenced
   (both edit styles.css; T18 is the alignment/spacing backbone, T12 the metal skin on top).
-  Approach: a subagent audits the CSS spacing values while the overseer measures rendered
-  alignment in preview; combine → propose a spacing scale → implement → show before/after
+  Approach: audit the CSS spacing values and measure rendered alignment in preview;
+  combine → propose a spacing scale → implement → show before/after
   (taste-gated). Then repeat the build-then-show pattern for T12.
 - **Needs your input:** T13 (red-button placement/function), T16 (map scope).
   **Blocked:** T17 (download the wbarahona + timeless888 zips). **T7 blocked** (pub URLs).
@@ -1044,8 +1044,8 @@ The "Join B" from the sitrep — the biggest single entropy drop. Replace the ~1
 `lib/prefs/prefs.js`. Keep localStorage keys (`"yuma-"+id`) so existing users don't lose
 settings; reuse derivation via custom `apply()` (colour→whole --fg-* palette, bg→3 vars,
 frametint, font-derived Auto text-size, font hover-preview). CRT toggle stores "1"/"0" + a
-body class today — handle in its apply. Sonnet drafts the schema + hard-case map; overseer
-refactors the apply fns to effect-only, wires init→prefs boot + reset→prefs.reset(), verifies
+body class today — handle in its apply. Draft the schema + hard-case map first, then
+refactor the apply fns to effect-only, wire init→prefs boot + reset→prefs.reset(), verify
 EVERY control applies+persists identically (esp. Auto size re-deriving on body-font change),
 commits. Acceptance: no behaviour change; selfcheck clean.
 
