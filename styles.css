@@ -211,8 +211,8 @@
       inset 0 0 0 var(--bezel-black) #000,                                     /* jet-black border — OUTERMOST, always solid (defines the rounded bezel edge) */
       inset 0 0 0 calc(var(--bezel-black) + var(--bezel-gap)) var(--bg),       /* screen-bg gap (trims the hairline) */
       inset 0 0 0 var(--bezel-in) var(--fg-bright),                            /* bright theme-coloured hairline */
-      inset 0 0 5px var(--bezel-in) rgba(var(--fg-rgb),.42),                   /* tight crisp glow hugging the hairline (inboard only) */
-      inset 0 0 clamp(16px,2vmax,34px) var(--bezel-in) rgba(var(--fg-rgb),.20),/* gentle phosphor bloom inward — subtler + tighter than before */
+      inset 0 0 6px var(--bezel-in) rgba(var(--fg-rgb),.6),                    /* tight crisp glow hugging the hairline (inboard only) */
+      inset 0 0 clamp(20px,2.6vmax,44px) var(--bezel-in) rgba(var(--fg-rgb),.34),/* phosphor bloom inward — the interior glow (restored after T66 over-damped it) */
       inset 0 0 clamp(96px,12vmax,168px) 46px rgba(0,0,0,.20);                 /* soft corner shade → hint of curvature */
   }
   /* Settings → Screen Bezel: OFF removes the jet-black border + rounding + reflection */
