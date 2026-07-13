@@ -10,7 +10,9 @@ T92 (CRT/motion pref) → T88 (icons, once T89 clears sources) → **T86 the Map
 sessions). T89 is a strong subagent candidate (see "Subagents" note at the bottom of this batch).
 
 **✅ SHIPPED 2026-07-13:** T90 (find-bar padding), T87 (TOC hierarchy + legibility floor), T91 (glowing
-edge-faded `<hr>` with a centred ◈ flourish) — the "quick wins" batch. **Still open:** T92, T88, T89, T86.
+edge-faded `<hr>` with a centred ◈ flourish), T92 (CRT on by default + Reduce Motion toggle), and a BUG FIX
+(a linked faction now loads its own sheet, not the tribe's — the preview override was masking every faction).
+**Still open:** T88, T89, T86, T94, T93.
 
 ### T86 · NEW "Map" tab — Fallout wasteland map, US + Wendover regional — LARGE [feature]
 A new top-level **Map** tab (row 1, alongside Home / Wiki; route `#map`), rebuilt from scratch to be
@@ -90,9 +92,17 @@ map self-draw (T86) + any other animation. Persist `mdb-reducemotion`; add to re
 The user owns/runs a Discord server with a whole channel of **character entries** —
 `discord.com/channels/1516117680606675037/1516398043077808179` (server / channel id). Goal: pull those
 bios into the roster instead of (or alongside) hand-entry in the sheet.
+- **DECIDED (user 2026-07-13): pull data LIVE.** A static site can't hold a bot token or bypass CORS, so
+  "live" needs a tiny intermediary that holds the token. TWO viable shapes: (a) **Bot → Google Sheet** — a
+  hosted bot keeps a Sheet updated on message events; the app already reads Sheets live (near-live, matches
+  the existing pattern, simplest to slot in). (b) **Serverless proxy** (Cloudflare Worker / Vercel fn) that
+  holds the token as a secret and returns the channel as JSON with CORS headers; the app fetches it on demand
+  (truly live). Recommend (a) for v1 → the roster keeps working exactly as now, just fed from Discord. The
+  Discord-admin setup steps were walked through to the user (create app → bot → MESSAGE CONTENT INTENT →
+  token → OAuth invite with View Channels + Read Message History → confirm channel access).
 - **Constraint:** the channel is PRIVATE and this app is a static, backend-less site → it CANNOT fetch
   Discord directly (Discord needs a bot token / user auth; CORS + secrets rule it out client-side).
-- **Recommended shape (static-friendly):** an **export → transform → commit** pipeline. The user exports the
+- **Fallback shape (no hosting):** an **export → transform → commit** pipeline. The user exports the
   channel (e.g. *DiscordChatExporter*, free, uses their token) to JSON; a new `tools/discord_to_roster.py`
   maps each entry → the roster's field schema (`FIELDS`/`EXTRA_CHARACTERS` shape, or a sheet the app reads);
   commit / paste into the master sheet (T54). No infra, manual refresh.
