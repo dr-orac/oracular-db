@@ -2973,9 +2973,10 @@ function renderWiki(node){
       const cells=[...el.querySelectorAll("tr > td, tr > th")];
       const styled=cells.filter(c=>wikiStyled(c)).length;
       const cols=Math.max(0,...rows.map(r=>r.querySelectorAll(":scope > td, :scope > th").length));
-      // colour-coded cells in a ≥3-column grid → faction card grid. (A 2-column styled table is a
-      // key-value infobox, e.g. a faction dossier — leave it to the data-table renderer below.)
-      if(cols>=3 && styled>=Math.ceil(cells.length/2)){
+      // colour-coded cells → card grid: a ≥3-column styled table, OR a SINGLE ROW of 2–4 styled cells
+      // (e.g. two big "jump to the full guide" link cards on a hub page). A MULTI-row 2-column styled
+      // table is a key-value infobox, so it's excluded and falls through to the data-table renderer.
+      if(styled>=Math.ceil(cells.length/2) && (cols>=3 || (rows.length===1 && cells.length>=2 && cells.length<=4))){
         out+=`<div class="wiki-cardgrid">`+cells.map(c=>wikiCard(c)).join("")+`</div>`; return;
       }
       if(!el.querySelector("th") && el.querySelectorAll("tr").length===1 && cells.length>=2 && cells.length<=4){
