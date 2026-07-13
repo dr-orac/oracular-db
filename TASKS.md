@@ -333,6 +333,38 @@ Acceptance: fuzzy+ranked roster search; a global ⌘K palette across factions/wi
 shared scorer; verified live. (Ordering: after the current design polish; the global palette is the
 headline feature.)
 
+### T97 · Map — highlight Wendover + click-to-regional — MED [feature, ties to T86 incr. 4]
+On the US atlas, make the **Wendover, Utah/Nevada** area (where the game is set) a PROMINENT, distinct
+marker (larger/pulsing/labelled, its own accent) so it reads as "you are here". Clicking it **swaps to the
+Local/regional map** (flips the US-Wide/Local pill to Local + shows the Wendover view). Wendover is on the
+UT–NV border west of the Great Salt Lake (≈40.7°N,114.0°W) → roughly x≈300,y≈205 in the 650×500 box —
+verify against the SVG. Pairs with building the actual regional map (T86 increment 4). Acceptance: a hero
+Wendover marker on the US map; clicking it activates Local mode; keyboard-accessible; verified.
+
+### T98 · Fullscreen (focus) mode — more visible button + generous top padding + CRT transition — SMALL/MED
+The reader's fullscreen/focus toggle (`exitDocFocus`/`enterDocFocus`, `body[data-focus="doc"]`) is too
+subtle. (a) Make the ENTER button clearly visible (larger, labelled/tooltip, stronger affordance). (b) In
+fullscreen, add GENEROUS top padding above the content — be generous; it should breathe. (c) Add a
+CRT-appropriate transition entering/leaving fullscreen (power-on bloom / scanline sweep, reduced-motion
+gated via `mdb-reducemotion`). Acceptance: obvious button; roomy top inset in focus mode; a tasteful CRT
+transition; verified + reduced-motion respected.
+
+### T99 · Masthead re-layout — centred faction "tree" + left nav + right settings — MED [design]
+User-proposed + agreed direction: make row-1 a **3-column grid** — LEFT: Home / Wiki / Map (umbrella nav);
+CENTRE: the FACTION selector (truly centred via the grid, not floated); RIGHT: the settings cog. Centre the
+faction's **mini brand/tagline text** too. Optionally centre the row-2 section tabs under the faction so the
+whole masthead reads as one symmetric tree (the flow-chart connector already hangs off the faction box, so a
+centred faction makes the bus symmetric). Keep it responsive (stacks sensibly < 860px). Acceptance:
+balanced 3-zone masthead; faction optically centred at any width; connector still correct; before/after
+shots; verified light/dark + mobile.
+
+### T100 · Repo licensing + credit preservation (SHWIWWI-TEC) + donate link — DOCS/DECISION [needs the user]
+Add a clear top-level licence + a request to preserve the SHWIWWI-TEC credit, and (optionally) make the
+footer signature link to the user's projects/donate page. NOT yet done — needs the user's licence choice.
+See the discussion notes captured 2026-07-13 (below). Deliverables when decided: `LICENSE`, a `NOTICE`/
+`CREDITS` line asking downstream to keep the credit, and (if wanted) an `href` on `.devsig` to the user's
+site. Confirm compatibility with any SS14/Nuclear-14-derived content licences already in use.
+
 ### T81 · Tables must render FULLY — no lateral scrollbar; reflow to multi-row — DESIGN [LARGE, robust]
 Wide data tables currently get a horizontal scrollbar (`.doctable{ overflow-x:auto }`). Instead they should
 render FULLY, reflowing intelligently to multiple rows when too wide — never a lateral scroll.
