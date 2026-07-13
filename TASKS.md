@@ -3,7 +3,22 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
-## 🆕 Queued 2026-07-13 (batch 5 — user, roadmapped methodically, NOT built)
+## ✅ Batch 5 — COMPLETE 2026-07-13 (all built, verified, pushed)
+Every item below shipped. Summary of the additional commits beyond the per-task notes:
+- **Flow-chart connector** — solid line (no fade), reconnected + robustly-aligned bus (ResizeObserver +
+  fonts.ready + 1px overlap, so it always meets the outer risers), deeper risers + bigger responsive
+  arrowheads, more row spacing — all via shared `--row-gap` / `--bus-top` / `--conn-w` / `--ah-*` vars.
+- **T83** interior bezel glow restored · **T80** "Label:" mini-headings (leading + trailing, guarded) ·
+  **T84** left-justify in-cell table bullets · **T77** bigger responsive home faction icons ·
+  **T78** one shared `--box-glow` on boxes · **T82** one `--sel-line` selected-item motif with a rightward
+  glow · **T81** tables never h-scroll (stacked reflow + nav-strip chip wrap, width-gated + robust) ·
+  **T79** proportionate line spacing (1.85→1.75 + unified rhythm) · **T75/T76** weapon/armor category
+  icons on the hub chips · more thematic nav icons (Roster=dog tag, Lore=tome, Roleplay=masks).
+- **T85** (heading space above>below) was ALREADY SATISFIED — left as-is (avoid entropy).
+- Follow-up idea for T76: armor pages currently share the weapons hub; per-armor-TYPE icons (light/medium/
+  heavy/power) need the wiki to add armor-category structure — noted in `docs/WIKI-EDITS-TODO.md`.
+
+## 🆕 Queued 2026-07-13 (batch 5 — user, roadmapped methodically — ALL SHIPPED, see above)
 
 Ordering note: **T85 → T83 → T80 → T84 → T82 → T78 → T81 → T79 → T77 → T75 → T76** is a sensible build
 order (quick general rules/regressions first, then the big table-reflow, then design passes, then
