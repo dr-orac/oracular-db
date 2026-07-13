@@ -175,7 +175,11 @@ Shipped: a live "Wiki Map" appended under the wiki landing, built from the Media
 Weapons · Crafting · Survival · Lore · Gameplay · Mechanics), specific domains claiming shared pages
 first, with an "Uncategorised" bucket (dashed) for still-untagged pages — so it regroups itself as the
 user's categorisation pass proceeds. Links are wiki-host URLs → intercepted into in-app navigation.
-Verified live (6 sections / 45 links, in-app nav, landing-only, appends once). Original spec:
+Verified live (6 sections / 45 links, in-app nav, landing-only, appends once).
+**Follow-ups (2026-07-13):** (a) known faction pages are grouped under Factions via `FACTION_WIKI` even
+before the wiki tags them (Uncategorised 21→10, Factions shows all 12) — `375052c`; (b) the map's section
+headers are `role="heading"` divs (not `<h3>`) so `buildDocSidebar` no longer pulls them into the doc
+contents rail — `99b517a`. Original spec:
 User has wiki edit access + is doing a categorisation pass (see `docs/WIKI-CATEGORISATION.md` for the exact
 checklist). So build the sitemap **live from the MediaWiki category tree** (`Category:Nuclear-14` → section
 subcats → members) — self-updating, no hand-maintained map. Include an **"Uncategorised" fallback bucket**
@@ -812,7 +816,14 @@ below the 17px floor (tl2 is 15px today); scale slightly by level (tl1 largest) 
 line-height, keep the active-item accent. Acceptance: every h1–h3 in both docs appears; nothing < 17px;
 desktop + mobile screenshots; no overflow.
 
-## T24 · Consistent bulleted lists — SMALL / investigate-then-fix
+## T24 · Consistent bulleted lists — ✅ DONE 2026-07-13 (5d4b4c2)
+`mergeAdjacentLists` folds runs of adjacent same-type `<ul>`/`<ol>` (Google's split-list export) into
+one list after doc + wiki render; lists separated by a heading/paragraph stay apart. Added depth-distinct
+nested markers (▪ → ◦ → –) + tighter nested spacing. Mechanism verified live (synthetic run: 3 split
+`<ul>`s → one list; divider keeps lists apart; markers per depth). NOTE: the real Google-Docs source case
+wasn't verifiable in-sandbox (Docs export network-blocked); the wiki uses clean single lists.
+
+## T24 (original spec) · Consistent bulleted lists — SMALL / investigate-then-fix
 Identical-source bullets render differently → find where OUR pipeline diverges. Reproduce in preview
 (inspect both `<li>`s: tag, parent `<ul>`/`<ol>`, computed margin/indent, `::before` marker). Likely
 cause: Google exports runs of bullets as separate `<ul>`s or a stray element splits the list, or a
@@ -820,7 +831,17 @@ bullet loses its `<ul>` wrapper in docClean. Normalise so every same-level bulle
 indent, spacing). Acceptance: the two example bullets + all same-level bullets render identically;
 numbered lists unaffected; screenshot.
 
-## T25 · Make multi-cell data tables more attractive — DESIGN / MEDIUM
+## T25 · Make multi-cell data tables more attractive — ✅ DONE 2026-07-13 (26264dd)
+Tables were already themed (`.doctable` wrapper: header row, zebra, hover, column rules) because docClean
+rebuilds cells clean (dropping the wiki's fixed-amber inline styles). The real gap was correctness:
+docClean kept only `id`, so `colspan`/`rowspan` and cell alignment were LOST — a spanning section-header
+row (e.g. `colspan=11` "Weapons & Armaments") collapsed to one cell and skewed the row, and numeric
+columns lost right/centre alignment. Now carries colspan/rowspan (clamped) + centre/right alignment
+(via `data-align`) through docClean; CSS gives aligned cells tabular figures and styles a lone full-width
+colspan cell as a themed section banner. Verified live on Small Guns (8 tables, per-row column counts now
+consistent; banner centred).
+
+## T25 (original spec) · Make multi-cell data tables more attractive — DESIGN / MEDIUM
 Real tables (lore Faction/Standing, roleplay Role/Description/Notes) use the plain `.doctable` style.
 Improve: distinct header row, comfortable cell padding, phosphor-tuned row rhythm/zebra, a subtle
 frame, graceful narrow-screen scroll (no page overflow). Theme-tracking (var(--fg*)). MULTI-cell
