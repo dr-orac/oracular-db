@@ -45,6 +45,7 @@
           <button class="navbox" type="button" data-section="home" id="nav-home" aria-label="Home"></button>
           <button class="navbox" type="button" data-section="wiki" id="nav-wiki" aria-label="Wiki"></button>
           <button class="navbox" type="button" data-section="map" id="nav-map" aria-label="Map"></button>
+          <button class="navbox" type="button" data-section="paperwork" id="nav-paperwork" aria-label="Paperwork"></button>
         </div>
         <div class="brand"><!-- FACTION selector box (centre zone) — filled by renderBrand() --></div>
         <div class="titlebar-right">
@@ -347,6 +348,15 @@
             <p class="map-reference-msg">The game space at a useful tabletop scale. Its original schematic will be built from the supplied references, with named landmarks confirmed before they are published.</p>
           </div>
         </div>
+      </section>
+
+      <!-- PAPERWORK — fillable SS14 form templates (copy to clipboard); starter set, expandable -->
+      <section id="paperwork" class="paperwork-view hidden" aria-label="Paperwork">
+        <div class="pw-head">
+          <h2 class="pw-viewtitle">Paperwork</h2>
+          <p class="pw-viewsub">Fillable SS14 form templates — copy one, fill the [BRACKETS] in-game.</p>
+        </div>
+        <div class="pw-list" id="paperwork-list"></div>
       </section>
 
       <!-- LOADING / ERROR -->

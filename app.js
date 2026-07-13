@@ -2055,6 +2055,7 @@ function writeRoute(target){
   if(_routing) return;
   // the wiki is umbrella content (not faction-scoped) → a top-level #wiki/<Page> route
   const h = currentSection==="home" ? "home"
+          : currentSection==="paperwork" ? "paperwork"
           : currentSection==="map" ? "map" + (_mapScope!=="us" ? "/"+_mapScope : "")
           : currentSection==="wiki" ? "wiki" + (_wikiPage && _wikiPage!==WIKI.home ? "/"+encodeURIComponent(_wikiPage) : "")
           : currentFaction + "/" + currentSection + (target ? "/"+target : "");
@@ -2078,6 +2079,7 @@ function applyRoute(){
   try{
     if(r.faction && FACTIONS[r.faction] && r.faction!==currentFaction) applyFaction(r.faction);
     let sec = r.section || "home";
+    if(sec==="paperwork"){ if(sec!==currentSection) setSection("paperwork"); _pendingTarget=null; return; }
     if(sec!=="home" && sec!=="map" && sec!=="roster" && sec!=="relations" && sec!=="wiki" && !factionDocs().some(d=>d.id===sec)) sec="roster";
     if(sec==="map"){ setMapScope(r.target, { route:false }); if(sec!==currentSection) setSection("map"); _pendingTarget=null; return; }
     if(sec==="wiki"){                        // #wiki/<Page> — the target IS the wiki page to open
@@ -2211,6 +2213,8 @@ const NAV_ICONS = {
   wiki:    '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16Z"/><path d="M4 12h16M12 4c2.6 2.2 2.6 13.8 0 16M12 4c-2.6 2.2-2.6 13.8 0 16" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
   /* map = a folded paper map with a location pin — flat currentColor, matched to the others */
   map:     '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2Zm-.5 1.8 5 1.67v12.7l-5-1.67V4.8Z"/><path d="M15.5 8.5a2.5 2.5 0 0 0-2.5 2.5c0 1.9 2.5 4.5 2.5 4.5s2.5-2.6 2.5-4.5a2.5 2.5 0 0 0-2.5-2.5Zm0 1.7a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8Z"/></svg>',
+  /* paperwork = a stamped document */
+  paperwork:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M6 2h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm7 1.6V7h3.4L13 3.6ZM8 10h8v1.5H8V10Zm0 3.2h8v1.5H8v-1.5Zm0 3.2h5v1.5H8v-1.5Z"/><circle cx="16.5" cy="17.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M15 17.4l1.1 1.1 1.9-2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   _default:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6V3Zm7 1.5V8h3.5L13 4.5Z"/></svg>',
 };
 /* T75/T76 — per-category icons for the weapon/armor "hub" nav chips (shared across those pages). Flat
@@ -2358,7 +2362,7 @@ window.addEventListener("resize", ()=>{ clearTimeout(_connResizeT); _connResizeT
 /* ROW 1 (umbrella): fill the HOME + WIKI boxes and mark the active one. (The FACTION box between them
    is built by renderBrand(); the cog sits at the far right.) */
 function renderPrimaryNav(){
-  [["home","Home"],["wiki","Wiki"],["map","Map"]].forEach(([id,label])=>{
+  [["home","Home"],["wiki","Wiki"],["map","Map"],["paperwork","Paperwork"]].forEach(([id,label])=>{
     const b=$("#nav-"+id); if(!b) return;
     b.innerHTML=`<span class="navico">${NAV_ICONS[id]||NAV_ICONS._default}</span><span class="navlabel">${esc(label)}</span>`;
     const on=currentSection===id;
@@ -3452,7 +3456,7 @@ function clearRegionDetail(){
   document.querySelectorAll("#map-region-pins .map-pin.sel").forEach(p=>p.classList.remove("sel"));
 }
 function setSection(id){
-  if(id!=="home" && id!=="map" && id!=="roster" && id!=="relations" && id!=="wiki" && !factionDocs().some(d=>d.id===id)) id="roster";
+  if(id!=="home" && id!=="map" && id!=="paperwork" && id!=="roster" && id!=="relations" && id!=="wiki" && !factionDocs().some(d=>d.id===id)) id="roster";
   if(id!=="roster" && id!=="relations") cancelRosterLoad();
   if(id!=="wiki") cancelWikiLoad();
   exitDocFocus();                          // leaving/entering any view drops the reader's focus mode
@@ -3464,13 +3468,19 @@ function setSection(id){
   });
   positionConnector();  // move the lit faction→selection channel to the new active tab
   renderPrimaryNav();   // sync the ROW-1 HOME/WIKI active state
-  const isHome = id==="home", isRoster = id==="roster", isRelations = id==="relations", isMap = id==="map";
+  const isHome = id==="home", isRoster = id==="roster", isRelations = id==="relations", isMap = id==="map", isPaper = id==="paperwork";
   const home=$("#home"); if(home) home.classList.toggle("hidden", !isHome);
-  $("#docview").classList.toggle("hidden", isRoster || isHome || isRelations || isMap);
+  $("#docview").classList.toggle("hidden", isRoster || isHome || isRelations || isMap || isPaper);
   $("#relations").classList.toggle("hidden", !isRelations);
   const mapEl=$("#map"); if(mapEl) mapEl.classList.toggle("hidden", !isMap);
+  const paperEl=$("#paperwork"); if(paperEl) paperEl.classList.toggle("hidden", !isPaper);
   if(isHome){
     renderHome();
+    $("#roster").classList.add("hidden");
+    $("#cards").classList.add("hidden");
+    $("#state").classList.add("hidden");
+  }else if(isPaper){
+    renderPaperwork();
     $("#roster").classList.add("hidden");
     $("#cards").classList.add("hidden");
     $("#state").classList.add("hidden");
@@ -4039,4 +4049,41 @@ function runBoot(){
     else if(e.key==="Escape"){ e.preventDefault(); close(); }
   });
   el.addEventListener("click", e=>{ if(e.target===el){ close(); return; } const it=e.target.closest(".cmdk-item"); if(it) go(+it.dataset.i); });
+})();
+
+/* ============================ PAPERWORK — fillable SS14 form templates ============================
+   Ported (starter set) from the SS14 Macros paperwork palette
+   (…/SS14 Macros/App/Hammerspoon/_archive/paperwork_palette.js — templates are Lua-injected there).
+   Each is a copy-to-clipboard template with [BRACKET] fields to fill in-game. HANDOFF (ChatGPT): import
+   the full template library + letterheads/stamps/tags from that source into PAPERWORK_TEMPLATES; the tab,
+   route (#paperwork), nav box and renderer below are already wired. */
+const PAPERWORK_TEMPLATES = [
+  { category:"Security", title:"Detainment / Arrest Record", body:
+"=== DETAINMENT RECORD ===\nDetainee: [NAME]\nCharges: [CRIMES]\nSentence: [TIME] / [FINE]\nArresting officer: [OFFICER]\nTime of arrest: [TIME]\nRights read: [YES/NO]\nNotes: [NOTES]\n\nSigned: ________________________" },
+  { category:"Command", title:"Access / ID Application", body:
+"=== ACCESS APPLICATION ===\nApplicant: [NAME]\nCurrent role: [JOB]\nAccess requested: [DOORS/AREAS]\nReason: [JUSTIFICATION]\nSponsoring head: [HEAD OF DEPT]\n\nApproved / Denied (circle)\nSigned: ________________________" },
+  { category:"Logistics", title:"Supply Requisition", body:
+"=== SUPPLY REQUISITION ===\nRequested by: [NAME] · [DEPARTMENT]\nItems:\n  - [ITEM] × [QTY]\n  - [ITEM] × [QTY]\nPurpose: [REASON]\nBudget code: [CODE]\n\nAuthorised: ________________________" },
+  { category:"Medical", title:"Treatment Record", body:
+"=== MEDICAL TREATMENT RECORD ===\nPatient: [NAME]\nPresenting condition: [SYMPTOMS]\nDiagnosis: [DIAGNOSIS]\nTreatment given: [TREATMENT]\nMedications: [CHEMS/DOSES]\nAttending medic: [MEDIC]\nOutcome: [DISCHARGED/ADMITTED/DECEASED]" },
+  { category:"Command", title:"Incident Report", body:
+"=== INCIDENT REPORT ===\nReporting party: [NAME] · [ROLE]\nDate / shift: [DATE]\nLocation: [AREA]\nWhat happened: [ACCOUNT]\nParties involved: [NAMES]\nAction taken: [RESPONSE]\nFollow-up required: [YES/NO]\n\nSigned: ________________________" },
+  { category:"General", title:"Letter of Recommendation", body:
+"=== LETTER OF RECOMMENDATION ===\nTo whom it may concern,\n\nI, [YOUR NAME] ([YOUR ROLE]), recommend [NAME] for [POSITION/PURPOSE].\n\n[REASONS]\n\nRegards,\n[YOUR NAME]\n________________________" },
+];
+function renderPaperwork(){
+  const wrap=$("#paperwork-list"); if(!wrap) return;
+  wrap.innerHTML = PAPERWORK_TEMPLATES.map((t,i)=>
+    `<div class="pw-card"><div class="pw-cardhead"><span class="pw-cat">${esc(t.category)}</span>`
+    +`<h3 class="pw-title">${esc(t.title)}</h3><button class="btn pw-copy" type="button" data-i="${i}">⧉ Copy</button></div>`
+    +`<pre class="pw-body">${esc(t.body)}</pre></div>`).join("");
+}
+(function paperworkWire(){
+  const sec=$("#paperwork"); if(!sec) return;
+  sec.addEventListener("click", e=>{
+    const b=e.target.closest(".pw-copy"); if(!b) return;
+    const t=PAPERWORK_TEMPLATES[+b.dataset.i]; if(!t) return;
+    try{ navigator.clipboard && navigator.clipboard.writeText(t.body); }catch(err){}
+    const o=b.textContent; b.textContent="Copied ✓"; setTimeout(()=>{ b.textContent=o; }, 1400);
+  });
 })();
