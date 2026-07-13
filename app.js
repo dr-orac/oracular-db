@@ -3255,6 +3255,20 @@ const MAP_LOCATIONS = [
 function mapDetailPrompt(){
   return `<div class="map-detail-empty">Select a marker to read its place in wasteland history.</div>`;
 }
+/* Wendover — the "you are here" home region (where the game is set). A prominent hero marker on the US
+   atlas; clicking it flips to the Local/regional map. Coords in the 650×500 viewBox (UT–NV border, N of
+   the New Vegas cluster). */
+const MAP_HOME = { x:300, y:200, label:"WENDOVER" };
+/* switch the atlas between US-Wide and Local — shared by the scope pill AND the Wendover hero marker. */
+function setMapMode(local){
+  const modes=$(".map-modes");
+  if(modes) modes.querySelectorAll("button").forEach(x=>{ const on=(x.dataset.mapmode==="local")===local; x.classList.toggle("active",on); x.setAttribute("aria-selected", on?"true":"false"); });
+  const body=$("#map .map-body"), loc=$("#map-local"), sub=$("#map-sub");
+  if(body) body.classList.toggle("hidden", local);
+  if(loc)  loc.classList.toggle("hidden", !local);
+  if(sub)  sub.textContent = local ? "The local area where the game is set — regional pins coming soon."
+                                   : "Reference map of the old west — the places that shaped the wasteland. Select a marker.";
+}
 function renderMap(){
   const pinsG = $("#map-pins"); if(!pinsG) return;
   pinsG.innerHTML = MAP_LOCATIONS.map(loc=>{
@@ -3264,7 +3278,14 @@ function renderMap(){
       + `<circle class="map-pin-ring" cx="${loc.x}" cy="${loc.y}" r="6"/>`
       + `<circle class="map-pin-dot" cx="${loc.x}" cy="${loc.y}" r="3.2"/>`
       + `</g>`;
-  }).join("");
+  }).join("")
+  // the Wendover hero marker (rendered last → on top). Pulsing ring + label; click → Local map.
+  + `<g class="map-home" data-home="1" tabindex="0" role="button" aria-label="Wendover — you are here. Open the local map.">`
+    + `<circle class="map-home-hit" cx="${MAP_HOME.x}" cy="${MAP_HOME.y}" r="16"/>`
+    + `<circle class="map-home-pulse" cx="${MAP_HOME.x}" cy="${MAP_HOME.y}" r="7"/>`
+    + `<circle class="map-home-dot" cx="${MAP_HOME.x}" cy="${MAP_HOME.y}" r="5"/>`
+    + `<text class="map-home-label" x="${MAP_HOME.x}" y="${MAP_HOME.y-14}" text-anchor="middle">${esc(MAP_HOME.label)}</text>`
+  + `</g>`;
   const leg = $("#map-legend");
   if(leg) leg.innerHTML = `<div class="map-legend-title">Allegiance</div>`
     + Object.values(MAP_FACTIONS).map(f=>`<span class="map-legend-item"><span class="map-legend-swatch ${f.cls}"></span>${esc(f.label)}</span>`).join("");
@@ -3368,25 +3389,15 @@ $("#primary-nav").addEventListener("click", e=>{
 /* MAP pins: click / Enter / Space on a marker opens its detail; the "All markers" button clears it */
 (function wireMap(){
   const svg=$("#map-svg"); if(!svg) return;
-  svg.addEventListener("click", e=>{ const p=e.target.closest(".map-pin"); if(p) showMapDetail(p.dataset.id); });
-  svg.addEventListener("keydown", e=>{
-    if(e.key!=="Enter" && e.key!==" ") return;
-    const p=e.target.closest(".map-pin"); if(p){ e.preventDefault(); showMapDetail(p.dataset.id); }
-  });
+  const hit=e=>{ const h=e.target.closest(".map-home"); if(h){ setMapMode(true); return true; }
+                 const p=e.target.closest(".map-pin"); if(p){ showMapDetail(p.dataset.id); return true; } return false; };
+  svg.addEventListener("click", hit);
+  svg.addEventListener("keydown", e=>{ if((e.key==="Enter"||e.key===" ") && hit(e)) e.preventDefault(); });
   const side=$(".map-side");
   if(side) side.addEventListener("click", e=>{ if(e.target.closest(".map-detail-clear")) clearMapDetail(); });
-  // US-Wide / Local scope pill: swap the atlas for the (upcoming) regional panel
+  // US-Wide / Local scope pill → shared setMapMode()
   const modes=$(".map-modes");
-  if(modes) modes.addEventListener("click", e=>{
-    const b=e.target.closest("[data-mapmode]"); if(!b) return;
-    const local = b.dataset.mapmode==="local";
-    modes.querySelectorAll("button").forEach(x=>{ const on=x===b; x.classList.toggle("active",on); x.setAttribute("aria-selected", on?"true":"false"); });
-    const body=$("#map .map-body"), loc=$("#map-local"), sub=$("#map-sub");
-    if(body) body.classList.toggle("hidden", local);
-    if(loc)  loc.classList.toggle("hidden", !local);
-    if(sub)  sub.textContent = local ? "The local area where the game is set — regional pins coming soon."
-                                     : "Reference map of the old west — the places that shaped the wasteland. Select a marker.";
-  });
+  if(modes) modes.addEventListener("click", e=>{ const b=e.target.closest("[data-mapmode]"); if(b) setMapMode(b.dataset.mapmode==="local"); });
 })();
 /* home landing: a faction cell (left) SELECTS the faction — re-skins + re-renders home so the right
    column shows that faction's sections, without leaving home. A section card (right) or the Wiki (top)

@@ -1444,6 +1444,17 @@
   .map-pin.sel .map-pin-ring{ opacity:1; stroke-width:1.9; }
   .map-pin.sel .map-pin-dot{ r:4.6; }
   .map-pin:focus{ outline:none; }
+  /* Wendover HERO marker — the "you are here" home region; brighter, labelled, pulsing → click = Local map */
+  .map-home{ cursor:pointer; color:var(--fg-bright); }
+  .map-home-hit{ fill:transparent; }
+  .map-home-dot{ fill:currentColor; filter:drop-shadow(0 0 7px currentColor); transition:r .15s; }
+  .map-home-pulse{ fill:none; stroke:currentColor; stroke-width:1.6; opacity:.7; transform-box:fill-box; transform-origin:center; }
+  body:not([data-reducemotion="on"]) .map-home-pulse{ animation:mappulse 2.2s ease-out infinite; }
+  @keyframes mappulse{ 0%{ transform:scale(.7); opacity:.75; } 100%{ transform:scale(2.7); opacity:0; } }
+  .map-home-label{ fill:var(--fg-bright); font-family:var(--font-head); font-size:11px; letter-spacing:1.5px;
+    paint-order:stroke; stroke:var(--bg); stroke-width:3px; }
+  .map-home:hover .map-home-dot, .map-home:focus-visible .map-home-dot{ r:6; }
+  .map-home:focus{ outline:none; }
   /* sidebar: legend + detail */
   .map-side{ position:sticky; top:8px; display:flex; flex-direction:column; gap:14px; }
   .map-legend, .map-detail{ border:1px solid var(--fg-faint); background:var(--bg-panel);
