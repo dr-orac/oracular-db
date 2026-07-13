@@ -1552,10 +1552,41 @@ function cardHTML(ch, idx){
 /* ------------------------ app state ------------------------ */
 const state = { model:null, view:"roster", query:"", selected:0, sortBy:"rank", filterSection:"all" };
 
+/* T96 — fuzzy, typo-tolerant subsequence test: q's letters appear in order in text, packed tightly enough
+   to be a real hit (so "matlok"≈"matlock", "califrnia"≈"california") without matching scattered noise. */
+function fuzzySubseq(text, q){
+  if(q.length<3) return false;                        // too short to fuzzy-match safely
+  let i=0, start=-1, end=-1;
+  for(let j=0; j<text.length && i<q.length; j++){
+    if(text[j]===q[i]){ if(start<0) start=j; end=j; i++; }
+  }
+  return i===q.length && (end-start+1) <= q.length*2 + 2;
+}
+/* T96 — score a character against the query: name > role > the full search blob; prefix + word-start +
+   whole-field bonuses; a fuzzy subsequence match scores lower than an exact substring. 0 = no match. */
+function scoreMatch(c, q){
+  const scoreField=(text, w)=>{
+    if(!text) return 0;
+    const i=text.indexOf(q);
+    if(i>=0){
+      let s=w*10;                                       // exact substring
+      if(i===0) s+=w*4;                                 // prefix
+      if(i===0 || /\s/.test(text[i-1])) s+=w*2;         // word-start
+      if(text===q) s+=w*6;                              // whole field
+      return s;
+    }
+    return fuzzySubseq(text, q) ? w*3 : 0;              // typo/dropped-letter fallback
+  };
+  const name=norm(c.name), role=norm(shortRole(c.fields.role)||c.fields.role||"");
+  return Math.max(scoreField(name,3), scoreField(role,2), scoreField(c.search||"",1));
+}
 function filtered(){
   const q=norm(state.query);
   if(!q) return state.model.characters;
-  return state.model.characters.filter(c=>c.search.includes(q));
+  const hits=[];
+  for(const c of state.model.characters){ const s=scoreMatch(c,q); if(s>0) hits.push({c,s}); }
+  hits.sort((a,b)=> b.s-a.s || a.c.name.localeCompare(b.c.name));   // rank by relevance, then name
+  return hits.map(h=>h.c);
 }
 
 /* ---- in-theme custom dropdown ----------------------------------------------------------
@@ -1638,22 +1669,33 @@ function renderRoster(){
   const chars=filtered();
   const q=norm(state.query);                 // used to highlight matched substrings in rows
   const list=$("#list");
-  const sections = state.filterSection==="all"
-    ? state.model.sections
-    : state.model.sections.filter(s=>s===state.filterSection);
+  const rowHTML=(c)=>{
+    const gi = state.model.characters.indexOf(c);
+    const sub = shortRole(c.fields.role) || c.fields.species || "";
+    return `<div class="row${gi===state.selected?' active':''}" data-idx="${gi}"
+      id="row-${gi}" role="option" aria-selected="${gi===state.selected}">
+      <span class="row-name">${highlightMatch(c.name, q)}</span>
+      ${sub?`<span class="row-sub">${highlightMatch(sub, q)}</span>`:""}
+    </div>`;
+  };
   let html="";
-  for(const sec of sections){
-    const inSec = sortChars(chars.filter(c=>c.section===sec));
-    if(!inSec.length) continue;
-    html+=`<div class="sectionhdr">${esc(sectionLabel(sec))}</div>`;
-    for(const c of inSec){
-      const gi = state.model.characters.indexOf(c);
-      const sub = shortRole(c.fields.role) || c.fields.species || "";
-      html+=`<div class="row${gi===state.selected?' active':''}" data-idx="${gi}"
-        id="row-${gi}" role="option" aria-selected="${gi===state.selected}">
-        <span class="row-name">${highlightMatch(c.name, q)}</span>
-        ${sub?`<span class="row-sub">${highlightMatch(sub, q)}</span>`:""}
-      </div>`;
+  if(q){
+    // SEARCH MODE — one relevance-RANKED list (filtered() already ranked it); section grouping is dropped
+    // so the best match is always first. The section filter still narrows the pool.
+    const hits = state.filterSection==="all" ? chars : chars.filter(c=>c.section===state.filterSection);
+    if(hits.length){
+      html+=`<div class="sectionhdr">Results · ${hits.length}</div>`;
+      for(const c of hits) html+=rowHTML(c);
+    }
+  } else {
+    // BROWSE MODE — grouped by section, sorted within each.
+    const sections = state.filterSection==="all" ? state.model.sections
+      : state.model.sections.filter(s=>s===state.filterSection);
+    for(const sec of sections){
+      const inSec = sortChars(chars.filter(c=>c.section===sec));
+      if(!inSec.length) continue;
+      html+=`<div class="sectionhdr">${esc(sectionLabel(sec))}</div>`;
+      for(const c of inSec) html+=rowHTML(c);
     }
   }
   list.innerHTML = html || emptyStateHTML(state.query);

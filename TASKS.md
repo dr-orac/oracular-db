@@ -313,7 +313,7 @@ hero, faction cards, dossier panels, settings groups, the roster/relations panel
 - Acceptance: boxes across roster + wiki share one subtle outer glow, defined in one place; no heavy/uneven
   glows; light + dark themes both fine; screenshots.
 
-### T96 · Search upgrade — toward "best-in-class" find/search — DESIGN [MED, optional]
+### T96 · Search upgrade — DESIGN [MED] — ⏳ INCREMENT 1 SHIPPED 2026-07-13 (fuzzy + ranked roster search); global ⌘K palette still to do
 Today: the roster search is a live substring filter over names/roles/notes; the doc find is a substring
 highlighter with next/prev + a count. Both are fine, but best-in-class search adds a few cheap, high-value
 layers (all doable client-side, no backend — fits the static site):
