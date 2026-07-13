@@ -333,7 +333,7 @@ Acceptance: fuzzy+ranked roster search; a global ⌘K palette across factions/wi
 shared scorer; verified live. (Ordering: after the current design polish; the global palette is the
 headline feature.)
 
-### T97 · Map — highlight Wendover + click-to-regional — MED [feature, ties to T86 incr. 4]
+### T97 · Map — highlight Wendover + click-to-regional — MED [feature, ties to T86 incr. 4] — ✅ SHIPPED 2026-07-13
 On the US atlas, make the **Wendover, Utah/Nevada** area (where the game is set) a PROMINENT, distinct
 marker (larger/pulsing/labelled, its own accent) so it reads as "you are here". Clicking it **swaps to the
 Local/regional map** (flips the US-Wide/Local pill to Local + shows the Wendover view). Wendover is on the
@@ -341,7 +341,7 @@ UT–NV border west of the Great Salt Lake (≈40.7°N,114.0°W) → roughly x�
 verify against the SVG. Pairs with building the actual regional map (T86 increment 4). Acceptance: a hero
 Wendover marker on the US map; clicking it activates Local mode; keyboard-accessible; verified.
 
-### T98 · Fullscreen (focus) mode — more visible button + generous top padding + CRT transition — SMALL/MED
+### T98 · Fullscreen (focus) mode — more visible button + generous top padding + CRT transition — SMALL/MED — ✅ SHIPPED 2026-07-13
 The reader's fullscreen/focus toggle (`exitDocFocus`/`enterDocFocus`, `body[data-focus="doc"]`) is too
 subtle. (a) Make the ENTER button clearly visible (larger, labelled/tooltip, stronger affordance). (b) In
 fullscreen, add GENEROUS top padding above the content — be generous; it should breathe. (c) Add a
@@ -349,7 +349,7 @@ CRT-appropriate transition entering/leaving fullscreen (power-on bloom / scanlin
 gated via `mdb-reducemotion`). Acceptance: obvious button; roomy top inset in focus mode; a tasteful CRT
 transition; verified + reduced-motion respected.
 
-### T99 · Masthead re-layout — centred faction "tree" + left nav + right settings — MED [design]
+### T99 · Masthead re-layout — centred faction "tree" + left nav + right settings — MED [design] — ✅ SHIPPED 2026-07-13
 User-proposed + agreed direction: make row-1 a **3-column grid** — LEFT: Home / Wiki / Map (umbrella nav);
 CENTRE: the FACTION selector (truly centred via the grid, not floated); RIGHT: the settings cog. Centre the
 faction's **mini brand/tagline text** too. Optionally centre the row-2 section tabs under the faction so the
