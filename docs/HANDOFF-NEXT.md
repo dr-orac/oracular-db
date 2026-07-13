@@ -72,8 +72,10 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 - **`EXTRA_CHARACTERS`** (top of app.js): hardcoded bios merged into the roster (incl. Wendover chars).
 
 ## Open tasks (priority order, with concrete pointers)
-1. **Run the UI/UX audit baseline before changing the map interface.** Follow `docs/UI-UX-AUDIT.md` Phase 0,
-   record reproducible findings, then fix accepted P0/P1 issues before adding a renderer dependency.
+1. **Run the UI/UX audit baseline before changing the map interface.** Begin with UX-001 / T102: reproduce
+   the reported TOC and scrolling failures across all reader entry points, then establish graceful,
+   cancellation-safe scrolling. Continue `docs/UI-UX-AUDIT.md` Phase 0 and fix accepted P0/P1 issues before
+   adding a renderer dependency.
 2. **Make the world dataset display-ready** (research may proceed while the audit runs; it does not edit UI).
    `data/world.json` is deliberately `provisional`: its 13 current locations and valid internal references
    are a research starting point, not yet authoritative placements. Follow `docs/MAP-ARCHITECTURE.md`:

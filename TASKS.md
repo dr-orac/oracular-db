@@ -20,6 +20,21 @@ replay every theme × viewport × state combination.
 - **Acceptance:** all surfaces receive a baseline pass; no accepted P0/P1 remains; outstanding lower-priority
   findings are explicitly retained or declined; selfcheck and affected regression journeys pass.
 
+### T102 · Reader scrolling and TOC navigation quality — P1 [bug + interaction]
+
+Start with `docs/UI-UX-AUDIT.md` finding UX-001. The earlier T73 fix improved sidebar targeting but did not
+establish one contract across sidebar TOC, inline TOC, deep links, find results, back-to-top, active-section
+tracking, focus mode, and user cancellation. Reproduce and instrument before changing the implementation.
+
+- Test Docs and wiki; wide and narrow layouts; cold/warm and image-heavy content; immediate and rapid clicks;
+  pointer, touch, keyboard, focus mode, and reduced motion.
+- Confirm the intended scroll container, final target geometry, layout shifts, cancellation, and rail reveal.
+- Consolidate content-target scrolling only if the evidence shows separate handlers are the source of drift.
+- Keep active TOC reveal scoped to the TOC rail so it can never move the main reader or page.
+- **Acceptance:** every entry point reaches the correct target gracefully; no stuck or partial scroll; no
+  snap-back after user input; no visible correction jerk after layout settles; active tracking stays stable;
+  reduced motion jumps immediately; regression cases are recorded in the audit run.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →
