@@ -7,8 +7,15 @@ Work top-to-bottom unless told otherwise. **One task = one commit.**
 
 Ordering note: **T85 → T83 → T80 → T84 → T82 → T78 → T81 → T79 → T77 → T75 → T76** is a sensible build
 order (quick general rules/regressions first, then the big table-reflow, then design passes, then
-content-icon work). SHIPPED from this batch already: masthead connector fade removal + row-gap (`deb9a71`),
-and bigger responsive arrowheads + slightly thicker connector line (this session).
+content-icon work).
+
+**SHIPPED from this batch (2026-07-13):** masthead connector fade removal + row-gap (`deb9a71`); bigger
+responsive arrowheads + slightly thicker line (`1ae230f`); **T83** interior bezel glow restored (`ee3cb6d`);
+**T77** bigger responsive home faction icons (`bb453fe`); **T80** consistent "Label:" mini-headings —
+leading + trailing, guarded (`a73d01d`); **T84** left-justify in-cell table bullets (`c9ab83c`). **T85**
+(heading space above>below) was found ALREADY SATISFIED site-wide (doc headings ~4.5:1, section headers 4:1)
+— left as-is to avoid entropy; fold any tweaks into T79. **Still open:** T82, T78, T81, T79, T75, T76.
+Also shipped: `docs/WIKI-EDITS-TODO.md` (wiki-maintainer action list — `a15916f`).
 
 ### T85 · Headings — more space ABOVE than below — SMALL [general rule, entropy]
 User: headings read best with a bit more space proportionately ABOVE them than below, so it's clear which
