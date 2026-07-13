@@ -2227,11 +2227,12 @@ function renderNav(){
     `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}"><span class="navico">${NAV_ICONS[t.id]||NAV_ICONS._default}</span><span class="navlabel">${esc(t.label)}</span></button>`).join("");
   nav.classList.remove("hidden");
   renderPrimaryNav();
-  positionConnector();
+  watchConnector();
 }
 /* The flow-chart BUS (#topnav::before) should span exactly the outer RISERS — first tab centre to
    last tab centre — not the full tab-row edges (which left it floating half a tab past each end).
-   Tab widths vary, so measure and feed the ends in as CSS vars (recomputed on nav change + resize). */
+   Tab widths vary, so measure and feed the ends in as CSS vars. A 1px overlap past each outer riser
+   guarantees a clean join despite subpixel rounding. */
 function positionConnector(){
   const nav=$("#topnav"); if(!nav) return;
   const tabs=nav.querySelectorAll(".navtab");
@@ -2239,10 +2240,20 @@ function positionConnector(){
   const first=tabs[0], last=tabs[tabs.length-1];
   const lc=first.offsetLeft + first.offsetWidth/2;                    // first riser (offsetParent = #topnav)
   const rc=last.offsetLeft + last.offsetWidth/2;                      // last riser
-  nav.style.setProperty("--bus-l", Math.round(lc)+"px");
-  nav.style.setProperty("--bus-r", Math.round(nav.offsetWidth-rc)+"px");
+  nav.style.setProperty("--bus-l", (Math.round(lc)-1)+"px");         // -1px so the bus meets the outer risers
+  nav.style.setProperty("--bus-r", (Math.round(nav.offsetWidth-rc)-1)+"px");
 }
-let _connResizeT=null;
+/* Keep the bus aligned to the risers ROBUSTLY: the tab labels use a web font, so the tabs REFLOW after
+   the font loads (and on zoom / window resize) — recomputing only once at render left the bus ends short.
+   A ResizeObserver on the tab row re-runs positionConnector on every reflow; fonts.ready covers the first
+   paint. (Setting the CSS vars doesn't change #topnav's box, so this can't loop.) */
+let _connRO=null, _connResizeT=null;
+function watchConnector(){
+  const nav=$("#topnav"); if(!nav) return;
+  positionConnector();
+  if(window.ResizeObserver && !_connRO){ _connRO=new ResizeObserver(()=>positionConnector()); _connRO.observe(nav); }
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(positionConnector).catch(()=>{});
+}
 window.addEventListener("resize", ()=>{ clearTimeout(_connResizeT); _connResizeT=setTimeout(positionConnector, 120); });
 /* ROW 1 (umbrella): fill the HOME + WIKI boxes and mark the active one. (The FACTION box between them
    is built by renderBrand(); the cog sits at the far right.) */
