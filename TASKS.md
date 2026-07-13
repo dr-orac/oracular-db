@@ -86,6 +86,39 @@ map self-draw (T86) + any other animation. Persist `mdb-reducemotion`; add to re
 - Acceptance: CRT transition plays by default; a Settings "Reduce Motion" toggle (off by default) disables
   all motion when on; persists + resets; verify the transition fires and the toggle suppresses it.
 
+### T93 · Discord character-entry pipeline — RESEARCH+BUILD [needs the user; ties to T52/T54]
+The user owns/runs a Discord server with a whole channel of **character entries** —
+`discord.com/channels/1516117680606675037/1516398043077808179` (server / channel id). Goal: pull those
+bios into the roster instead of (or alongside) hand-entry in the sheet.
+- **Constraint:** the channel is PRIVATE and this app is a static, backend-less site → it CANNOT fetch
+  Discord directly (Discord needs a bot token / user auth; CORS + secrets rule it out client-side).
+- **Recommended shape (static-friendly):** an **export → transform → commit** pipeline. The user exports the
+  channel (e.g. *DiscordChatExporter*, free, uses their token) to JSON; a new `tools/discord_to_roster.py`
+  maps each entry → the roster's field schema (`FIELDS`/`EXTRA_CHARACTERS` shape, or a sheet the app reads);
+  commit / paste into the master sheet (T54). No infra, manual refresh.
+- **Alternative (automatic, later):** a Discord bot + tiny backend that reads the channel live and writes a
+  Google Sheet the app already reads. Needs hosting + a bot token — bigger commitment; roadmap separately.
+- **KEY OPEN QUESTION (ask the user):** how are the entries structured? Forum channel with one THREAD per
+  character? One message each? Rich embeds vs plain markdown? Consistent field labels (Name/Species/Role…)?
+  This decides the parser. Get 2–3 sample exports to design the mapping.
+- **Mapping:** reuse the roster's fuzzy header matching (`FIELDS[x].match`) so Discord field labels map to
+  the same columns; carry a `faction` + `section`; keep the ORIGINAL source-of-truth rules (never write the
+  tribe's original sheet — [[project_yuma_roster]]).
+- Acceptance: a documented, repeatable pipeline (`tools/discord_to_roster.py` + a short README) that turns a
+  channel export into roster-ready data for ≥1 faction, verified against a sample export.
+
+### T94 · "Events" tab — showcase upcoming events — MED [new tab, feature]
+A new top-level **Events** tab (row 1, alongside Home / Wiki / Map; route `#events`) showing UPCOMING events
+(sessions, raids, faction meets, lore beats) in the terminal theme.
+- **Data source (decide):** simplest = a Google Sheet like the roster (date · title · faction · blurb ·
+  location · link), read live via gviz; OR a wiki page; OR Discord Scheduled Events (auth-gated, same
+  constraints as T93). Recommend the Sheet for v1 (matches the existing data pattern).
+- **UI:** a chronological list/cards — next-up highlighted, past events dimmed/collapsed, faction colour
+  accents, optional countdown. Reuse the card/box components + `--box-glow`; responsive; empty state.
+- **Integration:** a new section like wiki/map (route + nav box + `renderEvents`), theme-aware, no backend.
+- Acceptance: an Events tab listing upcoming events from the chosen source, sorted by date, themed +
+  responsive, with a graceful empty/loading state; verify with sample data.
+
 ### Subagents — where to spawn Sonnet to save tokens (user question)
 GOOD candidates (research / read-heavy / parallelisable, little live-browser verification):
 - **T89 legality sweep** — web research + synthesis → a doc. Ideal Sonnet subagent.
