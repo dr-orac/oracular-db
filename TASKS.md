@@ -10,11 +10,14 @@ order (quick general rules/regressions first, then the big table-reflow, then de
 content-icon work).
 
 **SHIPPED from this batch (2026-07-13):** masthead connector fade removal + row-gap (`deb9a71`); bigger
-responsive arrowheads + slightly thicker line (`1ae230f`); **T83** interior bezel glow restored (`ee3cb6d`);
-**T77** bigger responsive home faction icons (`bb453fe`); **T80** consistent "Label:" mini-headings —
-leading + trailing, guarded (`a73d01d`); **T84** left-justify in-cell table bullets (`c9ab83c`). **T85**
+responsive arrowheads + slightly thicker line (`1ae230f`); reconnected faction-box stem via shared
+`--row-gap`; **deeper risers + bigger arrowheads + more row spacing** via shared `--bus-top` (legible,
+proportional, responsive); **T83** interior bezel glow restored (`ee3cb6d`); **T77** bigger responsive home
+faction icons (`bb453fe`); **T80** consistent "Label:" mini-headings — leading + trailing, guarded
+(`a73d01d`); **T84** left-justify in-cell table bullets (`c9ab83c`); **T78** site-wide subtle box outer-glow
+via one `--box-glow` token; **more thematic nav icons** (Roster=dog tag, Lore=tome, Roleplay=masks). **T85**
 (heading space above>below) was found ALREADY SATISFIED site-wide (doc headings ~4.5:1, section headers 4:1)
-— left as-is to avoid entropy; fold any tweaks into T79. **Still open:** T82, T78, T81, T79, T75, T76.
+— left as-is to avoid entropy; fold any tweaks into T79. **Still open:** T82, T81, T79, T75, T76.
 Also shipped: `docs/WIKI-EDITS-TODO.md` (wiki-maintainer action list — `a15916f`).
 
 ### T85 · Headings — more space ABOVE than below — SMALL [general rule, entropy]
