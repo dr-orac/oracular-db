@@ -571,11 +571,26 @@
   /* one header row: section tabs on the LEFT, the FACTION selector + the Settings cog pushed to the
      top-RIGHT. The cog is the far-right element. */
   .titlebar{ display:flex; align-items:center; gap:10px 16px; flex-wrap:wrap; }
-  /* ROW 1 umbrella nav — HOME · FACTION▼ · WIKI, left-grouped (the cog is pushed to the right). HOME and
-     WIKI (.navbox) SHARE the FACTION box's look at this hierarchy level (rules folded into .faction-box
-     below) — the only difference is they carry no legend + no dropdown arrow. */
+  /* ROW 1 as a balanced 3-zone tree: LEFT = umbrella nav (Home/Wiki/Map), CENTRE = the FACTION selector
+     (optically centred by the grid regardless of the side widths), RIGHT = the settings cog. The equal 1fr
+     side columns keep FACTION on the true screen centre; the connector stem drops from that centre. */
+  /* CENTRED TREE — only where there's room (≥1024px): equal minmax(0,1fr) side columns force FACTION to the
+     true centre, and row-2 centres the same way, so the stem drops dead-centre onto the bus. Below 1024 the
+     masthead falls back to the base flex row (nav left, faction + cog right) so the wide nav can't crowd the
+     faction / clip Map. */
+  @media (min-width:1024px){
+    body:not([data-frame="border"]):not([data-section="home"]) .titlebar{
+      display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:10px 16px; }
+    body:not([data-frame="border"]):not([data-section="home"]) .primary-nav{ margin:0; justify-self:start; flex-wrap:nowrap; }
+    body:not([data-frame="border"]):not([data-section="home"]) .brand{ justify-self:center; }
+    body:not([data-frame="border"]):not([data-section="home"]) .titlebar-right{ margin:0; justify-self:end; flex-wrap:nowrap; }
+    body:not([data-frame="border"]):not([data-section="home"]) #topnav{ margin-inline:auto; }   /* row-2 centred under the faction */
+  }
+  /* ROW 1 umbrella nav — HOME · WIKI · MAP, left-grouped. HOME/WIKI/MAP (.navbox) SHARE the FACTION box's
+     look at this hierarchy level (rules folded into .faction-box below) — they just carry no legend/arrow. */
   .primary-nav{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-right:auto; }
   .titlebar-right{ display:flex; align-items:center; gap:14px; margin-left:auto; }
+  body[data-section="home"] .brand{ display:none; }   /* brand is now a titlebar sibling → hide it on the home landing */
 
   /* Settings — a large standalone cog glyph on the far right (it turns as you hover / while open) */
   .cogbtn{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; gap:9px;
