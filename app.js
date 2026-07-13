@@ -2816,12 +2816,73 @@ async function loadWiki(page){
     status.className="docstatus"; status.textContent="";
     announceDoc(page.replace(/_/g," ")+" loaded");           // screen-reader cue for the loaded page
     writeRoute();                                             // reflect the loaded wiki page in the URL
+    if(page===WIKI.home) appendWikiSitemap(reader);          // the wiki landing gets a live site map
   }catch(e){
     if(currentSection!=="wiki") return;
     stopDocLoader(); status.className="docstatus error";
     status.innerHTML = `Couldn’t load the wiki page. <a href="${escAttr($("#doclink").href)}" target="_blank" rel="noopener noreferrer">Open the wiki ↗</a>`;
     announceDoc("Couldn’t load the wiki page.");
   }finally{ if(currentSection==="wiki") stopDocLoader(); clearTimeout(timer); }
+}
+/* ---- Live wiki SITE MAP (T62) ---------------------------------------------------------------
+   A map of the whole wiki, built LIVE from the MediaWiki category system and shown under the wiki
+   landing. Pages are grouped by category into curated top-level sections; specific domains are listed
+   first so they claim shared pages before the generic Gameplay/Mechanics catch-alls, and anything with
+   no curated category lands in an "Uncategorised" bucket. As the wiki's categories get tidied up
+   (docs/WIKI-CATEGORISATION.md), the map re-groups itself on the next load — no code change needed. */
+const SITEMAP_SECTIONS = [
+  { cat:"Server",    label:"Server & Rules" },
+  { cat:"Factions",  label:"Factions" },
+  { cat:"Weapons",   label:"Weapons" },
+  { cat:"Crafting",  label:"Crafting" },
+  { cat:"Survival",  label:"Survival" },
+  { cat:"Lore",      label:"Lore" },
+  { cat:"Gameplay",  label:"Gameplay" },
+  { cat:"Mechanics", label:"Mechanics" },
+];
+async function fetchWikiSitemap(signal){
+  // one request: every content page + its (non-hidden) categories
+  const url="https://"+WIKI.host+"/api.php?format=json&formatversion=2&origin=*"+
+    "&action=query&generator=allpages&gaplimit=500&gapnamespace=0&prop=categories&cllimit=500&clshow=!hidden";
+  const j=await fetch(url,{signal}).then(r=>r.json());
+  const pages=(j.query&&j.query.pages)||[];
+  const items=pages
+    .filter(p=>p.title!=="Main Page")                         // the landing itself isn't a map entry
+    .map(p=>({ title:p.title, cats:new Set((p.categories||[]).map(c=>c.title.replace(/^Category:/,""))) }));
+  const groups=SITEMAP_SECTIONS.map(s=>({ label:s.label, cat:s.cat, pages:[] }));
+  const byCat=Object.fromEntries(groups.map(g=>[g.cat,g]));
+  const misc=[];
+  items.forEach(it=>{
+    const sec=SITEMAP_SECTIONS.find(s=>it.cats.has(s.cat));   // first curated match wins (order = priority)
+    (sec ? byCat[sec.cat].pages : misc).push(it.title);
+  });
+  groups.forEach(g=>g.pages.sort((a,b)=>a.localeCompare(b)));
+  misc.sort((a,b)=>a.localeCompare(b));
+  const out=groups.filter(g=>g.pages.length);
+  if(misc.length) out.push({ label:"Uncategorised", cat:null, pages:misc });
+  return out;
+}
+function sitemapHTML(groups){
+  // links are real wiki-host URLs so the #docreader click handler intercepts them → in-app loadWiki
+  const link=t=>`<li><a class="sitemap-link" href="${escAttr("https://"+WIKI.host+"/index.php/"+encodeURIComponent(t.replace(/ /g,"_")))}">${esc(t)}</a></li>`;
+  const sec=g=>`<section class="sitemap-sec${g.cat?"":" sitemap-sec--misc"}">`+
+      `<h3 class="sitemap-sec-head">${esc(g.label)}<span class="sitemap-count">${g.pages.length}</span></h3>`+
+      `<ul class="sitemap-list">${g.pages.map(link).join("")}</ul>`+
+    `</section>`;
+  return `<div class="wiki-sitemap"><h2 class="sitemap-title">Wiki Map</h2>`+
+    `<p class="sitemap-note">Every page on the wiki, grouped by category.</p>`+
+    `<div class="sitemap-grid">${groups.map(sec).join("")}</div></div>`;
+}
+async function appendWikiSitemap(reader){
+  try{
+    const groups=await fetchWikiSitemap();
+    if(currentSection!=="wiki" || _wikiPage!==WIKI.home) return; // stale guard (navigated away meanwhile)
+    if(reader.querySelector(".wiki-sitemap")) return;            // don't double-append
+    const wb=reader.querySelector(".wikibody")||reader;
+    const holder=document.createElement("div"); holder.innerHTML=sitemapHTML(groups);
+    wb.appendChild(holder.firstElementChild);
+    buildDocSidebar(reader);                                     // the map's headings join the contents rail
+  }catch(e){ /* the map is a bonus — a failure just leaves the landing as-is */ }
 }
 /* clicking an internal wiki link browses to that page in-app instead of leaving the site */
 $("#docreader").addEventListener("click", e=>{

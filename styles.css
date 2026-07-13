@@ -1152,6 +1152,31 @@
     box-shadow:0 0 18px -8px rgba(var(--fg-rgb),.6); transition:background .15s, box-shadow .15s; }
   .wikibody .wiki-factionjump a:hover{ background:var(--bg-panel-2);
     box-shadow:0 0 22px -5px rgba(var(--fg-rgb),.7); }
+
+  /* ---- live wiki SITE MAP (T62): grouped index appended under the wiki landing ---- */
+  .wiki-sitemap{ margin-top:3.2em; border-top:1px solid var(--fg-faint); padding-top:1.6em; }
+  .sitemap-title{ font-family:var(--font-head); color:var(--fg-bright); letter-spacing:1px;
+    text-shadow:var(--glow); margin:0 0 .15em; }
+  .sitemap-title::before{ content:"» "; color:var(--fg-dim); }
+  .sitemap-note{ color:var(--fg-dim); margin:0 0 1.4em; font-size:var(--fs-note, .9em); }
+  .sitemap-grid{ display:grid; gap:clamp(12px,1.6vw,20px);
+    grid-template-columns:repeat(auto-fill, minmax(clamp(180px,17vw,230px),1fr)); align-items:start; }
+  .sitemap-sec{ border:1px solid var(--fg-faint); background:var(--bg-panel); padding:clamp(12px,1.4vw,18px);
+    min-width:0; }
+  .sitemap-sec--misc{ border-style:dashed; }   /* uncategorised bucket reads as the "to sort" pile */
+  .sitemap-sec-head{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin:0 0 .7em;
+    font-family:var(--font-head); font-size:clamp(14px,1.3vw,17px); letter-spacing:1px; text-transform:uppercase;
+    color:var(--fg-bright); border-bottom:1px solid var(--fg-faint); padding-bottom:.45em; }
+  .sitemap-count{ flex:0 0 auto; font-size:.72em; color:var(--fg-dim); letter-spacing:.5px; }
+  .wiki-sitemap .sitemap-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.28em; }
+  .wiki-sitemap .sitemap-list li{ margin:0; }
+  .wiki-sitemap .sitemap-list li::before{ content:none; }   /* suppress the docreader ▪ bullet — the link has its own › */
+  .sitemap-link{ display:block; color:var(--fg); text-decoration:none; padding:2px 0 2px 14px; position:relative;
+    line-height:1.35; border-left:2px solid transparent; transition:color .12s, border-color .12s, padding .12s; }
+  .sitemap-link::before{ content:"›"; position:absolute; left:2px; color:var(--fg-dim); }
+  .sitemap-link:hover, .sitemap-link:focus-visible{ color:var(--fg-bright); border-left-color:var(--fg);
+    padding-left:18px; outline:none; }
+  .sitemap-link:hover::before, .sitemap-link:focus-visible::before{ color:var(--fg-bright); }
   /* HERO banner — the page's title block */
   .wikibody .wiki-hero{ text-align:center; margin:0 0 22px; padding:26px 24px;
     border:1px solid var(--fg); background:linear-gradient(180deg, rgba(var(--fg-rgb),.07), transparent 90%);
