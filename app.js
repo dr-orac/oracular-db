@@ -534,7 +534,7 @@ function applyBezel(key){
    whole reading pane. min(…,100%) in the CSS keeps every preset overflow-safe on narrow screens. */
 const DOC_WIDTHS = {
   narrow: { doc:"66ch",  wiki:"74ch"  },
-  medium: { doc:"78ch",  wiki:"88ch"  },   // default — a touch roomier than the old 74/84
+  medium: { doc:"78ch",  wiki:"92ch"  },   // default — the link-dense wiki gets a little more room
   wide:   { doc:"92ch",  wiki:"102ch" },
   full:   { doc:"100%",  wiki:"100%"  },
 };

@@ -71,7 +71,7 @@
     /* Reading measure for the doc + wiki readers — the Settings "Reading Width" control (T71) rewrites
        these on :root; the wiki runs a touch wider than Google Docs. min(…,100%) keeps them overflow-safe. */
     --doc-measure:      78ch;
-    --doc-measure-wiki: 88ch;
+    --doc-measure-wiki: 92ch;
   }
 
   *{ box-sizing:border-box; }
@@ -1321,6 +1321,10 @@
   /* T70 — the wiki reads a little WIDER than a lore doc: its tables, card grids and link-dense prose use
      the room (a bare doc keeps the tighter 74ch measure). loadWiki tags the reader data-docid="wiki:…". */
   .docreader[data-docid^="wiki:"]{ grid-template-columns:1fr min(var(--doc-measure-wiki), 100%) 1fr; }
+  /* Boxed wiki content sits one pixel below the surrounding prose size so cards and callouts feel
+     proportionate without changing the reader's general legibility or user-selected text scale. */
+  .wikibody .wiki-hero, .wikibody .wiki-callout, .wikibody .wiki-card, .wiki-sitemap .sitemap-sec{
+    font-size:calc(1em - 1px); }
   /* link-dense wiki prose reads better with a clearer underline than a lore doc's faint one */
   .docreader[data-docid^="wiki:"] .wikibody a{ text-decoration-color:var(--fg-dim); }
   /* the wiki packs sections tightly — open up the vertical rhythm for legibility (more air before each
