@@ -46,6 +46,27 @@ restructure. **TWO MODES** (a toggle, like List/Cards):
   whether the regional map is a stylised drawing or a real Wendover-area map.
 - Acceptance: a Map tab with US + Wendover modes, themed to the app, pins + timelines working, player pins
   persist locally + export, touch + mouse pan/zoom, no console errors, responsive; verify both modes.
+- **PREP DONE 2026-07-13 (ready to build — do it in bounded increments, verify each):**
+  - **SVG:** the standalone US map is 50 `<path>` states in a `<g>` (viewBox `0 0 650 500`) at
+    `../fallout-map-standalone/index.html` lines ~379–433, each hardcoded `fill="#0a1d11" stroke="#3cff7a"`.
+    Extract + theme-strip with: `sed 's/ fill="#0a1d11" stroke="#3cff7a" stroke-width="1.2"//g; s/ id="path[0-9]*"//g'`
+    then theme via CSS: `.map-svg path{ fill:var(--bg-panel); stroke:var(--fg); stroke-width:1 }`.
+  - **Data:** `locations` array (F1/F2/NV), shape `{id,name,game,faction,x,y,desc,timeline:[{year,event}]}` —
+    port verbatim into a `MAP_LOCATIONS` const (paraphrase any verbatim lore per LEGAL-SWEEP). `x,y` are in
+    the 650×500 viewBox space → pins are `<circle>`/markers at those coords inside the same SVG.
+  - **Integration points in THIS app (mirror how `wiki` is wired):** (1) new row-1 nav box in index.html
+    beside `#nav-wiki` (`<button class="navbox" data-section="map" id="nav-map">`); (2) `NAV_ICONS.map`
+    (a map/globe glyph); (3) `renderPrimaryNav()` — add `["map","Map"]` to its list; (4) `setSection()` —
+    add `"map"` to the valid-id guard + a branch that hides roster/cards/state/docview/relations/home,
+    shows `#map`, and calls `renderMap()`; add `#map` to the hide-logic of the other branches; (5)
+    `parseRoute`/`applyRoute` already handle a bare `#<section>` — `map` needs the same top-level treatment
+    as `wiki` (it's umbrella, not faction-scoped) in `writeRoute`/`applyRoute`; (6) `<section id="map"
+    class="map-view hidden">` in index.html holding the SVG + a sidebar/legend + a US/Wendover mode toggle.
+  - **Pin store (local-now/shared-later):** one seam — `getMapPins()/addMapPin()/saveMapPins()` over
+    `localStorage["mdb-mappins"]` (+ export/import JSON); swap the impl for a backend later, callers unchanged.
+  - **Wendover mode:** original STYLISED regional art (NOT a traced real map — per LEGAL-SWEEP); players
+    drop pins here. Suggested build order: US static themed → pins+timeline → mode toggle → Wendover +
+    player-add pins → zoom/pan (+touch).
 
 ### T87 · TOC readability — varied styling + a "never too small" floor — SMALL/MED
 Make the in-reader Contents rail (`#doctoc`, `.tl2/.tl3/.tl4`) read better: differentiate levels with more
