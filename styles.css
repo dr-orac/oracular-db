@@ -1005,9 +1005,14 @@
   .docreader li{ margin:.5em 0; }
   .docreader ul li{ list-style:none; position:relative; }
   .docreader ul li::before{ content:"▪"; color:var(--fg-dim); position:absolute; left:-1.2em; top:-.02em; }
+  /* depth-distinct markers so nesting reads clearly: ▪ filled → ◦ hollow → – dash */
+  .docreader ul ul li::before{ content:"◦"; }
+  .docreader ul ul ul li::before{ content:"–"; }
   .docreader ol{ padding-left:1.7em; }
   .docreader ol li{ list-style:decimal; }
   .docreader ol li::marker{ color:var(--fg-dim); }
+  /* a nested list hugs its parent item (no big gap above/below) so the run reads as one block */
+  .docreader li > ul, .docreader li > ol{ margin:.35em 0 .15em; }
   .docreader hr{ border:0; height:1px; margin:2em 0;
     background:linear-gradient(to right, transparent, var(--fg-faint) 20%, var(--fg-faint) 80%, transparent); }
   .docreader blockquote{ margin:0 0 1.05em; padding:.3em 0 .3em 1.1em; border-left:2px solid var(--fg-faint);

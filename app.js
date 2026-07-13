@@ -2361,6 +2361,20 @@ function docClean(node){
   });
   return out;
 }
+/* Google Docs (and some wiki markup) export a single logical bullet list as a RUN of separate
+   adjacent <ul>/<ol> siblings — so identical-source bullets render with gaps + inconsistent spacing.
+   Fold each run of same-type adjacent lists into one, so every same-level bullet is uniform. (Truly
+   separate lists have a heading/paragraph between them, so they stay apart.) */
+function mergeAdjacentLists(root){
+  root.querySelectorAll("ul, ol").forEach(list=>{
+    if(!list.parentNode) return;                             // already absorbed earlier in the pass
+    let next;
+    while((next=list.nextElementSibling) && next.tagName===list.tagName){
+      while(next.firstChild) list.appendChild(next.firstChild);
+      next.remove();
+    }
+  });
+}
 /* Tag Table-of-Contents entries (a paragraph that is just one in-doc link) with their
    target heading's level, so the TOC shows real hierarchy via indent + size. */
 function styleTOC(reader){
@@ -2614,6 +2628,7 @@ function stopDocLoader(){ if(_docLoaderTimer){ clearInterval(_docLoaderTimer); _
 /* inject a prepared doc into the reader (shared by the cold + cached paths) */
 function renderPreparedDoc(reader, prepared, doc){
   reader.innerHTML = prepared.html;                           // text-only markup — paints fast
+  mergeAdjacentLists(reader);                                 // fold Google's split bullet runs into one list
   hydrateDocImages(reader, prepared.images||[]);              // images stream in on approach
   styleTOC(reader);
   buildDocSidebar(reader);
@@ -2809,6 +2824,7 @@ async function loadWiki(page){
     // components; the .wikibody wrapper keeps loose prose in the reader's centre measure (the reader
     // is a grid, so bare runs would otherwise fall into the narrow side column).
     reader.innerHTML = `<div class="wikibody">${renderWiki(tmp)}</div>`;
+    mergeAdjacentLists(reader);                                // fold any split bullet runs into one list
     armWikiFigures(reader);                                    // fade wiki images in as they load
     // if this wiki page IS one of our factions, offer a jump to its roster in the Database (closes the
     // faction↔wiki loop; the coming-soon → wiki link is the other direction)
