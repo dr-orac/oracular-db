@@ -3,6 +3,104 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## 🆕 Queued 2026-07-13 (batch 5 — user, roadmapped methodically, NOT built)
+
+Ordering note: **T83 → T80 → T82 → T78 → T81 → T79 → T77 → T75 → T76** is a sensible build order
+(quick regressions/rules first, then the big table-reflow, then the design passes, then content-icon work).
+One item from this batch already SHIPPED: the masthead connector fade removal + row-gap bump (`deb9a71`).
+
+### T83 · Restore the exterior border's INTERIOR glow — SMALL [regression from T66]
+After T66 (contain the bezel glow behind a solid black border, `a4be3b3`) the screen's exterior border
+reads FLAT — it lost its inboard phosphor glow. Restore a subtle INTERIOR glow hugging the theme hairline,
+WITHOUT bringing back the outward halo T66 removed (glow must stay strictly inboard of the jet-black band).
+- Where: the bezel `body:not([data-frame="border"])::after` box-shadow stack (styles.css ~line 205). T66
+  softened the inboard layers (tight glow .65→.42, bloom .36→.20, spread tightened) and put the black band
+  on top — likely over-damped. Lift the inboard tight-glow + bloom back up (e.g. ~.55 / ~.30) and/or widen
+  the bloom a touch; keep the corner-shade from washing it out.
+- Acceptance: the hairline shows a gentle inner phosphor glow again; the outer black border stays crisp with
+  NO halo bleeding outward (T66 must not regress); screenshot a corner + an edge, all four sides.
+
+### T80 · A trailing "Label:" should break onto its own line — SMALL [general rule]
+Symptom (wiki, user): a paragraph that introduces a list ends with the label tacked on — e.g. "…the
+groundwork has already been laid. **Roles:**" then a bulleted list — so "Roles:" hangs at the end of the
+prior sentence instead of sitting on its own line above the list. Fix as a GENERAL rule in docClean/
+wikiClean (applies to doc + wiki):
+- When a paragraph's text ends with a short trailing label (≈1–4 words) that ends in a colon AND is
+  immediately followed by a list (`<ul>`/`<ol>`), split that label onto its OWN line — either a `<br>` +
+  the label, or promote it to a small `.doc-listlabel` sub-label element above the list.
+- Robustness (must not over-fire): only when the colon is at the very END of the paragraph, the label is
+  short, and a list follows. Do NOT touch mid-sentence colons, ratios ("10:1"), times, or code.
+- Acceptance: "Roles:" (Caesar's Legion page) and similar render on their own line above their list; a
+  normal in-sentence colon is untouched; verify on the Legion page + one Google-doc case.
+
+### T82 · Horizontal selector line → rightward glow, ONE general rule — DESIGN [SMALL-MED, entropy]
+The left-edge accent bar on a selected item is a recurring motif at different thicknesses/ad-hoc values:
+roster active row, `.doctoc a.active` (`inset 3px 0 0 var(--fg)`), active nav tab, rail items, relations
+rail, etc. Make it ONE entropy-free rule: a selector line with a subtle glow emanating toward the RIGHT.
+- Define once — e.g. a `--sel-line` width var + a shared class/util (or a `:where()` rule) that draws the
+  left bar via `box-shadow: inset <w> 0 0 var(--fg)` PLUS a soft rightward glow (a second layer, e.g.
+  `inset calc(<w>+…) 0 <blur> -<spread> rgba(var(--fg-rgb),.35)`, or a `::before` gradient fading right).
+- Apply consistently everywhere the motif appears; retire the per-site ad-hoc variants (reduce entropy).
+- Acceptance: one shared selector-line rule with a rightward glow; used in ≥3 places (roster row, doc TOC,
+  a rail); consistent look, thickness driven by the var; screenshots of the motif in 2+ places.
+
+### T78 · Site-wide subtle OUTER glow on boxes — DESIGN [SMALL-MED]
+The data tables carry a nice subtle outer glow (`.doctable{ box-shadow:0 0 22px -14px rgba(var(--fg-rgb),.45) }`).
+Generalise that as a consistent, entropy-free "box glow" across boxed components: wiki cards, callouts,
+hero, faction cards, dossier panels, settings groups, the roster/relations panels, etc.
+- Define ONCE — a `--box-glow` value (subtle, theme-tracking) applied via a shared rule/`:where()` list or a
+  utility class; don't hand-tune per component. Keep it subtle (ambience, not a spotlight); compose with
+  existing borders; don't double up where a glow already exists.
+- Acceptance: boxes across roster + wiki share one subtle outer glow, defined in one place; no heavy/uneven
+  glows; light + dark themes both fine; screenshots.
+
+### T81 · Tables must render FULLY — no lateral scrollbar; reflow to multi-row — DESIGN [LARGE, robust]
+Wide data tables currently get a horizontal scrollbar (`.doctable{ overflow-x:auto }`). Instead they should
+render FULLY, reflowing intelligently to multiple rows when too wide — never a lateral scroll.
+- Approach: the responsive "stacked" pattern. When a table's natural width exceeds its container, switch
+  THAT table to a stacked mode: each body row becomes a block of `label: value` pairs, where the label is
+  the column's header-row text (carry it into each cell as `data-label`, render via CSS `::before`). Narrow
+  tables that already fit stay as normal tables.
+- Decide per-table at render (measure natural vs container width) OR via CSS container queries; measuring is
+  more robust to theme/measure changes. Recompute on resize + reading-width (T71) change.
+- Robustness (MUST NOT break): spanning-banner rows (colspan section headers — T25) stay full-width banners;
+  2-column key-value infoboxes (already fit) are left alone; the wide nav tables (weapon page hubs) handled
+  sensibly (link strips → a wrap-flow, not stacked pairs); preserve T25 alignment.
+- Acceptance: NO wiki/doc table shows a horizontal scrollbar at any width or reading-width; wide stat tables
+  (Small Guns/Big Guns) reflow to readable stacked rows with their column labels; banners, infoboxes, and
+  narrow tables (Currency) unaffected; verify across the width ladder. Ties to T75/T76.
+
+### T79 · Wiki line-spacing + legibility pass — DESIGN [MED, good-typography]
+Make the wiki's line spacing proportionate and legible per good typographic principles.
+- Audit holistically: prose `line-height` vs heading `line-height`, paragraph spacing, list spacing (incl.
+  the T24 nested markers), the measure (T70/T71), and vertical rhythm between blocks (the section rules
+  landed in `6206122`). Aim for a consistent modular scale rather than ad-hoc per-element values.
+- Acceptance: wiki prose reads comfortably at the width ladder; consistent rhythm (no cramped or over-loose
+  blocks); before/after screenshots on a prose-heavy page (a faction page) + the Main Page.
+
+### T77 · Home faction icons — bigger + responsive — SMALL
+The home faction-picker tile icons (`.home-fac-ico`, currently `clamp(32px,3.6vw,46px)`) should be somewhat
+BIGGER while staying responsive. Bump the clamp (≈`clamp(40px,4.6vw,58px)`), re-check tile proportion/
+balance + no overflow at the width ladder (incl. the mobile `@media` override ~line 802).
+- Acceptance: bigger faction glyphs on home, still responsive/no overflow; tiles balanced; screenshot
+  narrow + wide.
+
+### T75 · Weapons & Armaments — better table + per-category icons — DESIGN [MED]
+The wiki weapon pages (Small Guns, Big Guns, Ranged/Melee Weapons, …) are dense stat tables. Give them a
+nicer, more legible layout and their OWN icons per weapon category.
+- Icons: a WEAPON_ICONS map — small themed `currentColor` SVGs in the FACTION_ICONS style, per category
+  (pistol · rifle/SMG · shotgun · laser · plasma · melee · heavy · explosive). Place beside the category's
+  section heading / spanning banner (the `colspan` banners already exist — T25).
+- Table: builds on the themed `.doctable` + T25 alignment; right-align numeric stat columns; clean "armory
+  readout" rhythm. MUST compose with T81 (no h-scroll → reflow).
+- Acceptance: weapon tables read cleanly, each category shows a distinct icon, numerics aligned, no
+  h-overflow; verify on Small Guns + Big Guns.
+
+### T76 · Armor — better table + per-type icons — DESIGN [MED]
+Same treatment as T75 for armor pages/sections: per-type icons (light · medium · heavy · power armor ·
+helmet · shield) + clean readout table, composing with T81. Acceptance: armor tables read cleanly with
+distinct type icons, aligned, no h-overflow; verify on the armor page.
+
 ## 🆕 Queued 2026-07-12 (batch 4)
 
 ### T74 · Home faction picker — icon-forward tiles — ✅ DONE 2026-07-13
