@@ -523,6 +523,7 @@ function applyDocWidth(key){
   document.body.dataset.docwidth = key;
   localStorage.setItem("mdb-docwidth", key);
   document.querySelectorAll("#docwidth-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
+  if(typeof evalTableStacking==="function") requestAnimationFrame(()=>evalTableStacking(document));  // width changed → re-check table reflow
 }
 /* BODY faces whose glyphs render small per-px → default to the "large" text size.
    (The user's explicit Text Size choice is persisted and wins over this default.
@@ -2432,6 +2433,56 @@ function mergeAdjacentLists(root){
     }
   });
 }
+/* T81 — tables must render FULLY, never a lateral scrollbar. PREP each data table for a possible reflow:
+   find the header row, carry each column's header into its body cells as data-label, and tag banner rows.
+   Only tables that can be safely stacked are marked stackable="yes" (skip rowspan / no real header row /
+   fewer than 2 body rows — those keep the normal scroll fallback). evalTableStacking() then decides, per
+   current width, whether each stackable table actually needs to reflow. */
+function prepareStackTables(root){
+  root.querySelectorAll(".doctable > table").forEach(table=>{
+    const box=table.parentElement;
+    const rows=[...table.rows];
+    if(rows.length<1){ return; }
+    // NAV STRIP (weapon-page hub etc.) — a short table that's really a row of category chips → wrap it,
+    // don't scroll. Detected as a ≤2-row table with a row of ≥4 SHORT cells (each ≤4 words: a link or the
+    // current-page label).
+    const navRow = rows.find(r=>r.cells.length>=4 && [...r.cells].every(c=>{
+      const w=c.textContent.trim().split(/\s+/).filter(Boolean); return w.length<=4; }));
+    if(navRow && rows.length<=2){
+      box.setAttribute("data-navflow","");
+      rows.forEach(r=>{ if(r!==navRow && r.cells.length===1) r.cells[0].classList.add("dt-banner"); });
+      return;
+    }
+    if(rows.length<2){ return; }
+    const colCount = Math.max(...rows.map(r=>[...r.cells].reduce((n,c)=>n+(c.colSpan||1),0)));
+    // any rowspan makes column mapping unsafe → leave as a normal (scrolling) table
+    if(rows.some(r=>[...r.cells].some(c=>(c.rowSpan||1)>1))){ return; }
+    const isBanner = r => r.cells.length===1 && (r.cells[0].colSpan||1)>=colCount;
+    const headerRow = rows.find(r=>!isBanner(r) && [...r.cells].reduce((n,c)=>n+(c.colSpan||1),0)===colCount && r.cells.length>1);
+    if(!headerRow) return;                                    // no real column-header row → don't stack
+    const labels=[...headerRow.cells].map(c=>c.textContent.trim());
+    const bodyRows = rows.filter(r=>r!==headerRow && !isBanner(r));
+    if(bodyRows.length<2) return;                             // not enough rows to be worth stacking
+    headerRow.classList.add("dt-head");
+    rows.forEach(r=>{ if(isBanner(r)) r.cells[0].classList.add("dt-banner"); });
+    bodyRows.forEach(r=>{ [...r.cells].forEach((c,ci)=>{
+      if((c.colSpan||1)===1 && labels[ci]) c.setAttribute("data-label", labels[ci]);
+    }); });
+    box.dataset.stackable="yes";
+  });
+  evalTableStacking(root);
+}
+/* Toggle [data-stack] per stackable table by whether it overflows its container at the CURRENT width.
+   Measured un-stacked first so the decision is based on the table's natural width. */
+function evalTableStacking(root){
+  (root||document).querySelectorAll('.doctable[data-stackable="yes"]').forEach(box=>{
+    box.removeAttribute("data-stack");                        // measure natural (un-stacked) width
+    const table=box.querySelector("table");
+    if(table && table.scrollWidth > box.clientWidth + 2) box.setAttribute("data-stack","");
+  });
+}
+let _stackT=null;
+window.addEventListener("resize", ()=>{ clearTimeout(_stackT); _stackT=setTimeout(()=>evalTableStacking(document), 140); });
 /* Tag Table-of-Contents entries (a paragraph that is just one in-doc link) with their
    target heading's level, so the TOC shows real hierarchy via indent + size. */
 function styleTOC(reader){
@@ -2686,6 +2737,7 @@ function stopDocLoader(){ if(_docLoaderTimer){ clearInterval(_docLoaderTimer); _
 function renderPreparedDoc(reader, prepared, doc){
   reader.innerHTML = prepared.html;                           // text-only markup — paints fast
   mergeAdjacentLists(reader);                                 // fold Google's split bullet runs into one list
+  prepareStackTables(reader);                                 // reflow over-wide tables instead of h-scrolling
   hydrateDocImages(reader, prepared.images||[]);              // images stream in on approach
   styleTOC(reader);
   buildDocSidebar(reader);
@@ -2915,6 +2967,7 @@ async function loadWiki(page){
     // is a grid, so bare runs would otherwise fall into the narrow side column).
     reader.innerHTML = `<div class="wikibody">${renderWiki(tmp)}</div>`;
     mergeAdjacentLists(reader);                                // fold any split bullet runs into one list
+    prepareStackTables(reader);                                // reflow over-wide tables instead of h-scrolling
     armWikiFigures(reader);                                    // fade wiki images in as they load
     // if this wiki page IS one of our factions, offer a jump to its roster in the Database (closes the
     // faction↔wiki loop; the coming-soon → wiki link is the other direction)
