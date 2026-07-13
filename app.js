@@ -2265,36 +2265,38 @@ function renderNav(){
    guarantees a clean join despite subpixel rounding. */
 function positionConnector(){
   const nav=$("#topnav"); if(!nav) return;
-  const tabs=nav.querySelectorAll(".navtab");
-  if(tabs.length<2 || !nav.offsetWidth){
-    ["--bus-l","--bus-r","--busA-l","--busA-r"].forEach(p=>nav.style.removeProperty(p)); return; }
+  const clearVars=()=>["--bus-l","--bus-w","--busA-l","--busA-w"].forEach(p=>nav.style.removeProperty(p));
+  const tabs=[...nav.querySelectorAll(".navtab")];
+  // BAIL on any degenerate/mid-layout measurement: nav or a tab not laid out yet (offsetWidth 0). Setting
+  // vars from a half-measured layout is exactly how a stale, over-wide bus used to get stuck. Leave the last
+  // good vars in place; watchConnector's rAF + RO + fonts.ready re-run once layout settles.
+  if(tabs.length<2 || !nav.offsetWidth || tabs.some(t=>!t.offsetWidth)){ if(tabs.length<2) clearVars(); return; }
   const first=tabs[0], last=tabs[tabs.length-1];
-  let lo=first.offsetLeft + first.offsetWidth/2;                      // first riser (offsetParent = #topnav)
-  let hi=last.offsetLeft + last.offsetWidth/2;                        // last riser
-  // MAGNET: also reach the FACTION-BOX centre (where the stem drops) so the stem always lands ON the bus,
-  // whatever the tab count / however the two rows line up — otherwise a wide faction box over few tabs
-  // leaves the stem dangling in space beside the bus.
+  const firstC=first.offsetLeft + first.offsetWidth/2;                // first riser centre (offsetParent = #topnav)
+  const lastC =last.offsetLeft + last.offsetWidth/2;                  // last riser centre
+  let lo=firstC, hi=lastC;
+  // MAGNET: nudge the bus toward the FACTION-BOX centre so the stem lands ON it — but clamp STRICTLY to the
+  // riser span [firstC,lastC] so the bus can NEVER extend past the outer risers, whatever the faction box
+  // measures (wide name, open dropdown, mid-animation). This is the "extends too far" fix.
   let fcx=null;
   const fbox=document.querySelector(".faction-box");
   if(fbox){ const fr=fbox.getBoundingClientRect(), nr=nav.getBoundingClientRect();
-    // CLAMP the magnet to the actual tab-row extent (first tab's left → last tab's right). A wide or
-    // mid-animation faction-box measurement (e.g. while the dropdown is open) could otherwise put fcx
-    // far outside the tabs and stretch the bus to the screen edges — the "extends too far" bug.
-    const rowL=first.offsetLeft, rowR=last.offsetLeft + last.offsetWidth;
-    fcx = Math.max(rowL, Math.min(rowR, fr.left + fr.width/2 - nr.left));
-    lo=Math.min(lo,fcx); hi=Math.max(hi,fcx); }
-  nav.style.setProperty("--bus-l", (Math.round(lo)-1)+"px");         // -1px so the bus meets the outer risers
-  nav.style.setProperty("--bus-r", (Math.round(nav.offsetWidth-hi)-1)+"px");
-  // LIT CHANNEL: the highlighted bus segment runs from the stem (faction centre) to the ACTIVE tab's riser,
-  // so the eye traces faction → selected section as one bright, glowing path. Positioned here (not in CSS)
-  // because it depends on measured tab centres; re-run by setSection() whenever the active tab changes.
+    fcx = Math.max(firstC, Math.min(lastC, fr.left + fr.width/2 - nr.left));
+    lo=Math.min(lo,fcx); hi=Math.max(hi,fcx); }   // (no-op given the clamp, but keeps intent explicit)
+  // Position by LEFT + WIDTH (both measured from #topnav's left edge) — NOT left+right insets. The old
+  // right-inset form depended on nav.offsetWidth, so any stale/changed nav width stretched the bus across
+  // the whole row. left+width is pinned to the risers and immune to nav-width changes.
+  nav.style.setProperty("--bus-l", (Math.round(lo)-1)+"px");          // -1px so the bus meets the outer risers
+  nav.style.setProperty("--bus-w", (Math.round(hi-lo)+2)+"px");
+  // LIT CHANNEL: the bright segment from the stem (faction centre) to the ACTIVE tab's riser. Same left+width
+  // scheme; re-run by setSection() on every tab change.
   const act=nav.querySelector(".navtab.active");
   if(act && fcx!=null){
     const acx=act.offsetLeft + act.offsetWidth/2;
     const aLo=Math.min(fcx,acx), aHi=Math.max(fcx,acx);
     nav.style.setProperty("--busA-l", (Math.round(aLo)-1)+"px");
-    nav.style.setProperty("--busA-r", (Math.round(nav.offsetWidth-aHi)-1)+"px");
-  }else{ nav.style.removeProperty("--busA-l"); nav.style.removeProperty("--busA-r"); }
+    nav.style.setProperty("--busA-w", (Math.round(aHi-aLo)+2)+"px");
+  }else{ nav.style.removeProperty("--busA-l"); nav.style.removeProperty("--busA-w"); }
 }
 /* Keep the bus aligned to the risers ROBUSTLY: the tab labels use a web font, so the tabs REFLOW after
    the font loads (and on zoom / window resize) — recomputing only once at render left the bus ends short.
@@ -2304,6 +2306,9 @@ let _connRO=null, _connResizeT=null;
 function watchConnector(){
   const nav=$("#topnav"); if(!nav) return;
   positionConnector();
+  // re-run after the next two frames — the first synchronous call can land mid-layout (a tab still
+  // measuring 0, the faction box mid-transition); by the second frame the row has settled.
+  requestAnimationFrame(()=>requestAnimationFrame(positionConnector));
   if(window.ResizeObserver && !_connRO){ _connRO=new ResizeObserver(()=>positionConnector()); _connRO.observe(nav); }
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(positionConnector).catch(()=>{});
 }

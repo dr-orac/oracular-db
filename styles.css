@@ -711,10 +711,10 @@
       --conn-glow:0 0 9px rgba(var(--fg-rgb),.72); }      /* …and glows harder */
     body:not([data-frame="border"]):not([data-section="home"]) #topnav{ position:relative; width:fit-content; max-width:100%; }
     body:not([data-frame="border"]):not([data-section="home"]) #topnav::before{      /* the bus — spans exactly the outer RISERS (first→last tab centre), set by positionConnector() */
-      content:""; position:absolute; left:var(--bus-l,0); right:var(--bus-r,0); top:calc(-1 * var(--bus-top)); height:var(--conn-w); pointer-events:none; z-index:0;
-      background:var(--conn-dim); }   /* solid dim line — the bus is contained to the riser span, so it needs no fade */
+      content:""; position:absolute; left:var(--bus-l,0); width:var(--bus-w,0); top:calc(-1 * var(--bus-top)); height:var(--conn-w); pointer-events:none; z-index:0;
+      background:var(--conn-dim); }   /* left+width (not left+right) → pinned to the risers, immune to nav-width changes */
     body:not([data-frame="border"]):not([data-section="home"]) #topnav::after{       /* LIT segment: faction stem → active riser, sits on top of the dim bus */
-      content:""; position:absolute; left:var(--busA-l,0); right:var(--busA-r,0); top:calc(-1 * var(--bus-top) - .5px); height:var(--conn-w-lit); pointer-events:none; z-index:1;
+      content:""; position:absolute; left:var(--busA-l,0); width:var(--busA-w,0); top:calc(-1 * var(--bus-top) - .5px); height:var(--conn-w-lit); pointer-events:none; z-index:1;
       background:var(--conn-lit); box-shadow:var(--conn-glow); }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab{ position:relative; }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab::before{       /* bus → tab riser (vertical line) */
