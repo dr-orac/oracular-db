@@ -9,6 +9,9 @@ Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 
 T92 (CRT/motion pref) → T88 (icons, once T89 clears sources) → **T86 the Map** (largest; may want its own
 sessions). T89 is a strong subagent candidate (see "Subagents" note at the bottom of this batch).
 
+**✅ SHIPPED 2026-07-13:** T90 (find-bar padding), T87 (TOC hierarchy + legibility floor), T91 (glowing
+edge-faded `<hr>` with a centred ◈ flourish) — the "quick wins" batch. **Still open:** T92, T88, T89, T86.
+
 ### T86 · NEW "Map" tab — Fallout wasteland map, US + Wendover regional — LARGE [feature]
 A new top-level **Map** tab (row 1, alongside Home / Wiki; route `#map`), rebuilt from scratch to be
 theme-integrated (uses `--fg`/`--bg`/the bezel), NOT a green standalone. Reference the existing prototype at
