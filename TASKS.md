@@ -3,6 +3,23 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## Queued 2026-07-13 (batch 7 — quality baseline before map UI expansion)
+
+### T101 · Whole-application UI/UX and entropy audit — LARGE [audit, then bounded fixes]
+
+Use `docs/UI-UX-AUDIT.md` as the sole audit contract. Begin with its Phase 0 representative matrix across
+every user-facing surface and important failure state. Record evidence and severity before making changes;
+then implement accepted P0/P1 findings in dependency order as separate commits. Do not bundle a redesign or
+replay every theme × viewport × state combination.
+
+- **First deliverable:** active findings with reproduction/evidence, impact, direction, and acceptance check.
+- **Required coverage:** correctness/state, navigation and task flow, accessibility/input, visual system,
+  responsive layout, performance/resilience, and maintainability/entropy.
+- **Map gate:** establish the baseline before adding a geographic renderer; assess that dependency under
+  Phase 4 rather than assuming it belongs permanently.
+- **Acceptance:** all surfaces receive a baseline pass; no accepted P0/P1 remains; outstanding lower-priority
+  findings are explicitly retained or declined; selfcheck and affected regression journeys pass.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →

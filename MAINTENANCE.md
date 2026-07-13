@@ -272,6 +272,7 @@ is committed; nothing sensitive lives in the repo.
 | Knowledge lost between sessions / contributors | this file (in repo, in git) |
 | Shared `/tmp` + run config clobbered by neighbouring projects | `tools/preview.py` rebuilds the server + live dir idempotently; work in this subfolder as its own project to isolate |
 | Design drift from the system | STYLE-GUIDE.md + selfcheck token-drift warning |
+| Cross-surface UI regressions and duplicated local fixes | `docs/UI-UX-AUDIT.md` representative journey matrix + cause-based tasks |
 
 ---
 

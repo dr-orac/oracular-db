@@ -3,8 +3,8 @@
 **This is the canonical entry point.** The dated `HANDOFF-2026-07-*.md` files are historical; read those only
 for backstory. Keep THIS file current — each work session should update "Open tasks" + "Recently shipped".
 
-`main` is clean, selfcheck passes, everything below is pushed and live on GitHub Pages
-(`dr-orac.github.io/oracular-db`). This is the authoritative "what's done / what's next" doc.
+This is the authoritative "what's done / what's next" doc. Run `git status --short --branch` before relying
+on deployment state; local checkpoints may intentionally be ahead of GitHub Pages (`dr-orac.github.io/oracular-db`).
 
 ## Working protocol (multiple people/tools alternate on this repo — one at a time)
 - **Before starting:** `git fetch && git pull` (or fast-forward). Someone else may have pushed.
@@ -36,7 +36,8 @@ Vanilla, no-build static site: `index.html` + `styles.css` + `app.js` + self-hos
 Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherhood** have live sheet data.
 
 ## How to run / verify / ship
-- **Selfcheck (must pass before every commit):** `python3 tools/selfcheck.py` — checks id refs + css vars.
+- **Selfcheck (must pass before every commit):** `python3 tools/selfcheck.py` — checks application wiring,
+  assets, structural drift, and world-data integrity.
   A pre-commit hook and GitHub Actions both enforce it. After a fresh clone run `tools/setup-git.sh`.
 - **Preview:** `python3 tools/preview.py` rebuilds a static copy; serve it and open in a browser to verify.
 - **Deploy = push.** Pushing to `main` auto-deploys via GitHub Pages (~1–2 min). No separate deploy step.
@@ -71,7 +72,9 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 - **`EXTRA_CHARACTERS`** (top of app.js): hardcoded bios merged into the roster (incl. Wendover chars).
 
 ## Open tasks (priority order, with concrete pointers)
-1. **Make the world dataset display-ready** (the main task; the map still uses hardcoded pixel pins).
+1. **Run the UI/UX audit baseline before changing the map interface.** Follow `docs/UI-UX-AUDIT.md` Phase 0,
+   record reproducible findings, then fix accepted P0/P1 issues before adding a renderer dependency.
+2. **Make the world dataset display-ready** (research may proceed while the audit runs; it does not edit UI).
    `data/world.json` is deliberately `provisional`: its 13 current locations and valid internal references
    are a research starting point, not yet authoritative placements. Follow `docs/MAP-ARCHITECTURE.md`:
    - inventory the existing 23 US atlas entries so migration never reduces coverage;
@@ -79,19 +82,22 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
    - classify placement basis, review status, and uncertainty separately from location identity;
    - reconcile the researched records, then change `data_status` only when every published marker passes;
    - migrate one game-sized set at a time behind the existing `renderMap()`/`showMapDetail()` UI.
-2. **Extend Region, then build Local.** Keep the original Wendover schematic and its verified real-world
+3. **Run a bounded geographic-renderer proof.** After the audit baseline, test MapLibre for US + Region
+   geographic layers, lazy-loaded and self-hosted where practical. Keep Local in its original game-space
+   coordinates and design the transition between systems. The dependency must pass the Phase 4 gate.
+4. **Extend Region, then build Local.** Keep the original Wendover schematic and its verified real-world
    anchors. Add reviewed regional routes/landmarks next; build the playable Local schematic only from the
    supplied in-game overview and user-confirmed landmarks.
-3. **Grow the paperwork library.** The *system* is done (template picker → fillable fields → live SS14
-   paper-code preview → copy). Add templates to `PAPERWORK_TEMPLATES` — each is
-   `{ id, category, title, fields:[{key,label,multiline?}], render(v)=>string }` where `render` returns the
-   in-game paper markup. Optional: a search box + category filter; letterheads/stamps. Reference form set:
-   `…/SS14 Macros/App/Hammerspoon/_archive/paperwork_palette.js` (template data is in the adjacent `.lua`).
-4. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
+5. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
    Sheet/wiki like the rest of the roster (forks the data model — pick one and note it).
-5. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
+6. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
    full step-by-step (pandoc / VisualEditor paste, hub + two-card page shape) is in `docs/WIKI-INTEGRATION.md`.
    When those pages exist, flip the tribe's Lore/Roleplay tabs from the Google-Doc source to the wiki pages.
+
+## Parked
+
+- **Paperwork expansion** waits for access to its source application. Keep the current feature in regression
+  coverage, but do not grow a second template library independently.
 
 ## Recently shipped (so you don't redo it)
 Masthead centred-tree, connector overshoot fix (left+width), fullscreen focus polish + CRT power-on,
