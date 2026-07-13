@@ -316,12 +316,29 @@
             <div class="map-detail" id="map-detail" aria-live="polite"></div>
           </aside>
         </div>
-        <div class="map-reference map-panel hidden" id="map-panel-region" role="tabpanel" aria-labelledby="mapmode-region" tabindex="0">
-          <div class="map-reference-inner">
-            <div class="map-reference-kicker">Wendover Region</div>
-            <div class="map-reference-title">Regional overview</div>
-            <p class="map-reference-msg">The wider setting: settlements, approaches, and routes around Wendover. It will use an original schematic and a reviewed landmark registry.</p>
+        <div class="map-body map-panel hidden" id="map-panel-region" role="tabpanel" aria-labelledby="mapmode-region">
+          <div class="map-stage">
+            <svg id="map-region-svg" class="map-svg map-region-svg" viewBox="0 0 1000 700" role="img" aria-label="Schematic overview of the Wendover region" xmlns="http://www.w3.org/2000/svg">
+              <rect class="region-field" x="0" y="0" width="1000" height="700"/>
+              <path class="region-flats" d="M262 166 C380 93 667 104 856 199 L814 487 C619 542 371 523 188 425 Z"/>
+              <path class="region-ponds" d="M318 505 C429 468 704 476 825 534 L786 642 C620 673 401 649 276 590 Z"/>
+              <path class="region-ridge" d="M82 114 166 58 234 124 305 74 373 145 433 95 498 164"/>
+              <path class="region-ridge region-ridge--far" d="M607 105 682 45 750 113 826 65 917 153"/>
+              <path class="region-corridor" d="M42 377 C237 352 379 370 512 356 S759 350 968 329"/>
+              <path class="region-track" d="M38 405 C236 382 378 399 510 386 S759 380 966 359"/>
+              <text class="region-label" x="522" y="224" text-anchor="middle">BONNEVILLE SALT FLATS</text>
+              <text class="region-route-label" x="503" y="340" text-anchor="middle">I-80 CORRIDOR</text>
+              <g id="map-region-pins"></g>
+            </svg>
           </div>
+          <aside class="map-side" id="map-region-side">
+            <div class="map-legend" aria-label="Regional map legend">
+              <div class="map-legend-title">Regional orientation</div>
+              <span class="map-legend-item"><span class="map-legend-swatch pin-other"></span>Reviewed landmark</span>
+              <span class="map-legend-note">Schematic only — not a road or terrain survey.</span>
+            </div>
+            <div class="map-detail" id="map-region-detail" aria-live="polite"></div>
+          </aside>
         </div>
         <div class="map-reference map-panel hidden" id="map-panel-local" role="tabpanel" aria-labelledby="mapmode-local" tabindex="0">
           <div class="map-reference-inner">

@@ -3347,6 +3347,16 @@ function mapDetailPrompt(){
    atlas; clicking it opens the regional overview. Coords in the 650×500 viewBox (UT–NV border, N of
    the New Vegas cluster). */
 const MAP_HOME = { x:300, y:200, label:"WENDOVER" };
+const REGION_LANDMARKS = [
+  { id:"wendover", name:"Wendover", kind:"Settlement", x:174, y:367, labelX:174, labelY:344,
+    desc:"The western anchor of the region and the approach to the local game space." },
+  { id:"salt-flats", name:"Bonneville Salt Flats", kind:"Open terrain", x:530, y:299, labelX:530, labelY:276,
+    desc:"The broad salt plain crossed by the region's main east–west corridor." },
+  { id:"silver-islands", name:"Silver Island Mountains", kind:"High ground", x:257, y:144, labelX:257, labelY:170,
+    desc:"A northern high-ground landmark above the flats." },
+  { id:"salt-works", name:"Salt Works", kind:"Industrial site", x:632, y:555, labelX:632, labelY:582,
+    desc:"Southern industrial evaporation works, shown only as a regional orientation point." },
+];
 const MAP_SCOPES = {
   us:     { title:"Wasteland Atlas", sub:"Reference map of the old west — the places that shaped the wasteland. Select a marker." },
   region: { title:"Wendover Region", sub:"A wider overview of the approaches, settlements, and routes around Wendover." },
@@ -3390,6 +3400,7 @@ function renderMap(){
   const det = $("#map-detail");
   if(det && !det.dataset.sel) det.innerHTML = mapDetailPrompt();
   else if(det && det.dataset.sel) showMapDetail(det.dataset.sel);   // keep the selection across re-renders
+  renderRegionMap();
 }
 function showMapDetail(id){
   const loc = MAP_LOCATIONS.find(l=>l.id===id), det=$("#map-detail"); if(!loc || !det) return;
@@ -3409,6 +3420,36 @@ function clearMapDetail(){
   const det=$("#map-detail"); if(!det) return;
   delete det.dataset.sel; det.innerHTML = mapDetailPrompt();
   document.querySelectorAll('#map-pins .map-pin.sel').forEach(p=>p.classList.remove('sel'));
+}
+function regionDetailPrompt(){
+  return `<div class="map-detail-empty">Select a landmark to orient yourself in the wider region.</div>`;
+}
+function renderRegionMap(){
+  const pinsG=$("#map-region-pins"); if(!pinsG) return;
+  pinsG.innerHTML=REGION_LANDMARKS.map(loc=>
+    `<g class="map-pin pin-other" data-id="${escAttr(loc.id)}" tabindex="0" role="button" aria-label="${escAttr(loc.name)}">`
+      +`<circle class="map-pin-hit" cx="${loc.x}" cy="${loc.y}" r="20"/>`
+      +`<circle class="map-pin-ring" cx="${loc.x}" cy="${loc.y}" r="9"/>`
+      +`<circle class="map-pin-dot" cx="${loc.x}" cy="${loc.y}" r="4.4"/>`
+      +`<text class="map-region-pin-label" x="${loc.labelX}" y="${loc.labelY}" text-anchor="middle">${esc(loc.name)}</text>`
+    +`</g>`).join("");
+  const det=$("#map-region-detail");
+  if(det && !det.dataset.sel) det.innerHTML=regionDetailPrompt();
+  else if(det && det.dataset.sel) showRegionDetail(det.dataset.sel);
+}
+function showRegionDetail(id){
+  const loc=REGION_LANDMARKS.find(x=>x.id===id), det=$("#map-region-detail"); if(!loc || !det) return;
+  det.dataset.sel=id;
+  det.innerHTML=`<div class="map-detail-head"><span class="map-detail-dot pin-other"></span><h3 class="map-detail-name">${esc(loc.name)}</h3></div>`
+    +`<div class="map-detail-meta">${esc(loc.kind)} · Regional orientation</div>`
+    +`<p class="map-detail-desc">${esc(loc.desc)}</p>`
+    +`<button type="button" class="btn map-region-clear">◂ All landmarks</button>`;
+  document.querySelectorAll("#map-region-pins .map-pin").forEach(p=>p.classList.toggle("sel", p.dataset.id===id));
+}
+function clearRegionDetail(){
+  const det=$("#map-region-detail"); if(!det) return;
+  delete det.dataset.sel; det.innerHTML=regionDetailPrompt();
+  document.querySelectorAll("#map-region-pins .map-pin.sel").forEach(p=>p.classList.remove("sel"));
 }
 function setSection(id){
   if(id!=="home" && id!=="map" && id!=="roster" && id!=="relations" && id!=="wiki" && !factionDocs().some(d=>d.id===id)) id="roster";
@@ -3495,6 +3536,14 @@ $("#primary-nav").addEventListener("click", e=>{
   svg.addEventListener("keydown", e=>{ if((e.key==="Enter"||e.key===" ") && hit(e)) e.preventDefault(); });
   const side=$(".map-side");
   if(side) side.addEventListener("click", e=>{ if(e.target.closest(".map-detail-clear")) clearMapDetail(); });
+  const regionSvg=$("#map-region-svg");
+  const regionHit=e=>{ const p=e.target.closest(".map-pin"); if(p){ showRegionDetail(p.dataset.id); return true; } return false; };
+  if(regionSvg){
+    regionSvg.addEventListener("click", regionHit);
+    regionSvg.addEventListener("keydown", e=>{ if((e.key==="Enter"||e.key===" ") && regionHit(e)) e.preventDefault(); });
+  }
+  const regionSide=$("#map-region-side");
+  if(regionSide) regionSide.addEventListener("click", e=>{ if(e.target.closest(".map-region-clear")) clearRegionDetail(); });
   // Scope pill → one route-aware map selector.
   const modes=$(".map-modes");
   if(modes) modes.addEventListener("click", e=>{ const b=e.target.closest("[data-mapscope]"); if(b) setMapScope(b.dataset.mapscope); });

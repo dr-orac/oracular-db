@@ -32,9 +32,10 @@ theme too. Command bar hidden on `#map`; breadcrumb "Map ▸ Wasteland Atlas". V
 detail, clear, no console errors). **Scope foundation complete locally:** the route-aware pill now has
 **US** (`#map`), **Region** (`#map/region`), and **Local** (`#map/local`) panels; the atlas's Wendover
 marker opens Region, and the accessible selection state, title, breadcrumb, and narrow-screen layout stay
-in sync. **REMAINING INCREMENTS:** (2) original Region schematic + reviewed routes/landmarks; (3) original
-Local game-space schematic + confirmed landmarks; (4) browser-local player pins with edit/delete and JSON
-export/import; (5) mouse, keyboard, and touch pan/zoom. The source of truth for the data boundary and
+in sync. **Region base complete locally:** an original orientation schematic now carries four reviewed
+anchors and a landmark detail panel. **REMAINING INCREMENTS:** (1) original Local game-space schematic +
+confirmed landmarks; (2) browser-local player pins with edit/delete and JSON
+export/import; (3) mouse, keyboard, and touch pan/zoom. The source of truth for the data boundary and
 delivery order is `docs/MAP-ARCHITECTURE.md`.
 
 ### T86 · Current contract

@@ -51,6 +51,7 @@ must be confirmed against the supplied in-game reference or user direction befor
 
 1. **Scope foundation** — three panels, direct links, accessible tab state, and this contract. Complete.
 2. **Regional base** — original regional schematic plus a small reviewed landmark and route registry.
+   Complete with the initial four orientation anchors; extend only with reviewed sources.
 3. **Local base** — original playable-area schematic, using a cleaner in-game overview as spatial reference;
    confirm landmark names and categories before publishing them.
 4. **Personal pins** — versioned browser-local store keyed by scope, create/edit/delete, validation, and
@@ -60,3 +61,12 @@ must be confirmed against the supplied in-game reference or user direction befor
    rules are decided. Do not overload the roster sheet as an incidental map database.
 
 Each step must preserve the three-scope URLs, work at narrow widths, and pass the repository self-check.
+
+## Regional orientation sources
+
+The first Region schematic uses only broad, verified orientation anchors: Wendover, the Bonneville Salt
+Flats, the I-80 corridor, the Silver Island Mountains, and southern salt works. It is intentionally not a
+survey and reuses no source geometry or imagery. These anchors were checked against the [Bureau of Land
+Management's Bonneville Salt Flats overview](https://www.blm.gov/visit/bonneville-salt-flats) and the
+[Utah Geological Survey's field guide](https://geology.utah.gov/map-pub/survey-notes/geosights/bonneville-salt-flats/).
+Future additions need a similarly direct source or explicit user confirmation.
