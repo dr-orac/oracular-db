@@ -61,6 +61,8 @@
     --rail: clamp(312px, 26vw, 432px);   /* the left index column (roster rail) — the search sits over it */
     --row-gap: 30px;                     /* gap between masthead row 1 (titlebar) and row 2 (tabs); the
                                             faction-box stem length derives from this so it always reaches the bus */
+    --box-glow: 0 0 22px -14px rgba(var(--fg-rgb), .45);   /* ONE subtle outer glow shared by boxed
+                                            components (cards, callouts, tiles, tables) — theme-tracking */
     /* Reading measure for the doc + wiki readers — the Settings "Reading Width" control (T71) rewrites
        these on :root; the wiki runs a touch wider than Google Docs. min(…,100%) keeps them overflow-safe. */
     --doc-measure:      78ch;
@@ -716,7 +718,7 @@
   .home-wiki{ flex:0 0 auto; margin-bottom:clamp(12px,1.8vh,22px);
     display:flex; align-items:center; gap:clamp(12px,1.6vw,22px); text-align:left;
     padding:clamp(9px,1.5vh,17px) clamp(16px,1.8vw,26px); cursor:pointer; font-family:var(--font-head);
-    background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg);
+    background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg); box-shadow:var(--box-glow);
     transition:border-color .18s, background .18s, box-shadow .18s, transform .16s; }
   .home-wiki:hover, .home-wiki:focus-visible{ outline:none; border-color:var(--fg); background:var(--bg-panel-2);
     transform:translateY(-2px); box-shadow:0 0 26px -10px rgba(var(--fg-rgb),.5), inset 0 0 0 1px rgba(var(--fg-rgb),.2); }
@@ -753,7 +755,7 @@
   .home-fac{ display:flex; flex-direction:column; align-items:center; justify-content:center;
     gap:clamp(6px,.9vh,11px); cursor:pointer; padding:clamp(10px,1.5vh,16px) 8px; min-width:0;
     min-height:clamp(80px,10.5vh,104px); text-align:center; background:var(--bg-panel); border:1px solid var(--fg-faint);
-    color:var(--fg); font-family:var(--font-head);
+    color:var(--fg); font-family:var(--font-head); box-shadow:var(--box-glow);
     transition:color .14s, border-color .14s, background .14s, box-shadow .14s, transform .12s; }
   .home-fac-ico{ flex:0 0 auto; width:clamp(40px,4.6vw,58px); height:clamp(40px,4.6vw,58px);
     display:inline-flex; color:var(--fg-bright); }
@@ -775,7 +777,7 @@
   .home-sec{ flex:0 0 auto; min-height:clamp(72px,9.5vh,100px); position:relative; overflow:hidden;
     display:flex; align-items:center; gap:clamp(13px,1.4vw,20px); text-align:left;
     padding:clamp(9px,1.3vh,16px) clamp(15px,1.7vw,22px); background:var(--bg-panel); color:var(--fg);
-    border:1px solid var(--fg-faint); cursor:pointer; font-family:var(--font-head);
+    border:1px solid var(--fg-faint); cursor:pointer; font-family:var(--font-head); box-shadow:var(--box-glow);
     transition:border-color .18s, background .18s, box-shadow .18s, transform .16s;
     animation:hometile .4s cubic-bezier(.2,.8,.3,1) backwards; animation-delay:calc(var(--i,0) * 55ms); }
   .home-sec:hover, .home-sec:focus-visible{ outline:none; border-color:var(--fg); background:var(--bg-panel-2);
@@ -1132,7 +1134,7 @@
      horizontal row rules (verticals kept faint so columns separate without a busy grid),
      comfortable padding, zebra striping and a row-hover highlight for scanning. */
   .docreader .doctable{ overflow-x:auto; margin:2em 0; -webkit-overflow-scrolling:touch;
-    border:1px solid var(--fg-faint); box-shadow:0 0 22px -14px rgba(var(--fg-rgb),.45); }
+    border:1px solid var(--fg-faint); box-shadow:var(--box-glow); }
   .docreader table{ border-collapse:collapse; margin:0; width:100%; font-size:1em; }
   .docreader th, .docreader td{ padding:10px 15px; text-align:left; vertical-align:top;
     border-bottom:1px solid rgba(var(--fg-rgb),.13); }
@@ -1224,7 +1226,7 @@
     color:var(--fg-bright); text-shadow:var(--glow-strong); margin:0 0 .3em; }
   /* CALLOUT / ALERT — an admonition box with a left accent bar */
   .wikibody .wiki-callout{ margin:0 0 20px; padding:14px 18px;
-    border:1px solid var(--fg-faint); border-left:3px solid var(--fg); background:var(--bg-panel); }
+    border:1px solid var(--fg-faint); border-left:3px solid var(--fg); background:var(--bg-panel); box-shadow:var(--box-glow); }
   .wikibody .wiki-callout--alert{ border-left-width:4px; border-left-color:var(--fg-bright);
     box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.22), 0 0 20px -12px rgba(var(--fg-rgb),.5); }
   .wikibody .wiki-callout p{ margin:.32em 0; }
@@ -1233,7 +1235,7 @@
   .wikibody .wiki-cardgrid{ display:grid; gap:12px; margin:0 0 22px;
     grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); }
   .wikibody .wiki-card{ padding:14px 16px; border:1px solid var(--fg-faint); background:var(--bg-panel);
-    transition:border-color .18s, background .18s, transform .18s, box-shadow .18s; }
+    box-shadow:var(--box-glow); transition:border-color .18s, background .18s, transform .18s, box-shadow .18s; }
   .wikibody .wiki-card:hover{ border-color:var(--fg); background:var(--bg-panel-2); transform:translateY(-2px);
     box-shadow:0 12px 26px -16px rgba(0,0,0,.9), 0 0 22px -8px rgba(var(--fg-rgb),.45); }
   .wikibody .wiki-card p{ margin:.28em 0; font-size:.92em; color:var(--fg-dim); }
