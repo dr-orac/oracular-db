@@ -1675,7 +1675,23 @@
      light on the phosphor rather than a boxed-in panel. */
   /* vertical-only padding so the eyebrow / portrait / stats line up on the SAME left
      edge as the narrative fields below (the dossier's 40px content edge). */
-  .doss-head{ position:relative; isolation:isolate; padding:var(--sp-6) 0; margin-bottom:var(--sp-6); }
+  /* T95 — reusable "case file" folder tab. Sits ABOVE a panel's top lip (a hairline) as a sibling
+     before it, with margin-bottom:-1px so its border-less base merges into that lip — reading as a
+     folder tab sticking out the top. Square-cornered for the pixel/terminal theme; the glow points
+     UP only so it never washes the seam. Reuse anywhere a "file" metaphor is earned. */
+  .filetab{
+    display:inline-flex; align-items:center; max-width:min(72%, 340px);
+    margin:0 0 -1px 12px; padding:5px 16px 7px; position:relative; z-index:1;
+    font-family:var(--font-head); font-size:13px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--fg-bright); background:var(--bg-panel-2);
+    border:1px solid var(--fg-faint); border-bottom:0;
+    box-shadow:0 -7px 15px -10px rgba(var(--fg-rgb),.5);
+    text-shadow:0 0 7px rgba(var(--fg-rgb),.4);
+  }
+  .filetab > span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  /* the dossier is the folder body: a top hairline is the folder edge the tab rests on */
+  .doss-head{ position:relative; isolation:isolate; padding:var(--sp-5) 0 var(--sp-6);
+    margin-bottom:var(--sp-6); border-top:1px solid var(--fg-faint); }
   /* a soft, feathered POOL OF LIGHT behind the header — subtle, no hard rim. It bleeds
      outward (negative insets) and melts to transparent well before the edges, reading as a
      gentle lift on the phosphor rather than a boxed panel. Toggleable off in Settings. */

@@ -1470,6 +1470,10 @@ function editFormHTML(ch){
 function dossierHTML(ch){
   const f=ch.fields;
   let html="";
+  // T95 — "case file" folder tab protruding from the top of the dossier. Labelled with the
+  // character's section (the file category), so it reads as a physical folder tab, not a chip.
+  const tabLabel = sectionLabel(ch.section) || "Dossier";
+  html+=`<div class="filetab" aria-hidden="true"><span>${esc(tabLabel)}</span></div>`;
   html+=`<div class="doss-head">`;
   // portrait beside the name block; the "More" overflow menu tucks into the top-right of THIS
   // row (not a floating row of its own). The old "Unit Dossier · <section>" eyebrow was dropped

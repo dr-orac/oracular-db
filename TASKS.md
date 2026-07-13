@@ -266,7 +266,16 @@ First pass defined `--box-glow` but with a -14px spread that made it invisible; 
 the token to a wide soft bloom + faint edge seat (`0 0 24px -8px .34, 0 0 2px 0 .12`) so doc tables, wiki
 cards/callouts and home tiles all carry a visible-but-subtle outer glow. One token, all boxes. Verified live.
 
-### T95 · "Dossier" folder-tab styling for boxed content — DESIGN [MED, thematic]
+### T95 · "Dossier" folder-tab styling for boxed content — ✅ SHIPPED 2026-07-13 (dossier; construct reusable)
+Built a reusable `.filetab` construct (a labelled folder tab that protrudes above a panel's top-lip
+hairline via `margin-bottom:-1px`; square-cornered for the pixel theme; upward-only glow so it merges into
+the seam). Applied to the **character dossier**: `dossierHTML` emits a `.filetab` labelled with the
+character's section (`sectionLabel(ch.section)`, fallback "Dossier") before `.doss-head`, and `.doss-head`
+got a `border-top` folder-edge. Verified live (injected sample — sandbox roster fetch was down). **Remaining
+(optional):** adopt `.filetab` on wiki faction pages (a tab reading the faction name) if/when desired — the
+construct is ready. Original spec kept below for that follow-up.
+
+### T95 (original spec — for the wiki-faction-page follow-up) · folder-tab styling — DESIGN [MED, thematic]
 The user likes the classic **manila-folder / dossier tab sticking out of the top edge** of a panel — reads
 as a physical case file, which fits the terminal-archive theme. Roadmap it where it's tactically useful and
 looks good (do NOT paste tabs on every box — pick the spots where a "file" metaphor is earned):
