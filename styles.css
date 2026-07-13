@@ -169,13 +169,13 @@
      three zones: breadcrumb (left) · emblem (centre) · developer signature (right). A thin, persistent,
      informational bar; the search stays up top per convention. */
   .statusbar{ flex:0 0 auto; position:relative; display:flex; align-items:center;
-    height:clamp(36px,4.4vh,48px); z-index:20;
-    padding:6px var(--sb-pad, 30px) 4px; margin-bottom:var(--sb-lift, 20px);   /* roomier; clears the bezel */
+    height:clamp(31px,3.7vh,41px); z-index:20;                                  /* ~15% shorter than before */
+    padding:5px var(--sb-pad, 38px) 3px; margin-bottom:var(--sb-lift, 20px);    /* extra side padding on crumb/signature; clears the bezel */
     font-family:var(--font-body); font-size:12px; letter-spacing:1.5px; color:var(--fg-dim); user-select:none; }
   /* clearances derive from the active frame: the screen bezel by default, the metal frame in Chassis mode */
-  body:not([data-frame="border"]) .statusbar{ --sb-pad:calc(var(--bezel-in, 22px) + 8px); --sb-lift:calc(var(--bezel-in, 22px) - 2px); }
-  body[data-frame="border"] .statusbar{ --sb-pad:calc(var(--frame) + 10px); --sb-lift:calc(var(--frame) + 6px); }
-  body[data-bezel="off"] .statusbar{ --sb-pad:20px; --sb-lift:8px; }
+  body:not([data-frame="border"]) .statusbar{ --sb-pad:calc(var(--bezel-in, 22px) + 16px); --sb-lift:calc(var(--bezel-in, 22px) - 2px); }
+  body[data-frame="border"] .statusbar{ --sb-pad:calc(var(--frame) + 18px); --sb-lift:calc(var(--frame) + 6px); }
+  body[data-bezel="off"] .statusbar{ --sb-pad:28px; --sb-lift:8px; }
   /* the line above the bar — IDENTICAL to the masthead divider (header::after): a solid --fg-dim rule,
      full-bleed to the hairline, with the same glow + faint faux-double-rule. */
   .statusbar::before{ content:""; position:absolute; left:var(--bezel-in); right:var(--bezel-in); top:0; height:0;
