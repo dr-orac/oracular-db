@@ -1,5 +1,8 @@
 # Misfits Database (formerly the Yuma Tribe Roster / "The Tribe Database")
 
+> **Picking up the work?** Start with **[`docs/HANDOFF-NEXT.md`](docs/HANDOFF-NEXT.md)** — the canonical
+> handoff (working protocol, how to run/verify/ship, hard rules, architecture map, open tasks + decisions).
+
 A Fallout-style ("Pip-Boy" terminal) web viewer for SS14 RP factions. The **Misfits Database**
 is the umbrella: it hosts the factions from the Misfits wiki's own faction listing (the Tribe,
 Brotherhood of Steel, NCR, Caesar's Legion, the Enclave, and more), each a config *skin* with its
