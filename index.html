@@ -27,7 +27,6 @@
   <div class="scanlines"></div>
   <div class="vignette"></div>
   <div id="crtwipe" aria-hidden="true"></div><!-- faction-switch CRT re-tune sweep -->
-  <div class="devsig" aria-hidden="true"><span class="devsig-dec">▚▞</span>&nbsp;SHWIWWI&#8209;TEC<span class="devsig-dec">&nbsp;//</span></div><!-- developer signature -->
   <div class="glass"></div>   <!-- optional behind-glass sheen (off by default) -->
 
   <!-- boot sequence overlay (skippable; shown once per session) -->
@@ -253,6 +252,12 @@
         </div>
       </section>
     </main>
+    <!-- bottom STATUS BAR: breadcrumb (left) · emblem (centre) · developer signature (right) -->
+    <footer class="statusbar">
+      <div class="sb-zone sb-left"><span class="sb-crumb" id="sb-crumb">Misfits Database</span></div>
+      <div class="sb-zone sb-center"><span class="sb-emblem" aria-hidden="true">◈</span></div>
+      <div class="sb-zone sb-right"><span class="devsig" aria-hidden="true"><span class="devsig-dec">▚▞</span>&nbsp;SHWIWWI&#8209;TEC<span class="devsig-dec">&nbsp;//</span></span></div>
+    </footer>
   </div>
 
   <!-- hidden upload input (kept off-screen rather than display:none so it stays operable) -->

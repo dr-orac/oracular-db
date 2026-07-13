@@ -162,17 +162,41 @@
   body[data-reducemotion="on"].crt-retune #crtwipe,
   body[data-reducemotion="on"].crt-retune #crtwipe::before,
   body[data-reducemotion="on"].crt-retune .app{ animation:none; opacity:0; filter:none; }
-  /* developer signature — a small, subtle terminal tag in the bottom-right corner (inside the bezel).
-     Brightens a touch on hover; never intercepts clicks. */
-  .devsig{ position:fixed; z-index:9300; pointer-events:none; user-select:none;
-    right:calc(var(--bezel-in, 22px) + 6px); bottom:calc(var(--bezel-in, 22px) - 8px);
-    font-family:var(--font-body); font-size:10.5px; letter-spacing:2px; line-height:1; white-space:nowrap;
-    text-transform:uppercase; color:var(--fg-faint); text-shadow:0 0 6px rgba(var(--fg-rgb),.22);
-    opacity:.62; transition:opacity .25s, color .25s; }
+  /* ---------- bottom STATUS BAR (macOS-window-bottom style) — its own segment under a glowing rule ----------
+     three zones: breadcrumb (left) · emblem (centre) · developer signature (right). A thin, persistent,
+     informational bar; the search stays up top per convention. */
+  .statusbar{ flex:0 0 auto; position:relative; display:flex; align-items:center;
+    height:clamp(26px,3.4vh,34px); z-index:20;
+    padding:0 var(--sb-pad, 30px); margin-bottom:var(--sb-lift, 20px);   /* clear the screen bezel (bottom + sides) */
+    font-family:var(--font-body); font-size:11px; letter-spacing:1.5px; color:var(--fg-dim); user-select:none; }
+  /* clearances derive from the active frame: the screen bezel by default, the metal frame in Chassis mode */
+  body:not([data-frame="border"]) .statusbar{ --sb-pad:calc(var(--bezel-in, 22px) + 8px); --sb-lift:calc(var(--bezel-in, 22px) - 2px); }
+  body[data-frame="border"] .statusbar{ --sb-pad:calc(var(--frame) + 10px); --sb-lift:calc(var(--frame) + 6px); }
+  body[data-bezel="off"] .statusbar{ --sb-pad:20px; --sb-lift:8px; }
+  /* the "second horizontal line" above the bar — a glowing, edge-faded rule (matches the T91 hr motif) */
+  .statusbar::before{ content:""; position:absolute; left:var(--sb-pad,30px); right:var(--sb-pad,30px); top:0; height:1px;
+    background:linear-gradient(to right, transparent, rgba(var(--fg-rgb),.42) 12%, rgba(var(--fg-rgb),.42) 88%, transparent);
+    box-shadow:0 0 9px rgba(var(--fg-rgb),.3); }
+  .sb-zone{ flex:1 1 0; display:flex; align-items:center; min-width:0; }
+  .sb-left{ justify-content:flex-start; }
+  .sb-center{ flex:0 0 auto; justify-content:center; padding:0 14px; }
+  .sb-right{ justify-content:flex-end; }
+  .sb-crumb{ text-transform:uppercase; color:var(--fg-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sb-emblem{ color:var(--fg-faint); font-size:12px; line-height:1; text-shadow:0 0 8px rgba(var(--fg-rgb),.4);
+    transition:color .25s, text-shadow .25s; }
+  .statusbar:hover .sb-emblem{ color:var(--fg-dim); }
+  /* developer signature — now lives in the bar's right zone (static, not floating) */
+  .devsig{ display:inline-flex; align-items:center; white-space:nowrap; text-transform:uppercase;
+    font-size:10.5px; letter-spacing:2px; color:var(--fg-faint); text-shadow:0 0 6px rgba(var(--fg-rgb),.22);
+    opacity:.72; transition:opacity .25s, color .25s; }
   .devsig:hover{ opacity:1; color:var(--fg-dim); }
   .devsig-dec{ color:var(--fg-dim); letter-spacing:0; opacity:.8; }
-  body[data-frame="border"] .devsig{ right:calc(var(--frame) + 8px); bottom:calc(var(--frame) + 4px); }
-  @media (max-width:640px){ .devsig{ font-size:9.5px; letter-spacing:1.4px; right:14px; bottom:8px; } }
+  body[data-section="home"] .sb-crumb{ opacity:.85; }
+  @media (max-width:640px){
+    .statusbar{ font-size:10px; letter-spacing:1px; padding:0 12px; height:clamp(24px,4vh,30px); }
+    .sb-center{ display:none; }   /* drop the centre emblem on narrow screens — keep crumb + signature */
+    .devsig{ font-size:9.5px; letter-spacing:1.2px; }
+  }
   /* optional behind-glass sheen — off by default, kept faint to protect legibility */
   .glass{
     position:fixed; inset:0; z-index:6500; pointer-events:none;

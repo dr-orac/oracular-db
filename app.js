@@ -3015,6 +3015,7 @@ async function loadWiki(page){
     }
     styleTOC(reader); buildDocSidebar(reader); trackDocSection();
     reader.dataset.docid = "wiki:"+page;
+    updateCrumb();                                             // reflect the wiki page in the status-bar breadcrumb
     $("#docnow").textContent = "› "+page.replace(/_/g," ");
     status.className="docstatus"; status.textContent="";
     announceDoc(page.replace(/_/g," ")+" loaded");           // screen-reader cue for the loaded page
@@ -3198,6 +3199,7 @@ function setSection(id){
 }
 /* the page's single H1 (sr-only) — describes the current view for screen readers */
 function setAppHeading(){
+  updateCrumb();
   const h=$("#app-h1"); if(!h) return;
   if(currentSection==="home"){ h.textContent="Misfits Database — Home"; return; }
   const label = currentSection==="roster" ? "Roster"
@@ -3205,6 +3207,17 @@ function setAppHeading(){
     : currentSection==="wiki" ? "Wiki"
     : (factionDocs().find(d=>d.id===currentSection)||{}).label || currentSection;
   h.textContent = activeFaction().name + " — " + label;
+}
+/* the status-bar breadcrumb (left zone) — echoes the current location (the H1 is the a11y source). */
+function updateCrumb(){
+  const el=$("#sb-crumb"); if(!el) return;
+  let c;
+  if(currentSection==="home") c="Misfits Database";
+  else if(currentSection==="wiki") c="Wiki ▸ " + String(_wikiPage||WIKI.home).replace(/_/g," ");
+  else{ const label = currentSection==="roster" ? "Roster" : currentSection==="relations" ? "Relations"
+      : (factionDocs().find(d=>d.id===currentSection)||{}).label || currentSection;
+    c = activeFaction().name + " ▸ " + label; }
+  el.textContent = c;
 }
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
