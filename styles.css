@@ -166,32 +166,36 @@
      three zones: breadcrumb (left) · emblem (centre) · developer signature (right). A thin, persistent,
      informational bar; the search stays up top per convention. */
   .statusbar{ flex:0 0 auto; position:relative; display:flex; align-items:center;
-    height:clamp(26px,3.4vh,34px); z-index:20;
-    padding:0 var(--sb-pad, 30px); margin-bottom:var(--sb-lift, 20px);   /* clear the screen bezel (bottom + sides) */
-    font-family:var(--font-body); font-size:11px; letter-spacing:1.5px; color:var(--fg-dim); user-select:none; }
+    height:clamp(36px,4.4vh,48px); z-index:20;
+    padding:6px var(--sb-pad, 30px) 4px; margin-bottom:var(--sb-lift, 20px);   /* roomier; clears the bezel */
+    font-family:var(--font-body); font-size:12px; letter-spacing:1.5px; color:var(--fg-dim); user-select:none; }
   /* clearances derive from the active frame: the screen bezel by default, the metal frame in Chassis mode */
   body:not([data-frame="border"]) .statusbar{ --sb-pad:calc(var(--bezel-in, 22px) + 8px); --sb-lift:calc(var(--bezel-in, 22px) - 2px); }
   body[data-frame="border"] .statusbar{ --sb-pad:calc(var(--frame) + 10px); --sb-lift:calc(var(--frame) + 6px); }
   body[data-bezel="off"] .statusbar{ --sb-pad:20px; --sb-lift:8px; }
-  /* the "second horizontal line" above the bar — a glowing, edge-faded rule (matches the T91 hr motif) */
-  .statusbar::before{ content:""; position:absolute; left:var(--sb-pad,30px); right:var(--sb-pad,30px); top:0; height:1px;
-    background:linear-gradient(to right, transparent, rgba(var(--fg-rgb),.42) 12%, rgba(var(--fg-rgb),.42) 88%, transparent);
-    box-shadow:0 0 9px rgba(var(--fg-rgb),.3); }
+  /* the line above the bar — IDENTICAL to the masthead divider (header::after): a solid --fg-dim rule,
+     full-bleed to the hairline, with the same glow + faint faux-double-rule. */
+  .statusbar::before{ content:""; position:absolute; left:var(--bezel-in); right:var(--bezel-in); top:0; height:0;
+    border-bottom:1px solid var(--fg-dim);
+    box-shadow:0 0 10px 0 rgba(var(--fg-rgb),.42), 0 3px 0 -2px rgba(var(--fg-rgb),.3); }
+  body[data-frame="border"] .statusbar::before{ left:var(--frame); right:var(--frame); }
+  body[data-bezel="off"] .statusbar::before{ left:14px; right:14px; }
   .sb-zone{ flex:1 1 0; display:flex; align-items:center; min-width:0; }
   .sb-left{ justify-content:flex-start; }
-  .sb-center{ flex:0 0 auto; justify-content:center; padding:0 14px; }
+  .sb-center{ flex:0 0 auto; justify-content:center; padding:0 16px; }
   .sb-right{ justify-content:flex-end; }
-  .sb-crumb{ text-transform:uppercase; color:var(--fg-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .sb-emblem{ color:var(--fg-faint); font-size:12px; line-height:1; text-shadow:0 0 8px rgba(var(--fg-rgb),.4);
-    transition:color .25s, text-shadow .25s; }
-  .statusbar:hover .sb-emblem{ color:var(--fg-dim); }
+  .sb-crumb{ text-transform:uppercase; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    text-shadow:0 0 7px rgba(var(--fg-rgb),.28); }
+  .sb-emblem{ color:var(--fg-dim); width:clamp(18px,2vw,22px); height:clamp(18px,2vw,22px); display:inline-flex;
+    filter:drop-shadow(0 0 7px rgba(var(--fg-rgb),.5)); transition:color .25s, filter .25s; }
+  .sb-emblem svg{ width:100%; height:100%; fill:currentColor; }
+  .statusbar:hover .sb-emblem{ color:var(--fg-bright); filter:drop-shadow(0 0 10px rgba(var(--fg-rgb),.7)); }
   /* developer signature — now lives in the bar's right zone (static, not floating) */
   .devsig{ display:inline-flex; align-items:center; white-space:nowrap; text-transform:uppercase;
-    font-size:10.5px; letter-spacing:2px; color:var(--fg-faint); text-shadow:0 0 6px rgba(var(--fg-rgb),.22);
-    opacity:.72; transition:opacity .25s, color .25s; }
-  .devsig:hover{ opacity:1; color:var(--fg-dim); }
-  .devsig-dec{ color:var(--fg-dim); letter-spacing:0; opacity:.8; }
-  body[data-section="home"] .sb-crumb{ opacity:.85; }
+    font-size:11px; letter-spacing:2px; color:var(--fg-dim); text-shadow:0 0 7px rgba(var(--fg-rgb),.3);
+    opacity:.95; transition:opacity .25s, color .25s; }
+  .devsig:hover{ opacity:1; color:var(--fg-bright); }
+  .devsig-dec{ color:var(--fg); letter-spacing:0; opacity:.85; }
   @media (max-width:640px){
     .statusbar{ font-size:10px; letter-spacing:1px; padding:0 12px; height:clamp(24px,4vh,30px); }
     .sb-center{ display:none; }   /* drop the centre emblem on narrow screens — keep crumb + signature */
