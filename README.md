@@ -105,13 +105,17 @@ python3 tools/make-og-stubs.py --base-url "https://…/" # rebuild c/ Discord st
 ## Before you deploy or commit
 
 ```bash
+# Once after a fresh clone: activate the repository's pre-commit check
+./tools/setup-git.sh
+
 python3 tools/selfcheck.py      # integrity linter: dangling element ids, undefined CSS
                                 # vars, missing fonts/media, truncated JS, dead CSS classes
 python3 tools/preview.py        # rebuild the local preview in /tmp (then open ?sheet=…)
 ```
 
-`selfcheck.py` also runs automatically as a git **pre-commit hook** (it blocks a broken
-commit; `--no-verify` to override). Full maintenance notes live in **MAINTENANCE.md**.
+`setup-git.sh` makes `selfcheck.py` a local git **pre-commit hook** (it blocks a broken
+commit; `--no-verify` to override). GitHub also runs the same check on every push and pull
+request. Full maintenance notes live in **MAINTENANCE.md**.
 
 ## Conventions worth knowing
 

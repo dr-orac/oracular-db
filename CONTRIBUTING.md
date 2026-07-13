@@ -19,14 +19,15 @@ are in **MAINTENANCE.md**; the design system is in **STYLE-GUIDE.md**.
 ## Before you commit
 
 ```bash
+./tools/setup-git.sh           # once after a fresh clone: activate the commit guard
 python3 tools/selfcheck.py     # integrity linter: element ids, CSS vars, fonts/media,
                                # JS structure, dead CSS classes, orphan fonts, token drift
 python3 tools/preview.py       # rebuild the local preview, then open /
 ```
 
-`selfcheck.py` runs automatically as a **pre-commit hook** and blocks a commit that fails
-(`--no-verify` to override in an emergency). Let the linter do mechanical checks — reserve
-review effort for design and trade-offs.
+`setup-git.sh` configures the versioned **pre-commit hook**, which blocks a commit that fails
+(`--no-verify` to override in an emergency). GitHub runs the same check on every push and pull
+request. Let the linter do mechanical checks — reserve review effort for design and trade-offs.
 
 ## Project conventions
 
