@@ -4051,39 +4051,65 @@ function runBoot(){
   el.addEventListener("click", e=>{ if(e.target===el){ close(); return; } const it=e.target.closest(".cmdk-item"); if(it) go(+it.dataset.i); });
 })();
 
-/* ============================ PAPERWORK — fillable SS14 form templates ============================
-   Ported (starter set) from the SS14 Macros paperwork palette
-   (…/SS14 Macros/App/Hammerspoon/_archive/paperwork_palette.js — templates are Lua-injected there).
-   Each is a copy-to-clipboard template with [BRACKET] fields to fill in-game. HANDOFF (ChatGPT): import
-   the full template library + letterheads/stamps/tags from that source into PAPERWORK_TEMPLATES; the tab,
-   route (#paperwork), nav box and renderer below are already wired. */
+/* ============================ PAPERWORK SYSTEM ============================
+   A fillable-form system: pick a template → fill its fields → a live preview assembles the in-game SS14
+   paper markup ([head]/[bold]/…) → copy it into a paper. One example template ships (arrest report); add
+   more to PAPERWORK_TEMPLATES following the same {fields, render} shape. Each field: {key,label,multiline?}.
+   Source of the wider template library: the SS14 Macros paperwork palette. */
 const PAPERWORK_TEMPLATES = [
-  { category:"Security", title:"Detainment / Arrest Record", body:
-"=== DETAINMENT RECORD ===\nDetainee: [NAME]\nCharges: [CRIMES]\nSentence: [TIME] / [FINE]\nArresting officer: [OFFICER]\nTime of arrest: [TIME]\nRights read: [YES/NO]\nNotes: [NOTES]\n\nSigned: ________________________" },
-  { category:"Command", title:"Access / ID Application", body:
-"=== ACCESS APPLICATION ===\nApplicant: [NAME]\nCurrent role: [JOB]\nAccess requested: [DOORS/AREAS]\nReason: [JUSTIFICATION]\nSponsoring head: [HEAD OF DEPT]\n\nApproved / Denied (circle)\nSigned: ________________________" },
-  { category:"Logistics", title:"Supply Requisition", body:
-"=== SUPPLY REQUISITION ===\nRequested by: [NAME] · [DEPARTMENT]\nItems:\n  - [ITEM] × [QTY]\n  - [ITEM] × [QTY]\nPurpose: [REASON]\nBudget code: [CODE]\n\nAuthorised: ________________________" },
-  { category:"Medical", title:"Treatment Record", body:
-"=== MEDICAL TREATMENT RECORD ===\nPatient: [NAME]\nPresenting condition: [SYMPTOMS]\nDiagnosis: [DIAGNOSIS]\nTreatment given: [TREATMENT]\nMedications: [CHEMS/DOSES]\nAttending medic: [MEDIC]\nOutcome: [DISCHARGED/ADMITTED/DECEASED]" },
-  { category:"Command", title:"Incident Report", body:
-"=== INCIDENT REPORT ===\nReporting party: [NAME] · [ROLE]\nDate / shift: [DATE]\nLocation: [AREA]\nWhat happened: [ACCOUNT]\nParties involved: [NAMES]\nAction taken: [RESPONSE]\nFollow-up required: [YES/NO]\n\nSigned: ________________________" },
-  { category:"General", title:"Letter of Recommendation", body:
-"=== LETTER OF RECOMMENDATION ===\nTo whom it may concern,\n\nI, [YOUR NAME] ([YOUR ROLE]), recommend [NAME] for [POSITION/PURPOSE].\n\n[REASONS]\n\nRegards,\n[YOUR NAME]\n________________________" },
+  { id:"arrest", category:"Security", title:"Arrest / Detainment Report",
+    fields:[
+      { key:"name",     label:"Detainee name" },
+      { key:"charges",  label:"Charges", multiline:true },
+      { key:"sentence", label:"Sentence (time / fine)" },
+      { key:"officer",  label:"Arresting officer" },
+      { key:"time",     label:"Time of arrest" },
+      { key:"rights",   label:"Rights read? (Y/N)" },
+      { key:"notes",    label:"Notes", multiline:true },
+    ],
+    render:v=>
+`[head=1]Arrest Report[/head]
+[bold]Detainee:[/bold] ${v.name||"____"}
+[bold]Charges:[/bold] ${v.charges||"____"}
+[bold]Sentence:[/bold] ${v.sentence||"____"}
+[bold]Arresting officer:[/bold] ${v.officer||"____"}
+[bold]Time of arrest:[/bold] ${v.time||"____"}
+[bold]Rights read:[/bold] ${v.rights||"____"}
+[bold]Notes:[/bold] ${v.notes||"—"}
+
+Signed: __________________________` },
 ];
+let _pwSel=0, _pwVals={};
 function renderPaperwork(){
   const wrap=$("#paperwork-list"); if(!wrap) return;
-  wrap.innerHTML = PAPERWORK_TEMPLATES.map((t,i)=>
-    `<div class="pw-card"><div class="pw-cardhead"><span class="pw-cat">${esc(t.category)}</span>`
-    +`<h3 class="pw-title">${esc(t.title)}</h3><button class="btn pw-copy" type="button" data-i="${i}">⧉ Copy</button></div>`
-    +`<pre class="pw-body">${esc(t.body)}</pre></div>`).join("");
+  const t=PAPERWORK_TEMPLATES[_pwSel]||PAPERWORK_TEMPLATES[0];
+  wrap.innerHTML =
+    `<div class="pw-picker" role="tablist" aria-label="Templates">`+PAPERWORK_TEMPLATES.map((x,i)=>
+      `<button class="pw-pick${i===_pwSel?' active':''}" type="button" role="tab" aria-selected="${i===_pwSel}" data-i="${i}"><span class="pw-cat">${esc(x.category)}</span>${esc(x.title)}</button>`).join("")+`</div>`
+   +`<div class="pw-work">`
+     +`<form class="pw-form" id="pw-form" onsubmit="return false">`+t.fields.map(f=>
+        `<label class="pw-field"><span>${esc(f.label)}</span>`+
+        (f.multiline
+          ? `<textarea data-k="${escAttr(f.key)}" rows="2">${esc(_pwVals[f.key]||"")}</textarea>`
+          : `<input type="text" data-k="${escAttr(f.key)}" value="${escAttr(_pwVals[f.key]||"")}" />`)+`</label>`).join("")+`</form>`
+     +`<div class="pw-out"><div class="pw-outhead"><span>Preview — paste into an in-game paper</span>`
+       +`<button class="btn pw-copy" type="button">⧉ Copy</button></div>`
+       +`<pre class="pw-preview" id="pw-preview">${esc(t.render(_pwVals))}</pre></div>`
+   +`</div>`;
 }
 (function paperworkWire(){
   const sec=$("#paperwork"); if(!sec) return;
   sec.addEventListener("click", e=>{
-    const b=e.target.closest(".pw-copy"); if(!b) return;
-    const t=PAPERWORK_TEMPLATES[+b.dataset.i]; if(!t) return;
-    try{ navigator.clipboard && navigator.clipboard.writeText(t.body); }catch(err){}
-    const o=b.textContent; b.textContent="Copied ✓"; setTimeout(()=>{ b.textContent=o; }, 1400);
+    const p=e.target.closest(".pw-pick");
+    if(p){ _pwSel=+p.dataset.i; _pwVals={}; renderPaperwork(); return; }
+    const c=e.target.closest(".pw-copy");
+    if(c){ const pre=$("#pw-preview"); if(pre){ try{ navigator.clipboard && navigator.clipboard.writeText(pre.textContent); }catch(err){}
+      const o=c.textContent; c.textContent="Copied ✓"; setTimeout(()=>{ c.textContent=o; }, 1400); } }
+  });
+  sec.addEventListener("input", e=>{
+    const el=e.target.closest("[data-k]"); if(!el) return;
+    _pwVals[el.dataset.k]=el.value;
+    const t=PAPERWORK_TEMPLATES[_pwSel]||PAPERWORK_TEMPLATES[0];
+    const pre=$("#pw-preview"); if(pre) pre.textContent=t.render(_pwVals);
   });
 })();
