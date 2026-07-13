@@ -1419,8 +1419,10 @@
   .map-view{ display:flex; flex-direction:column; min-height:0; padding-top:clamp(6px,1.4vh,16px); }
   .map-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:14px 20px; flex-wrap:wrap; padding:0 var(--sp-2) var(--sp-3); }
   .map-modes{ flex:0 0 auto; }   /* reuses the .seg pill (List/Cards) look */
-  .map-modes button{ white-space:nowrap; }
-  .map-modes:has(#mapmode-local.active)::before{ transform:translateX(100%); }   /* slide the fill to the active mode */
+  .seg.map-modes button{ min-width:0; padding:9px clamp(10px,4.4vw,24px); white-space:nowrap; }
+  .seg.map-modes::before{ width:calc(33.333% - 3px); }
+  .seg.map-modes:has(#mapmode-region.active)::before{ transform:translateX(100%); }
+  .seg.map-modes:has(#mapmode-local.active)::before{ transform:translateX(200%); }
   .map-title{ margin:0; font-family:var(--font-head); font-size:clamp(20px,3vw,30px); letter-spacing:2px;
     text-transform:uppercase; color:var(--fg-bright); text-shadow:var(--glow); }
   .map-sub{ margin:5px 0 0; color:var(--fg-dim); font-size:13px; letter-spacing:.4px; }
@@ -1476,12 +1478,14 @@
   .map-tl-year{ font-family:var(--font-head); font-size:13px; color:var(--fg-bright); }
   .map-tl-event{ color:var(--fg-dim); font-size:13px; line-height:1.4; }
   .map-detail-clear{ font-size:12px; margin-top:2px; }
-  /* Local (Wendover) scope — placeholder until the regional map + player pins land */
-  .map-local{ margin:0 var(--sp-2) var(--sp-4); border:1px solid var(--fg-faint); background:var(--bg-panel);
+  /* Regional and local panels deliberately remain separate from the US atlas: each will own a
+     different original schematic and landmark dataset, while sharing this stable selector shell. */
+  .map-reference{ margin:0 var(--sp-2) var(--sp-4); border:1px solid var(--fg-faint); background:var(--bg-panel);
     box-shadow:var(--box-glow); min-height:clamp(240px,38vh,420px); display:flex; align-items:center; justify-content:center; padding:24px; }
-  .map-local-inner{ max-width:460px; text-align:center; }
-  .map-local-title{ font-family:var(--font-head); font-size:clamp(16px,2.4vw,22px); letter-spacing:2px; text-transform:uppercase; color:var(--fg-bright); text-shadow:var(--glow); }
-  .map-local-msg{ margin:12px 0 0; color:var(--fg-dim); font-size:14px; line-height:1.6; }
+  .map-reference-inner{ max-width:500px; text-align:center; }
+  .map-reference-kicker{ color:var(--fg-dim); font-size:12px; letter-spacing:2px; text-transform:uppercase; }
+  .map-reference-title{ margin-top:5px; font-family:var(--font-head); font-size:clamp(16px,2.4vw,22px); letter-spacing:2px; text-transform:uppercase; color:var(--fg-bright); text-shadow:var(--glow); }
+  .map-reference-msg{ margin:12px 0 0; color:var(--fg-dim); font-size:14px; line-height:1.6; }
   @media (max-width:760px){
     .map-body{ grid-template-columns:1fr; }
     .map-side{ position:static; }

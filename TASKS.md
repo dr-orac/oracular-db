@@ -21,7 +21,7 @@ UNBLOCKED), T94 (Events tab), T93 (Discord pipeline — needs the user's setup +
 **⚠ From T89, needs the user's decision:** two bundled fonts (Monofonto, Gothic 821 Cn) are a licensing
 risk with OFL fallbacks already in-repo — swap or licence; see `docs/LEGAL-SWEEP.md`.
 
-### T86 · NEW "Map" tab — Fallout wasteland map, US + Wendover regional — LARGE [feature] — IN PROGRESS
+### T86 · NEW "Map" tab — US + Wendover Region + Local maps — LARGE [feature] — IN PROGRESS
 **✅ INCREMENT 1 SHIPPED 2026-07-13:** the Map tab is wired + live. Row-1 `#nav-map` box (folded-map
 NAV_ICON), `#map` umbrella route (writeRoute/applyRoute/setSection like wiki), `<section id="map">` with the
 themed US SVG (50 state paths, static in index.html, `.map-states path` themed via CSS) + a lore-pin layer.
@@ -29,57 +29,22 @@ themed US SVG (50 state paths, static in index.html, `.map-states path` themed v
 inject pins + legend + a detail sidebar (name · game · faction · timeline). Faction pins use FIXED identity
 hues (NCR amber / Legion red / Independent blue) — NOT theme-derived, so they stay distinct under the amber
 theme too. Command bar hidden on `#map`; breadcrumb "Map ▸ Wasteland Atlas". Verified live (pins, click →
-detail, clear, no console errors). **REMAINING INCREMENTS (next):** (2) pin hover polish + optional
-timeline animation; (3) US/Wendover **mode toggle** (List/Cards-style); (4) **Wendover** stylised regional
-map + **player-added pins** over the `getMapPins/addMapPin/saveMapPins` localStorage seam (+ export/import
-JSON) — "local now, shared later"; (5) **zoom + pan** with touch support. Original spec + build order below.
+detail, clear, no console errors). **Scope foundation complete locally:** the route-aware pill now has
+**US** (`#map`), **Region** (`#map/region`), and **Local** (`#map/local`) panels; the atlas's Wendover
+marker opens Region, and the accessible selection state, title, breadcrumb, and narrow-screen layout stay
+in sync. **REMAINING INCREMENTS:** (2) original Region schematic + reviewed routes/landmarks; (3) original
+Local game-space schematic + confirmed landmarks; (4) browser-local player pins with edit/delete and JSON
+export/import; (5) mouse, keyboard, and touch pan/zoom. The source of truth for the data boundary and
+delivery order is `docs/MAP-ARCHITECTURE.md`.
 
-### T86 (original spec) · NEW "Map" tab — Fallout wasteland map, US + Wendover regional — LARGE [feature]
-A new top-level **Map** tab (row 1, alongside Home / Wiki; route `#map`), rebuilt from scratch to be
-theme-integrated (uses `--fg`/`--bg`/the bezel), NOT a green standalone. Reference the existing prototype at
-`…/fallout-map-standalone/` (`index.html` + `HANDOFF.md` + `PRE_INTEGRATION_ROADMAP.md`) — reuse its US SVG
-paths + `locations` dataset + hover/anchor/zoom-pan interaction model as a STARTING point, but re-skin and
-restructure. **TWO MODES** (a toggle, like List/Cards):
-- **US-wide** — pins for the classic Fallout locations that shaped the lore (F1/F2/NV: Shady Sands, The Hub,
-  Boneyard, Vault 13/15, Arroyo, New Reno, NCR, Hoover Dam, The Strip, The Fort, Goodsprings…). Hover =
-  timeline preview; click = anchor. NCR/Legion/other visual distinction + filter. This is REFERENCE lore.
-- **Regional (Wendover)** — the local area where the game is set; **players can ADD pins** to highlight lore
-  events that happened nearby. Persistence: **start with per-browser `localStorage`** (`mdb-mappins`) +
-  export/import JSON so pins can be shared manually; SHARED/authoritative pins need a backend or the master
-  sheet — link to **T54** (blocked on the user) and roadmap that separately. **DECIDED (user 2026-07-13):
-  "local now, shared later"** — build per-browser localStorage pins for v1, but structure the pin store
-  (one `addPin`/`getPins`/`savePins` seam) so a shared backend can slot in later without a rewrite.
-  Add-pin UX: click-to-place +
-  a small form (title, date, blurb, faction/tag); edit/delete own pins.
-- Shared: zoom + pan (add touch support — the prototype is mouse-only), the two-level timeline, a legend,
-  reduced-motion-aware self-draw intro (ties to T92). Data structure clean enough to later move to a sheet.
-- **GATED on T89 (legality)** — Fallout is Bethesda/ZeniMax IP; confirm what location names / lore text /
-  map likeness a fan project can use before shipping public.
-- Decisions to make (ask the user): shared vs per-browser player pins for v1; how much US lore to include;
-  whether the regional map is a stylised drawing or a real Wendover-area map.
-- Acceptance: a Map tab with US + Wendover modes, themed to the app, pins + timelines working, player pins
-  persist locally + export, touch + mouse pan/zoom, no console errors, responsive; verify both modes.
-- **PREP DONE 2026-07-13 (ready to build — do it in bounded increments, verify each):**
-  - **SVG:** the standalone US map is 50 `<path>` states in a `<g>` (viewBox `0 0 650 500`) at
-    `../fallout-map-standalone/index.html` lines ~379–433, each hardcoded `fill="#0a1d11" stroke="#3cff7a"`.
-    Extract + theme-strip with: `sed 's/ fill="#0a1d11" stroke="#3cff7a" stroke-width="1.2"//g; s/ id="path[0-9]*"//g'`
-    then theme via CSS: `.map-svg path{ fill:var(--bg-panel); stroke:var(--fg); stroke-width:1 }`.
-  - **Data:** `locations` array (F1/F2/NV), shape `{id,name,game,faction,x,y,desc,timeline:[{year,event}]}` —
-    port verbatim into a `MAP_LOCATIONS` const (paraphrase any verbatim lore per LEGAL-SWEEP). `x,y` are in
-    the 650×500 viewBox space → pins are `<circle>`/markers at those coords inside the same SVG.
-  - **Integration points in THIS app (mirror how `wiki` is wired):** (1) new row-1 nav box in index.html
-    beside `#nav-wiki` (`<button class="navbox" data-section="map" id="nav-map">`); (2) `NAV_ICONS.map`
-    (a map/globe glyph); (3) `renderPrimaryNav()` — add `["map","Map"]` to its list; (4) `setSection()` —
-    add `"map"` to the valid-id guard + a branch that hides roster/cards/state/docview/relations/home,
-    shows `#map`, and calls `renderMap()`; add `#map` to the hide-logic of the other branches; (5)
-    `parseRoute`/`applyRoute` already handle a bare `#<section>` — `map` needs the same top-level treatment
-    as `wiki` (it's umbrella, not faction-scoped) in `writeRoute`/`applyRoute`; (6) `<section id="map"
-    class="map-view hidden">` in index.html holding the SVG + a sidebar/legend + a US/Wendover mode toggle.
-  - **Pin store (local-now/shared-later):** one seam — `getMapPins()/addMapPin()/saveMapPins()` over
-    `localStorage["mdb-mappins"]` (+ export/import JSON); swap the impl for a backend later, callers unchanged.
-  - **Wendover mode:** original STYLISED regional art (NOT a traced real map — per LEGAL-SWEEP); players
-    drop pins here. Suggested build order: US static themed → pins+timeline → mode toggle → Wendover +
-    player-add pins → zoom/pan (+touch).
+### T86 · Current contract
+The map is a top-level, theme-integrated view with **three scales**: US reference atlas, a wider Wendover
+Region, and the playable Wendover Local space. The full contract, coordinate system, source boundary, and
+delivery order live in `docs/MAP-ARCHITECTURE.md`; do not reintroduce a separate, conflicting map spec here.
+The app stays browser-local for personal pins in v1, with one future storage seam for shared canon. Every
+published regional/local shape must be original rather than traced from a game map, and every name or blurb
+must be reviewed before it ships. The end-state acceptance is all three URLs working, responsive and
+accessible maps, persistent personal pins with JSON export/import, and touch + mouse pan/zoom.
 
 ### T87 · TOC readability — varied styling + a "never too small" floor — SMALL/MED
 Make the in-reader Contents rail (`#doctoc`, `.tl2/.tl3/.tl4`) read better: differentiate levels with more

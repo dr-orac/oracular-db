@@ -2055,7 +2055,7 @@ function writeRoute(target){
   if(_routing) return;
   // the wiki is umbrella content (not faction-scoped) → a top-level #wiki/<Page> route
   const h = currentSection==="home" ? "home"
-          : currentSection==="map" ? "map"
+          : currentSection==="map" ? "map" + (_mapScope!=="us" ? "/"+_mapScope : "")
           : currentSection==="wiki" ? "wiki" + (_wikiPage && _wikiPage!==WIKI.home ? "/"+encodeURIComponent(_wikiPage) : "")
           : currentFaction + "/" + currentSection + (target ? "/"+target : "");
   const full = "#" + h;
@@ -2079,7 +2079,7 @@ function applyRoute(){
     if(r.faction && FACTIONS[r.faction] && r.faction!==currentFaction) applyFaction(r.faction);
     let sec = r.section || "home";
     if(sec!=="home" && sec!=="map" && sec!=="roster" && sec!=="relations" && sec!=="wiki" && !factionDocs().some(d=>d.id===sec)) sec="roster";
-    if(sec==="map"){ if(sec!==currentSection) setSection("map"); _pendingTarget=null; return; }   // #map — umbrella, no target
+    if(sec==="map"){ setMapScope(r.target, { route:false }); if(sec!==currentSection) setSection("map"); _pendingTarget=null; return; }
     if(sec==="wiki"){                        // #wiki/<Page> — the target IS the wiki page to open
       const pg = r.target || WIKI.home;
       if(sec!==currentSection){ _wikiPage = pg; setSection("wiki"); }   // setSection loads _wikiPage
@@ -3281,10 +3281,9 @@ function focusDocFind(i){
 }
 function stepDocFind(dir){ if(_docFindMatches.length) focusDocFind(_docFindIdx+dir); }
 /* ============================ T86 · MAP ============================
-   Increment 1: a themed "reference atlas" of the western wasteland. The US state outlines live
-   statically in index.html (#map-svg > .map-states); renderMap() injects the lore PINS + legend and
-   wires selection → the detail sidebar. Coords are in the 650×500 viewBox. Wendover regional mode +
-   player-added pins + zoom/pan are later increments (see TASKS.md T86 build order). */
+   Three scales share one route and selector: US reference atlas, Wendover region, then the local game
+   space. The US outlines live in index.html (#map-svg > .map-states); its coordinates use a 650×500
+   viewBox. Regional/local landmark data will use their own documented 1000×700 coordinate space. */
 const MAP_FACTIONS = {
   ncr:    { label:"NCR",         cls:"pin-ncr" },
   legion: { label:"Caesar's Legion", cls:"pin-legion" },
@@ -3345,18 +3344,28 @@ function mapDetailPrompt(){
   return `<div class="map-detail-empty">Select a marker to read its place in wasteland history.</div>`;
 }
 /* Wendover — the "you are here" home region (where the game is set). A prominent hero marker on the US
-   atlas; clicking it flips to the Local/regional map. Coords in the 650×500 viewBox (UT–NV border, N of
+   atlas; clicking it opens the regional overview. Coords in the 650×500 viewBox (UT–NV border, N of
    the New Vegas cluster). */
 const MAP_HOME = { x:300, y:200, label:"WENDOVER" };
-/* switch the atlas between US-Wide and Local — shared by the scope pill AND the Wendover hero marker. */
-function setMapMode(local){
+const MAP_SCOPES = {
+  us:     { title:"Wasteland Atlas", sub:"Reference map of the old west — the places that shaped the wasteland. Select a marker." },
+  region: { title:"Wendover Region", sub:"A wider overview of the approaches, settlements, and routes around Wendover." },
+  local:  { title:"Wendover Local", sub:"The playable game space — landmark detail is shown at a closer scale." },
+};
+let _mapScope="us";
+function setMapScope(scope, opts={}){
+  scope=MAP_SCOPES[scope] ? scope : "us";
+  _mapScope=scope;
   const modes=$(".map-modes");
-  if(modes) modes.querySelectorAll("button").forEach(x=>{ const on=(x.dataset.mapmode==="local")===local; x.classList.toggle("active",on); x.setAttribute("aria-selected", on?"true":"false"); });
-  const body=$("#map .map-body"), loc=$("#map-local"), sub=$("#map-sub");
-  if(body) body.classList.toggle("hidden", local);
-  if(loc)  loc.classList.toggle("hidden", !local);
-  if(sub)  sub.textContent = local ? "The local area where the game is set — regional pins coming soon."
-                                   : "Reference map of the old west — the places that shaped the wasteland. Select a marker.";
+  if(modes) modes.querySelectorAll("button").forEach(x=>{ const on=x.dataset.mapscope===scope; x.classList.toggle("active",on); x.setAttribute("aria-selected", on?"true":"false"); });
+  document.querySelectorAll("#map .map-panel").forEach(x=>x.classList.toggle("hidden", x.id!=="map-panel-"+scope));
+  const meta=MAP_SCOPES[scope], title=$(".map-title"), sub=$("#map-sub");
+  if(title) title.textContent=meta.title;
+  if(sub) sub.textContent=meta.sub;
+  if(currentSection==="map"){
+    setAppHeading();
+    if(opts.route!==false) writeRoute();
+  }
 }
 function renderMap(){
   const pinsG = $("#map-pins"); if(!pinsG) return;
@@ -3368,8 +3377,8 @@ function renderMap(){
       + `<circle class="map-pin-dot" cx="${loc.x}" cy="${loc.y}" r="3.2"/>`
       + `</g>`;
   }).join("")
-  // the Wendover hero marker (rendered last → on top). Pulsing ring + label; click → Local map.
-  + `<g class="map-home" data-home="1" tabindex="0" role="button" aria-label="Wendover — you are here. Open the local map.">`
+  // the Wendover hero marker (rendered last → on top). Pulsing ring + label; click → regional overview.
+  + `<g class="map-home" data-home="1" tabindex="0" role="button" aria-label="Wendover — you are here. Open the regional map.">`
     + `<circle class="map-home-hit" cx="${MAP_HOME.x}" cy="${MAP_HOME.y}" r="16"/>`
     + `<circle class="map-home-pulse" cx="${MAP_HOME.x}" cy="${MAP_HOME.y}" r="7"/>`
     + `<circle class="map-home-dot" cx="${MAP_HOME.x}" cy="${MAP_HOME.y}" r="5"/>`
@@ -3451,7 +3460,7 @@ function setAppHeading(){
   updateCrumb();
   const h=$("#app-h1"); if(!h) return;
   if(currentSection==="home"){ h.textContent="Misfits Database — Home"; return; }
-  if(currentSection==="map"){ h.textContent="Misfits Database — Map"; return; }
+  if(currentSection==="map"){ h.textContent="Misfits Database — "+MAP_SCOPES[_mapScope].title; return; }
   const label = currentSection==="roster" ? "Roster"
     : currentSection==="relations" ? "Relations"
     : currentSection==="wiki" ? "Wiki"
@@ -3463,7 +3472,7 @@ function updateCrumb(){
   const el=$("#sb-crumb"); if(!el) return;
   let c;
   if(currentSection==="home") c="Misfits Database";
-  else if(currentSection==="map") c="Map ▸ Wasteland Atlas";
+  else if(currentSection==="map") c="Map ▸ "+MAP_SCOPES[_mapScope].title;
   else if(currentSection==="wiki") c="Wiki ▸ " + String(_wikiPage||WIKI.home).replace(/_/g," ");
   else{ const label = currentSection==="roster" ? "Roster" : currentSection==="relations" ? "Relations"
       : (factionDocs().find(d=>d.id===currentSection)||{}).label || currentSection;
@@ -3477,18 +3486,18 @@ $("#topnav").addEventListener("click", e=>{
 $("#primary-nav").addEventListener("click", e=>{
   const b=e.target.closest(".navbox"); if(b) setSection(b.dataset.section);
 });
-/* MAP pins: click / Enter / Space on a marker opens its detail; the "All markers" button clears it */
+/* MAP pins: click / Enter / Space on a marker opens its detail; the Wendover marker opens Region. */
 (function wireMap(){
   const svg=$("#map-svg"); if(!svg) return;
-  const hit=e=>{ const h=e.target.closest(".map-home"); if(h){ setMapMode(true); return true; }
+  const hit=e=>{ const h=e.target.closest(".map-home"); if(h){ setMapScope("region"); return true; }
                  const p=e.target.closest(".map-pin"); if(p){ showMapDetail(p.dataset.id); return true; } return false; };
   svg.addEventListener("click", hit);
   svg.addEventListener("keydown", e=>{ if((e.key==="Enter"||e.key===" ") && hit(e)) e.preventDefault(); });
   const side=$(".map-side");
   if(side) side.addEventListener("click", e=>{ if(e.target.closest(".map-detail-clear")) clearMapDetail(); });
-  // US-Wide / Local scope pill → shared setMapMode()
+  // Scope pill → one route-aware map selector.
   const modes=$(".map-modes");
-  if(modes) modes.addEventListener("click", e=>{ const b=e.target.closest("[data-mapmode]"); if(b) setMapMode(b.dataset.mapmode==="local"); });
+  if(modes) modes.addEventListener("click", e=>{ const b=e.target.closest("[data-mapscope]"); if(b) setMapScope(b.dataset.mapscope); });
 })();
 /* home landing: a faction cell (left) SELECTS the faction — re-skins + re-renders home so the right
    column shows that faction's sections, without leaving home. A section card (right) or the Wiki (top)

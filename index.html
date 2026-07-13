@@ -240,8 +240,7 @@
         </div>
       </section>
 
-      <!-- MAP VIEW (T86) — themed Fallout wasteland map. Increment 1: US "reference atlas" with lore
-           pins + a detail sidebar. Wendover regional mode + player-added pins + zoom/pan follow. -->
+      <!-- MAP VIEW (T86) — three distinct scales: US reference atlas, Wendover region, and local game space. -->
       <section id="map" class="map-view hidden" aria-label="Map">
         <div class="map-head">
           <div class="map-headtext">
@@ -249,11 +248,12 @@
             <p class="map-sub" id="map-sub">Reference map of the old west — the places that shaped the wasteland. Select a marker.</p>
           </div>
           <div class="seg map-modes" role="tablist" aria-label="Map scope">
-            <button id="mapmode-us" class="active" type="button" role="tab" aria-selected="true" data-mapmode="us">US-Wide</button>
-            <button id="mapmode-local" type="button" role="tab" aria-selected="false" data-mapmode="local">Local</button>
+            <button id="mapmode-us" class="active" type="button" role="tab" aria-controls="map-panel-us" aria-selected="true" data-mapscope="us">US</button>
+            <button id="mapmode-region" type="button" role="tab" aria-controls="map-panel-region" aria-selected="false" data-mapscope="region">Region</button>
+            <button id="mapmode-local" type="button" role="tab" aria-controls="map-panel-local" aria-selected="false" data-mapscope="local">Local</button>
           </div>
         </div>
-        <div class="map-body">
+        <div class="map-body map-panel" id="map-panel-us" role="tabpanel" aria-labelledby="mapmode-us">
           <div class="map-stage">
             <svg id="map-svg" class="map-svg" viewBox="0 0 650 500" role="img" aria-label="Map of the western wasteland" xmlns="http://www.w3.org/2000/svg">
               <g class="map-states">
@@ -316,10 +316,18 @@
             <div class="map-detail" id="map-detail" aria-live="polite"></div>
           </aside>
         </div>
-        <div class="map-local hidden" id="map-local">
-          <div class="map-local-inner">
-            <div class="map-local-title">Regional map — Wendover</div>
-            <p class="map-local-msg">The local area where the game is set, with player-placed pins for lore events nearby. Coming in the next build.</p>
+        <div class="map-reference map-panel hidden" id="map-panel-region" role="tabpanel" aria-labelledby="mapmode-region" tabindex="0">
+          <div class="map-reference-inner">
+            <div class="map-reference-kicker">Wendover Region</div>
+            <div class="map-reference-title">Regional overview</div>
+            <p class="map-reference-msg">The wider setting: settlements, approaches, and routes around Wendover. It will use an original schematic and a reviewed landmark registry.</p>
+          </div>
+        </div>
+        <div class="map-reference map-panel hidden" id="map-panel-local" role="tabpanel" aria-labelledby="mapmode-local" tabindex="0">
+          <div class="map-reference-inner">
+            <div class="map-reference-kicker">Wendover Local</div>
+            <div class="map-reference-title">Playable area</div>
+            <p class="map-reference-msg">The game space at a useful tabletop scale. Its original schematic will be built from the supplied references, with named landmarks confirmed before they are published.</p>
           </div>
         </div>
       </section>
