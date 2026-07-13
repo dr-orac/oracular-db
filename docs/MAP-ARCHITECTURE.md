@@ -21,6 +21,61 @@ Region and Local map data will use a fixed `1000 × 700` coordinate space. This 
 across responsive rendering and makes pins, routes, import/export, and a later shared store independent
 of the artwork implementation.
 
+`data/world.json` is a research dataset until its top-level `data_status` becomes `display_ready`. The app
+must not consume provisional coordinates merely because they are syntactically valid. A coordinate is a
+displayable placement only after the identity, basis, evidence, and uncertainty have been reviewed.
+
+## Placement evidence
+
+Keep three different questions separate:
+
+1. **Identity:** is the fictional location explicitly identified with a real-world place? The Boneyard as
+   Los Angeles is a strong identity anchor; a generic desert vault usually is not.
+2. **Placement:** is its point fixed by that identity, inferred relative to anchors on one game's world
+   map, broadly constrained by several clues, or authored for this project?
+3. **Precision:** how large is the plausible area? A city identity can be certain while its chosen marker
+   still represents a metropolitan area rather than an exact building.
+
+New or revised location records should replace the ambiguous `source_confidence` field with this shape:
+
+```json
+{
+  "canon_scope": "fallout_1",
+  "placement": {
+    "basis": "real_world_identity",
+    "status": "reviewed",
+    "precision_km": 15,
+    "method_note": "City identity is explicit; marker represents the metropolitan centre."
+  },
+  "evidence": [
+    {
+      "source_id": "stable-source-id",
+      "supports": "identity",
+      "locator": "page, map label, dialogue, or section",
+      "note": "Concise statement of what this source establishes."
+    }
+  ]
+}
+```
+
+Allowed placement bases are `real_world_identity`, `game_map_inference`, `regional_inference`,
+`project_authored`, and `unknown`. Allowed statuses are `reviewed`, `provisional`, and `withheld`.
+`precision_km` is an uncertainty radius, not a promise of survey accuracy. `unknown` placements remain in
+the research set but do not receive a public marker.
+
+For inference from a game map:
+
+- establish at least two identity anchors from that same map; three or more are preferred;
+- compare relative direction and distance to those anchors rather than tracing the source artwork;
+- record contradictions and map distortion instead of forcing an exact fit;
+- calculate or state a conservative uncertainty radius;
+- never use one global transform across different games or continuities;
+- keep alternate placements when the evidence genuinely supports more than one interpretation.
+
+The rendered map may simplify an accepted placement, but it must not imply greater certainty than the
+underlying record. The repository self-check validates graph references and coordinate ranges; evidence
+review remains a separate human gate.
+
 ```json
 {
   "version": 1,
@@ -52,12 +107,14 @@ must be confirmed against the supplied in-game reference or user direction befor
 1. **Scope foundation** — three panels, direct links, accessible tab state, and this contract. Complete.
 2. **Regional base** — original regional schematic plus a small reviewed landmark and route registry.
    Complete with the initial four orientation anchors; extend only with reviewed sources.
-3. **Local base** — original playable-area schematic, using a cleaner in-game overview as spatial reference;
+3. **US data migration** — reconcile the existing 23 atlas entries with reviewed records in
+   `data/world.json`; preserve coverage while replacing hand-positioned pins in bounded game-by-game sets.
+4. **Local base** — original playable-area schematic, using a cleaner in-game overview as spatial reference;
    confirm landmark names and categories before publishing them.
-4. **Personal pins** — versioned browser-local store keyed by scope, create/edit/delete, validation, and
+5. **Personal pins** — versioned browser-local store keyed by scope, create/edit/delete, validation, and
    JSON export/import. Keep one storage seam so a shared source can replace it later.
-5. **Navigation** — pan/zoom with mouse, keyboard, and touch support; reduced-motion-safe transitions.
-6. **Shared canon, only when needed** — add a reviewed external source after its ownership and moderation
+6. **Navigation** — pan/zoom with mouse, keyboard, and touch support; reduced-motion-safe transitions.
+7. **Shared canon, only when needed** — add a reviewed external source after its ownership and moderation
    rules are decided. Do not overload the roster sheet as an incidental map database.
 
 Each step must preserve the three-scope URLs, work at narrow widths, and pass the repository self-check.

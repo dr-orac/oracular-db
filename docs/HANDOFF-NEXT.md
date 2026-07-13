@@ -27,8 +27,8 @@ for backstory. Keep THIS file current — each work session should update "Open 
 - **Sheets/Docs are often blocked in dev** → verify roster-dependent changes on the LIVE url, not locally.
 
 ## Content & art rules (for map / paperwork / wiki additions)
-Originals only: **no traced real-world maps, no Vault-Tec/Bethesda trademarked art, no AI-generated art** on
-the public site. Use own screenshots / original schematic art; note the licence on any wiki upload. (`docs/LEGAL-SWEEP.md`.)
+Originals only: **no traced real-world maps and no Vault-Tec/Bethesda trademarked art** on the public site.
+Use own screenshots or original schematic art; note the licence on any wiki upload. (`docs/LEGAL-SWEEP.md`.)
 
 ## The project in 30 seconds
 Vanilla, no-build static site: `index.html` + `styles.css` + `app.js` + self-hosted fonts + `tools/` +
@@ -44,8 +44,9 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
   not load locally** — verify roster-dependent things on the live URL. The wiki host is reachable.
 
 ## Hard rules (do not break)
-- **No tool/assistant attribution anywhere** — not in tracked files, not in commit messages. Keep the repo
-  reading as ordinary human development. (Any imported data must be stripped of non-data instruction/meta.)
+- **Repository history describes the work itself** — what changed, why, sources, and validation. Do not
+  record private production metadata in tracked files or commit messages. Imported data must contain only
+  project-relevant content and provenance.
 - **Never write to `CONFIG.sheetId`** (`10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY`, the tribe source sheet).
 - **One task = one commit** (imperative subject + why-body). Selfcheck clean before committing.
 - **No history rewriting / force-push on `main`** (a few old commit bodies are knowingly left as-is).
@@ -61,7 +62,7 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
   left+right — don't reintroduce right-inset positioning, it caused the "bus overshoot" bug).
 - **Map:** 3 scales (US atlas / Wendover Region / Local) sharing `#map[/<scope>]` with `_mapScope`. US pins
   are the hardcoded `MAP_LOCATIONS` (pixel coords in a 650×500 viewBox) + a Wendover hero marker. Region is
-  a small original schematic. `renderMap()`/`showMapDetail()`/`setMapMode()`. Region drawing + coordinate
+  a small original schematic. `renderMap()`/`showMapDetail()`/`setMapScope()`. Region drawing + coordinate
   contract are documented in `docs/MAP-ARCHITECTURE.md`.
 - **Command palette:** ⌘K/Ctrl-K, fuzzy-ranked, deep-links via hash. Self-contained IIFE at end of app.js.
 - **Roster search:** `filtered()` + `scoreMatch()`/`fuzzySubseq()` — fuzzy + ranked; flat "Results" list
@@ -70,24 +71,25 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 - **`EXTRA_CHARACTERS`** (top of app.js): hardcoded bios merged into the roster (incl. Wendover chars).
 
 ## Open tasks (priority order, with concrete pointers)
-1. **Wire the map to `data/world.json`** (the main task; the map still uses hardcoded pixel pins).
-   `data/world.json` has 13 locations with **real lat/long**, 7 regions, `connections` (routes),
-   `faction_zones` (control), `event_hooks`, terrain, and `terminal_entry` lore. Plan:
-   - **US atlas:** replace `MAP_LOCATIONS` pixel coords by projecting each location's lat/long into the
-     650×500 viewBox. Calibrate with 2 known anchors (e.g. LA/Boneyard and Hoover Dam or Las Vegas) to fit a
-     linear lon→x, lat→y transform, then map the `fallout_*` locations. Show `terminal_entry.body` in the
-     detail panel. Do it behind the existing `renderMap()`/`showMapDetail()` so the UI is unchanged.
-   - **Wendover Region/Local:** render the 4 `misfits_*` locations + their `connections` (draw routes) +
-     `faction_zones` (control shading/legend) + lore, on top of the existing region schematic.
-   - Keep increments bounded; verify each on the live URL (roster-independent, so it's testable).
-2. **Grow the paperwork library.** The *system* is done (template picker → fillable fields → live SS14
+1. **Make the world dataset display-ready** (the main task; the map still uses hardcoded pixel pins).
+   `data/world.json` is deliberately `provisional`: its 13 current locations and valid internal references
+   are a research starting point, not yet authoritative placements. Follow `docs/MAP-ARCHITECTURE.md`:
+   - inventory the existing 23 US atlas entries so migration never reduces coverage;
+   - collect identity anchors and map-relative evidence game by game;
+   - classify placement basis, review status, and uncertainty separately from location identity;
+   - reconcile the researched records, then change `data_status` only when every published marker passes;
+   - migrate one game-sized set at a time behind the existing `renderMap()`/`showMapDetail()` UI.
+2. **Extend Region, then build Local.** Keep the original Wendover schematic and its verified real-world
+   anchors. Add reviewed regional routes/landmarks next; build the playable Local schematic only from the
+   supplied in-game overview and user-confirmed landmarks.
+3. **Grow the paperwork library.** The *system* is done (template picker → fillable fields → live SS14
    paper-code preview → copy). Add templates to `PAPERWORK_TEMPLATES` — each is
    `{ id, category, title, fields:[{key,label,multiline?}], render(v)=>string }` where `render` returns the
    in-game paper markup. Optional: a search box + category filter; letterheads/stamps. Reference form set:
    `…/SS14 Macros/App/Hammerspoon/_archive/paperwork_palette.js` (template data is in the adjacent `.lua`).
-3. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
+4. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
    Sheet/wiki like the rest of the roster (forks the data model — pick one and note it).
-4. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
+5. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
    full step-by-step (pandoc / VisualEditor paste, hub + two-card page shape) is in `docs/WIKI-INTEGRATION.md`.
    When those pages exist, flip the tribe's Lore/Roleplay tabs from the Google-Doc source to the wiki pages.
 

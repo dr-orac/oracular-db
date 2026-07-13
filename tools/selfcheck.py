@@ -16,7 +16,7 @@ Exit code 0 = clean, 1 = errors found.  Warnings never fail the build.
 
 Stdlib only. Safe to run anywhere python3 exists.
 """
-import os, re, sys
+import json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def p(*a): return os.path.join(ROOT, *a)
@@ -251,6 +251,137 @@ def check_css_comment_balance(css):
         err(f'unterminated "/*" comment starting at styles.css:{line} — a "/*" is never closed')
 
 check_css_comment_balance(css)
+
+# ---------------------------------------------------------------- 9. world/map data integrity
+# The map dataset is edited independently from the rendering code. Validate its internal graph here so a
+# renamed or omitted location cannot silently break routes, faction zones, or event markers.
+world_path = p("data", "world.json")
+if os.path.exists(world_path):
+    try:
+        with open(world_path, encoding="utf-8") as f:
+            world = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        err(f"data/world.json cannot be read as JSON: {exc}")
+        world = None
+
+    if world is not None:
+        collections = ("terrain_types", "regions", "locations", "connections", "faction_zones", "event_hooks")
+        for key in collections:
+            if not isinstance(world.get(key), list):
+                err(f'data/world.json field "{key}" must be an array')
+
+        def collect_ids(key):
+            rows = world.get(key, []) if isinstance(world.get(key), list) else []
+            found = set()
+            for index, row in enumerate(rows):
+                if not isinstance(row, dict):
+                    err(f"data/world.json {key}[{index}] must be an object")
+                    continue
+                item_id = row.get("id")
+                if not isinstance(item_id, str) or not item_id:
+                    err(f"data/world.json {key}[{index}] has no non-empty id")
+                elif item_id in found:
+                    err(f'data/world.json has duplicate {key} id "{item_id}"')
+                else:
+                    found.add(item_id)
+            return found
+
+        terrain_ids = collect_ids("terrain_types")
+        region_ids = collect_ids("regions")
+        location_ids = collect_ids("locations")
+        collect_ids("faction_zones")
+        collect_ids("event_hooks")
+
+        confidence_values = {"low", "medium", "high"}
+        placement_bases = {"real_world_identity", "game_map_inference", "regional_inference", "project_authored", "unknown"}
+        placement_statuses = {"reviewed", "provisional", "withheld"}
+        locations = world.get("locations", []) if isinstance(world.get("locations"), list) else []
+        for loc in locations:
+            if not isinstance(loc, dict):
+                continue
+            loc_id = loc.get("id", "(missing id)")
+            coords = loc.get("coordinates")
+            if not isinstance(coords, dict):
+                err(f'data/world.json location "{loc_id}" has no coordinates object')
+            else:
+                lat, lon = coords.get("latitude"), coords.get("longitude")
+                if not isinstance(lat, (int, float)) or not -90 <= lat <= 90:
+                    err(f'data/world.json location "{loc_id}" has invalid latitude')
+                if not isinstance(lon, (int, float)) or not -180 <= lon <= 180:
+                    err(f'data/world.json location "{loc_id}" has invalid longitude')
+            if loc.get("terrain_type_id") not in terrain_ids:
+                err(f'data/world.json location "{loc_id}" references unknown terrain_type_id "{loc.get("terrain_type_id")}"')
+            if "source_confidence" in loc and loc.get("source_confidence") not in confidence_values:
+                err(f'data/world.json location "{loc_id}" has invalid source_confidence "{loc.get("source_confidence")}"')
+            placement = loc.get("placement")
+            if placement is not None:
+                if not isinstance(placement, dict):
+                    err(f'data/world.json location "{loc_id}" placement must be an object')
+                else:
+                    if placement.get("basis") not in placement_bases:
+                        err(f'data/world.json location "{loc_id}" has invalid placement basis "{placement.get("basis")}"')
+                    if placement.get("status") not in placement_statuses:
+                        err(f'data/world.json location "{loc_id}" has invalid placement status "{placement.get("status")}"')
+                    precision = placement.get("precision_km")
+                    if not isinstance(precision, (int, float)) or precision < 0:
+                        err(f'data/world.json location "{loc_id}" has invalid placement precision_km')
+            evidence = loc.get("evidence")
+            if evidence is not None and (not isinstance(evidence, list) or not all(isinstance(item, dict) for item in evidence)):
+                err(f'data/world.json location "{loc_id}" evidence must be an array of objects')
+
+        connections = world.get("connections", []) if isinstance(world.get("connections"), list) else []
+        for index, connection in enumerate(connections):
+            if not isinstance(connection, dict):
+                continue
+            for field in ("from_id", "to_id"):
+                ref = connection.get(field)
+                if ref not in location_ids:
+                    err(f'data/world.json connections[{index}].{field} references unknown location "{ref}"')
+            for terrain_id in connection.get("terrain_profile", []):
+                if terrain_id not in terrain_ids:
+                    err(f'data/world.json connections[{index}] references unknown terrain "{terrain_id}"')
+
+        zones = world.get("faction_zones", []) if isinstance(world.get("faction_zones"), list) else []
+        for zone in zones:
+            if not isinstance(zone, dict):
+                continue
+            zone_id = zone.get("id", "(missing id)")
+            if zone.get("region_id") not in region_ids:
+                err(f'data/world.json faction zone "{zone_id}" references unknown region "{zone.get("region_id")}"')
+            for location_id in zone.get("controlled_location_ids", []):
+                if location_id not in location_ids:
+                    err(f'data/world.json faction zone "{zone_id}" references unknown location "{location_id}"')
+
+        events = world.get("event_hooks", []) if isinstance(world.get("event_hooks"), list) else []
+        for event in events:
+            if not isinstance(event, dict):
+                continue
+            event_id = event.get("id", "(missing id)")
+            if event.get("region_id") not in region_ids:
+                err(f'data/world.json event "{event_id}" references unknown region "{event.get("region_id")}"')
+            for location_id in event.get("primary_location_ids", []):
+                if location_id not in location_ids:
+                    err(f'data/world.json event "{event_id}" references unknown location "{location_id}"')
+
+        status = world.get("data_status")
+        if status == "provisional":
+            info("data/world.json is internally valid but provisional; map placement review is still required")
+        elif status == "display_ready":
+            for loc in locations:
+                if not isinstance(loc, dict):
+                    continue
+                loc_id = loc.get("id", "(missing id)")
+                placement = loc.get("placement")
+                if not isinstance(loc.get("canon_scope"), str) or not loc.get("canon_scope"):
+                    err(f'display-ready location "{loc_id}" has no canon_scope')
+                if not isinstance(placement, dict) or placement.get("status") != "reviewed":
+                    err(f'display-ready location "{loc_id}" must have reviewed placement')
+                elif placement.get("basis") == "unknown":
+                    err(f'display-ready location "{loc_id}" cannot have unknown placement basis')
+                if not isinstance(loc.get("evidence"), list) or not loc.get("evidence"):
+                    err(f'display-ready location "{loc_id}" must include evidence')
+        else:
+            warn('data/world.json data_status should be "provisional" or "display_ready"')
 
 # ---------------------------------------------------------------- report
 print("── Yuma Roster self-check ──")

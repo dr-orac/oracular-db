@@ -1,7 +1,8 @@
 {
-  "version": "1.2",
+  "version": "1.3",
   "universe_id": "fallout_core_plus_misfits",
-  "_note": "Canonical world dataset for the map (regions, locations, terrain, routes, faction control, event seeds). Coordinates are approximate real-world lat/long; acceptable error ~10km. Cleaned to data only.",
+  "data_status": "provisional",
+  "_note": "Working world dataset for map research. Coordinates are hypotheses until their placement basis, evidence, and uncertainty have been reviewed under docs/MAP-ARCHITECTURE.md; the application must not treat this file as display-ready yet.",
 
   "terrain_types": [
     { "id": "terrain_salt_flats", "name": "Salt Flats", "movement_penalty": 1.2, "cover_rating": 0.2, "visibility_rating": 0.9, "encounter_bias": ["snipers", "vehicle_ambushes", "weather_hazards"], "description": "Extremely flat, reflective salt crust with minimal cover and long sight lines." },
@@ -39,19 +40,14 @@
   ],
 
   "connections": [
-    { "from_id": "f1_shady_sands", "to_id": "f1_the_hub", "connection_type": "caravan_route", "approx_distance_km": 120, "terrain_profile": ["terrain_desert_scrub"], "description": "Primary caravan trail linking Shady Sands to the Hub across desert scrub and minor ruins.", "tags": ["ncr", "trade", "high_value"] },
-    { "from_id": "f1_the_hub", "to_id": "f1_boneyard", "connection_type": "caravan_route", "approx_distance_km": 160, "terrain_profile": ["terrain_desert_scrub", "terrain_urban_ruins"], "description": "Trade route descending from inland Hub corridors to the coastal ruins of the Boneyard.", "tags": ["ncr", "salvage"] },
-    { "from_id": "fnv_new_vegas_strip", "to_id": "fnv_goodsprings", "connection_type": "road", "approx_distance_km": 35, "terrain_profile": ["terrain_desert_scrub"], "description": "Paved and dirt roads connecting the New Vegas Strip to the frontier town of Goodsprings.", "tags": ["mojave", "early_game"] },
-    { "from_id": "f3_megaton", "to_id": "f3_rivet_city", "connection_type": "urban_route", "approx_distance_km": 15, "terrain_profile": ["terrain_urban_ruins"], "description": "Winding paths through Capital Wasteland ruins along the Potomac from Megaton to Rivet City.", "tags": ["capital_wasteland", "river_corridor"] },
     { "from_id": "misfits_wendover_town", "to_id": "misfits_great_salt_flats", "connection_type": "road", "approx_distance_km": 8, "terrain_profile": ["terrain_salt_flats"], "description": "Cracked highway leading east out of Wendover into the open salt flats.", "tags": ["misfits", "hazardous", "ambush_prone"] },
     { "from_id": "misfits_wendover_town", "to_id": "misfits_toana_range_overlook", "connection_type": "trail", "approx_distance_km": 5, "terrain_profile": ["terrain_mountain_ridge"], "description": "Steep path from town edge up into the Toana Ridge outpost.", "tags": ["misfits", "elevation"] },
     { "from_id": "misfits_wendover_town", "to_id": "misfits_vault_facility", "connection_type": "hidden_tunnel", "approx_distance_km": 3, "terrain_profile": ["terrain_salt_flats"], "description": "Concealed subsurface access from a maintenance block to the vault installation beneath the flats.", "tags": ["misfits", "vault", "secret"] }
   ],
 
   "faction_zones": [
-    { "id": "zone_ncr_core", "faction": "NCR", "region_id": "region_new_california_republic", "description": "Core NCR territory around Shady Sands, Hub, and Boneyard.", "controlled_location_ids": ["f1_shady_sands", "f1_the_hub", "f1_boneyard"], "control_strength": 0.9, "tags": ["west_coast", "political_core"] },
+    { "id": "zone_ncr_core", "faction": "NCR", "region_id": "region_new_california_republic", "description": "Core NCR territory represented by the currently recorded Shady Sands and Boneyard locations.", "controlled_location_ids": ["f1_shady_sands", "f1_boneyard"], "control_strength": 0.9, "tags": ["west_coast", "political_core"] },
     { "id": "zone_ncr_mojave", "faction": "NCR", "region_id": "region_mojave_wasteland", "description": "NCR expansion into the Mojave, projecting power toward Hoover Dam and New Vegas.", "controlled_location_ids": ["fnv_new_vegas_strip"], "control_strength": 0.6, "tags": ["borderland", "contested"] },
-    { "id": "zone_brotherhood_capital", "faction": "Brotherhood of Steel", "region_id": "region_capital_wasteland", "description": "Brotherhood presence in the Capital Wasteland, focused on technology recovery.", "controlled_location_ids": ["f3_rivet_city"], "control_strength": 0.7, "tags": ["tech_focus"] },
     { "id": "zone_ncr_wendover", "faction": "NCR", "region_id": "region_wendover_misfits", "description": "NCR outpost presence in Wendover town and mountain overlook.", "controlled_location_ids": ["misfits_wendover_town", "misfits_toana_range_overlook"], "control_strength": 0.6, "tags": ["frontier", "misfits"] },
     { "id": "zone_raiders_flats", "faction": "Raiders", "region_id": "region_wendover_misfits", "description": "Loose raider bands operating across the Great Salt Flats between Wendover and the vault.", "controlled_location_ids": ["misfits_great_salt_flats"], "control_strength": 0.4, "tags": ["ambush", "misfits"] },
     { "id": "zone_vault_dwellers_wendover", "faction": "Vault Dwellers", "region_id": "region_wendover_misfits", "description": "Vault-origin inhabitants contesting interior control of the Wendover vault facility.", "controlled_location_ids": ["misfits_vault_facility"], "control_strength": 0.7, "tags": ["vault", "misfits"] }
