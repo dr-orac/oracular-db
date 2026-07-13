@@ -47,14 +47,14 @@ remote-data path, what was fixed, what was deferred and why. Read it before touc
 | `DOCS` | the tribe's doc tabs (Google Docs) — other factions start with `docs:[]` (see "Doc reader" below) |
 | `EXTRA_CHARACTERS` | code-defined dossiers not in the sheet (visitors etc.), each tagged with its `faction` |
 | `FIELDS` / `ID_ORDER` / `BLOCK_ORDER` | the **data contract** (see below) |
-| data fetch | `effectiveSheetId()`, `sheetUrl()`, `parseCSV()`, model build; `buildNameIndex()` + `buildConnections()` (the cross-link / mention graph) |
+| data fetch | `effectiveSheetId()`, `sheetUrl()`, `parseCSV()`, model build; `buildNameIndex()` + `buildConnections()` (the cross-link / mention graph). A newer roster request cancels the previous one, and only its owner may update the screen. |
 | render | `render()` (try/caught), `renderRoster()`, `renderCards()`, `dossierHTML()` |
 | dossier pieces | portrait, spirit, S.P.E.C.I.A.L, connections, log, shots |
 | masthead (2 rows) | row 1 = Home / **FACTION box** / Wiki + cog (`renderPrimaryNav()`, `renderBrand()`, `wireFactionMenu()`); row 2 = this faction's sections (`renderNav()`) |
 | section routing | `setSection()` dispatches: home · roster · **relations** · wiki · a faction doc. Hash router `applyRoute`/`writeRoute`/`parseRoute`/`openPendingChar` |
 | relations view | `renderRelations()`, `relationsGraph()`, `relationsPanelHTML()`, `parseRelationshipEntries()` — a character's web from the roster's Relationships field. Shares `state.selected` + the `listboxStep()` keyboard helper with the roster list |
 | doc reader | `loadDoc()` → `docClean()` (strict whitelist; strips `<div>`; themes `<img>` as `.docfig`), `styleTOC()`, `buildDocSidebar()` (see below) |
-| wiki reader | `loadWiki()` → `normaliseWikiImages()` (keep + absolutise images) → `renderWiki()` (re-skin MediaWiki structure) → `wikiClean()`/`docClean()`; internal links browse in-app |
+| wiki reader | `loadWiki()` → `normaliseWikiImages()` (keep + absolutise images) → `renderWiki()` (re-skin MediaWiki structure) → `wikiClean()`/`docClean()`; internal links browse in-app. A new page or section aborts the old request, so late responses cannot replace the active reader. |
 | delegated events | one document click handler dispatches all in-content buttons |
 | theme | `apply*()` setters, persisted in `localStorage` (`mdb-*`, per-faction where relevant). Fonts: `FACES` catalogue, **headings + body picked separately** (`applyFontHead`/`applyFontBody`, `data-font-head`/`data-font-body`); legacy `mdb-font` preset key migrates once via `PRESET_MIGRATE`. Frame modes `data-frame`, `data-contrast="high"` (a11y) |
 | edit / upload | optional write-back paths (only active when `webAppUrl` set) |
@@ -102,8 +102,10 @@ How it works:
   **stripped into a side-table** and lazily hydrated as they scroll near
   (`hydrateDocImages` — IntersectionObserver primary + a rect-check pass on render/scroll,
   because IO/rAF are suspended in hidden tabs). Pending frames show a "RECEIVING IMAGE"
-  skeleton. Tab hover/focus prefetches that doc (`prefetchDoc`); there is deliberately no
-  blanket prefetch (mobile bandwidth).
+  skeleton. Concurrent hover/click requests for the same document share one cold read, and
+  stale-cache refreshes are similarly coalesced. Each document fetch owns its image list, so
+  concurrent document work cannot cross-wire lazy image data. Tab hover/focus prefetches that
+  doc (`prefetchDoc`); there is deliberately no blanket prefetch (mobile bandwidth).
 - `docClean()` rebuilds the doc from a **strict element whitelist**, dropping all of Google's
   inline styles/classes (so our CSS themes it) — this is also the sanitiser (no scripts/styles
   can pass). It preserves heading `id`s (for the TOC), converts `<span>` weight/italic to

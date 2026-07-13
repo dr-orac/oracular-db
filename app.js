@@ -2401,22 +2401,22 @@ function docText(raw){
   while((m=re.exec(raw))){ out+=esc(raw.slice(last, m.index))+`<span class="dq">${esc(m[0])}</span>`; last=re.lastIndex; }
   return out + esc(raw.slice(last));
 }
-function docClean(node){
+function docClean(node, imgSink){
   let out="";
   node.childNodes.forEach(n=>{
     if(n.nodeType===3){ out+=docText(n.nodeValue); return; }   // text node (quotes get styled)
     if(n.nodeType!==1) return;
     const tag=n.tagName.toLowerCase();
     if(tag==="span"){                                          // unwrap; preserve bold/italic
-      let inner=docClean(n);
+      let inner=docClean(n, imgSink);
       if(inner){ if(docBold(n)) inner=`<strong>${inner}</strong>`; if(docItalic(n)) inner=`<em>${inner}</em>`; }
       out+=inner; return;
     }
-    if(!DOC_OK[tag]){ out+=docClean(n); return; }              // unknown tag → keep its children
+    if(!DOC_OK[tag]){ out+=docClean(n, imgSink); return; }     // unknown tag → keep its children
     if(tag==="br"||tag==="hr"){ out+=`<${tag}>`; return; }
     if(tag==="a"){
       const href=n.getAttribute("href")||"";
-      const inner=docClean(n);
+      const inner=docClean(n, imgSink);
       if(/^https?:/i.test(href)) out+=`<a href="${escAttr(href)}" target="_blank" rel="noopener noreferrer">${inner}</a>`;
       else if(href.startsWith("#")) out+=`<a href="${escAttr(href)}" class="docanchor">${inner}</a>`;  // in-doc TOC link
       else out+=inner;
@@ -2429,8 +2429,8 @@ function docClean(node){
         // base64 images are extracted into the prepared doc's side-table and hydrated
         // lazily on scroll (see hydrateDocImages) — they're ~99% of the export's bytes,
         // and inlining them all makes first paint wait on every image at once.
-        const srcAttr = (_docImgSink && /^data:/i.test(src))
-          ? ` data-docimg="${_docImgSink.push(src)-1}"`
+        const srcAttr = (imgSink && /^data:/i.test(src))
+          ? ` data-docimg="${imgSink.push(src)-1}"`
           : ` src="${escAttr(src)}"`;
         out+=`<figure class="docfig"><div class="docfig-screen pending"><img${srcAttr} alt="${escAttr(alt)}" loading="lazy" decoding="async"><span class="docfig-tint"></span></div>`+
              (alt?`<figcaption class="docfig-cap">${esc(alt)}</figcaption>`:"")+`</figure>`;
@@ -2442,12 +2442,12 @@ function docClean(node){
       // exports a bordered box as a 1×1 table) → render it as a featured framed quote, not a
       // data table. Real data tables (≥2 cells) still render as scrollable tables.
       if(n.querySelectorAll("tr").length===1 && n.querySelectorAll("td,th").length===1){
-        out+=`<blockquote class="docquote docquote-box">${docClean(n.querySelector("td,th"))}</blockquote>`;
+        out+=`<blockquote class="docquote docquote-box">${docClean(n.querySelector("td,th"), imgSink)}</blockquote>`;
         return;
       }
-      out+=`<div class="doctable"><table>${docClean(n)}</table></div>`; return;   // wrap → scrolls on narrow screens
+      out+=`<div class="doctable"><table>${docClean(n, imgSink)}</table></div>`; return;   // wrap → scrolls on narrow screens
     }
-    const inner=docClean(n);
+    const inner=docClean(n, imgSink);
     if(/^(p|h[1-6]|li|blockquote|td|th)$/.test(tag)){
       if(!inner.trim()) return;                          // drop empty blocks (Docs spacers)
       if(/^Tab \d+$/.test(n.textContent.trim())) return; // drop Google Docs tab-name artifacts
@@ -2694,8 +2694,9 @@ document.addEventListener("keydown", e=>{                          // Esc leaves
       decode never blocks reading.
    Prepared shape: { html, images:[dataURL…], t:epoch }. */
 const _docCache = new Map();                                  // docId -> prepared doc
+const _docInFlight = new Map();                               // docId -> cold read promise (dedupes hover + click)
+const _docRefreshes = new Map();                              // docId -> stale-cache refresh promise
 const DOC_STALE_MS = 15*60*1000;                              // background-refresh IDB copies older than this
-let _docImgSink = null;                                       // collects extracted images during docClean
 
 /* minimal IndexedDB k/v — never throws, resolves null / no-ops when unavailable */
 function idbGet(key){ return new Promise(res=>{ try{
@@ -2716,28 +2717,41 @@ function idbSet(key,val){ try{
     setTimeout(()=>db.close(), 1500); };
 }catch(e){} }
 
-async function prepareDoc(docId, signal){
+function trackDocWork(map, docId, work){
+  map.set(docId, work);
+  const clear=()=>{ if(map.get(docId)===work) map.delete(docId); };
+  work.then(clear, clear);
+  return work;
+}
+function refreshDoc(docId){
+  if(_docRefreshes.has(docId)) return _docRefreshes.get(docId);
+  bgSyncStart();
+  const work=fetchAndPrepare_(docId);
+  work.then(bgSyncEnd, bgSyncEnd);
+  return trackDocWork(_docRefreshes, docId, work);
+}
+function prepareDoc(docId, signal){
   if(_docCache.has(docId)) return _docCache.get(docId);
-  const stored = await idbGet("doc:"+docId);                  // device cache: skip the network entirely
-  if(stored && stored.html){
-    _docCache.set(docId, stored);
-    if(Date.now()-(stored.t||0) > DOC_STALE_MS){                // refresh behind the scenes
-      bgSyncStart();
-      fetchAndPrepare_(docId).catch(()=>{}).finally(bgSyncEnd);
+  if(_docInFlight.has(docId)) return _docInFlight.get(docId);
+  const work=(async()=>{
+    const stored = await idbGet("doc:"+docId);                // device cache: skip the network entirely
+    if(stored && stored.html){
+      _docCache.set(docId, stored);
+      if(Date.now()-(stored.t||0) > DOC_STALE_MS) refreshDoc(docId);
+      return stored;
     }
-    return stored;
-  }
-  return fetchAndPrepare_(docId, signal);
+    return fetchAndPrepare_(docId, signal);
+  })();
+  return trackDocWork(_docInFlight, docId, work);
 }
 async function fetchAndPrepare_(docId, signal){
   const res = await fetch(`https://docs.google.com/document/d/${docId}/export?format=html`, signal ? {signal} : {});
   if(!res.ok) throw new Error("status "+res.status);
   const parsed = new DOMParser().parseFromString(await res.text(), "text/html");
   parseDocStyles(parsed);                                     // learn which classes mean bold/italic
-  _docImgSink = [];
-  const html = docClean(parsed.body);                         // the expensive recursive walk, off the open path
-  const prepared = { html, images:_docImgSink, t:Date.now() };
-  _docImgSink = null;
+  const images=[];
+  const html = docClean(parsed.body, images);                  // the expensive recursive walk, off the open path
+  const prepared = { html, images, t:Date.now() };
   _docCache.set(docId, prepared);
   idbSet("doc:"+docId, prepared);                             // persist for next session (fire-and-forget)
   return prepared;
@@ -2918,6 +2932,11 @@ async function loadDoc(doc){
    wiki links load in-app so you can browse through it. */
 const WIKI = { host:"wiki.misfitsystems.net", home:"Main_Page" };
 let _wikiPage = WIKI.home;
+let _wikiRequest=0, _wikiController=null;
+function cancelWikiLoad(){
+  _wikiRequest++;
+  if(_wikiController){ _wikiController.abort(); _wikiController=null; }
+}
 /* a block is a "styled box" if the author gave it a border/background (a banner, callout or card) */
 function wikiStyled(el){ return /(?:border|background)\s*:/i.test(el.getAttribute("style")||""); }
 function wikiHexRgb(c){ c=(c||"").replace("#",""); if(c.length===3) c=c.split("").map(x=>x+x).join("");
@@ -3050,18 +3069,23 @@ function wikiPageFromHref(href){                               // wiki page titl
 }
 async function loadWiki(page){
   page = page || WIKI.home; _wikiPage = page;
+  cancelWikiLoad();
+  const request=_wikiRequest, isCurrent=()=>request===_wikiRequest && currentSection==="wiki" && _wikiPage===page;
   const reader=$("#docreader"), status=$("#docstatus");
   $("#docscroll").scrollTop=0;
   $("#doctitle").textContent = "Wiki";
   $("#doclink").href = "https://"+WIKI.host+"/index.php/"+encodeURIComponent(page);
   setDocLink("↗ Source Wiki", "Open this page on the source wiki");   // the reader shows OUR themed copy; this opens the original
   reader.innerHTML=""; startDocLoader(status);
-  const ctrl=new AbortController(); const timer=setTimeout(()=>ctrl.abort(),15000);
+  const ctrl=new AbortController(); _wikiController=ctrl;
+  const timer=setTimeout(()=>ctrl.abort(),15000);
   try{
     const url="https://"+WIKI.host+"/api.php?action=parse&format=json&formatversion=2&origin=*"+
       "&redirects=1&prop=text&page="+encodeURIComponent(page);
-    const r=await fetch(url,{signal:ctrl.signal}); const j=await r.json();
-    if(currentSection!=="wiki") return;                       // stale guard (user navigated away)
+    const r=await fetch(url,{signal:ctrl.signal});
+    if(!r.ok) throw new Error("status "+r.status);
+    const j=await r.json();
+    if(!isCurrent()) return;                                   // stale/aborted load never owns the reader
     const html = j && j.parse && j.parse.text;
     if(!html) throw new Error(j && j.error ? j.error.info : "no content");
     const tmp=document.createElement("div"); tmp.innerHTML=html;
@@ -3069,7 +3093,7 @@ async function loadWiki(page){
       .forEach(e=>e.remove());                                // drop MediaWiki chrome (keep images)
     tmp.querySelectorAll("a[href]").forEach(a=>a.setAttribute("href", wikiAbs(a.getAttribute("href"))));
     normaliseWikiImages(tmp);                                 // keep + theme images (see helper)
-    docBoldClasses=new Set(); docItalicClasses=new Set(); docTitleCount=0; _docImgSink=null;   // reset docClean state
+    docBoldClasses=new Set(); docItalicClasses=new Set(); docTitleCount=0;   // reset document-style state
     // renderWiki re-skins the wiki's hand-built structure (hero/callout/card-grid/columns) as native
     // components; the .wikibody wrapper keeps loose prose in the reader's centre measure (the reader
     // is a grid, so bare runs would otherwise fall into the narrow side column).
@@ -3095,11 +3119,15 @@ async function loadWiki(page){
     writeRoute();                                             // reflect the loaded wiki page in the URL
     if(page===WIKI.home) appendWikiSitemap(reader);          // the wiki landing gets a live site map
   }catch(e){
-    if(currentSection!=="wiki") return;
+    if(!isCurrent()) return;
     stopDocLoader(); status.className="docstatus error";
     status.innerHTML = `Couldn’t load the wiki page. <a href="${escAttr($("#doclink").href)}" target="_blank" rel="noopener noreferrer">Open the wiki ↗</a>`;
     announceDoc("Couldn’t load the wiki page.");
-  }finally{ if(currentSection==="wiki") stopDocLoader(); clearTimeout(timer); }
+  }finally{
+    if(isCurrent()) stopDocLoader();
+    if(_wikiController===ctrl) _wikiController=null;
+    clearTimeout(timer);
+  }
 }
 /* ---- Live wiki SITE MAP (T62) ---------------------------------------------------------------
    A map of the whole wiki, built LIVE from the MediaWiki category system and shown under the wiki
@@ -3117,12 +3145,22 @@ const SITEMAP_SECTIONS = [
   { cat:"Gameplay",  label:"Gameplay" },
   { cat:"Mechanics", label:"Mechanics" },
 ];
+let _wikiSitemapCache=null, _wikiSitemapPending=null;
 async function fetchWikiSitemap(signal){
-  // one request: every content page + its (non-hidden) categories
-  const url="https://"+WIKI.host+"/api.php?format=json&formatversion=2&origin=*"+
-    "&action=query&generator=allpages&gaplimit=500&gapnamespace=0&prop=categories&cllimit=500&clshow=!hidden";
-  const j=await fetch(url,{signal}).then(r=>r.json());
-  const pages=(j.query&&j.query.pages)||[];
+  // Follow MediaWiki's continuation token so the map remains complete as the wiki grows.
+  const pages=[]; let continuation=null;
+  do{
+    const q=new URLSearchParams({
+      format:"json", formatversion:"2", origin:"*", action:"query", generator:"allpages",
+      gaplimit:"500", gapnamespace:"0", prop:"categories", cllimit:"500", clshow:"!hidden",
+    });
+    if(continuation) Object.entries(continuation).forEach(([k,v])=>q.set(k,v));
+    const r=await fetch("https://"+WIKI.host+"/api.php?"+q, {signal});
+    if(!r.ok) throw new Error("status "+r.status);
+    const j=await r.json();
+    pages.push(...((j.query&&j.query.pages)||[]));
+    continuation=j.continue||null;
+  }while(continuation);
   const items=pages
     .filter(p=>p.title!=="Main Page")                         // the landing itself isn't a map entry
     .map(p=>({ title:p.title, cats:new Set((p.categories||[]).map(c=>c.title.replace(/^Category:/,""))) }));
@@ -3143,6 +3181,14 @@ async function fetchWikiSitemap(signal){
   if(misc.length) out.push({ label:"Uncategorised", cat:null, pages:misc });
   return out;
 }
+function getWikiSitemap(){
+  if(_wikiSitemapCache) return Promise.resolve(_wikiSitemapCache);
+  if(_wikiSitemapPending) return _wikiSitemapPending;
+  const work=fetchWikiSitemap();
+  _wikiSitemapPending=work;
+  work.then(groups=>{ _wikiSitemapCache=groups; _wikiSitemapPending=null; }, ()=>{ _wikiSitemapPending=null; });
+  return work;
+}
 function sitemapHTML(groups){
   // links are real wiki-host URLs so the #docreader click handler intercepts them → in-app loadWiki
   const link=t=>`<li><a class="sitemap-link" href="${escAttr("https://"+WIKI.host+"/index.php/"+encodeURIComponent(t.replace(/ /g,"_")))}">${esc(t)}</a></li>`;
@@ -3158,7 +3204,7 @@ function sitemapHTML(groups){
 }
 async function appendWikiSitemap(reader){
   try{
-    const groups=await fetchWikiSitemap();
+    const groups=await getWikiSitemap();
     if(currentSection!=="wiki" || _wikiPage!==WIKI.home) return; // stale guard (navigated away meanwhile)
     if(reader.querySelector(".wiki-sitemap")) return;            // don't double-append
     const wb=reader.querySelector(".wikibody")||reader;
@@ -3357,6 +3403,8 @@ function clearMapDetail(){
 }
 function setSection(id){
   if(id!=="home" && id!=="map" && id!=="roster" && id!=="relations" && id!=="wiki" && !factionDocs().some(d=>d.id===id)) id="roster";
+  if(id!=="roster" && id!=="relations") cancelRosterLoad();
+  if(id!=="wiki") cancelWikiLoad();
   exitDocFocus();                          // leaving/entering any view drops the reader's focus mode
   currentSection = id;
   document.body.setAttribute("data-section", id);
@@ -3659,20 +3707,31 @@ function showState(title, sub, isError){
   $("#statesub").innerHTML = sub;
 }
 
+let _rosterRequest=0, _rosterController=null;
+function cancelRosterLoad(){
+  _rosterRequest++;
+  if(_rosterController){ _rosterController.abort(); _rosterController=null; }
+  const main=document.querySelector("main"); if(main) main.setAttribute("aria-busy","false");
+}
 async function load(isRefresh){
+  cancelRosterLoad();
+  const request=_rosterRequest, faction=currentFaction, sheet=effectiveSheetId(), url=sheetUrl();
+  const isCurrent=()=>request===_rosterRequest && faction===currentFaction && sheet===effectiveSheetId();
+  const ctrl=new AbortController(); _rosterController=ctrl;
   document.body.classList.remove("coming-soon");
   const _main=document.querySelector("main"); if(_main) _main.setAttribute("aria-busy","true");   // a11y: fetching
   if(!isRefresh) showState("ACCESSING PIP-LINK", "Establishing read-only link to the archive…");
   setLink(isRefresh?"RE-SYNCING…":"CONNECTING…");
   try{
-    const res=await fetch(sheetUrl(), {cache:"no-store"});
+    const res=await fetch(url, {cache:"no-store", signal:ctrl.signal});
     if(!res.ok) throw new Error("HTTP "+res.status);
     const text=await res.text();
     const rows=parseCSV(text);
     const model=buildModel(rows);
     if(!model.characters.length) throw new Error("No character rows found");
+    if(!isCurrent()) return;                                 // a newer faction/load owns the roster now
     state.model=model;
-    state.loadedSheet=effectiveSheetId();  // remember which faction's sheet is in memory
+    state.loadedSheet=sheet;               // remember exactly which roster the model represents
     buildNameIndex(model);                 // for cross-linking names in dossiers
     buildConnections(model);               // mentions / mentioned-by graph data
     renderListControls(model);             // roster filter + sort controls
@@ -3681,6 +3740,7 @@ async function load(isRefresh){
     render();
     if(!isRefresh) openPendingChar();     // honour a deep-linked character on first load
   }catch(err){
+    if(!isCurrent()) return;                                  // aborted/stale failures stay silent
     setLink("OFFLINE", true);
     // a failed REFRESH keeps the last good roster on screen (don't blank working data
     // over a transient network error) — the full error state is for first load only
@@ -3688,7 +3748,12 @@ async function load(isRefresh){
     showState("", `Could not read the sheet (<code>${esc(err.message)}</code>).<br><br>
       Make sure the Google Sheet is shared <b>“Anyone with the link → Viewer”</b>.
       Then hit <b>⟳ Refresh</b>. Nothing is ever written back to the sheet.`, true);
-  }finally{ if(_main) _main.setAttribute("aria-busy","false"); }   // a11y: fetch settled
+  }finally{
+    if(isCurrent()){
+      if(_main) _main.setAttribute("aria-busy","false");
+      if(_rosterController===ctrl) _rosterController=null;
+    }
+  }
 }
 
 /* ------------------------ boot sequence ------------------------ */
