@@ -109,7 +109,7 @@ function factionLinked(f){ return /^[A-Za-z0-9_-]{20,}$/.test((f && f.data && f.
    Reduced-motion → no-op (the swap is instant). */
 let _retuneTimer=null;
 function crtRetune(){
-  if(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if(document.body.dataset.reducemotion === "on") return;   // app Reduce Motion pref is authoritative (default off = plays)
   const b=document.body;
   b.classList.remove("crt-retune"); void b.offsetWidth;   // restart the animation if one is mid-play
   b.classList.add("crt-retune");
@@ -3273,6 +3273,15 @@ function applyContrast(on, persist){
   applyColor(_curColor);   // re-derive --fg-dim / --fg-faint for the new mode
 }
 $("#contrast-toggle").addEventListener("click", ()=>{ applyContrast(document.body.dataset.contrast!=="high"); });
+/* Reduce Motion (app pref, default OFF = motion on). Authoritative over the SYSTEM reduced-motion pref, so
+   the CRT re-tune + flicker play by default; ON calms all animation/transition (CSS keys off
+   body[data-reducemotion="on"]). */
+function applyReduceMotion(on){
+  document.body.dataset.reducemotion = on ? "on" : "off";
+  localStorage.setItem("mdb-reducemotion", on?"on":"off");
+  const b=$("#reducemotion-toggle"); if(b){ b.textContent="Reduce Motion: "+(on?"ON":"OFF"); b.classList.toggle("active", on); }
+}
+$("#reducemotion-toggle").addEventListener("click", ()=>{ applyReduceMotion(document.body.dataset.reducemotion!=="on"); });
 
 $("#refresh").addEventListener("click", ()=>load(true));
 
@@ -3281,10 +3290,11 @@ $("#refresh").addEventListener("click", ()=>load(true));
 $("#reset-settings").addEventListener("click", ()=>{
   ["mdb-font","mdb-font-head","mdb-font-body","mdb-docfont-title","mdb-docfont-head",
    "mdb-docfont-body","mdb-color","mdb-bg",
-   "mdb-textsize","mdb-frame","mdb-frametint","mdb-sheen","mdb-crt","mdb-dosspanel","mdb-cards","mdb-imgcolor","mdb-bezel","mdb-docwidth","mdb-contrast",
+   "mdb-textsize","mdb-frame","mdb-frametint","mdb-sheen","mdb-crt","mdb-dosspanel","mdb-cards","mdb-imgcolor","mdb-bezel","mdb-docwidth","mdb-contrast","mdb-reducemotion",
    fkey("font-head"),fkey("font-body")   // clear THIS faction's font override → its signature reloads
   ].forEach(k=>localStorage.removeItem(k));
   applyContrast(false);   // back to normal contrast (before applyColor so the palette is right)
+  applyReduceMotion(false);   // motion back on (default)
   const _rf = factionFont(activeFaction());
   applyFontHead(_rf.head); applyFontBody(_rf.body);   // reset to the active faction's signature typeface
   applyTextSize("auto");                                 // size follows the font again
@@ -3596,6 +3606,7 @@ function runBoot(){
   applyImgColor(localStorage.getItem("mdb-imgcolor") || "screen");
   applyBezel(localStorage.getItem("mdb-bezel") || "on");
   applyDocWidth(localStorage.getItem("mdb-docwidth") || "medium");
+  applyReduceMotion(localStorage.getItem("mdb-reducemotion") === "on");   // default OFF = motion on
   const crtOn = localStorage.getItem("mdb-crt") !== "0";
   document.body.classList.toggle("crt", crtOn);
   $("#crt-toggle").textContent = "Scanlines: " + (crtOn ? "ON" : "OFF");

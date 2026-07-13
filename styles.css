@@ -157,9 +157,11 @@
     34%{ filter:brightness(1.1) saturate(.92); }                   /* new colour blooms back */
     100%{ filter:none; }
   }
-  @media (prefers-reduced-motion:reduce){
-    body.crt-retune #crtwipe, body.crt-retune #crtwipe::before, body.crt-retune .app{ animation:none; opacity:0; filter:none; }
-  }
+  /* Motion is ON by default (the CRT re-tune plays regardless of the SYSTEM reduced-motion pref) — the
+     app's own "Reduce Motion" toggle (Settings, default OFF) is authoritative and disables it. */
+  body[data-reducemotion="on"].crt-retune #crtwipe,
+  body[data-reducemotion="on"].crt-retune #crtwipe::before,
+  body[data-reducemotion="on"].crt-retune .app{ animation:none; opacity:0; filter:none; }
   /* optional behind-glass sheen — off by default, kept faint to protect legibility */
   .glass{
     position:fixed; inset:0; z-index:6500; pointer-events:none;
@@ -179,10 +181,15 @@
     50%{ opacity:.965; } 50.4%{ opacity:1; }
     73%{ opacity:.98; } 73.3%{ opacity:1; }
   }
-  @media (prefers-reduced-motion: reduce){
-    body.crt .app{ animation:none; }
-    .cursor{ animation:none; }
-  }
+  /* scanline flicker + cursor blink also play by default; the app Reduce Motion toggle stops them. */
+  body[data-reducemotion="on"].crt .app{ animation:none; }
+  body[data-reducemotion="on"] .cursor{ animation:none; }
+  /* Reduce Motion (app toggle) — a comprehensive, safe reset: neutralise all animation + transition so the
+     toggle reliably calms the whole UI (loaders just complete instantly). Scoped to the pref, not the
+     system, so default = motion ON. */
+  body[data-reducemotion="on"] *, body[data-reducemotion="on"] *::before, body[data-reducemotion="on"] *::after{
+    animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; scroll-behavior:auto !important; }
 
   /* ---------- screen glass + jet-black monitor bezel (ALWAYS ON, independent of the .crt toggle) ----------
      Frames the phosphor like a real CRT: a soft top reflection suggests curved glass, and a
