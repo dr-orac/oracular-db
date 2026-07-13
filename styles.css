@@ -1125,6 +1125,14 @@
   .docreader tbody tr:nth-child(even){ background:rgba(var(--fg-rgb),.045); }
   .docreader tbody tr:hover{ background:rgba(var(--fg-rgb),.10); }
   .docreader tbody tr:last-child td{ border-bottom:0; }
+  /* preserved cell alignment (numeric columns read right-aligned, with tabular figures) */
+  .docreader td[data-align="center"], .docreader th[data-align="center"]{ text-align:center; }
+  .docreader td[data-align="right"],  .docreader th[data-align="right"]{ text-align:right; font-variant-numeric:tabular-nums; }
+  /* a full-width spanning cell (colspan) is a section banner inside the table → treat it like a subhead */
+  .docreader td[colspan]:only-child, .docreader th[colspan]:only-child{
+    background:rgba(var(--fg-rgb),.09); color:var(--fg-bright); text-align:center;
+    font-family:var(--font-head); letter-spacing:1px; text-transform:uppercase; font-size:.92em;
+    border-bottom:1px solid rgba(var(--fg-rgb),.3); }
 
   /* ---------- WIKI native components (renderWiki re-skins the MediaWiki landing structure) ----------
      The source wiki hand-builds a hero banner, callouts, a faction card grid and column layouts with

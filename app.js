@@ -2346,8 +2346,17 @@ function docClean(node){
       return;
     }
     const id=n.getAttribute("id");                       // keep heading anchors so the TOC can jump
-    const attr=(id && /^[\w.:-]+$/.test(id) ? ` id="${escAttr(id)}"` : "")
+    let attr=(id && /^[\w.:-]+$/.test(id) ? ` id="${escAttr(id)}"` : "")
       + (tag==="h1" && /^\s*part\b/i.test(n.textContent) ? ' class="part"' : "");
+    if(tag==="td" || tag==="th"){                        // preserve table cell spans + alignment (docClean
+      const cs=parseInt(n.getAttribute("colspan"),10);   // otherwise rebuilds cells bare → spanning header
+      const rs=parseInt(n.getAttribute("rowspan"),10);   // rows misalign + numeric columns lose alignment)
+      if(cs>1) attr+=` colspan="${Math.min(cs,30)}"`;
+      if(rs>1) attr+=` rowspan="${Math.min(rs,60)}"`;
+      const m=(n.getAttribute("style")||"").match(/text-align:\s*(center|right)/i);
+      const al=((n.getAttribute("align")||(m?m[1]:""))||"").toLowerCase();
+      if(al==="center"||al==="right") attr+=` data-align="${al}"`;
+    }
     out+=`<${tag}${attr}>${inner}</${tag}>`;
   });
   return out;
