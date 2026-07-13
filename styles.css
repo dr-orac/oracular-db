@@ -59,7 +59,7 @@
        Always clears --bezel-in so content never crowds the border; grows on large displays. */
     --edge: clamp(38px, 4.6vw, 90px);
     --rail: clamp(312px, 26vw, 432px);   /* the left index column (roster rail) — the search sits over it */
-    --row-gap: 24px;                     /* gap between masthead row 1 (titlebar) and row 2 (tabs); the
+    --row-gap: 30px;                     /* gap between masthead row 1 (titlebar) and row 2 (tabs); the
                                             faction-box stem length derives from this so it always reaches the bus */
     /* Reading measure for the doc + wiki readers — the Settings "Reading Width" control (T71) rewrites
        these on :root; the wiki runs a touch wider than Google Docs. min(…,100%) keeps them overflow-safe. */
@@ -643,25 +643,27 @@
      under Home. Shown only on the wide single-row masthead in the screen frame. #topnav shrinks to its
      tabs (fit-content) so the bus spans exactly the tab group. */
   @media (min-width:860px){
+    /* connector geometry — ONE set of vars on the body-scoped ancestor so the bus, risers, stem and
+       arrowheads all stay coherent + responsive. --bus-top = riser depth (bus→tab); --conn-w = line
+       weight; --ah-half × --ah-tall = arrowhead size. */
+    body:not([data-frame="border"]):not([data-section="home"]){
+      --conn-w:1.5px; --bus-top:18px;
+      --ah-half:clamp(4.4px,0.6vw,5.4px); --ah-tall:clamp(5.8px,0.75vw,7px); }
     body:not([data-frame="border"]):not([data-section="home"]) #topnav{ position:relative; width:fit-content; max-width:100%; }
-    /* connector weights: line a touch thicker (--conn-w); arrowhead ~20% bigger than the old 3×4px and
-       responsively sized (--ah-half × --ah-tall). Shared so bus/riser/stem/arrow stay coherent. */
-    body:not([data-frame="border"]):not([data-section="home"]) #topnav{
-      --conn-w:1.5px; --ah-half:clamp(3.6px,0.5vw,4.6px); --ah-tall:clamp(4.8px,0.62vw,6px); }
     body:not([data-frame="border"]):not([data-section="home"]) #topnav::before{      /* the bus — spans exactly the outer RISERS (first→last tab centre), set by positionConnector() */
-      content:""; position:absolute; left:var(--bus-l,0); right:var(--bus-r,0); top:-9px; height:var(--conn-w); pointer-events:none;
+      content:""; position:absolute; left:var(--bus-l,0); right:var(--bus-r,0); top:calc(-1 * var(--bus-top)); height:var(--conn-w); pointer-events:none;
       background:rgba(var(--fg-rgb),.85); }   /* solid line (no end fade) — the bus is contained to the riser span, so it needs no fade */
     body:not([data-frame="border"]):not([data-section="home"]) .navtab{ position:relative; }
-    body:not([data-frame="border"]):not([data-section="home"]) .navtab::before{       /* bus → tab riser */
-      content:""; position:absolute; left:50%; top:-9px; width:var(--conn-w); height:6px;
+    body:not([data-frame="border"]):not([data-section="home"]) .navtab::before{       /* bus → tab riser (vertical line) */
+      content:""; position:absolute; left:50%; top:calc(-1 * var(--bus-top)); width:var(--conn-w); height:calc(var(--bus-top) - var(--ah-tall) + 2px);
       transform:translateX(-50%); background:rgba(var(--fg-rgb),.8); pointer-events:none; }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab::after{        /* riser arrowhead (points into the tab) */
       content:""; position:absolute; left:50%; top:calc(-1 * var(--ah-tall)); transform:translateX(-50%); pointer-events:none;
       border-left:var(--ah-half) solid transparent; border-right:var(--ah-half) solid transparent; border-top:var(--ah-tall) solid rgba(var(--fg-rgb),.8); }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::before{ background:var(--fg); }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::after{ border-top-color:var(--fg); }
-    body:not([data-frame="border"]):not([data-section="home"]) .faction-box::after{   /* FACTION box → bus stem — spans the row gap so it always meets the bus (bus sits 9px above row 2) */
-      content:""; position:absolute; left:50%; top:100%; width:var(--conn-w); height:calc(var(--row-gap) - 9px + 3px);
+    body:not([data-frame="border"]):not([data-section="home"]) .faction-box::after{   /* FACTION box → bus stem — spans the row gap up to the bus (which sits --bus-top above row 2) */
+      content:""; position:absolute; left:50%; top:100%; width:var(--conn-w); height:calc(var(--row-gap) - var(--bus-top) + 3px);
       transform:translateX(-50%); background:rgba(var(--fg-rgb),.85); pointer-events:none; }
   }
   /* on a doc section, hide the roster-only chrome (search / view toggle / refresh / status) */
