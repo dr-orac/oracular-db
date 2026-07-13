@@ -21,7 +21,10 @@ restructure. **TWO MODES** (a toggle, like List/Cards):
 - **Regional (Wendover)** — the local area where the game is set; **players can ADD pins** to highlight lore
   events that happened nearby. Persistence: **start with per-browser `localStorage`** (`mdb-mappins`) +
   export/import JSON so pins can be shared manually; SHARED/authoritative pins need a backend or the master
-  sheet — link to **T54** (blocked on the user) and roadmap that separately. Add-pin UX: click-to-place +
+  sheet — link to **T54** (blocked on the user) and roadmap that separately. **DECIDED (user 2026-07-13):
+  "local now, shared later"** — build per-browser localStorage pins for v1, but structure the pin store
+  (one `addPin`/`getPins`/`savePins` seam) so a shared backend can slot in later without a rewrite.
+  Add-pin UX: click-to-place +
   a small form (title, date, blurb, faction/tag); edit/delete own pins.
 - Shared: zoom + pan (add touch support — the prototype is mouse-only), the two-level timeline, a legend,
   reduced-motion-aware self-draw intro (ties to T92). Data structure clean enough to later move to a sheet.
