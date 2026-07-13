@@ -613,7 +613,7 @@
   /* ---------- top-level section nav (Roster + embedded docs) ---------- */
   /* section tabs live at the LEFT of the single header row (see .titlebar) */
   .topnav{ display:flex; gap:8px; flex-wrap:wrap; }
-  .masthead > #topnav{ margin-top:16px; }   /* ROW 2 sits below the titlebar (row 1) — clear vertical gap between tiers */
+  .masthead > #topnav{ margin-top:24px; }   /* ROW 2 sits below the titlebar (row 1) — clear vertical gap between tiers */
   /* ROW 2 is a SUB-level of row 1: same label size (legibility) but a lighter, flatter treatment —
      a flat outline, not a raised gradient panel — so the tabs read as subordinate to the big row-1
      boxes rather than as peers. The active state mirrors row-1's subtle active (not a loud solid fill,
@@ -644,7 +644,7 @@
     body:not([data-frame="border"]):not([data-section="home"]) #topnav{ position:relative; width:fit-content; max-width:100%; }
     body:not([data-frame="border"]):not([data-section="home"]) #topnav::before{      /* the bus — spans exactly the outer RISERS (first→last tab centre), set by positionConnector() */
       content:""; position:absolute; left:var(--bus-l,0); right:var(--bus-r,0); top:-9px; height:1px; pointer-events:none;
-      background:linear-gradient(90deg, rgba(var(--fg-rgb),.4), rgba(var(--fg-rgb),.85) 15%, rgba(var(--fg-rgb),.85) 85%, rgba(var(--fg-rgb),.4)); }
+      background:rgba(var(--fg-rgb),.85); }   /* solid line (no end fade) — the bus is contained to the riser span, so it needs no fade */
     body:not([data-frame="border"]):not([data-section="home"]) .navtab{ position:relative; }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab::before{       /* bus → tab riser */
       content:""; position:absolute; left:50%; top:-9px; width:1px; height:6px;
