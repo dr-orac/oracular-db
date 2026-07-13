@@ -980,6 +980,10 @@
   .docreader h3{ font-size:1.06em; color:var(--fg-bright); font-weight:400; letter-spacing:1.5px; text-transform:uppercase; margin:1.8em 0 .4em; }
   .docreader h4{ font-size:.95em; color:var(--fg-dim); letter-spacing:1.5px; text-transform:uppercase; margin:1.45em 0 .3em; }
   .docreader p{ margin:0 0 1.2em; }
+  /* consistent "Label:" mini-heading (T80) — a leading/trailing short "Word(s):" reads uniformly as a
+     bright emphasised lead-in; kept in the body font so it doesn't jar mid-line. */
+  .docreader .doc-label{ color:var(--fg-bright); font-weight:700; letter-spacing:.4px;
+    text-shadow:0 0 8px rgba(var(--fg-rgb),.3); }
   /* tighten the gap when a heading follows another heading (no orphan double-space) */
   .docreader h1 + h2, .docreader h2 + h3, .docreader h3 + h4{ margin-top:.6em; }
   /* Table of Contents — chunky font, indent + size by the target heading's level */

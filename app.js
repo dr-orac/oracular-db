@@ -2373,9 +2373,37 @@ function docClean(node){
       const al=((n.getAttribute("align")||(m?m[1]:""))||"").toLowerCase();
       if(al==="center"||al==="right") attr+=` data-align="${al}"`;
     }
-    out+=`<${tag}${attr}>${inner}</${tag}>`;
+    let body=inner;
+    if(tag==="p" || tag==="li"){
+      body=leadLabel(body);                                    // leading "Label:" → consistent mini-heading
+      if(tag==="p" && n.nextElementSibling && /^(?:UL|OL)$/.test(n.nextElementSibling.tagName))
+        body=trailLabel(body);                                 // trailing "Label:" before a list → its own line
+    }
+    out+=`<${tag}${attr}>${body}</${tag}>`;
   });
   return out;
+}
+/* Consistent "Label:" mini-heading formatting (T80). A short "Word(s):" lead-in (≤4 words, letters) at the
+   START of a paragraph/list-item becomes a bright .doc-label so every such lead reads the same regardless
+   of source emphasis; a short trailing "Word(s):" that introduces a list breaks onto its OWN line above it.
+   Guarded to only fire on genuine short labels — never mid-sentence colons, times ("10:00"), or ratios. */
+/* a genuine label is ≤4 words, each Capitalised / ALLCAPS / a short connective (of/the/and…) — this
+   rejects prose fragments that merely start with a capital and have an early colon ("He said the
+   following:") while accepting real labels ("The New Mandate:", "Elder/Senior:", "Protocol:"). */
+function isLabel(label){
+  const words=label.replace(/:$/,"").trim().split(/[\s/]+/).filter(Boolean);
+  if(!words.length || words.length>4) return false;
+  const connective=/^(of|the|and|a|an|to|in|for|or|de|la|&)$/i;
+  return words.every(w=> /^[A-Z0-9]/.test(w) || connective.test(w));
+}
+function leadLabel(html){
+  return html.replace(
+    /^(\s*)(?:<(strong|b)>)?\s*([A-Z][A-Za-z0-9][A-Za-z0-9 '&./-]{0,26}?:)(?:<\/\2>)?(&nbsp;|\s)/,
+    (m, sp, tag, label, tail) => isLabel(label) ? `${sp}<span class="doc-label">${label}</span>${tail}` : m);
+}
+function trailLabel(html){
+  return html.replace(/(\s)([A-Z][A-Za-z '&/-]{1,26}?:)\s*$/, (m, sp, label) =>
+    isLabel(label) ? `${sp}<br><span class="doc-label">${label}</span>` : m);
 }
 /* Google Docs (and some wiki markup) export a single logical bullet list as a RUN of separate
    adjacent <ul>/<ol> siblings — so identical-source bullets render with gaps + inconsistent spacing.
