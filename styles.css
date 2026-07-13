@@ -1146,6 +1146,15 @@
     background:rgba(var(--fg-rgb),.09); color:var(--fg-bright); text-align:center;
     font-family:var(--font-head); letter-spacing:1px; text-transform:uppercase; font-size:.92em;
     border-bottom:1px solid rgba(var(--fg-rgb),.3); }
+  /* T84 — a cell that CONTAINS a list is a content block, not a centred banner: left-justify it, drop the
+     banner chrome, and let the list breathe. (Selectors include the colspan-banner form so they out-
+     specify the banner rule above.) */
+  .docreader td[colspan]:only-child:has(:is(ul,ol)), .docreader th[colspan]:only-child:has(:is(ul,ol)),
+  .docreader td:has(:is(ul,ol)), .docreader th:has(:is(ul,ol)){
+    text-align:left; background:none; color:inherit; font-family:inherit;
+    text-transform:none; letter-spacing:normal; font-size:1em; }
+  .docreader td :is(ul,ol), .docreader th :is(ul,ol){ margin:.35em 0 .15em; padding-left:1.25em; text-align:left; }
+  .docreader td li, .docreader th li{ margin:.3em 0; }
 
   /* ---------- WIKI native components (renderWiki re-skins the MediaWiki landing structure) ----------
      The source wiki hand-builds a hero banner, callouts, a faction card grid and column layouts with
