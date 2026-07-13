@@ -44,3 +44,11 @@ Fonts have their own licence files in `fonts/`.
   (codepen.io/carterfromsl/pen/OJjxXKJ); implemented our own way — the hue-rotate is computed
   from each theme's colour at runtime (`hslOf` → `--img-hue`/`--img-sat` in app.js), not a
   hard-coded per-theme class as in the pen.
+
+## Icons (adapted from libraries)
+
+- **Caesar's Legion "bull" icon** — adapted from *"bull"* by **Lorc** on
+  [game-icons.net](https://game-icons.net/1x1/lorc/bull.html), licensed
+  **CC BY 3.0** (https://creativecommons.org/licenses/by/3.0/). Recoloured to `currentColor`
+  (fill via CSS); the path is otherwise unmodified. All other faction / nav / weapon icons are
+  original hand-authored SVGs. (See `docs/LEGAL-SWEEP.md` for the icon-sourcing policy.)

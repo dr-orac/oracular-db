@@ -162,6 +162,17 @@
   body[data-reducemotion="on"].crt-retune #crtwipe,
   body[data-reducemotion="on"].crt-retune #crtwipe::before,
   body[data-reducemotion="on"].crt-retune .app{ animation:none; opacity:0; filter:none; }
+  /* developer signature — a small, subtle terminal tag in the bottom-right corner (inside the bezel).
+     Brightens a touch on hover; never intercepts clicks. */
+  .devsig{ position:fixed; z-index:9300; pointer-events:none; user-select:none;
+    right:calc(var(--bezel-in, 22px) + 6px); bottom:calc(var(--bezel-in, 22px) - 8px);
+    font-family:var(--font-body); font-size:10.5px; letter-spacing:2px; line-height:1; white-space:nowrap;
+    text-transform:uppercase; color:var(--fg-faint); text-shadow:0 0 6px rgba(var(--fg-rgb),.22);
+    opacity:.62; transition:opacity .25s, color .25s; }
+  .devsig:hover{ opacity:1; color:var(--fg-dim); }
+  .devsig-dec{ color:var(--fg-dim); letter-spacing:0; opacity:.8; }
+  body[data-frame="border"] .devsig{ right:calc(var(--frame) + 8px); bottom:calc(var(--frame) + 4px); }
+  @media (max-width:640px){ .devsig{ font-size:9.5px; letter-spacing:1.4px; right:14px; bottom:8px; } }
   /* optional behind-glass sheen — off by default, kept faint to protect legibility */
   .glass{
     position:fixed; inset:0; z-index:6500; pointer-events:none;
