@@ -3,6 +3,92 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
+
+Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →
+T92 (CRT/motion pref) → T88 (icons, once T89 clears sources) → **T86 the Map** (largest; may want its own
+sessions). T89 is a strong subagent candidate (see "Subagents" note at the bottom of this batch).
+
+### T86 · NEW "Map" tab — Fallout wasteland map, US + Wendover regional — LARGE [feature]
+A new top-level **Map** tab (row 1, alongside Home / Wiki; route `#map`), rebuilt from scratch to be
+theme-integrated (uses `--fg`/`--bg`/the bezel), NOT a green standalone. Reference the existing prototype at
+`…/fallout-map-standalone/` (`index.html` + `HANDOFF.md` + `PRE_INTEGRATION_ROADMAP.md`) — reuse its US SVG
+paths + `locations` dataset + hover/anchor/zoom-pan interaction model as a STARTING point, but re-skin and
+restructure. **TWO MODES** (a toggle, like List/Cards):
+- **US-wide** — pins for the classic Fallout locations that shaped the lore (F1/F2/NV: Shady Sands, The Hub,
+  Boneyard, Vault 13/15, Arroyo, New Reno, NCR, Hoover Dam, The Strip, The Fort, Goodsprings…). Hover =
+  timeline preview; click = anchor. NCR/Legion/other visual distinction + filter. This is REFERENCE lore.
+- **Regional (Wendover)** — the local area where the game is set; **players can ADD pins** to highlight lore
+  events that happened nearby. Persistence: **start with per-browser `localStorage`** (`mdb-mappins`) +
+  export/import JSON so pins can be shared manually; SHARED/authoritative pins need a backend or the master
+  sheet — link to **T54** (blocked on the user) and roadmap that separately. Add-pin UX: click-to-place +
+  a small form (title, date, blurb, faction/tag); edit/delete own pins.
+- Shared: zoom + pan (add touch support — the prototype is mouse-only), the two-level timeline, a legend,
+  reduced-motion-aware self-draw intro (ties to T92). Data structure clean enough to later move to a sheet.
+- **GATED on T89 (legality)** — Fallout is Bethesda/ZeniMax IP; confirm what location names / lore text /
+  map likeness a fan project can use before shipping public.
+- Decisions to make (ask the user): shared vs per-browser player pins for v1; how much US lore to include;
+  whether the regional map is a stylised drawing or a real Wendover-area map.
+- Acceptance: a Map tab with US + Wendover modes, themed to the app, pins + timelines working, player pins
+  persist locally + export, touch + mouse pan/zoom, no console errors, responsive; verify both modes.
+
+### T87 · TOC readability — varied styling + a "never too small" floor — SMALL/MED
+Make the in-reader Contents rail (`#doctoc`, `.tl2/.tl3/.tl4`) read better: differentiate levels with more
+than indent — e.g. weight/face/colour/size per level (H2 vs H3 vs H4), a clearer active state (composes with
+the T82 selector line), and a **hard minimum font-size floor** so deep levels never shrink to unreadable.
+- Acceptance: TOC levels are visually distinct + scannable; the smallest entries stay ≥ a legible floor
+  (≈13px); active entry clear; verify on a deep-heading page (Brotherhood / Small Guns).
+
+### T88 · Continue sourcing thematic wiki icons — ONGOING [gated on T89]
+Keep expanding the icon set thematically (post-apoc / steampunk / Fallout-flavoured) for wiki content:
+faction cards (done), weapon/armor categories (done), plus section headings, callout types, item/chem/
+currency pages, etc. Prime reference library: **game-icons.net** (huge thematic set, CC-BY 3.0 — needs
+attribution; confirm under T89). Hand-adapt into the flat `currentColor` NAV_ICONS/FACTION_ICONS style.
+- Acceptance: a consistent, growing icon vocabulary; each new icon matched to content + attributed if from
+  a library; verify large + at render size.
+
+### T89 · Legality / licensing sweep — RESEARCH [gates T86 + T88; SUBAGENT candidate]
+Before adding Fallout locations/lore (T86) and library icons (T88), establish what this fan project may use.
+Produce `docs/LEGAL-SWEEP.md` covering: (a) **Fallout / Bethesda-ZeniMax IP** — using location names, lore
+text, faction names, map likeness in a non-commercial fan tool (fan-content policies, trademark vs
+copyright, "nominative use", what to avoid — logos, art assets, verbatim copyrighted text); (b) **icon
+libraries** — game-icons.net (CC-BY 3.0 attribution mechanics), other CC0/MIT sets; (c) **fonts** already
+in the repo (Monofonto/Overseer/etc. — confirm redistribution rights) + any new ones; (d) **SS14 / Nuclear-14**
+content already used. Output = a clear "safe / needs-attribution / avoid" table + attribution snippets for
+`CREDITS.md`. NOT legal advice — a documented best-effort risk map so the user can decide.
+- Acceptance: `docs/LEGAL-SWEEP.md` with a per-source verdict table + required attributions; unblocks T86/T88.
+
+### T90 · More padding under the find bar → content (docbar to wiki/doc body) — SMALL
+The strip under the "find in document" bar and above where the doc/wiki content starts is sometimes tight.
+Give it more breathing room (the `.docbar`/`#docmeta` row → `.docscroll` top). Keep responsive.
+- Acceptance: comfortable gap under the find bar on doc + wiki; no layout shift; verify desktop + mobile.
+
+### T91 · Themed horizontal dividers (`<hr>`) — glow + faded edges + Vault-Tec centre flourish — SMALL/MED
+Style `.docreader hr` (doc + wiki) as a proper terminal divider: a theme-coloured line that **fades at both
+ends**, a soft **glow**, and a small **centre flourish** (a Vault-Tec-style motif — e.g. a diamond/gear/
+"☢"/bracket ornament) centred on the line. Reduced-motion-agnostic (static). Reuse `--box-glow`/`--fg` tokens.
+- Acceptance: `<hr>`s in docs + wiki render as a glowing, edge-faded rule with a centred ornament; theme-
+  tracking; verify on a page with an hr.
+
+### T92 · CRT-style transitions ON by default + "Reduce Motion" prefs toggle (default OFF) — MED
+Today the CRT faction-switch (`crtRetune`) is gated ONLY on the system `prefers-reduced-motion`, so it never
+plays where that's set. The user wants the CRT/motion flourishes **ON by default**, with an explicit
+**Settings → Reduce Motion** toggle that is **OFF by default** (motion on). Rework the gate: motion plays
+unless (`mdb-reducemotion === "on"`) OR (system reduced-motion AND the user hasn't explicitly turned motion
+on) — simplest: an explicit tri-state, default = motion ON. Apply the gate consistently to crtRetune + the
+map self-draw (T86) + any other animation. Persist `mdb-reducemotion`; add to reset + `refreshCur`.
+- Acceptance: CRT transition plays by default; a Settings "Reduce Motion" toggle (off by default) disables
+  all motion when on; persists + resets; verify the transition fires and the toggle suppresses it.
+
+### Subagents — where to spawn Sonnet to save tokens (user question)
+GOOD candidates (research / read-heavy / parallelisable, little live-browser verification):
+- **T89 legality sweep** — web research + synthesis → a doc. Ideal Sonnet subagent.
+- **T88 icon sourcing** — browse game-icons.net etc., shortlist + describe candidates per category.
+- **T86 map DATA** — compile the Fallout location list (coords/faction/timeline) as structured data.
+- Broad read-only **codebase audits / exploration** (find-all-usages, entropy scans).
+BAD candidates (keep inline — need live browser verify + tight iteration): the CSS/UI tweaks (T87/T90/T91/
+T92), the interactive Map UI build, anything verified via the preview + screenshots.
+
 ## ✅ Batch 5 — COMPLETE 2026-07-13 (all built, verified, pushed)
 Every item below shipped. Summary of the additional commits beyond the per-task notes:
 - **Flow-chart connector** — solid line (no fade), reconnected + robustly-aligned bus (ResizeObserver +
