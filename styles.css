@@ -63,6 +63,8 @@
                                             faction-box stem length derives from this so it always reaches the bus */
     --box-glow: 0 0 22px -14px rgba(var(--fg-rgb), .45);   /* ONE subtle outer glow shared by boxed
                                             components (cards, callouts, tiles, tables) — theme-tracking */
+    --sel-line: 3px;                     /* thickness of the "selected item" left accent bar (roster row,
+                                            doc TOC, rails); components may override locally */
     /* Reading measure for the doc + wiki readers — the Settings "Reading Width" control (T71) rewrites
        these on :root; the wiki runs a touch wider than Google Docs. min(…,100%) keeps them overflow-safe. */
     --doc-measure:      78ch;
@@ -936,7 +938,7 @@
   .doctoc a{ display:block; text-decoration:none; color:var(--fg-dim); font-family:var(--font-body);
     font-size:17px; line-height:1.3; padding:6px 12px 6px var(--sp-2); }
   .doctoc a:hover{ color:var(--fg-bright); background:var(--bg-panel-2); }
-  .doctoc a.active{ color:var(--fg-bright); background:var(--bg-panel-2); box-shadow:inset 3px 0 0 var(--fg); }
+  .doctoc a.active{ color:var(--fg-bright); }   /* bar + rightward glow come from the shared T82 rule */
   .doctoc a.tl1{ font-size:19px; color:var(--fg-bright); letter-spacing:.5px; margin-top:1em; }
   .doctoc a.tl2{ color:var(--fg); padding-left:calc(var(--sp-2) + 15px); margin-top:.4em; }
   .doctoc a.tl3{ padding-left:calc(var(--sp-2) + 31px); }
@@ -1411,8 +1413,12 @@
   .row:hover{ background:var(--bg-panel-2); }
   /* selected row: calm raised panel + phosphor left-accent bar (was a loud full-colour fill). The
      highlight fades out to the right (transparent) so it reads as a soft sweep, not a hard block. */
-  .row.active{ background:linear-gradient(to right, var(--bg-panel-2) 42%, transparent);
-    box-shadow:inset 3px 0 0 var(--fg); }
+  /* T82 — ONE "selected item" motif shared by the roster row, doc TOC entry and rails: a left accent
+     bar (--sel-line) with a glow emanating rightward (amber fade). Retires the per-component variants. */
+  .row.active, .doctoc a.active, .rel-railitem.active{
+    box-shadow: inset var(--sel-line) 0 0 var(--fg);
+    background-color: var(--bg-panel-2);
+    background-image: linear-gradient(to right, rgba(var(--fg-rgb),.17), rgba(var(--fg-rgb),.05) 32%, transparent 62%); }
   .row.active .row-sub{ color:var(--fg); opacity:1; }
   .row-name{ color:var(--fg-bright); }
   .row.active .row-name{ color:var(--fg-bright); }
@@ -1718,7 +1724,7 @@
     background:none; border:0; color:var(--fg); font-family:var(--font-body); font-size:17px; line-height:1.3;
     padding:8px 12px 8px var(--sp-2); }
   .rel-railitem:hover{ color:var(--fg-bright); background:var(--bg-panel-2); }
-  .rel-railitem.active{ color:var(--fg-bright); background:var(--bg-panel-2); box-shadow:inset 3px 0 0 var(--fg); }
+  .rel-railitem.active{ color:var(--fg-bright); }   /* bar + rightward glow come from the shared T82 rule */
   .rel-railname{ flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .rel-raildeg{ flex:0 0 auto; font-size:13px; color:var(--fg-dim); border:1px solid var(--fg-faint);
     border-radius:11px; padding:0 8px; line-height:1.6; }
