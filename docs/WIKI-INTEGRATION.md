@@ -141,3 +141,75 @@ callouts if you want them themed the same way in the app.
 - Keep headings shallow (H2/H3) — they drive the app's TOC sidebar.
 - Internal `[[links]]` between your pages become **in-app navigation** automatically (the reader
   intercepts wiki links and loads them without leaving the terminal).
+
+---
+
+# Converting the Google Docs → wikitext (the fast path)
+
+Don't retype the guides by hand — convert them. The two source docs are:
+- **Tribe Lore** — `https://docs.google.com/document/d/1N_gne2LAWEJpjp6CfLhtvuHHD8bm97d64V0dHoXnlIE/`
+- **Roleplay Guide** — `https://docs.google.com/document/d/1lQrOZ-UPOR8-FP58l8ZFMvSPOyYDb5BYvvkwg0dR1oU/`
+
+Target page names (option A, subpages — 1 wiki page per app tab):
+`The_Tribe/Lore` and `The_Tribe/Roleplay_Guide`.
+
+## Method A — pandoc (recommended, ~2 min, keeps headings/bold/lists/tables)
+1. In each Google Doc: **File → Download → Microsoft Word (.docx)**. (Word keeps structure far better than
+   plain text; pandoc reads it natively.)
+2. Install pandoc once — macOS: `brew install pandoc` (or download from pandoc.org).
+3. Convert each file to MediaWiki markup:
+   ```bash
+   pandoc "Tribe Lore.docx"        -f docx -t mediawiki --wrap=none -o tribe-lore.wiki
+   pandoc "Roleplay Guide.docx"    -f docx -t mediawiki --wrap=none -o tribe-roleplay.wiki
+   # If a doc has images, add:  --extract-media=./media   (then upload those via Special:Upload)
+   ```
+4. Open the `.wiki` file, **copy all**, paste into the wiki page's **Edit source** box, **Show preview**,
+   then **Save**.
+
+## Post-conversion cleanup (5-minute pass — pandoc is good, not perfect)
+- **Headings:** make sure the top level is `== H2 ==` (pandoc may emit `= H1 =`; the app reserves H1 for the
+  page title). Demote everything one level if so.
+- **Drop cruft:** delete the Google title/author line if pandoc carried it in as body text — the wiki page
+  title is the H1.
+- **Label lead-ins:** the reader auto-bolds a short `Word:` at the start of a line as a mini-heading, so
+  `'''Rank:''' description` reads consistently — keep those short and Capitalised.
+- **Tables:** confirm they became `{| class="wikitable" … |}`. Keep them from getting very wide (the app
+  reflows wide tables, but fewer/wider columns read best). See `WIKI-EDITS-TODO.md §5`.
+- **Links:** turn plain-text cross-references into `[[The_Tribe/Lore|the lore page]]` so they become in-app
+  navigation.
+- **Add at the BOTTOM of each page** so it lands in the app's site-map + carries a credit:
+  ```
+  [[Category:Factions]]
+  <!-- Lore/guide by Big Brom Matlok, for the Wasteland Tribe. -->
+  ```
+  (Category names the app groups by: **Server & Rules · Factions · Weapons · Crafting · Survival · Lore ·
+  Gameplay · Mechanics** — `Factions` is right for these.)
+
+## Method B — no pandoc? two fallbacks
+- **Paste it to me.** Copy the doc body and paste it into our chat; I'll hand you the finished wikitext for
+  both pages (I can't fetch your Google Docs from here — they're network-blocked in my environment).
+- **Manual**, using the wikitext cheat-sheet above — fine for short docs, tedious for long ones.
+
+## Page skeleton (fill from the converted text)
+```mediawiki
+The '''Wasteland Tribe''' ... one-line intro.
+
+== <first section> ==
+Prose. '''Label:''' short lead-ins read as mini-headings in the app.
+
+* bullet
+* bullet
+
+== <next section> ==
+...
+
+[[Category:Factions]]
+```
+The Roleplay Guide already opens with *"A first draft, by Big Brom Matlok"* + a *"Your First Steps in the
+Tribe"* section — keep that shape; just let the `==` headings carry the structure (not bold-as-heading).
+
+## After the pages exist — tell me
+I flip the Tribe's **Lore** and **Roleplay** tabs from the Google-Doc source to the wiki pages (source model
++ 2-line config change, WIKI-INTEGRATION "App changes" step 2–3) and verify they render in-theme. The row-2
+tabs, home tiles, and deep-links (`#tribe/lore`, `#tribe/roleplay`) stay the same — only the source flips,
+and the content becomes wiki-editable + shows on the public wiki too.
