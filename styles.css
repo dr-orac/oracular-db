@@ -199,6 +199,7 @@
     opacity:.95; transition:opacity .25s, color .25s; }
   .devsig:hover{ opacity:1; color:var(--fg-bright); }
   .devsig-dec{ color:var(--fg); letter-spacing:0; opacity:.85; }
+  .devsig-dec:first-child{ margin-right:4px; }   /* a touch more air between the ▚▞ mark and the wordmark */
   @media (max-width:640px){
     .statusbar{ font-size:10px; letter-spacing:1px; padding:0 12px; height:clamp(24px,4vh,30px); }
     .sb-center{ display:none; }   /* drop the centre emblem on narrow screens — keep crumb + signature */
