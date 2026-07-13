@@ -59,6 +59,8 @@
        Always clears --bezel-in so content never crowds the border; grows on large displays. */
     --edge: clamp(38px, 4.6vw, 90px);
     --rail: clamp(312px, 26vw, 432px);   /* the left index column (roster rail) — the search sits over it */
+    --row-gap: 24px;                     /* gap between masthead row 1 (titlebar) and row 2 (tabs); the
+                                            faction-box stem length derives from this so it always reaches the bus */
     /* Reading measure for the doc + wiki readers — the Settings "Reading Width" control (T71) rewrites
        these on :root; the wiki runs a touch wider than Google Docs. min(…,100%) keeps them overflow-safe. */
     --doc-measure:      78ch;
@@ -613,7 +615,7 @@
   /* ---------- top-level section nav (Roster + embedded docs) ---------- */
   /* section tabs live at the LEFT of the single header row (see .titlebar) */
   .topnav{ display:flex; gap:8px; flex-wrap:wrap; }
-  .masthead > #topnav{ margin-top:24px; }   /* ROW 2 sits below the titlebar (row 1) — clear vertical gap between tiers */
+  .masthead > #topnav{ margin-top:var(--row-gap); }   /* ROW 2 sits below the titlebar (row 1) — clear vertical gap between tiers */
   /* ROW 2 is a SUB-level of row 1: same label size (legibility) but a lighter, flatter treatment —
      a flat outline, not a raised gradient panel — so the tabs read as subordinate to the big row-1
      boxes rather than as peers. The active state mirrors row-1's subtle active (not a loud solid fill,
@@ -658,8 +660,8 @@
       border-left:var(--ah-half) solid transparent; border-right:var(--ah-half) solid transparent; border-top:var(--ah-tall) solid rgba(var(--fg-rgb),.8); }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::before{ background:var(--fg); }
     body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::after{ border-top-color:var(--fg); }
-    body:not([data-frame="border"]):not([data-section="home"]) .faction-box::after{   /* FACTION box → bus stem */
-      content:""; position:absolute; left:50%; top:100%; width:var(--conn-w); height:9px;
+    body:not([data-frame="border"]):not([data-section="home"]) .faction-box::after{   /* FACTION box → bus stem — spans the row gap so it always meets the bus (bus sits 9px above row 2) */
+      content:""; position:absolute; left:50%; top:100%; width:var(--conn-w); height:calc(var(--row-gap) - 9px + 3px);
       transform:translateX(-50%); background:rgba(var(--fg-rgb),.85); pointer-events:none; }
   }
   /* on a doc section, hide the roster-only chrome (search / view toggle / refresh / status) */
