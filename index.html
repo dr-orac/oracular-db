@@ -244,8 +244,14 @@
            pins + a detail sidebar. Wendover regional mode + player-added pins + zoom/pan follow. -->
       <section id="map" class="map-view hidden" aria-label="Map">
         <div class="map-head">
-          <h2 class="map-title">Wasteland Atlas</h2>
-          <p class="map-sub">Reference map of the old west — the places that shaped the wasteland. Select a marker.</p>
+          <div class="map-headtext">
+            <h2 class="map-title">Wasteland Atlas</h2>
+            <p class="map-sub" id="map-sub">Reference map of the old west — the places that shaped the wasteland. Select a marker.</p>
+          </div>
+          <div class="seg map-modes" role="tablist" aria-label="Map scope">
+            <button id="mapmode-us" class="active" type="button" role="tab" aria-selected="true" data-mapmode="us">US-Wide</button>
+            <button id="mapmode-local" type="button" role="tab" aria-selected="false" data-mapmode="local">Local</button>
+          </div>
         </div>
         <div class="map-body">
           <div class="map-stage">
@@ -309,6 +315,12 @@
             <div class="map-legend" id="map-legend" aria-label="Legend"></div>
             <div class="map-detail" id="map-detail" aria-live="polite"></div>
           </aside>
+        </div>
+        <div class="map-local hidden" id="map-local">
+          <div class="map-local-inner">
+            <div class="map-local-title">Regional map — Wendover</div>
+            <p class="map-local-msg">The local area where the game is set, with player-placed pins for lore events nearby. Coming in the next build.</p>
+          </div>
         </div>
       </section>
 

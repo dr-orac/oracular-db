@@ -179,7 +179,7 @@ const FACTION_ICONS = {
   /* the Bull (Caesar's Legion) — adapted from Lorc's "bull" on game-icons.net (CC BY 3.0); see CREDITS.md */
   legion:'<svg viewBox="0 0 512 512" aria-hidden="true"><path d="M68.596 28.182c-86.767 50.67-51.027 136.884 123.35 136.884l2.835-70.433c-71.07 14-169.105 15.57-126.184-66.45zm378.455 0c42.92 82.022-55.114 80.45-126.185 66.45l2.836 70.434c174.378 0 210.117-86.213 123.35-136.884zM174.206 220.768c-3.798.104-7.758.785-11.816 2.087-1.887 29.822 11.63 50.308 48.516 39.88-.462-26.26-16.194-42.53-36.7-41.967zm167.213 0c-20.507-.563-36.24 15.707-36.7 41.966 36.886 10.43 50.404-10.057 48.518-39.88-4.058-1.3-8.02-1.982-11.818-2.086zm-53.123 162.7l-10.793 15.266c15.535 10.978 19.19 32.196 8.21 47.73C274.736 462 253.533 465.64 238 454.663c-15.535-10.978-19.19-32.193-8.21-47.728 2.03-2.875 4.483-5.42 7.288-7.543l-11.263-14.894c-4.34 3.283-8.153 7.203-11.292 11.645-16.805 23.784-11.098 56.982 12.685 73.788 23.784 16.806 56.956 11.098 73.762-12.686 16.806-23.783 11.11-56.967-12.672-73.773z"/></svg>',
   /* Followers of the Apocalypse — a Rod of Asclepius topped with a radiation trefoil finial */
-  followers:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4" r="3.5" fill="none" stroke="currentColor" stroke-width=".9"/><path d="M11.55 3.22 10.5 1.4A3 3 0 0 1 13.5 1.4L12.45 3.22A.9 .9 0 0 0 11.55 3.22ZM12.9 4 15 4A3 3 0 0 1 13.5 6.6L12.45 4.78A.9 .9 0 0 0 12.9 4ZM11.1 4 9 4A3 3 0 0 0 10.5 6.6L11.55 4.78A.9 .9 0 0 1 11.1 4Z"/><circle cx="12" cy="4" r=".85"/><path d="M12 7.7v13.9" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/><path d="M12 20.6c-3.1 0-3.1-3.4 0-3.4s3.1-3.4 0-3.4-3.1-3.4 0-3.4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/><path d="M12 12.6c1.4 0 2.5-.8 2.9-2 .3 1-.1 2-1 2.6l1.7.5-2.2.7z"/></svg>',
+  followers:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4" r="3.5" fill="none" stroke="currentColor" stroke-width=".9"/><path d="M11.55 3.22 10.5 1.4A3 3 0 0 1 13.5 1.4L12.45 3.22A.9 .9 0 0 0 11.55 3.22ZM12.9 4 15 4A3 3 0 0 1 13.5 6.6L12.45 4.78A.9 .9 0 0 0 12.9 4ZM11.1 4 9 4A3 3 0 0 0 10.5 6.6L11.55 4.78A.9 .9 0 0 1 11.1 4Z"/><circle cx="12" cy="4" r=".85"/><path d="M12 7.4v14.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M12 20.9c-3.8 0-3.8-3.5 0-3.5s3.8-3.5 0-3.5-3.8-3.5 0-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 12.6c1.4 0 2.5-.8 2.9-2 .3 1-.1 2-1 2.6l1.7.5-2.2.7z"/></svg>',
   townsfolk:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3.5h18v3H3z"/><path d="M3 6.5h18l-1.8 2.2-1.8-2.2-1.8 2.2-1.8-2.2-1.8 2.2-1.8-2.2-1.8 2.2-1.8-2.2-1.8 2.2L3 6.5Z"/><path d="M4.3 6.5h1.5v13H4.3zM18.2 6.5h1.5v13h-1.5z"/></svg>',   /* the bazaar market stall — townsfolk are the bazaar folk */
   wastelanders:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2.3a7.7 7.7 0 1 1 0 15.4 7.7 7.7 0 0 1 0-15.4Z"/><path d="m12 6 2 5 4 1-4 1-2 5-2-5-4-1 4-1z"/></svg>',
   outlaws:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.6c-4.5 0-7.6 3.1-7.6 7.4 0 2.4 1.1 4.1 2.5 5.3v2.3c0 .8.6 1.4 1.4 1.4h.4v1.2c0 .8.6 1.4 1.4 1.4s1.4-.6 1.4-1.4v-1.2h.9v1.2c0 .8.6 1.4 1.4 1.4s1.4-.6 1.4-1.4v-1.2h.4c.8 0 1.4-.6 1.4-1.4v-2.3c1.4-1.2 2.5-2.9 2.5-5.3 0-4.3-3.1-7.4-7.5-7.4ZM9 9.5a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4Zm6 0a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4Z"/></svg>',
@@ -2277,7 +2277,12 @@ function positionConnector(){
   let fcx=null;
   const fbox=document.querySelector(".faction-box");
   if(fbox){ const fr=fbox.getBoundingClientRect(), nr=nav.getBoundingClientRect();
-    fcx=fr.left + fr.width/2 - nr.left; lo=Math.min(lo,fcx); hi=Math.max(hi,fcx); }
+    // CLAMP the magnet to the actual tab-row extent (first tab's left → last tab's right). A wide or
+    // mid-animation faction-box measurement (e.g. while the dropdown is open) could otherwise put fcx
+    // far outside the tabs and stretch the bus to the screen edges — the "extends too far" bug.
+    const rowL=first.offsetLeft, rowR=last.offsetLeft + last.offsetWidth;
+    fcx = Math.max(rowL, Math.min(rowR, fr.left + fr.width/2 - nr.left));
+    lo=Math.min(lo,fcx); hi=Math.max(hi,fcx); }
   nav.style.setProperty("--bus-l", (Math.round(lo)-1)+"px");         // -1px so the bus meets the outer risers
   nav.style.setProperty("--bus-r", (Math.round(nav.offsetWidth-hi)-1)+"px");
   // LIT CHANNEL: the highlighted bus segment runs from the stem (faction centre) to the ACTIVE tab's riser,
@@ -3207,7 +3212,7 @@ const MAP_LOCATIONS = [
     { year:"2162", event:"A base of the Followers of the Apocalypse." }]},
   { id:"brotherhood", name:"Lost Hills", game:"Fallout 1", faction:"other", x:150, y:280, desc:"The bunker stronghold of the Brotherhood of Steel.", timeline:[
     { year:"2162", event:"Its knights aid the fight against the Master." }]},
-  { id:"mariposa", name:"Mariposa Base", game:"Fallout 1", faction:"other", x:160, y:215, desc:"A pre-war military site and mutant-making lab.", timeline:[
+  { id:"mariposa", name:"Mariposa Base", game:"Fallout 1", faction:"other", x:90, y:190, desc:"A pre-war military site and mutant-making lab.", timeline:[
     { year:"2162", event:"Sealed off after the first wanderer's raid." }]},
   { id:"theGlow", name:"The Glow", game:"Fallout 1", faction:"other", x:205, y:355, desc:"A crater still humming with radiation.", timeline:[
     { year:"2077", event:"A direct nuclear strike leaves the crater." }]},
@@ -3215,31 +3220,31 @@ const MAP_LOCATIONS = [
     { year:"2162", event:"Brought down as the Master falls." }]},
   { id:"arroyo", name:"Arroyo", game:"Fallout 2", faction:"other", x:95, y:125, desc:"A tribal village descended from Vault 13.", timeline:[
     { year:"2241", event:"Its chosen one sets out to save the crops." }]},
-  { id:"newReno", name:"New Reno", game:"Fallout 2", faction:"other", x:165, y:195, desc:"A lawless city run by feuding crime families.", timeline:[
+  { id:"newReno", name:"New Reno", game:"Fallout 2", faction:"other", x:220, y:195, desc:"A lawless city run by feuding crime families.", timeline:[
     { year:"2241", event:"Held in the grip of rival families." }]},
-  { id:"vaultCity", name:"Vault City", game:"Fallout 2", faction:"other", x:185, y:175, desc:"An advanced, insular city grown from a vault.", timeline:[
+  { id:"vaultCity", name:"Vault City", game:"Fallout 2", faction:"other", x:210, y:150, desc:"An advanced, insular city grown from a vault.", timeline:[
     { year:"2241", event:"Guards its technology and keeps to itself." }]},
-  { id:"goodsprings", name:"Goodsprings", game:"New Vegas", faction:"other", x:225, y:225, desc:"A quiet Mojave town.", timeline:[
+  { id:"goodsprings", name:"Goodsprings", game:"New Vegas", faction:"other", x:215, y:285, desc:"A quiet Mojave town.", timeline:[
     { year:"2281", event:"A courier is shot nearby and left for dead." }]},
-  { id:"primm", name:"Primm", game:"New Vegas", faction:"other", x:245, y:245, desc:"A small town beside a notorious prison.", timeline:[
+  { id:"primm", name:"Primm", game:"New Vegas", faction:"other", x:220, y:310, desc:"A small town beside a notorious prison.", timeline:[
     { year:"2281", event:"Thrown into chaos by escaped convicts." }]},
-  { id:"novac", name:"Novac", game:"New Vegas", faction:"other", x:270, y:265, desc:"A roadside town marked by a giant dinosaur.", timeline:[
+  { id:"novac", name:"Novac", game:"New Vegas", faction:"other", x:245, y:300, desc:"A roadside town marked by a giant dinosaur.", timeline:[
     { year:"2281", event:"A watchpost against raiders on the highway." }]},
-  { id:"boulderCity", name:"Boulder City", game:"New Vegas", faction:"ncr", x:255, y:235, desc:"A ruin held by the NCR.", timeline:[
+  { id:"boulderCity", name:"Boulder City", game:"New Vegas", faction:"ncr", x:285, y:275, desc:"A ruin held by the NCR.", timeline:[
     { year:"2281", event:"Site of a hard NCR–Legion clash." }]},
-  { id:"hooverDam", name:"Hoover Dam", game:"New Vegas", faction:"ncr", x:295, y:295, desc:"The prize of the Mojave — power and water.", timeline:[
+  { id:"hooverDam", name:"Hoover Dam", game:"New Vegas", faction:"ncr", x:305, y:280, desc:"The prize of the Mojave — power and water.", timeline:[
     { year:"2281", event:"The flashpoint between NCR and Legion." }]},
-  { id:"theFort", name:"The Fort", game:"New Vegas", faction:"legion", x:310, y:310, desc:"Caesar's Legion's camp across the river.", timeline:[
+  { id:"theFort", name:"The Fort", game:"New Vegas", faction:"legion", x:320, y:285, desc:"Caesar's Legion's camp across the river.", timeline:[
     { year:"2281", event:"The Legion's seat of command in the east." }]},
-  { id:"campMccarran", name:"Camp McCarran", game:"New Vegas", faction:"ncr", x:280, y:280, desc:"The NCR's fortified airfield.", timeline:[
+  { id:"campMccarran", name:"Camp McCarran", game:"New Vegas", faction:"ncr", x:255, y:258, desc:"The NCR's fortified airfield.", timeline:[
     { year:"2281", event:"A hub for NCR supply and command." }]},
-  { id:"cottonwoodCove", name:"Cottonwood Cove", game:"New Vegas", faction:"legion", x:320, y:325, desc:"A Legion landing on the Colorado.", timeline:[
+  { id:"cottonwoodCove", name:"Cottonwood Cove", game:"New Vegas", faction:"legion", x:315, y:315, desc:"A Legion landing on the Colorado.", timeline:[
     { year:"2281", event:"A crossing point for Legion forces." }]},
-  { id:"nelson", name:"Nelson", game:"New Vegas", faction:"legion", x:290, y:305, desc:"A town taken by the Legion.", timeline:[
+  { id:"nelson", name:"Nelson", game:"New Vegas", faction:"legion", x:275, y:305, desc:"A town taken by the Legion.", timeline:[
     { year:"2281", event:"Seized from the NCR as a foothold." }]},
-  { id:"jacobstown", name:"Jacobstown", game:"New Vegas", faction:"other", x:175, y:145, desc:"A mountain refuge for super mutants.", timeline:[
+  { id:"jacobstown", name:"Jacobstown", game:"New Vegas", faction:"other", x:210, y:210, desc:"A mountain refuge for super mutants.", timeline:[
     { year:"2281", event:"A haven seeking a cure for its own." }]},
-  { id:"blackMountain", name:"Black Mountain", game:"New Vegas", faction:"other", x:260, y:165, desc:"A radio-blaring peak ruled by mutants.", timeline:[
+  { id:"blackMountain", name:"Black Mountain", game:"New Vegas", faction:"other", x:270, y:270, desc:"A radio-blaring peak ruled by mutants.", timeline:[
     { year:"2281", event:"Held by a hostile nightkin broadcaster." }]},
 ];
 function mapDetailPrompt(){
@@ -3365,6 +3370,18 @@ $("#primary-nav").addEventListener("click", e=>{
   });
   const side=$(".map-side");
   if(side) side.addEventListener("click", e=>{ if(e.target.closest(".map-detail-clear")) clearMapDetail(); });
+  // US-Wide / Local scope pill: swap the atlas for the (upcoming) regional panel
+  const modes=$(".map-modes");
+  if(modes) modes.addEventListener("click", e=>{
+    const b=e.target.closest("[data-mapmode]"); if(!b) return;
+    const local = b.dataset.mapmode==="local";
+    modes.querySelectorAll("button").forEach(x=>{ const on=x===b; x.classList.toggle("active",on); x.setAttribute("aria-selected", on?"true":"false"); });
+    const body=$("#map .map-body"), loc=$("#map-local"), sub=$("#map-sub");
+    if(body) body.classList.toggle("hidden", local);
+    if(loc)  loc.classList.toggle("hidden", !local);
+    if(sub)  sub.textContent = local ? "The local area where the game is set — regional pins coming soon."
+                                     : "Reference map of the old west — the places that shaped the wasteland. Select a marker.";
+  });
 })();
 /* home landing: a faction cell (left) SELECTS the faction — re-skins + re-renders home so the right
    column shows that faction's sections, without leaving home. A section card (right) or the Wiki (top)
