@@ -3,9 +3,22 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
-## 🆕 Queued 2026-07-12 (batch 4 — roadmapped, NOT built)
+## 🆕 Queued 2026-07-12 (batch 4)
 
-### T73 · BUG — TOC click sometimes leaves the view "stuck" — ROADMAPPED (do NOT build yet)
+### T74 · Home faction picker — icon-forward tiles — ✅ DONE 2026-07-13
+User: "for factions let's centralise their icons, put them on top and make them decently large, give them
+a chance to shine." Shipped: each faction cell is now a tile with the glyph large + centred ON TOP and the
+name beneath (was icon-left-of-name), in an auto-fill grid that flows into as many equal columns as fit;
+the icons get a phosphor glow that brightens on hover/active. Short viewports pack more columns + shrink
+tiles so all 13 factions fit no-scroll; phones stack `.home-cols` via flexbox (a shrunk grid track was
+collapsing the two column rows into each other). Icons already lived in one central `FACTION_ICONS` map —
+no data change. Verified across desktop/landscape/mobile; faction switching still updates the sections column.
+
+### T73 · BUG — TOC click sometimes leaves the view "stuck" — ✅ DONE 2026-07-13
+Fixed: TOC now scrolls to the heading ELEMENT by index (immune to duplicate export ids) and re-aims
+exactly once the smooth scroll settles (`scrollend` + timeout fallback), abandoning the snap if the user
+takes over the scroll. Verified in the wiki reader (up + down jumps land exactly at the heading).
+Original spec:
 **Symptom (user, 2026-07-12):** clicking a heading in the doc/wiki **Table of Contents** sometimes leaves
 the view **stuck** — it doesn't scroll to the target (or scrolls partway and jams), and the reader can feel
 frozen until you nudge it. Intermittent, not every click. Investigate + fix (for a fresh context):
@@ -30,7 +43,11 @@ frozen until you nudge it. Intermittent, not every click. Investigate + fix (for
   doc switch and on image-heavy pages; no stuck/frozen state; keyboard activation works too; verify at the
   width ladder + reduced-motion (instant vs smooth).
 
-### T72 · Fullscreen / focus mode for the doc + wiki reader — ROADMAPPED (do NOT build yet)
+### T72 · Fullscreen / focus mode for the doc + wiki reader — ✅ DONE 2026-07-13
+Shipped: a subtle top-right toggle (corner-bracket glyph; inward = exit) hides all chrome (masthead,
+tabs, docbar, contents rail) via in-app `body[data-focus="doc"]` (not the OS Fullscreen API); exits on
+the button, Esc, or any navigation; not persisted; 44px target; reduced-motion-aware. Verified live.
+Original spec:
 A **"minimalist writing-app" focus mode** for the Google-Doc reader and the wiki reader: hide all the
 chrome (masthead rows, rails, bezel/frame) and show **only the content**, with a small **fullscreen
 toggle in the top-right of the content area** that sits subtly and brightens on hover; clicking it again
@@ -56,7 +73,11 @@ or pressing **Esc** exits. Plan (for a fresh context):
   click hides all chrome to show content only; click-again **and** Esc exit; route change exits; no
   h-overflow; screenshot both states; works at the width ladder + reduced-motion.
 
-### T71 · Settings: reading-width for Google Doc + wiki content — ROADMAPPED (do NOT build yet)
+### T71 · Settings: reading-width for Google Doc + wiki content — ✅ DONE 2026-07-13
+Shipped: a "Reading Width" control (Settings → Typography → Documents) with Narrow/Medium/Wide/Full,
+driving `--doc-measure` + `--doc-measure-wiki` on :root (wiki a touch wider), persisted (`mdb-docwidth`),
+reset-aware; default Medium is a touch roomier (78/88ch) and `.docscroll` padding bumped 40→50px. Verified
+(measure changes live, no h-overflow at any width). Original spec:
 Add a **prefs control to choose the reading-measure width** of the doc reader (Google Docs) and the wiki,
 and give the DEFAULT **a little more padding/breathing** than today. Plan (for a fresh context):
 - Introduce a CSS var, e.g. `--doc-measure` (default ~**80ch**, slightly roomier than today's 74ch), and use
@@ -105,7 +126,11 @@ entries **stretch full-width** and divide across rows evenly. Genuine improvemen
 master-detail, uses horizontal space, helps the no-scroll fit), not a shuffle. Lower entropy: retire the old
 `.home-tile`/`.home-hero` CSS + markup. Responsive: columns stack on mobile (Wiki → factions → sections).
 
-### T66 · Exterior glow should fade to pure black / transparent at the edge — ROADMAPPED [separate]
+### T66 · Exterior glow should fade to pure black / transparent at the edge — ✅ DONE 2026-07-13
+Shipped: reordered the bezel `::after` so the jet-black band is the top (first) layer (nothing tints it),
+dropped the blur==spread glow ring that washed over it, and softened the inboard glow (tight .65→.42,
+bloom .36→.20 + tighter spread). The glow now terminates on a solid black border and the rounded corners
+read as an intentional bezel. Verified live. Original spec:
 The outer bezel glow still doesn't die cleanly at the screen edge — it should fade to **pure black (or
 transparent, for robustness)** as it reaches the very edge. Rework the `--bezel-*` / exterior `::after`
 glow layers so the outermost stop is black/transparent, no lingering halo at the frame boundary.
@@ -144,7 +169,13 @@ Two parts, both about making the row-1 > row-2 hierarchy obvious:
    Thin, theme-coloured, low-key. **Responsive-safe:** show ONLY when row-2 is a single row; hide when it
    wraps/stacks (mobile) so lines never cross into empty space. Verify desktop + a couple of widths.
 
-### T62 · Show the wiki SITEMAP inside the app — MED [feature] — APPROACH DECIDED: LIVE from categories
+### T62 · Show the wiki SITEMAP inside the app — ✅ DONE 2026-07-13
+Shipped: a live "Wiki Map" appended under the wiki landing, built from the MediaWiki category system
+(one `generator=allpages&prop=categories` call). Pages group into curated sections (Server · Factions ·
+Weapons · Crafting · Survival · Lore · Gameplay · Mechanics), specific domains claiming shared pages
+first, with an "Uncategorised" bucket (dashed) for still-untagged pages — so it regroups itself as the
+user's categorisation pass proceeds. Links are wiki-host URLs → intercepted into in-app navigation.
+Verified live (6 sections / 45 links, in-app nav, landing-only, appends once). Original spec:
 User has wiki edit access + is doing a categorisation pass (see `docs/WIKI-CATEGORISATION.md` for the exact
 checklist). So build the sitemap **live from the MediaWiki category tree** (`Category:Nuclear-14` → section
 subcats → members) — self-updating, no hand-maintained map. Include an **"Uncategorised" fallback bucket**
