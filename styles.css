@@ -1583,9 +1583,10 @@
     transition:opacity .12s, color .12s, background .12s, border-color .12s, box-shadow .12s, transform .12s;
   }
   .portrait .upbtn svg, .portrait .iconbtn svg{ display:block; width:13px; height:13px; fill:currentColor; }
-  .portrait .upbtn{ right:5px; opacity:.92; }
+  .portrait .upbtn{ right:5px; opacity:0; }   /* the add/change-photo + is revealed on hover only */
   .portrait .iconbtn{ left:5px; opacity:0; }
   .portrait:hover .upbtn{ opacity:1; }
+  .portrait:focus-within .upbtn{ opacity:1; }   /* keyboard users still get it */
   .portrait:hover .iconbtn{ opacity:1; }
   .portrait .upbtn:hover, .portrait .iconbtn:hover{
     color:var(--bg); background:var(--fg); border-color:var(--fg-bright);
@@ -1593,8 +1594,9 @@
   /* card thumbnails: keep the 56-card grid clean — reveal the buttons on hover only */
   .portrait.sm .upbtn{ opacity:0; }
   .portrait.sm:hover .upbtn{ opacity:1; }
-  /* no photo yet → make the add-photo camera unmissable (wins over the sm hover rule above) */
-  .portrait.noimg .upbtn{ opacity:1; border-color:var(--fg-bright);
+  /* no photo yet → the + stays hover-only (the "NO ID" placeholder already signals an empty portrait),
+     but reveal it more emphatically when hovered so "add a photo" reads clearly. */
+  .portrait.noimg:hover .upbtn, .portrait.noimg:focus-within .upbtn{ border-color:var(--fg-bright);
     box-shadow:0 0 0 2px rgba(5,10,6,.5), 0 0 16px 0 rgba(var(--fg-rgb),.75); }
   /* dossier portrait: larger, clearer chips */
   .portrait.lg .upbtn, .portrait.lg .iconbtn{ width:32px; height:32px; bottom:8px; }
