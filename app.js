@@ -2225,7 +2225,23 @@ function renderNav(){
     `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}"><span class="navico">${NAV_ICONS[t.id]||NAV_ICONS._default}</span><span class="navlabel">${esc(t.label)}</span></button>`).join("");
   nav.classList.remove("hidden");
   renderPrimaryNav();
+  positionConnector();
 }
+/* The flow-chart BUS (#topnav::before) should span exactly the outer RISERS — first tab centre to
+   last tab centre — not the full tab-row edges (which left it floating half a tab past each end).
+   Tab widths vary, so measure and feed the ends in as CSS vars (recomputed on nav change + resize). */
+function positionConnector(){
+  const nav=$("#topnav"); if(!nav) return;
+  const tabs=nav.querySelectorAll(".navtab");
+  if(tabs.length<2 || !nav.offsetWidth){ nav.style.removeProperty("--bus-l"); nav.style.removeProperty("--bus-r"); return; }
+  const first=tabs[0], last=tabs[tabs.length-1];
+  const lc=first.offsetLeft + first.offsetWidth/2;                    // first riser (offsetParent = #topnav)
+  const rc=last.offsetLeft + last.offsetWidth/2;                      // last riser
+  nav.style.setProperty("--bus-l", Math.round(lc)+"px");
+  nav.style.setProperty("--bus-r", Math.round(nav.offsetWidth-rc)+"px");
+}
+let _connResizeT=null;
+window.addEventListener("resize", ()=>{ clearTimeout(_connResizeT); _connResizeT=setTimeout(positionConnector, 120); });
 /* ROW 1 (umbrella): fill the HOME + WIKI boxes and mark the active one. (The FACTION box between them
    is built by renderBrand(); the cog sits at the far right.) */
 function renderPrimaryNav(){
@@ -2647,9 +2663,16 @@ function docLoadError(status, e){
     `<a href="${escAttr($("#doclink").href)}" target="_blank" rel="noopener noreferrer">Open in Google Docs ↗</a>`;
   announceDoc(why.replace(/<[^>]+>/g,""));                    // screen-reader error cue (tags stripped)
 }
+/* the reader's top-right external link is reused across modes: "Docs" (opens the Google Doc) vs
+   "Source Wiki" (opens the original wiki page — the reader shows our re-themed copy). */
+function setDocLink(label, title){
+  const a=$("#doclink"); if(!a) return;
+  a.textContent=label; a.title=title; a.setAttribute("aria-label", title);
+}
 async function loadDoc(doc){
   $("#doctitle").textContent = doc.label;
   $("#doclink").href = `https://docs.google.com/document/d/${doc.docId}/edit`;
+  setDocLink("↗ Docs", "Open this document in Google Docs");
   const reader=$("#docreader"), status=$("#docstatus");
   $("#docscroll").scrollTop=0;
   if(reader.dataset.docid===doc.id) return;                   // already rendered this doc
@@ -2717,6 +2740,30 @@ function wikiLeafDivsToP(root){
   });
 }
 function wikiClean(el){ wikiLeafDivsToP(el); return docClean(el); }
+/* Which of OUR factions a wiki card is about — by its faction-page link first (robust), else by the
+   card title matching a faction name. Returns a faction id (key into FACTION_ICONS/FACTIONS) or null. */
+function wikiCardFaction(cell){
+  const norm=s=>(s||"").replace(/_/g," ").trim().toLowerCase();
+  for(const a of cell.querySelectorAll("a[href]")){
+    const pg=wikiPageFromHref(a.getAttribute("href"));
+    if(pg){ const id=Object.keys(FACTION_WIKI).find(k=>norm(FACTION_WIKI[k])===norm(pg)); if(id) return id; }
+  }
+  const txt=norm(cell.textContent);
+  return Object.keys(FACTIONS).find(id=>txt.includes(norm(FACTIONS[id].name))) || null;
+}
+/* Render one faction card. When the card is one of OUR factions, swap the source's inline glyph
+   (⚙/★/emoji before the name) for our themed FACTION_ICONS SVG, centred at the TOP of the box. */
+function wikiCard(cell){
+  const fid=wikiCardFaction(cell);
+  if(fid && FACTION_ICONS[fid]){
+    const clone=cell.cloneNode(true);
+    // strip a leading icon glyph (any run of non-letter/number symbols + spaces) from the first text
+    const tw=document.createTreeWalker(clone, NodeFilter.SHOW_TEXT);
+    let n; while((n=tw.nextNode())){ if(n.nodeValue.trim()){ n.nodeValue=n.nodeValue.replace(/^\s*[^\p{L}\p{N}]+\s*/u, ""); break; } }
+    return `<div class="wiki-card wiki-card--faction"><span class="wiki-card-ico" aria-hidden="true">${FACTION_ICONS[fid]}</span>${wikiClean(clone)}</div>`;
+  }
+  return `<div class="wiki-card">${wikiClean(cell)}</div>`;
+}
 /* Normalise MediaWiki images into bare <img> (src absolute + caption in alt), so docClean re-skins
    each as a themed .docfig — the same treatment roster/doc images get. MediaWiki wraps thumbs in a
    <figure>/.thumb with a File: link + a <figcaption>, and galleries in <ul class="gallery">; both carry
@@ -2770,7 +2817,7 @@ function renderWiki(node){
       // colour-coded cells in a ≥3-column grid → faction card grid. (A 2-column styled table is a
       // key-value infobox, e.g. a faction dossier — leave it to the data-table renderer below.)
       if(cols>=3 && styled>=Math.ceil(cells.length/2)){
-        out+=`<div class="wiki-cardgrid">`+cells.map(c=>`<div class="wiki-card">${wikiClean(c)}</div>`).join("")+`</div>`; return;
+        out+=`<div class="wiki-cardgrid">`+cells.map(c=>wikiCard(c)).join("")+`</div>`; return;
       }
       if(!el.querySelector("th") && el.querySelectorAll("tr").length===1 && cells.length>=2 && cells.length<=4){
         out+=`<div class="wiki-cols" style="--n:${cells.length}">`+cells.map(c=>`<div class="wiki-col">${wikiClean(c)}</div>`).join("")+`</div>`; return;   // single-row layout table → columns
@@ -2805,6 +2852,7 @@ async function loadWiki(page){
   $("#docscroll").scrollTop=0;
   $("#doctitle").textContent = "Wiki";
   $("#doclink").href = "https://"+WIKI.host+"/index.php/"+encodeURIComponent(page);
+  setDocLink("↗ Source Wiki", "Open this page on the source wiki");   // the reader shows OUR themed copy; this opens the original
   reader.innerHTML=""; startDocLoader(status);
   const ctrl=new AbortController(); const timer=setTimeout(()=>ctrl.abort(),15000);
   try{
