@@ -2207,6 +2207,23 @@
   }
   .hidden{ display:none !important; }
 
+  /* T96 — global command palette (⌘K / Ctrl-K) */
+  .cmdk{ position:fixed; inset:0; z-index:200; display:flex; align-items:flex-start; justify-content:center;
+    padding-top:12vh; background:rgba(0,0,0,.55); }
+  .cmdk-panel{ width:min(560px,92vw); max-height:70vh; display:flex; flex-direction:column;
+    background:var(--bg-panel); border:1px solid var(--fg); box-shadow:var(--box-glow), 0 24px 60px -24px #000; }
+  .cmdk-input{ background:transparent; border:0; border-bottom:1px solid var(--fg-faint); outline:none;
+    color:var(--fg-bright); font-family:var(--font-body); font-size:18px; letter-spacing:.5px; padding:16px 18px; caret-color:var(--fg-bright); }
+  .cmdk-input::placeholder{ color:var(--fg-dim); }
+  .cmdk-list{ overflow-y:auto; padding:6px; }
+  .cmdk-item{ display:flex; align-items:baseline; justify-content:space-between; gap:14px; padding:10px 12px; cursor:pointer; }
+  .cmdk-item.active{ background:var(--bg-panel-2); box-shadow:inset 3px 0 0 var(--fg); }
+  .cmdk-item-label{ color:var(--fg); font-size:15px; }
+  .cmdk-item.active .cmdk-item-label{ color:var(--fg-bright); text-shadow:0 0 7px rgba(var(--fg-rgb),.4); }
+  .cmdk-item-sub{ color:var(--fg-dim); font-size:11px; letter-spacing:1.5px; text-transform:uppercase; white-space:nowrap; }
+  .cmdk-empty{ color:var(--fg-dim); padding:20px; text-align:center; }
+  .cmdk-hint{ border-top:1px solid var(--fg-faint); color:var(--fg-dim); font-size:11px; letter-spacing:1px; padding:8px 14px; text-align:right; }
+
   /* ---------- print / export a single dossier (PDF) ---------- */
   @media print{
     .scanlines, .vignette, #boot, #toast, header, .listcol, #cards, #state,

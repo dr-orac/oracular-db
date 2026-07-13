@@ -3854,3 +3854,66 @@ function runBoot(){
   renderNav();                       // build the active faction's Home + Roster + docs section tabs
   applyRoute();                      // land on the view named in the URL (defaults to #home)
 })();
+
+/* ============================ T96 · GLOBAL COMMAND PALETTE (⌘K / Ctrl-K) ============================
+   Jump anywhere — factions, their rosters/relations/docs, wiki pages, the map — from one fuzzy-ranked box.
+   Each item is a hash target, so selecting it routes through applyRoute (same as typing the URL). Self-
+   contained: it builds its own overlay, reuses the roster search's fuzzySubseq for typo tolerance. */
+(function cmdk(){
+  const el=document.createElement("div");
+  el.id="cmdk"; el.className="cmdk hidden"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true"); el.setAttribute("aria-label","Command palette");
+  el.innerHTML=`<div class="cmdk-panel">`
+    +`<input id="cmdk-input" class="cmdk-input" type="text" autocomplete="off" placeholder="Jump to a faction, page or section…" aria-label="Search" />`
+    +`<div id="cmdk-list" class="cmdk-list" role="listbox" aria-label="Results"></div>`
+    +`<div class="cmdk-hint">↑↓ move · ↵ open · esc close</div></div>`;
+  document.body.appendChild(el);
+  const input=el.querySelector("#cmdk-input"), list=el.querySelector("#cmdk-list");
+  let active=0, results=[];
+
+  function items(){
+    const out=[
+      {label:"Home", sub:"Home", hash:"#home", kw:"home landing start"},
+      {label:"Wasteland Atlas", sub:"Map", hash:"#map", kw:"map atlas wendover locations wasteland"},
+      {label:"Wiki", sub:"Wiki", hash:"#wiki", kw:"wiki encyclopedia"},
+    ];
+    (typeof FACTION_ORDER!=="undefined"?FACTION_ORDER:Object.keys(FACTIONS)).forEach(id=>{
+      const f=FACTIONS[id]; if(!f) return;
+      out.push({label:f.name, sub:"Roster", hash:"#"+id+"/roster", kw:"faction roster "+id+" "+f.name});
+      const wp=FACTION_WIKI[id]; if(wp) out.push({label:f.name, sub:"Wiki page", hash:"#wiki/"+encodeURIComponent(wp), kw:"wiki "+f.name+" "+id});
+    });
+    out.push({label:"The Tribe — Relations", sub:"Relations", hash:"#tribe/relations", kw:"tribe relations web connections"});
+    (typeof DOCS!=="undefined"?DOCS:[]).forEach(d=> out.push({label:"The Tribe — "+d.label, sub:"Document", hash:"#tribe/"+d.id, kw:"tribe "+d.label+" lore roleplay"}));
+    return out;
+  }
+  function score(it, q){
+    const f=(t,w)=>{ if(!t) return 0; const i=t.indexOf(q); if(i>=0){ let s=w*10; if(i===0)s+=w*4; if(i===0||/\s/.test(t[i-1]))s+=w*2; return s; } return fuzzySubseq(t,q)?w*3:0; };
+    return Math.max(f(norm(it.label),3), f(norm(it.kw||""),1));
+  }
+  function render(){
+    const q=norm(input.value.trim());
+    let list0=items();
+    if(q) list0=list0.map(it=>({it,s:score(it,q)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).map(x=>x.it);
+    results=list0.slice(0,40);
+    if(active>=results.length) active=Math.max(0,results.length-1);
+    list.innerHTML = results.length
+      ? results.map((it,i)=>`<div class="cmdk-item${i===active?' active':''}" role="option" aria-selected="${i===active}" data-i="${i}"><span class="cmdk-item-label">${esc(it.label)}</span><span class="cmdk-item-sub">${esc(it.sub)}</span></div>`).join("")
+      : `<div class="cmdk-empty">No matches</div>`;
+    const a=list.querySelector(".cmdk-item.active"); if(a) a.scrollIntoView({block:"nearest"});
+  }
+  function open(){ el.classList.remove("hidden"); active=0; input.value=""; render(); input.focus(); }
+  function close(){ el.classList.add("hidden"); }
+  function isOpen(){ return !el.classList.contains("hidden"); }
+  function go(i){ const it=results[i]; if(!it) return; close(); if(location.hash===it.hash) applyRoute(); else location.hash=it.hash; }
+
+  document.addEventListener("keydown", e=>{
+    if((e.metaKey||e.ctrlKey) && (e.key==="k"||e.key==="K")){ e.preventDefault(); isOpen()?close():open(); }
+  });
+  input.addEventListener("input", ()=>{ active=0; render(); });
+  input.addEventListener("keydown", e=>{
+    if(e.key==="ArrowDown"){ e.preventDefault(); active=Math.min(active+1,results.length-1); render(); }
+    else if(e.key==="ArrowUp"){ e.preventDefault(); active=Math.max(active-1,0); render(); }
+    else if(e.key==="Enter"){ e.preventDefault(); go(active); }
+    else if(e.key==="Escape"){ e.preventDefault(); close(); }
+  });
+  el.addEventListener("click", e=>{ if(e.target===el){ close(); return; } const it=e.target.closest(".cmdk-item"); if(it) go(+it.dataset.i); });
+})();
