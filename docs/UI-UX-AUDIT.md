@@ -239,6 +239,38 @@ TOC anchors, so that path needs a suitable source document. Retain independent k
 real touch-device pass as external checks; the browser driver could focus the native links but did not
 reliably dispatch its synthetic Enter action, so no application conclusion was drawn from it.
 
+### UX-002 · P2 · correctness and entropy · Home, masthead, routing, command palette
+
+**Observation:** section availability is independently encoded in faction switching, two route guards, home
+cards, faction tabs, primary navigation, page headings, and command-palette items. Those copies have drifted.
+`applyFaction()` preserves only Home, Roster, or a current faction document, so switching faction from
+Relations or the faction-agnostic Map/Wiki/Paperwork surfaces unexpectedly opens Roster. The global Wiki uses
+a faction-branded application heading. The command palette promises global navigation but omits Paperwork
+and hard-codes only Tribe relations and documents.
+
+**Reproduction or evidence:** static ownership trace in `app.js`: the Roster/Relations/document list is built
+separately by `renderHome()` and `renderNav()`; umbrella ids are repeated by `applyRoute()`, `setSection()`,
+`renderPrimaryNav()`, and `writeRoute()`; `applyFaction()` uses a narrower validity rule; `cmdk.items()` has
+another hand-built destination list. The canonical handoff currently instructs contributors to update five
+locations for one new umbrella section, confirming that synchronization is manual.
+
+**User/maintenance impact:** faction selection can discard the user's current task, global surfaces present
+contradictory identity, and new or faction-specific destinations can silently disappear from discovery tools.
+Every added section increases the number of synchronized edits and the chance of another partial feature.
+
+**Recommended direction:** define one small registry for umbrella sections and one function for a faction's
+Roster/Relations/document sections. Use them for availability, labels, home/tabs, and palette discovery while
+keeping `setSection()`'s rendering branches explicit. Do not turn the registry into a generic rendering
+framework; its purpose is shared metadata and validation.
+
+**Acceptance check:** switching faction preserves Home, Map, Wiki, Paperwork, Roster, and Relations; a faction
+document survives only where the destination exists and otherwise falls back truthfully to Roster; global
+headings use the Misfits Database identity; direct malformed routes remain safe; home, tabs, primary nav, and
+command palette expose the destinations dictated by the shared registries with no hard-coded Tribe exception.
+
+**Status:** open — reproduce the continuity cases in the next live Phase 0 pass, then implement as one bounded
+navigation task if the observed behavior matches the ownership trace.
+
 ## Audit runs
 
 Add one row per representative pass. Link finding IDs in Notes rather than duplicating their contents.
@@ -249,3 +281,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | B | 2026-07-13 | 390px, physical input, default + reduced motion | Tribe Lore document find | Core pass | Result centered inside reader; outer page remained at 0; residual narrow paths remain under UX-001 |
 | A/E | 2026-07-13 | 1280px, pointer, default + reduced motion | Wiki TOC, focus mode, back-to-top | Pass | Back-to-top joined the bounded coordinator; normal mode reached 0 by 620ms and reduced motion by the 30ms sample |
 | A/F | 2026-07-13 | 1280px, cold load, nine deferred figures | Roleplay Guide TOC and deep link | Pass | Far appendix held its 14px offset before and after hydration; page remained at 0 |
+| Static | 2026-07-13 | section-ownership trace | Home, masthead, router, headings, command palette | Finding | UX-002: duplicated section registries have already drifted in continuity and destination coverage |

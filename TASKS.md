@@ -42,6 +42,25 @@ image-heavy, and narrow document-find cases pass. The two available Google docum
 inline TOC anchors. Retain inline-TOC, independent keyboard activation, and real touch-device checks as the
 external follow-ups recorded under UX-001; they do not block the next Phase 0 surface pass.
 
+### T103 · Section registry and faction-switch continuity — P2 [correctness + entropy]
+
+Start with `docs/UI-UX-AUDIT.md` finding UX-002. Section identity and availability are currently repeated
+across routing, faction switching, home cards, tabs, primary navigation, headings, and the command palette;
+the copies already disagree. Reproduce the listed context-loss cases before changing them.
+
+- Introduce one small umbrella-section registry and one faction-section builder for shared metadata and
+  validation; keep the actual rendering branches explicit and readable.
+- Preserve faction-agnostic Home/Map/Wiki/Paperwork and universal Roster/Relations when the faction changes.
+- Preserve a faction document only when the new faction offers the same id; otherwise fall back to Roster.
+- Give umbrella surfaces the Misfits Database heading identity rather than the selected faction's identity.
+- Drive command-palette coverage from the registries, including Paperwork, every faction's Relations, and
+  configured documents without a Tribe-specific exception.
+- Update maintenance guidance so adding a section has one metadata edit plus its explicit renderer/markup,
+  not a checklist of synchronized label and validity lists.
+- **Acceptance:** direct and malformed routes remain safe; page, route, breadcrumb, selected controls, and
+  command destinations agree through faction changes; home/tabs/palette expose the registry; selfcheck and
+  the affected wide/narrow keyboard/pointer journeys pass.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →
