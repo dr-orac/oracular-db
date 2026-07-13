@@ -593,14 +593,16 @@
   body[data-section="home"] .brand{ display:none; }   /* brand is now a titlebar sibling → hide it on the home landing */
 
   /* Settings — a large standalone cog glyph on the far right (it turns as you hover / while open) */
-  .cogbtn{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; gap:9px;
-    width:46px; height:46px;   /* icon-only square by default; grows to a labelled pill when there's room */
-    background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg-bright);   /* brighter */
+  /* SETTINGS shares the ROW-1 box look (bright --fg border, --bg-panel, 32px glyph, Workbench label) so it
+     reads as a sibling of Home/Wiki/Map/Faction. Icon-only 46px square on narrow screens; labelled box wide. */
+  .cogbtn{ flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; gap:14px;
+    width:46px; height:46px;   /* icon-only square by default; grows to a labelled box when there's room */
+    background:var(--bg-panel); border:1px solid var(--fg); color:var(--fg-bright);
     cursor:pointer; padding:0; transition:color .12s, border-color .12s, background .12s, box-shadow .12s; }
-  .cogbtn .cog-ico{ flex:0 0 auto; width:30px; height:30px; fill:currentColor; transition:transform .5s cubic-bezier(.34,1.56,.64,1);
+  .cogbtn .cog-ico{ flex:0 0 auto; width:32px; height:32px; fill:currentColor; transition:transform .5s cubic-bezier(.34,1.56,.64,1);
     filter:drop-shadow(0 0 5px rgba(var(--fg-rgb),.5)); }   /* a little glow */
-  .cog-label{ display:none; font-family:var(--font-head); font-size:16px; letter-spacing:2px;
-    text-transform:uppercase; line-height:1; white-space:nowrap; }   /* revealed only when the masthead has room */
+  .cog-label{ display:none; font-family:"Workbench","Gothic 821",sans-serif; font-size:22px; line-height:1;
+    letter-spacing:.5px; text-transform:uppercase; white-space:nowrap; text-shadow:0 0 6px rgba(var(--fg-rgb),.4); }   /* matches .navlabel; revealed when the masthead has room */
   .cogbtn:hover{ color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
     box-shadow:0 0 14px -4px rgba(var(--fg-rgb),.55); }
   .cogbtn:hover .cog-ico{ transform:rotate(60deg); }
@@ -609,7 +611,7 @@
   .cogbtn:active{ transform:translateY(1px); }
   /* wide viewports: bring the SETTINGS label back and grow the cog into a pill */
   @media (min-width:1080px){
-    .cogbtn{ width:auto; min-width:46px; padding:0 17px 0 13px; }
+    .cogbtn{ width:auto; height:auto; min-height:46px; padding:9px 18px; }   /* same box metrics as .navbox */
     .cog-label{ display:inline-block; }
   }
 
