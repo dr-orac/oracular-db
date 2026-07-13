@@ -61,8 +61,11 @@
     --rail: clamp(312px, 26vw, 432px);   /* the left index column (roster rail) — the search sits over it */
     --row-gap: 30px;                     /* gap between masthead row 1 (titlebar) and row 2 (tabs); the
                                             faction-box stem length derives from this so it always reaches the bus */
-    --box-glow: 0 0 22px -14px rgba(var(--fg-rgb), .45);   /* ONE subtle outer glow shared by boxed
-                                            components (cards, callouts, tiles, tables) — theme-tracking */
+    --box-glow: 0 0 24px -8px rgba(var(--fg-rgb), .34), 0 0 2px 0 rgba(var(--fg-rgb), .12);   /* ONE subtle
+                                            outer glow shared by boxed components (cards, callouts, tiles,
+                                            tables) — theme-tracking. Wide soft bloom + a faint edge seat so
+                                            it actually reads on the near-black panels (the old -14px spread
+                                            shrank it to nothing). */
     --sel-line: 3px;                     /* thickness of the "selected item" left accent bar (roster row,
                                             doc TOC, rails); components may override locally */
     /* Reading measure for the doc + wiki readers — the Settings "Reading Width" control (T71) rewrites
