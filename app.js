@@ -2013,6 +2013,7 @@ function writeRoute(target){
   if(_routing) return;
   // the wiki is umbrella content (not faction-scoped) → a top-level #wiki/<Page> route
   const h = currentSection==="home" ? "home"
+          : currentSection==="map" ? "map"
           : currentSection==="wiki" ? "wiki" + (_wikiPage && _wikiPage!==WIKI.home ? "/"+encodeURIComponent(_wikiPage) : "")
           : currentFaction + "/" + currentSection + (target ? "/"+target : "");
   const full = "#" + h;
@@ -2035,7 +2036,8 @@ function applyRoute(){
   try{
     if(r.faction && FACTIONS[r.faction] && r.faction!==currentFaction) applyFaction(r.faction);
     let sec = r.section || "home";
-    if(sec!=="home" && sec!=="roster" && sec!=="relations" && sec!=="wiki" && !factionDocs().some(d=>d.id===sec)) sec="roster";
+    if(sec!=="home" && sec!=="map" && sec!=="roster" && sec!=="relations" && sec!=="wiki" && !factionDocs().some(d=>d.id===sec)) sec="roster";
+    if(sec==="map"){ if(sec!==currentSection) setSection("map"); _pendingTarget=null; return; }   // #map — umbrella, no target
     if(sec==="wiki"){                        // #wiki/<Page> — the target IS the wiki page to open
       const pg = r.target || WIKI.home;
       if(sec!==currentSection){ _wikiPage = pg; setSection("wiki"); }   // setSection loads _wikiPage
@@ -2165,6 +2167,8 @@ const NAV_ICONS = {
   roleplay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M4.4 4.2 11 5.5a1 1 0 0 1 .8 1.14l-1 6.3a5.3 5.3 0 0 1-10.4-2.05l.8-5.86a1 1 0 0 1 1.2-.85ZM4 8a1 1 0 1 0 .3 1.98A1 1 0 0 0 4 8Zm4.4.9a1 1 0 1 0 .3 1.98 1 1 0 0 0-.3-1.98ZM3.5 12.4c1.1 1.3 2.5 1.9 4.2 1.55" fill-rule="evenodd"/><path d="M13.1 6.06 19.6 4.2a1 1 0 0 1 1.2.85l.8 5.86A5.3 5.3 0 0 1 14 13.35l.66-4.13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
   relations:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm10 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M8.6 6.5l6.8 4M8.6 17.5l6.8-4M7 8v8m10-8v8" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
   wiki:    '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16Z"/><path d="M4 12h16M12 4c2.6 2.2 2.6 13.8 0 16M12 4c-2.6 2.2-2.6 13.8 0 16" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
+  /* map = a folded paper map with a location pin — flat currentColor, matched to the others */
+  map:     '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2Zm-.5 1.8 5 1.67v12.7l-5-1.67V4.8Z"/><path d="M15.5 8.5a2.5 2.5 0 0 0-2.5 2.5c0 1.9 2.5 4.5 2.5 4.5s2.5-2.6 2.5-4.5a2.5 2.5 0 0 0-2.5-2.5Zm0 1.7a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8Z"/></svg>',
   _default:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6V3Zm7 1.5V8h3.5L13 4.5Z"/></svg>',
 };
 /* T75/T76 — per-category icons for the weapon/armor "hub" nav chips (shared across those pages). Flat
@@ -2302,7 +2306,7 @@ window.addEventListener("resize", ()=>{ clearTimeout(_connResizeT); _connResizeT
 /* ROW 1 (umbrella): fill the HOME + WIKI boxes and mark the active one. (The FACTION box between them
    is built by renderBrand(); the cog sits at the far right.) */
 function renderPrimaryNav(){
-  [["home","Home"],["wiki","Wiki"]].forEach(([id,label])=>{
+  [["home","Home"],["wiki","Wiki"],["map","Map"]].forEach(([id,label])=>{
     const b=$("#nav-"+id); if(!b) return;
     b.innerHTML=`<span class="navico">${NAV_ICONS[id]||NAV_ICONS._default}</span><span class="navlabel">${esc(label)}</span>`;
     const on=currentSection===id;
@@ -3177,8 +3181,108 @@ function focusDocFind(i){
   const c=$("#docfind-count"); if(c) c.textContent=`${_docFindIdx+1}/${_docFindMatches.length}`;
 }
 function stepDocFind(dir){ if(_docFindMatches.length) focusDocFind(_docFindIdx+dir); }
+/* ============================ T86 · MAP ============================
+   Increment 1: a themed "reference atlas" of the western wasteland. The US state outlines live
+   statically in index.html (#map-svg > .map-states); renderMap() injects the lore PINS + legend and
+   wires selection → the detail sidebar. Coords are in the 650×500 viewBox. Wendover regional mode +
+   player-added pins + zoom/pan are later increments (see TASKS.md T86 build order). */
+const MAP_FACTIONS = {
+  ncr:    { label:"NCR",         cls:"pin-ncr" },
+  legion: { label:"Caesar's Legion", cls:"pin-legion" },
+  other:  { label:"Independent", cls:"pin-other" },
+};
+const MAP_LOCATIONS = [
+  { id:"vault13", name:"Vault 13", game:"Fallout 1", faction:"other", x:135, y:245, desc:"The vault the first wanderer set out from.", timeline:[
+    { year:"2161", event:"Its water chip fails, forcing a search above ground." },
+    { year:"2162", event:"The Master's army is broken." },
+    { year:"2241", event:"Its people are resettled under the NCR." }]},
+  { id:"shadySands", name:"Shady Sands", game:"Fallout 1", faction:"ncr", x:155, y:265, desc:"The settlement that grew into the New California Republic.", timeline:[
+    { year:"2142", event:"Founded by survivors out of Vault 15." },
+    { year:"2186", event:"Becomes the capital of the NCR." }]},
+  { id:"theHub", name:"The Hub", game:"Fallout 1", faction:"other", x:175, y:310, desc:"The great trade town of the south.", timeline:[
+    { year:"2162", event:"Its caravans prove decisive against the Master." }]},
+  { id:"necropolis", name:"Necropolis", game:"Fallout 1", faction:"other", x:195, y:325, desc:"A city of ghouls raised over a ruined vault.", timeline:[
+    { year:"2077", event:"A direct strike births its ghoul population." }]},
+  { id:"boneyard", name:"Boneyard", game:"Fallout 1", faction:"other", x:125, y:375, desc:"The sprawling ruins of old Los Angeles.", timeline:[
+    { year:"2162", event:"A base of the Followers of the Apocalypse." }]},
+  { id:"brotherhood", name:"Lost Hills", game:"Fallout 1", faction:"other", x:150, y:280, desc:"The bunker stronghold of the Brotherhood of Steel.", timeline:[
+    { year:"2162", event:"Its knights aid the fight against the Master." }]},
+  { id:"mariposa", name:"Mariposa Base", game:"Fallout 1", faction:"other", x:160, y:215, desc:"A pre-war military site and mutant-making lab.", timeline:[
+    { year:"2162", event:"Sealed off after the first wanderer's raid." }]},
+  { id:"theGlow", name:"The Glow", game:"Fallout 1", faction:"other", x:205, y:355, desc:"A crater still humming with radiation.", timeline:[
+    { year:"2077", event:"A direct nuclear strike leaves the crater." }]},
+  { id:"cathedral", name:"The Cathedral", game:"Fallout 1", faction:"other", x:130, y:395, desc:"The seat of the Master's cult.", timeline:[
+    { year:"2162", event:"Brought down as the Master falls." }]},
+  { id:"arroyo", name:"Arroyo", game:"Fallout 2", faction:"other", x:95, y:125, desc:"A tribal village descended from Vault 13.", timeline:[
+    { year:"2241", event:"Its chosen one sets out to save the crops." }]},
+  { id:"newReno", name:"New Reno", game:"Fallout 2", faction:"other", x:165, y:195, desc:"A lawless city run by feuding crime families.", timeline:[
+    { year:"2241", event:"Held in the grip of rival families." }]},
+  { id:"vaultCity", name:"Vault City", game:"Fallout 2", faction:"other", x:185, y:175, desc:"An advanced, insular city grown from a vault.", timeline:[
+    { year:"2241", event:"Guards its technology and keeps to itself." }]},
+  { id:"goodsprings", name:"Goodsprings", game:"New Vegas", faction:"other", x:225, y:225, desc:"A quiet Mojave town.", timeline:[
+    { year:"2281", event:"A courier is shot nearby and left for dead." }]},
+  { id:"primm", name:"Primm", game:"New Vegas", faction:"other", x:245, y:245, desc:"A small town beside a notorious prison.", timeline:[
+    { year:"2281", event:"Thrown into chaos by escaped convicts." }]},
+  { id:"novac", name:"Novac", game:"New Vegas", faction:"other", x:270, y:265, desc:"A roadside town marked by a giant dinosaur.", timeline:[
+    { year:"2281", event:"A watchpost against raiders on the highway." }]},
+  { id:"boulderCity", name:"Boulder City", game:"New Vegas", faction:"ncr", x:255, y:235, desc:"A ruin held by the NCR.", timeline:[
+    { year:"2281", event:"Site of a hard NCR–Legion clash." }]},
+  { id:"hooverDam", name:"Hoover Dam", game:"New Vegas", faction:"ncr", x:295, y:295, desc:"The prize of the Mojave — power and water.", timeline:[
+    { year:"2281", event:"The flashpoint between NCR and Legion." }]},
+  { id:"theFort", name:"The Fort", game:"New Vegas", faction:"legion", x:310, y:310, desc:"Caesar's Legion's camp across the river.", timeline:[
+    { year:"2281", event:"The Legion's seat of command in the east." }]},
+  { id:"campMccarran", name:"Camp McCarran", game:"New Vegas", faction:"ncr", x:280, y:280, desc:"The NCR's fortified airfield.", timeline:[
+    { year:"2281", event:"A hub for NCR supply and command." }]},
+  { id:"cottonwoodCove", name:"Cottonwood Cove", game:"New Vegas", faction:"legion", x:320, y:325, desc:"A Legion landing on the Colorado.", timeline:[
+    { year:"2281", event:"A crossing point for Legion forces." }]},
+  { id:"nelson", name:"Nelson", game:"New Vegas", faction:"legion", x:290, y:305, desc:"A town taken by the Legion.", timeline:[
+    { year:"2281", event:"Seized from the NCR as a foothold." }]},
+  { id:"jacobstown", name:"Jacobstown", game:"New Vegas", faction:"other", x:175, y:145, desc:"A mountain refuge for super mutants.", timeline:[
+    { year:"2281", event:"A haven seeking a cure for its own." }]},
+  { id:"blackMountain", name:"Black Mountain", game:"New Vegas", faction:"other", x:260, y:165, desc:"A radio-blaring peak ruled by mutants.", timeline:[
+    { year:"2281", event:"Held by a hostile nightkin broadcaster." }]},
+];
+function mapDetailPrompt(){
+  return `<div class="map-detail-empty">Select a marker to read its place in wasteland history.</div>`;
+}
+function renderMap(){
+  const pinsG = $("#map-pins"); if(!pinsG) return;
+  pinsG.innerHTML = MAP_LOCATIONS.map(loc=>{
+    const fac = MAP_FACTIONS[loc.faction] || MAP_FACTIONS.other;
+    return `<g class="map-pin ${fac.cls}" data-id="${escAttr(loc.id)}" tabindex="0" role="button" aria-label="${escAttr(loc.name)}">`
+      + `<circle class="map-pin-hit" cx="${loc.x}" cy="${loc.y}" r="10"/>`
+      + `<circle class="map-pin-ring" cx="${loc.x}" cy="${loc.y}" r="6"/>`
+      + `<circle class="map-pin-dot" cx="${loc.x}" cy="${loc.y}" r="3.2"/>`
+      + `</g>`;
+  }).join("");
+  const leg = $("#map-legend");
+  if(leg) leg.innerHTML = `<div class="map-legend-title">Allegiance</div>`
+    + Object.values(MAP_FACTIONS).map(f=>`<span class="map-legend-item"><span class="map-legend-swatch ${f.cls}"></span>${esc(f.label)}</span>`).join("");
+  const det = $("#map-detail");
+  if(det && !det.dataset.sel) det.innerHTML = mapDetailPrompt();
+  else if(det && det.dataset.sel) showMapDetail(det.dataset.sel);   // keep the selection across re-renders
+}
+function showMapDetail(id){
+  const loc = MAP_LOCATIONS.find(l=>l.id===id), det=$("#map-detail"); if(!loc || !det) return;
+  const fac = MAP_FACTIONS[loc.faction] || MAP_FACTIONS.other;
+  det.dataset.sel = id;
+  det.innerHTML =
+      `<div class="map-detail-head"><span class="map-detail-dot ${fac.cls}"></span><h3 class="map-detail-name">${esc(loc.name)}</h3></div>`
+    + `<div class="map-detail-meta">${esc(loc.game)} · ${esc(fac.label)}</div>`
+    + `<p class="map-detail-desc">${esc(loc.desc)}</p>`
+    + (loc.timeline && loc.timeline.length
+        ? `<ul class="map-timeline">` + loc.timeline.map(t=>`<li><span class="map-tl-year">${esc(t.year)}</span><span class="map-tl-event">${esc(t.event)}</span></li>`).join("") + `</ul>`
+        : "")
+    + `<button type="button" class="btn map-detail-clear">◂ All markers</button>`;
+  document.querySelectorAll('#map-pins .map-pin').forEach(p=>p.classList.toggle('sel', p.dataset.id===id));
+}
+function clearMapDetail(){
+  const det=$("#map-detail"); if(!det) return;
+  delete det.dataset.sel; det.innerHTML = mapDetailPrompt();
+  document.querySelectorAll('#map-pins .map-pin.sel').forEach(p=>p.classList.remove('sel'));
+}
 function setSection(id){
-  if(id!=="home" && id!=="roster" && id!=="relations" && id!=="wiki" && !factionDocs().some(d=>d.id===id)) id="roster";
+  if(id!=="home" && id!=="map" && id!=="roster" && id!=="relations" && id!=="wiki" && !factionDocs().some(d=>d.id===id)) id="roster";
   exitDocFocus();                          // leaving/entering any view drops the reader's focus mode
   currentSection = id;
   document.body.setAttribute("data-section", id);
@@ -3188,12 +3292,18 @@ function setSection(id){
   });
   positionConnector();  // move the lit faction→selection channel to the new active tab
   renderPrimaryNav();   // sync the ROW-1 HOME/WIKI active state
-  const isHome = id==="home", isRoster = id==="roster", isRelations = id==="relations";
+  const isHome = id==="home", isRoster = id==="roster", isRelations = id==="relations", isMap = id==="map";
   const home=$("#home"); if(home) home.classList.toggle("hidden", !isHome);
-  $("#docview").classList.toggle("hidden", isRoster || isHome || isRelations);
+  $("#docview").classList.toggle("hidden", isRoster || isHome || isRelations || isMap);
   $("#relations").classList.toggle("hidden", !isRelations);
+  const mapEl=$("#map"); if(mapEl) mapEl.classList.toggle("hidden", !isMap);
   if(isHome){
     renderHome();
+    $("#roster").classList.add("hidden");
+    $("#cards").classList.add("hidden");
+    $("#state").classList.add("hidden");
+  }else if(isMap){
+    renderMap();
     $("#roster").classList.add("hidden");
     $("#cards").classList.add("hidden");
     $("#state").classList.add("hidden");
@@ -3219,6 +3329,7 @@ function setAppHeading(){
   updateCrumb();
   const h=$("#app-h1"); if(!h) return;
   if(currentSection==="home"){ h.textContent="Misfits Database — Home"; return; }
+  if(currentSection==="map"){ h.textContent="Misfits Database — Map"; return; }
   const label = currentSection==="roster" ? "Roster"
     : currentSection==="relations" ? "Relations"
     : currentSection==="wiki" ? "Wiki"
@@ -3230,6 +3341,7 @@ function updateCrumb(){
   const el=$("#sb-crumb"); if(!el) return;
   let c;
   if(currentSection==="home") c="Misfits Database";
+  else if(currentSection==="map") c="Map ▸ Wasteland Atlas";
   else if(currentSection==="wiki") c="Wiki ▸ " + String(_wikiPage||WIKI.home).replace(/_/g," ");
   else{ const label = currentSection==="roster" ? "Roster" : currentSection==="relations" ? "Relations"
       : (factionDocs().find(d=>d.id===currentSection)||{}).label || currentSection;
@@ -3239,10 +3351,21 @@ function updateCrumb(){
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
 });
-/* ROW-1 umbrella boxes: HOME + WIKI navigate; the FACTION box is handled by wireFactionMenu */
+/* ROW-1 umbrella boxes: HOME + WIKI + MAP navigate; the FACTION box is handled by wireFactionMenu */
 $("#primary-nav").addEventListener("click", e=>{
   const b=e.target.closest(".navbox"); if(b) setSection(b.dataset.section);
 });
+/* MAP pins: click / Enter / Space on a marker opens its detail; the "All markers" button clears it */
+(function wireMap(){
+  const svg=$("#map-svg"); if(!svg) return;
+  svg.addEventListener("click", e=>{ const p=e.target.closest(".map-pin"); if(p) showMapDetail(p.dataset.id); });
+  svg.addEventListener("keydown", e=>{
+    if(e.key!=="Enter" && e.key!==" ") return;
+    const p=e.target.closest(".map-pin"); if(p){ e.preventDefault(); showMapDetail(p.dataset.id); }
+  });
+  const side=$(".map-side");
+  if(side) side.addEventListener("click", e=>{ if(e.target.closest(".map-detail-clear")) clearMapDetail(); });
+})();
 /* home landing: a faction cell (left) SELECTS the faction — re-skins + re-renders home so the right
    column shows that faction's sections, without leaving home. A section card (right) or the Wiki (top)
    navigates into that section. */

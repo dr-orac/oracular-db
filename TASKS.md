@@ -21,7 +21,20 @@ UNBLOCKED), T94 (Events tab), T93 (Discord pipeline — needs the user's setup +
 **⚠ From T89, needs the user's decision:** two bundled fonts (Monofonto, Gothic 821 Cn) are a licensing
 risk with OFL fallbacks already in-repo — swap or licence; see `docs/LEGAL-SWEEP.md`.
 
-### T86 · NEW "Map" tab — Fallout wasteland map, US + Wendover regional — LARGE [feature]
+### T86 · NEW "Map" tab — Fallout wasteland map, US + Wendover regional — LARGE [feature] — IN PROGRESS
+**✅ INCREMENT 1 SHIPPED 2026-07-13:** the Map tab is wired + live. Row-1 `#nav-map` box (folded-map
+NAV_ICON), `#map` umbrella route (writeRoute/applyRoute/setSection like wiki), `<section id="map">` with the
+themed US SVG (50 state paths, static in index.html, `.map-states path` themed via CSS) + a lore-pin layer.
+`MAP_LOCATIONS` (23 F1/F2/NV sites, paraphrased desc/timeline per LEGAL-SWEEP) + `renderMap()`/`showMapDetail()`
+inject pins + legend + a detail sidebar (name · game · faction · timeline). Faction pins use FIXED identity
+hues (NCR amber / Legion red / Independent blue) — NOT theme-derived, so they stay distinct under the amber
+theme too. Command bar hidden on `#map`; breadcrumb "Map ▸ Wasteland Atlas". Verified live (pins, click →
+detail, clear, no console errors). **REMAINING INCREMENTS (next):** (2) pin hover polish + optional
+timeline animation; (3) US/Wendover **mode toggle** (List/Cards-style); (4) **Wendover** stylised regional
+map + **player-added pins** over the `getMapPins/addMapPin/saveMapPins` localStorage seam (+ export/import
+JSON) — "local now, shared later"; (5) **zoom + pan** with touch support. Original spec + build order below.
+
+### T86 (original spec) · NEW "Map" tab — Fallout wasteland map, US + Wendover regional — LARGE [feature]
 A new top-level **Map** tab (row 1, alongside Home / Wiki; route `#map`), rebuilt from scratch to be
 theme-integrated (uses `--fg`/`--bg`/the bezel), NOT a green standalone. Reference the existing prototype at
 `…/fallout-map-standalone/` (`index.html` + `HANDOFF.md` + `PRE_INTEGRATION_ROADMAP.md`) — reuse its US SVG
