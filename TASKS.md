@@ -5,9 +5,29 @@ Work top-to-bottom unless told otherwise. **One task = one commit.**
 
 ## 🆕 Queued 2026-07-13 (batch 5 — user, roadmapped methodically, NOT built)
 
-Ordering note: **T83 → T80 → T82 → T78 → T81 → T79 → T77 → T75 → T76** is a sensible build order
-(quick regressions/rules first, then the big table-reflow, then the design passes, then content-icon work).
-One item from this batch already SHIPPED: the masthead connector fade removal + row-gap bump (`deb9a71`).
+Ordering note: **T85 → T83 → T80 → T84 → T82 → T78 → T81 → T79 → T77 → T75 → T76** is a sensible build
+order (quick general rules/regressions first, then the big table-reflow, then design passes, then
+content-icon work). SHIPPED from this batch already: masthead connector fade removal + row-gap (`deb9a71`),
+and bigger responsive arrowheads + slightly thicker connector line (this session).
+
+### T85 · Headings — more space ABOVE than below — SMALL [general rule, entropy]
+User: headings read best with a bit more space proportionately ABOVE them than below, so it's clear which
+heading belongs to which section (the heading groups with the content under it). Make it a GENERAL rule:
+for doc + wiki headings (and roster section headers where it applies), `margin-top` > `margin-bottom` on a
+consistent ratio (e.g. ~2:1). Audit the current values (`.docreader h1–h4`, `.wikibody h2/h3/h4`) and set a
+consistent above>below rhythm; compose with the section-rule (border-top) landed in `6206122`.
+- Acceptance: every heading has clearly more space above than below, on a consistent ratio; headings group
+  with their following content; verify on a prose-heavy page + Main Page. (Overlaps T79 — do this first as
+  the rule, T79 as the broader pass.)
+
+### T84 · Bulleted lists inside table cells — left-justify + format attractively — SMALL/MED
+User: when bullet points appear inside table cells that are CENTRED, they look bad — left-justify them and
+format attractively. In `docClean`/`.doctable`, when a `<td>`/`<th>` contains a list (`<ul>`/`<ol>`), that
+cell's content should be LEFT-aligned (override any inherited/`data-align` centring) and the list styled to
+read cleanly in the tight cell (compact bullet, sensible indent/spacing). Don't affect non-list centred
+cells (numeric columns stay centred/right per T25).
+- Acceptance: table cells containing bullet lists render left-justified and tidy; numeric/short centred
+  cells unaffected; verify on a wiki page whose table has in-cell bullets.
 
 ### T83 · Restore the exterior border's INTERIOR glow — SMALL [regression from T66]
 After T66 (contain the bezel glow behind a solid black border, `a4be3b3`) the screen's exterior border
@@ -20,18 +40,27 @@ WITHOUT bringing back the outward halo T66 removed (glow must stay strictly inbo
 - Acceptance: the hairline shows a gentle inner phosphor glow again; the outer black border stays crisp with
   NO halo bleeding outward (T66 must not regress); screenshot a corner + an edge, all four sides.
 
-### T80 · A trailing "Label:" should break onto its own line — SMALL [general rule]
-Symptom (wiki, user): a paragraph that introduces a list ends with the label tacked on — e.g. "…the
-groundwork has already been laid. **Roles:**" then a bulleted list — so "Roles:" hangs at the end of the
-prior sentence instead of sitting on its own line above the list. Fix as a GENERAL rule in docClean/
-wikiClean (applies to doc + wiki):
-- When a paragraph's text ends with a short trailing label (≈1–4 words) that ends in a colon AND is
-  immediately followed by a list (`<ul>`/`<ol>`), split that label onto its OWN line — either a `<br>` +
-  the label, or promote it to a small `.doc-listlabel` sub-label element above the list.
-- Robustness (must not over-fire): only when the colon is at the very END of the paragraph, the label is
-  short, and a list follows. Do NOT touch mid-sentence colons, ratios ("10:1"), times, or code.
-- Acceptance: "Roles:" (Caesar's Legion page) and similar render on their own line above their list; a
-  normal in-sentence colon is untouched; verify on the Legion page + one Google-doc case.
+### T80 · Consistent "Label:" mini-heading formatting — SMALL/MED [general rule]
+Two related symptoms (wiki, user), same underlying rule — a short "Word(s):" label should render
+consistently as a **mini heading**, legibly, wherever it appears:
+1. **Trailing label:** a paragraph that introduces a list ends with the label tacked on — "…the groundwork
+   has already been laid. **Roles:**" then a bulleted list — so "Roles:" hangs at the end of the prior
+   sentence instead of sitting on its OWN line above the list.
+2. **Leading label:** an entry that begins "**Paladin:** Senior field commander…" — the "Paladin:" lead-in
+   should read as a consistent mini-heading (bright/emphasised, uniform across all such entries), not just
+   inline bold-or-not depending on the source.
+Fix as ONE general rule in docClean/wikiClean (doc + wiki):
+- **Trailing:** when a paragraph's text ends with a short label (≈1–4 words) ending in a colon AND is
+  immediately followed by a list, split that label onto its own line above the list (a `.doc-listlabel`).
+- **Leading:** when a block (`<p>`/`<li>`) STARTS with a short "Word(s):" label, wrap that label in a
+  consistent `.doc-label` (styled as a mini-heading — bright, slightly spaced) so every such lead-in reads
+  the same regardless of source emphasis.
+- Robustness (must not over-fire): label is SHORT (≈1–4 words, letters/spaces only), the colon is at the
+  very end (trailing) or right after the leading label; do NOT touch mid-sentence colons, ratios ("10:1"),
+  times, URLs, or code.
+- Acceptance: "Roles:" renders on its own line above its list; every "Paladin:"-style lead-in on the Legion
+  page renders as a uniform mini-heading; normal in-sentence colons untouched; verify on the Legion page +
+  one Google-doc case. (Consistency + legibility = entropy reduction.)
 
 ### T82 · Horizontal selector line → rightward glow, ONE general rule — DESIGN [SMALL-MED, entropy]
 The left-edge accent bar on a selected item is a recurring motif at different thicknesses/ad-hoc values:
