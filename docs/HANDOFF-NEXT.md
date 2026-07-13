@@ -1,7 +1,34 @@
 # Handoff — start here / next steps
 
+**This is the canonical entry point.** The dated `HANDOFF-2026-07-*.md` files are historical; read those only
+for backstory. Keep THIS file current — each work session should update "Open tasks" + "Recently shipped".
+
 `main` is clean, selfcheck passes, everything below is pushed and live on GitHub Pages
 (`dr-orac.github.io/oracular-db`). This is the authoritative "what's done / what's next" doc.
+
+## Working protocol (multiple people/tools alternate on this repo — one at a time)
+- **Before starting:** `git fetch && git pull` (or fast-forward). Someone else may have pushed.
+- **When done:** commit (selfcheck must pass) and **push** — push = deploy.
+- **One at a time.** Don't work in parallel on `main`; hand off via this doc. If you brought research/data
+  from elsewhere, strip any non-data instruction/meta before committing it.
+
+## Open decisions — need the user (don't silently drop these)
+- **`EXTRA_CHARACTERS`** — keep bios hardcoded in app.js, or move to the Sheet/wiki like the rest? (forks the data model.)
+- **Licensing / credit / donate (T100)** — no `LICENSE` yet; the SHWIWWI-TEC credit + any donate link wait on the user's licence choice. See the licensing discussion in `TASKS.md`.
+- **Font licensing risk** — Monofonto + Gothic 821 Cn are commercial with no web licence (`docs/LEGAL-SWEEP.md`); OFL fallbacks are in-repo — user to swap or licence.
+- **Wiki migration go-ahead** — moving Tribe Lore/Roleplay onto the MediaWiki (steps in `docs/WIKI-INTEGRATION.md`).
+
+## Sharp edges (don't re-break these)
+- **Connector** must stay positioned by **left+width** (never left+right insets) — that was the "bus overshoot" bug.
+- **Preview width quirk:** the dev preview evaluates media queries at a wider CSS width than `window.innerWidth`
+  reports (downscaling) — width-gated CSS can't be tested by resizing; verify at the target width by measurement.
+- **CRT motion** is gated on the app's **Reduce-Motion toggle** (`body[data-reducemotion]`), NOT the system pref.
+- **Faction sheets:** a faction's own sheet wins over any preview override (`effectiveSheetId`) — don't regress it.
+- **Sheets/Docs are often blocked in dev** → verify roster-dependent changes on the LIVE url, not locally.
+
+## Content & art rules (for map / paperwork / wiki additions)
+Originals only: **no traced real-world maps, no Vault-Tec/Bethesda trademarked art, no AI-generated art** on
+the public site. Use own screenshots / original schematic art; note the licence on any wiki upload. (`docs/LEGAL-SWEEP.md`.)
 
 ## The project in 30 seconds
 Vanilla, no-build static site: `index.html` + `styles.css` + `app.js` + self-hosted fonts + `tools/` +
