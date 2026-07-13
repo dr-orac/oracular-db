@@ -20,7 +20,7 @@ replay every theme × viewport × state combination.
 - **Acceptance:** all surfaces receive a baseline pass; no accepted P0/P1 remains; outstanding lower-priority
   findings are explicitly retained or declined; selfcheck and affected regression journeys pass.
 
-### T102 · Reader scrolling and TOC navigation quality — P1 [bug + interaction]
+### T102 · Reader scrolling and TOC navigation quality — P1 [bug + interaction] — IN PROGRESS 2026-07-13
 
 Start with `docs/UI-UX-AUDIT.md` finding UX-001. The earlier T73 fix improved sidebar targeting but did not
 establish one contract across sidebar TOC, inline TOC, deep links, find results, back-to-top, active-section
@@ -34,6 +34,11 @@ tracking, focus mode, and user cancellation. Reproduce and instrument before cha
 - **Acceptance:** every entry point reaches the correct target gracefully; no stuck or partial scroll; no
   snap-back after user input; no visible correction jerk after layout settles; active tracking stays stable;
   reduced motion jumps immediately; regression cases are recorded in the audit run.
+
+The confirmed nested-scroll failure is fixed: all content targets now move `#docscroll` explicitly, active
+rail reveal moves only `#doctoc`, long motion is capped, user input cancels without snap-back, and reduced
+motion is immediate. Wide sidebar/deep-link/rapid/wheel cases and narrow document find pass. Keep T102 open
+until the residual UX-001 matrix in `docs/UI-UX-AUDIT.md` is complete.
 
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
@@ -422,9 +427,9 @@ collapsing the two column rows into each other). Icons already lived in one cent
 no data change. Verified across desktop/landscape/mobile; faction switching still updates the sections column.
 
 ### T73 · BUG — TOC click sometimes leaves the view "stuck" — ✅ DONE 2026-07-13
-Fixed: TOC now scrolls to the heading ELEMENT by index (immune to duplicate export ids) and re-aims
-exactly once the smooth scroll settles (`scrollend` + timeout fallback), abandoning the snap if the user
-takes over the scroll. Verified in the wiki reader (up + down jumps land exactly at the heading).
+The initial element-index fix solved duplicate export ids. Its `scrollIntoView`/`scrollend` settling approach
+was superseded by T102 after live measurement showed that it could move the reader's ancestors. T102 is the
+current scrolling contract and remaining regression matrix.
 Original spec:
 **Symptom (user, 2026-07-12):** clicking a heading in the doc/wiki **Table of Contents** sometimes leaves
 the view **stuck** — it doesn't scroll to the target (or scrolls partway and jams), and the reader can feel

@@ -208,28 +208,32 @@ matrix before a public milestone. Keep this document's active findings current a
 
 ### UX-001 · P1 · scrolling · Docs and wiki
 
-**Observation:** TOC navigation can still feel stuck or land incorrectly despite the earlier targeted fix.
-The reader currently has separate paths for sidebar TOC clicks, inline TOC links, deep-linked headings, find
-results, back-to-top, and active-entry reveal; they do not all share cancellation or layout-settling behaviour.
+**Observation:** confirmed. A sidebar TOC click moved both the reader and the document page. The requested
+heading could finish above the visible reader while active-entry reveal independently moved another ancestor.
+Separate deep-link, inline-TOC, and find paths used the same unsafe browser primitive.
 
-**Reproduction or evidence:** user report. Reproduce across cold/warm documents and wiki pages, wide sidebar
-and narrow inline TOCs, long and image-heavy content, immediate clicks after switching, rapid successive
-clicks, focus-mode entry/exit, reduced motion, mouse wheel, touch, and keyboard activation. Instrument the
-intended container, target geometry, `scrollTop`, layout shifts, cancellation, and active-section changes.
+**Reproduction or evidence:** in the 1280px Tribe Lore reader, clicking `The Tree of Life` changed the outer
+page from `scrollY=0` to `202`; the reader's top moved from about `201px` to `0`, and the heading finished
+about `84px` above it. After routing all content targets through the reader, physical TOC clicks kept the page
+at `0`, the reader at about `202px`, and headings at their `14px` margin. A live wheel takeover stopped an
+in-flight jump and applied exactly the wheel delta with no later snap-back. Reduced motion landed within the
+first 30ms sample. At 390px, physical document-find input centered the result without moving the page.
 
 **User/maintenance impact:** a core reading/navigation action feels unreliable, and several independent
 handlers can regress differently.
 
-**Recommended direction:** first identify which failures remain. If duplication is causal, route content
-targets through one cancellation-aware coordinator and keep active-rail reveal explicitly scoped to its own
-scroll container.
+**Recommended direction:** implemented for sidebar TOC, inline TOC, deep links, and document find: explicit
+reader coordinates, a bounded owned animation, one late-layout correction, input cancellation, and an
+independent contents-rail reveal. Active-route writes now occur only when the section changes.
 
 **Acceptance check:** sidebar and inline TOCs, direct links, find stepping, and back-to-top always reach the
 correct target; motion is smooth and prompt; layout settling causes no visible final jump; user input cancels
 without snap-back; active tracking never moves the main reader; reduced motion is immediate; no stuck state
 occurs in the tested matrix.
 
-**Status:** open — first reproduction target in Phase 0.
+**Status:** in progress — the confirmed structural failure and primary Docs regressions are fixed. Complete
+the residual matrix before closing: wiki reader, an exported document with inline TOC links, back-to-top,
+focus mode, cold/image-heavy loading, keyboard activation, and a touch-device pass.
 
 ## Audit runs
 
@@ -237,4 +241,5 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 
 | Run | Date | Configuration | Surfaces covered | Result | Notes |
 |---|---|---|---|---|---|
-| — | — | — | — | Not started | Phase 0 baseline pending |
+| A/E | 2026-07-13 | 1280px, pointer, default + reduced motion | Tribe Lore sidebar, deep link, rapid replacement, wheel takeover | Core pass | UX-001 structural failure fixed; headings land at 14px without outer-page movement |
+| B | 2026-07-13 | 390px, physical input, default + reduced motion | Tribe Lore document find | Core pass | Result centered inside reader; outer page remained at 0; residual narrow paths remain under UX-001 |

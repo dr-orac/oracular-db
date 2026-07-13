@@ -2111,7 +2111,7 @@ function scrollPendingAnchor(){
   if(!_pendingTarget) return;
   const want=_pendingTarget; _pendingTarget=null;
   const h=[...$("#docreader").querySelectorAll("h1,h2,h3,h4")].find(x=>slugify(x.textContent)===want);
-  if(h) requestAnimationFrame(()=>h.scrollIntoView({block:"start"}));
+  if(h) requestAnimationFrame(()=>scrollDocTarget(h, {behavior:"auto"}));
 }
 window.addEventListener("hashchange", ()=>{ if(!_routing) applyRoute(); });
 $("#modalclose").addEventListener("click", ()=>$("#modalback").classList.remove("open"));
@@ -2610,9 +2610,10 @@ function styleTOC(reader){
   });
 }
 /* in-page outline sidebar (wide screens) — built from the doc's H1/H2 headings */
-let docHeads=[];
+let docHeads=[], _docRouteIdx=null;
 function buildDocSidebar(reader){
   const toc=$("#doctoc");
+  _docRouteIdx=null;
   docHeads=[...reader.querySelectorAll("h1,h2,h3,h4")]                                     // full outline, not just h1/h2
     .filter(h=>h.textContent.trim() && !h.classList.contains("doc-title"));                // …minus the masthead title
   if(docHeads.length<3){ toc.innerHTML=""; return; }            // too short to bother
@@ -2631,44 +2632,94 @@ function trackDocSection(){
   if(!docHeads.length){ $("#docnow").textContent=""; return; }
   const scTop=$("#docscroll").getBoundingClientRect().top;
   let cur=null, curIdx=-1;
-  for(let i=0;i<docHeads.length;i++){ if(docHeads[i].getBoundingClientRect().top - scTop <= 90){ cur=docHeads[i]; curIdx=i; } else break; }
+  // Match the heading deliberately parked at its 14px scroll margin. A wide threshold can skip a
+  // short section entirely when its next heading also sits near the top after a TOC jump.
+  for(let i=0;i<docHeads.length;i++){ if(docHeads[i].getBoundingClientRect().top - scTop <= 28){ cur=docHeads[i]; curIdx=i; } else break; }
   $("#docnow").textContent = cur ? "› "+cur.textContent.trim() : "";
   const toc=$("#doctoc"); let act=null;
   // match by index (not id) so duplicate export ids can't highlight two entries at once
   toc.querySelectorAll("a").forEach(a=>{ const on = (+a.dataset.i)===curIdx; a.classList.toggle("active", on); if(on) act=a; });
-  if(act) act.scrollIntoView({block:"nearest"});
-  writeRoute(cur ? slugify(cur.textContent) : "");   // the URL follows the section you're reading
+  if(act) revealDocTocEntry(act);                                  // move only the contents rail, never the page
+  if(curIdx!==_docRouteIdx){
+    _docRouteIdx=curIdx;
+    writeRoute(cur ? slugify(cur.textContent) : "");                // the URL follows actual section changes
+  }
 }
-/* Scroll the reader to a heading and KEEP it pinned once the smooth scroll settles. A one-shot
-   smooth scrollIntoView can land short when lazy images hydrate mid-flight and shift the target
-   (the classic "TOC click gets stuck" bug) — so after the animation ends (scrollend, with a timeout
-   fallback for Safari) we snap exactly onto the heading. If the user takes over the scroll (wheel /
-   touch / keys) we abandon the snap so we never yank them back. Rapid clicks drop the prior snap. */
-let _tocCleanup=null;
-function tocScrollTo(t){
-  if(!t) return;
+/* Reader scrolling has one owner: #docscroll. scrollIntoView() is deliberately avoided here because
+   it may also move the page and other scrollable ancestors. The explicit target calculation keeps
+   TOC, deep-link and find navigation inside the reader, respects reduced motion, and corrects once
+   after lazy content has had a chance to settle. New requests replace old ones; direct user input
+   cancels the pending correction so the reader never pulls against them. */
+let _docScrollCleanup=null;
+const DOC_SCROLL_KEYS=new Set(["ArrowUp","ArrowDown","PageUp","PageDown","Home","End"," "]);
+function docScrollBehavior(){ return document.body.dataset.reducemotion==="on" ? "auto" : "smooth"; }
+function docTargetScrollTop(target, block){
+  const sc=$("#docscroll"), sr=sc.getBoundingClientRect(), tr=target.getBoundingClientRect();
+  const offset = block==="center"
+    ? (sc.clientHeight-tr.height)/2
+    : (parseFloat(getComputedStyle(target).scrollMarginTop)||0);
+  return Math.max(0, Math.min(sc.scrollHeight-sc.clientHeight, sc.scrollTop+(tr.top-sr.top)-offset));
+}
+function revealDocTocEntry(entry){
+  if(!entry) return;
+  const toc=$("#doctoc"), tr=toc.getBoundingClientRect(), er=entry.getBoundingClientRect();
+  if(!toc.clientHeight) return;                                     // hidden at narrow widths; do not accumulate phantom scroll
+  const header=toc.querySelector(".sectionhdr");
+  const top=header ? Math.max(tr.top, header.getBoundingClientRect().bottom) : tr.top;
+  const bottom=tr.bottom-8;
+  if(er.top<top) toc.scrollTop+=er.top-top;
+  else if(er.bottom>bottom) toc.scrollTop+=er.bottom-bottom;
+}
+function cancelDocScroll(){
+  if(_docScrollCleanup) _docScrollCleanup();
+}
+function scrollDocTarget(target, opts){
   const sc=$("#docscroll");
-  if(_tocCleanup) _tocCleanup();                                   // cancel any prior pending snap (stale target)
-  let done=false, snapT=null;
-  const cleanup=()=>{ if(done) return; done=true; clearTimeout(snapT);
-    sc.removeEventListener("scrollend", settle);
-    window.removeEventListener("wheel", onUser, true);
-    window.removeEventListener("touchstart", onUser, true);
+  if(!target || !sc.contains(target)) return;
+  opts=opts||{};
+  cancelDocScroll();                                                // a newer destination supersedes the old one
+  const block=opts.block==="center" ? "center" : "start";
+  const behavior=opts.behavior==="auto" ? "auto" : docScrollBehavior();
+  let done=false, settleT=null, frame=null;
+  const cleanup=()=>{ if(done) return; done=true; clearTimeout(settleT); cancelAnimationFrame(frame);
+    sc.removeEventListener("wheel", onUser, true);
+    sc.removeEventListener("touchstart", onUser, true);
+    sc.removeEventListener("pointerdown", onUser, true);
     window.removeEventListener("keydown", onUser, true);
-    _tocCleanup=null; };
-  const settle=()=>{ if(done) return; cleanup(); t.scrollIntoView({block:"start"}); };  // snap exactly onto the heading
-  const onUser=()=>{ cleanup(); };                                 // user grabbed the scroll → leave them be
-  _tocCleanup=cleanup;
-  t.scrollIntoView({behavior:"smooth", block:"start"});            // animate (instant under reduced-motion)
-  sc.addEventListener("scrollend", settle);
-  window.addEventListener("wheel", onUser, {passive:true, capture:true});
-  window.addEventListener("touchstart", onUser, {passive:true, capture:true});
+    if(_docScrollCleanup===cleanup) _docScrollCleanup=null; };
+  const settle=()=>{ if(done) return;
+    const exact=docTargetScrollTop(target, block), error=exact-sc.scrollTop;
+    cleanup();
+    if(Math.abs(error)>1) sc.scrollTo({top:exact, behavior:"auto"}); // one bounded correction for late layout shifts
+  };
+  const onUser=e=>{ if(e.type==="keydown" && (!DOC_SCROLL_KEYS.has(e.key) || e.altKey || e.ctrlKey || e.metaKey)) return;
+    cleanup(); };
+  _docScrollCleanup=cleanup;
+  sc.addEventListener("wheel", onUser, {passive:true, capture:true});
+  sc.addEventListener("touchstart", onUser, {passive:true, capture:true});
+  sc.addEventListener("pointerdown", onUser, {passive:true, capture:true});
   window.addEventListener("keydown", onUser, true);
-  snapT=setTimeout(settle, 650);                                   // fallback where scrollend is unsupported
+  if(behavior==="auto"){
+    sc.scrollTop=docTargetScrollTop(target, block);
+    frame=requestAnimationFrame(()=>{ settleT=setTimeout(settle, 80); });
+    return;
+  }
+  const from=sc.scrollTop, distance=Math.abs(docTargetScrollTop(target, block)-from);
+  const duration=Math.min(520, Math.max(240, 220+Math.sqrt(distance)*3));
+  const started=performance.now();
+  const step=now=>{
+    if(done) return;
+    const p=Math.min(1, (now-started)/duration), eased=1-Math.pow(1-p,3);
+    const destination=docTargetScrollTop(target, block);             // follows bounded layout shifts during the move
+    sc.scrollTop=from+(destination-from)*eased;
+    if(p<1) frame=requestAnimationFrame(step);
+    else settleT=setTimeout(settle, 120);                            // allow nearby lazy content one brief settling window
+  };
+  frame=requestAnimationFrame(step);
 }
 $("#doctoc").addEventListener("click", e=>{
   const a=e.target.closest("a"); if(!a) return; e.preventDefault();
-  tocScrollTo(docHeads[+a.dataset.i]);                              // scroll to the element, not an id lookup
+  scrollDocTarget(docHeads[+a.dataset.i]);                          // scroll to the element, not an id lookup
 });
 
 /* Focus (fullscreen) mode for the reader (T72) — a minimalist "zen" state that hides all app chrome
@@ -3280,7 +3331,7 @@ function focusDocFind(i){
   _docFindMatches.forEach(m=>m.classList.remove("cur"));
   _docFindIdx=(i+_docFindMatches.length)%_docFindMatches.length;
   const m=_docFindMatches[_docFindIdx]; m.classList.add("cur");
-  m.scrollIntoView({block:"center", behavior:"smooth"});
+  scrollDocTarget(m, {block:"center"});
   const c=$("#docfind-count"); if(c) c.textContent=`${_docFindIdx+1}/${_docFindMatches.length}`;
 }
 function stepDocFind(dir){ if(_docFindMatches.length) focusDocFind(_docFindIdx+dir); }
@@ -3583,18 +3634,19 @@ $("#docscroll").addEventListener("scroll", ()=>{
   const now=Date.now();
   if(now-_hydLast>120){ _hydLast=now; runHydratePass(); }
 });
-$("#doctop").addEventListener("click", ()=>$("#docscroll").scrollTo({top:0, behavior:"smooth"}));
+$("#doctop").addEventListener("click", ()=>{ cancelDocScroll(); $("#docscroll").scrollTo({top:0, behavior:docScrollBehavior()}); });
 /* clicking a Table-of-Contents link scrolls within the rendered doc (no hash pollution) */
 $("#docreader").addEventListener("click", e=>{
   const a=e.target.closest("a.docanchor"); if(!a) return;
   e.preventDefault();
   const frag=a.getAttribute("href").slice(1);
-  let target = frag && document.getElementById(frag);
+  const reader=$("#docreader");
+  let target = frag && [...reader.querySelectorAll("[id]")].find(el=>el.id===frag);
   if(!target){                                          // Docs sometimes exports a bare "#" — match heading by text
     const txt=a.textContent.trim().toLowerCase();
-    target=[...$("#docreader").querySelectorAll("h1,h2,h3,h4")].find(h=>h.textContent.trim().toLowerCase()===txt);
+    target=[...reader.querySelectorAll("h1,h2,h3,h4")].find(h=>h.textContent.trim().toLowerCase()===txt);
   }
-  if(target) target.scrollIntoView({behavior:"smooth", block:"start"});
+  scrollDocTarget(target);
 });
 
 /* in-document find: debounced highlight on type; Enter / Shift+Enter step matches; Esc clears */
