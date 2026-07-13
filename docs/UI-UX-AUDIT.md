@@ -268,8 +268,15 @@ document survives only where the destination exists and otherwise falls back tru
 headings use the Misfits Database identity; direct malformed routes remain safe; home, tabs, primary nav, and
 command palette expose the destinations dictated by the shared registries with no hard-coded Tribe exception.
 
-**Status:** open — reproduce the continuity cases in the next live Phase 0 pass, then implement as one bounded
-navigation task if the observed behavior matches the ownership trace.
+**Status:** implemented 2026-07-13. Live reproduction confirmed the trace: Map/Region switched to the new
+faction's Roster, Relations switched to Roster, Wiki inherited the NCR heading, and the palette omitted
+Paperwork and all non-Tribe Relations destinations. One umbrella registry and one faction-section builder now
+own shared identity, availability, labels, and discovery while rendering remains explicit. All global/base
+continuity cases pass; unavailable documents fall back to Roster; malformed section, map-scope, and character
+routes canonicalise safely; same-id document loads are tied to their faction and exact source. The palette has
+44 registry-derived destinations. Verification also exposed an independent 1280px hit-area collision: the
+centred faction control covered Map/Paperwork. Intermediate desktop widths now use four 46px icon controls
+with accessible names/titles; full labels return where measured room exists.
 
 ## Audit runs
 
@@ -282,3 +289,5 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | A/E | 2026-07-13 | 1280px, pointer, default + reduced motion | Wiki TOC, focus mode, back-to-top | Pass | Back-to-top joined the bounded coordinator; normal mode reached 0 by 620ms and reduced motion by the 30ms sample |
 | A/F | 2026-07-13 | 1280px, cold load, nine deferred figures | Roleplay Guide TOC and deep link | Pass | Far appendix held its 14px offset before and after hydration; page remained at 0 |
 | Static | 2026-07-13 | section-ownership trace | Home, masthead, router, headings, command palette | Finding | UX-002: duplicated section registries have already drifted in continuity and destination coverage |
+| A | 2026-07-13 | 1760px + compact 1280/1024px, pointer | Home, masthead, routes, faction tabs, Docs, Map, Wiki, Paperwork | Pass | UX-002 fixed; global/base continuity, unavailable-doc fallback, malformed-route repair, headings, selected state, and nav hit areas agree |
+| B | 2026-07-13 | 390px, pointer + keyboard | Primary navigation, Map, Paperwork, command palette | Pass | No horizontal overflow; every nav centre resolves to its control; Map/Paperwork pointer path and Paperwork palette selection pass |

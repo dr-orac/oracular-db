@@ -44,14 +44,15 @@ remote-data path, what was fixed, what was deferred and why. Read it before touc
 |---|---|
 | `CONFIG` | sheet id, gid, defaultSection, webAppUrl |
 | `FACTIONS` | multi-faction config map + `FACTION_ORDER` / `FACTION_ICONS` / `FACTION_WIKI`. `activeFaction()`, `applyFaction()`, `factionAppearance()`, `fkey()`. Only linked factions (non-empty `data.sheetId`) show data; others → a themed "coming soon" |
-| `DOCS` | the tribe's doc tabs (Google Docs) — other factions start with `docs:[]` (see "Doc reader" below) |
+| `DOCS` | the tribe's configured Google Doc tabs — other factions start with `docs:[]` (see "Doc reader" below) |
+| section registry | `UMBRELLA_SECTIONS` owns global section metadata; `factionSections()` combines universal Roster/Relations with a faction's configured docs. These drive validity, continuity, labels, Home/tabs, headings, and command discovery. |
 | `EXTRA_CHARACTERS` | code-defined dossiers not in the sheet (visitors etc.), each tagged with its `faction` |
 | `FIELDS` / `ID_ORDER` / `BLOCK_ORDER` | the **data contract** (see below) |
 | data fetch | `effectiveSheetId()`, `sheetUrl()`, `parseCSV()`, model build; `buildNameIndex()` + `buildConnections()` (the cross-link / mention graph). A newer roster request cancels the previous one, and only its owner may update the screen. |
 | render | `render()` (try/caught), `renderRoster()`, `renderCards()`, `dossierHTML()` |
 | dossier pieces | portrait, spirit, S.P.E.C.I.A.L, connections, log, shots |
-| masthead (2 rows) | row 1 = Home / **FACTION box** / Wiki + cog (`renderPrimaryNav()`, `renderBrand()`, `wireFactionMenu()`); row 2 = this faction's sections (`renderNav()`) |
-| section routing | `setSection()` dispatches: home · roster · **relations** · wiki · a faction doc. Hash router `applyRoute`/`writeRoute`/`parseRoute`/`openPendingChar` |
+| masthead (2 rows) | row 1 = global section controls / **FACTION box** / cog (`renderPrimaryNav()`, `renderBrand()`, `wireFactionMenu()`); row 2 = this faction's sections (`renderNav()`) |
+| section routing | `setSection()` explicitly dispatches Home · Map · Paperwork · Roster · Relations · Wiki · a faction doc. Hash router `applyRoute`/`writeRoute`/`parseRoute`/`openPendingChar`; malformed destinations repair to a canonical hash. |
 | relations view | `renderRelations()`, `relationsGraph()`, `relationsPanelHTML()`, `parseRelationshipEntries()` — a character's web from the roster's Relationships field. Shares `state.selected` + the `listboxStep()` keyboard helper with the roster list |
 | doc reader | `loadDoc()` → `docClean()` (strict whitelist; strips `<div>`; themes `<img>` as `.docfig`), `styleTOC()`, `buildDocSidebar()` (see below) |
 | wiki reader | `loadWiki()` → `normaliseWikiImages()` (keep + absolutise images) → `renderWiki()` (re-skin MediaWiki structure) → `wikiClean()`/`docClean()`; internal links browse in-app. A new page or section aborts the old request, so late responses cannot replace the active reader. |
@@ -62,6 +63,20 @@ remote-data path, what was fixed, what was deferred and why. Read it before touc
 
 Global error nets: `render()` is wrapped in try/catch, and `window.onerror` /
 `unhandledrejection` surface an on-screen `toast()` — **nothing fails silently.**
+
+### Section ownership (keep one source of truth)
+
+- Global, faction-agnostic identity lives in `UMBRELLA_SECTIONS`.
+- Faction navigation comes from `factionSections(f)`: Roster + Relations + `f.docs`.
+- Availability checks use `sectionAvailable()`; labels use `umbrellaSection()` or `factionSection()`.
+- `setSection()` remains an explicit renderer/visibility dispatcher. The metadata registry must not become a
+  generic rendering framework.
+- To add a global surface, add one registry entry, then its explicit `setSection()` branch/visibility,
+  `NAV_ICONS` entry if needed, markup in `index.html`, and a `#primary-nav` button. Home/faction continuity,
+  route validation, headings, and command-palette discovery should require no extra label or validity edits.
+- To add a faction document, add it to that faction's `docs` configuration. Tabs, Home cards, validation,
+  headings, and command discovery derive from that entry. Use a distinct id unless same-id documents are
+  intentionally equivalent destinations across factions.
 
 ---
 
@@ -85,10 +100,10 @@ the sheet.
 
 ---
 
-## Doc reader (top-nav tabs that embed Google Docs)
+## Doc reader (faction tabs that embed Google Docs)
 
-The top nav (`#topnav`) has a **Roster** tab plus one tab per entry in the `DOCS` array
-(`{ id, label, docId }` near the top of `app.js`). Clicking a doc tab opens `#docview` and
+The faction nav (`#topnav`) has **Roster**, **Relations**, and one tab per configured document
+(`{ id, label, docId }` in a faction's `docs`). Clicking a doc tab opens `#docview` and
 renders the Google Doc **natively in the terminal theme** — not an iframe.
 
 How it works:

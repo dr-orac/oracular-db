@@ -42,7 +42,7 @@ image-heavy, and narrow document-find cases pass. The two available Google docum
 inline TOC anchors. Retain inline-TOC, independent keyboard activation, and real touch-device checks as the
 external follow-ups recorded under UX-001; they do not block the next Phase 0 surface pass.
 
-### T103 · Section registry and faction-switch continuity — P2 [correctness + entropy]
+### T103 · Section registry and faction-switch continuity — P2 [correctness + entropy] — IMPLEMENTED 2026-07-13
 
 Start with `docs/UI-UX-AUDIT.md` finding UX-002. Section identity and availability are currently repeated
 across routing, faction switching, home cards, tabs, primary navigation, headings, and the command palette;
@@ -60,6 +60,15 @@ the copies already disagree. Reproduce the listed context-loss cases before chan
 - **Acceptance:** direct and malformed routes remain safe; page, route, breadcrumb, selected controls, and
   command destinations agree through faction changes; home/tabs/palette expose the registry; selfcheck and
   the affected wide/narrow keyboard/pointer journeys pass.
+
+Section identity now has one umbrella registry plus one faction-section builder, while rendering remains
+explicit. Home, Map, Wiki, Paperwork, Roster, and Relations retain context across faction changes; configured
+documents retain context only when the destination faction offers the same id. Global headings no longer
+inherit the selected faction, stale same-id document loads cannot cross factions, and malformed section,
+map-scope, and character routes repair their hash. The command palette now derives all 44 destinations from
+the registry/configuration. Live checks passed at 1760px, the compact 1280/1024px layouts, and 390px with
+pointer and command-palette keyboard input; the intermediate-width nav collision is fixed with labelled,
+46px icon controls that retain their accessible names and titles.
 
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 

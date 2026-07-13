@@ -571,7 +571,7 @@
   /* one header row: section tabs on the LEFT, the FACTION selector + the Settings cog pushed to the
      top-RIGHT. The cog is the far-right element. */
   .titlebar{ display:flex; align-items:center; gap:10px 16px; flex-wrap:wrap; }
-  /* ROW 1 as a balanced 3-zone tree: LEFT = umbrella nav (Home/Wiki/Map), CENTRE = the FACTION selector
+  /* ROW 1 as a balanced 3-zone tree: LEFT = umbrella nav, CENTRE = the FACTION selector
      (optically centred by the grid regardless of the side widths), RIGHT = the settings cog. The equal 1fr
      side columns keep FACTION on the true screen centre; the connector stem drops from that centre. */
   /* CENTRED TREE — only where there's room (≥1024px): equal minmax(0,1fr) side columns force FACTION to the
@@ -586,7 +586,19 @@
     body:not([data-frame="border"]):not([data-section="home"]) .titlebar-right{ margin:0; justify-self:end; flex-wrap:nowrap; }
     body:not([data-frame="border"]):not([data-section="home"]) #topnav{ margin-inline:auto; }   /* row-2 centred under the faction */
   }
-  /* ROW 1 umbrella nav — HOME · WIKI · MAP, left-grouped. HOME/WIKI/MAP (.navbox) SHARE the FACTION box's
+  /* The four labelled umbrella boxes cannot share one half-row with long faction names at intermediate
+     desktop widths. Keep the true-centred three-zone tree and compact only this group to clear icon buttons;
+     aria-label + title retain each name. At ≥1751px the full labels have measured room again. */
+  @media (min-width:1024px) and (max-width:1750px){
+    body:not([data-frame="border"]):not([data-section="home"]) .primary-nav{ gap:6px; }
+    body:not([data-frame="border"]):not([data-section="home"]) .primary-nav .navbox{
+      width:46px; height:46px; padding:0; justify-content:center; gap:0; }
+    body:not([data-frame="border"]):not([data-section="home"]) .primary-nav .navico{ width:28px; height:28px; }
+    body:not([data-frame="border"]):not([data-section="home"]) .primary-nav .navlabel{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+      clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+  }
+  /* ROW 1 umbrella nav, left-grouped. Its .navbox controls SHARE the FACTION box's
      look at this hierarchy level (rules folded into .faction-box below) — they just carry no legend/arrow. */
   .primary-nav{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-right:auto; }
   .titlebar-right{ display:flex; align-items:center; gap:14px; margin-left:auto; }

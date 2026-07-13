@@ -54,10 +54,12 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 
 ## Architecture map (where things live in app.js)
 - **Routing:** hash router — `#home` · `#<faction>/<section>[/<target>]` · `#wiki/<Page>` · `#map[/<scope>]`
-  · `#paperwork`. `parseRoute`/`applyRoute`/`writeRoute`/`setSection`. Umbrella sections (home/wiki/map/
-  paperwork) are faction-agnostic; add new ones by following the Map/Paperwork pattern in `setSection`
-  (guard + visibility toggle + branch), `renderPrimaryNav` (the `[["home","Home"],…]` list), `writeRoute`,
-  `applyRoute`, `NAV_ICONS`, plus a `<section>` in index.html and a nav `<button>` in `#primary-nav`.
+  · `#paperwork`. `parseRoute`/`applyRoute`/`writeRoute`/`setSection`. `UMBRELLA_SECTIONS` owns shared
+  faction-agnostic metadata; `factionSections()` combines universal Roster/Relations with the active
+  faction's configured documents. Routing validation, faction continuity, Home cards, tabs, headings, and
+  command discovery consume those sources. Rendering stays explicit in `setSection()`. To add an umbrella
+  surface, add its metadata once, then add its explicit renderer/visibility branch, `NAV_ICONS` entry if
+  needed, `<section>` markup, and `#primary-nav` button. Do not add another section-validity or label list.
 - **Masthead:** 3-zone grid ≥1024px — nav left, faction centred, settings right; row-2 section tabs centre
   under the faction; the flow-chart connector is positioned by `positionConnector()` (left+width vars, not
   left+right — don't reintroduce right-inset positioning, it caused the "bus overshoot" bug).
@@ -72,10 +74,10 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 - **`EXTRA_CHARACTERS`** (top of app.js): hardcoded bios merged into the roster (incl. Wendover chars).
 
 ## Open tasks (priority order, with concrete pointers)
-1. **Continue the UI/UX audit baseline before changing the map interface.** UX-001 / T102 has a complete local
-   pass; retain its three external checks. Next reproduce UX-002 / T103: duplicated section registries appear
-   to drop Relations/Map/Wiki/Paperwork context on faction changes and omit destinations from the command
-   palette. Consolidate only after the live behavior confirms the trace, then continue the remaining surfaces.
+1. **Continue the UI/UX audit baseline before changing the map interface.** UX-001 / T102 and UX-002 / T103
+   have complete local passes; retain UX-001's three external checks. Continue Phase 0 with the roster/list/
+   cards/dossier/relations journeys, especially selected-character state, empty/error/loading behavior,
+   keyboard parity, and narrow reflow. Record evidence before accepting another bounded fix.
 2. **Make the world dataset display-ready** (research may proceed while the audit runs; it does not edit UI).
    `data/world.json` is deliberately `provisional`: its 13 current locations and valid internal references
    are a research starting point, not yet authoritative placements. Follow `docs/MAP-ARCHITECTURE.md`:

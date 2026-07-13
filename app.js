@@ -101,6 +101,25 @@ let currentFaction = DEFAULT_FACTION;
 try{ const _f = localStorage.getItem("mdb-faction"); if(_f && FACTIONS[_f]) currentFaction = _f; }catch(e){}
 function activeFaction(){ return FACTIONS[currentFaction] || FACTIONS[DEFAULT_FACTION]; }
 function factionDocs(){ return activeFaction().docs || []; }         // this faction's doc tabs
+/* Shared section metadata. Rendering stays explicit in setSection(); these registries own only identity,
+   availability, labels and discovery so routing, home, tabs and the command palette cannot drift apart. */
+const UMBRELLA_SECTIONS = [
+  { id:"home",      label:"Home",      keywords:"home landing start" },
+  { id:"wiki",      label:"Wiki",      keywords:"wiki encyclopedia" },
+  { id:"map",       label:"Map",       paletteLabel:"Wasteland Atlas", keywords:"map atlas wendover locations wasteland" },
+  { id:"paperwork", label:"Paperwork", keywords:"paperwork forms records documents" },
+];
+const FACTION_BASE_SECTIONS = [
+  { id:"roster",    label:"Roster",    kind:"roster" },
+  { id:"relations", label:"Relations", kind:"relations" },
+];
+function umbrellaSection(id){ return UMBRELLA_SECTIONS.find(s=>s.id===id); }
+function factionSections(f){
+  f=f||activeFaction();
+  return FACTION_BASE_SECTIONS.concat((f.docs||[]).map(d=>({id:d.id,label:d.label,kind:"document",doc:d})));
+}
+function factionSection(id, f){ return factionSections(f).find(s=>s.id===id); }
+function sectionAvailable(id, f){ return !!umbrellaSection(id) || !!factionSection(id, f); }
 function factionLinked(f){ return /^[A-Za-z0-9_-]{20,}$/.test((f && f.data && f.data.sheetId) || ""); }
 /* switch faction: apply its skin (colour + bg + brand), persist it, and reload the
    roster only if this faction's data sheet differs from the current one. */
@@ -125,12 +144,14 @@ function applyFaction(id){
   applyColor(ap.color); applyBg(ap.bg); applyFontHead(ap.head); applyFontBody(ap.body);
   renderBrand();
   renderNav();                                       // this faction's doc tabs (may be none)
-  // if the doc tab we were on doesn't exist for this faction, fall back to the roster
-  // (home + roster are universal, so they survive a faction switch)
+  // Preserve every umbrella/base section. A faction document survives only when the new faction offers
+  // the same id; otherwise fall back truthfully to its roster.
   if(currentSection==="home") setSection("home");     // re-render the tiles for this faction's docs
-  else if(currentSection!=="roster" && !factionDocs().some(d=>d.id===currentSection)) setSection("roster");
+  else if(!sectionAvailable(currentSection, f)) setSection("roster");
   else if(currentSection==="roster") showRosterFor(f);
-  setAppHeading();   // the H1 carries the faction name, so a switch refreshes it
+  else if(currentSection==="relations") showRelationsFor(f);
+  else { const doc=(f.docs||[]).find(d=>d.id===currentSection); if(doc && changed) loadDoc(doc); }
+  setAppHeading();   // refresh faction-scoped headings; umbrella headings retain the database identity
   writeRoute();   // the URL carries the faction, so a switch updates it (e.g. #brotherhood/roster)
   if(changed) crtRetune();   // play the CRT re-tune only on an actual change of faction
 }
@@ -2075,13 +2096,15 @@ function parseRoute(){
 /* apply the URL to the app: faction → section → target */
 function applyRoute(){
   const r = parseRoute();
+  let repairRoute=false;
   _routing = true;
   try{
     if(r.faction && FACTIONS[r.faction] && r.faction!==currentFaction) applyFaction(r.faction);
     let sec = r.section || "home";
     if(sec==="paperwork"){ if(sec!==currentSection) setSection("paperwork"); _pendingTarget=null; return; }
-    if(sec!=="home" && sec!=="map" && sec!=="roster" && sec!=="relations" && sec!=="wiki" && !factionDocs().some(d=>d.id===sec)) sec="roster";
-    if(sec==="map"){ setMapScope(r.target, { route:false }); if(sec!==currentSection) setSection("map"); _pendingTarget=null; return; }
+    if(!sectionAvailable(sec)){ sec="roster"; repairRoute=true; }
+    if(sec==="map"){ if(r.target && !MAP_SCOPES[r.target]) repairRoute=true;
+      setMapScope(r.target, { route:false }); if(sec!==currentSection) setSection("map"); _pendingTarget=null; return; }
     if(sec==="wiki"){                        // #wiki/<Page> — the target IS the wiki page to open
       const pg = r.target || WIKI.home;
       if(sec!==currentSection){ _wikiPage = pg; setSection("wiki"); }   // setSection loads _wikiPage
@@ -2093,13 +2116,13 @@ function applyRoute(){
     _pendingTarget = r.target || null;
     if(sec==="roster") openPendingChar();   // doc anchors are consumed by loadDoc when it finishes
     else if(sec==="relations" && state.model) renderRelations();   // consume the pending target now (else a pending load's render() will)
-  } finally { _routing = false; }
+  } finally { _routing = false; if(repairRoute) writeRoute(); }
 }
 /* open the pending character once the roster model is loaded (re-tried after each roster render) */
 function openPendingChar(){
   if(!_pendingTarget || currentSection!=="roster" || !state.model) return;
   const idx = state.model.characters.findIndex(c=>c.slug===_pendingTarget);
-  if(idx<0){ _pendingTarget=null; return; }
+  if(idx<0){ _pendingTarget=null; queueMicrotask(()=>writeRoute()); return; }
   _pendingTarget=null;
   if(state.view!=="roster") setView("roster");
   state.selected=idx; renderRoster();
@@ -2278,8 +2301,7 @@ function renderHome(){
     `</section>`;
 
   // LOWER-RIGHT: the selected faction's sections (Roster · Relations · its docs — NOT Wiki; that's on top)
-  const sections = [{id:"roster",label:"Roster"},{id:"relations",label:"Relations"}]
-    .concat(factionDocs().map(d=>({id:d.id,label:d.label})));
+  const sections = factionSections();
   const secCards = sections.map((s,i)=>
     `<button class="home-sec" type="button" data-section="${escAttr(s.id)}" style="--i:${i}">`+
       `<span class="home-sec-ico">${NAV_ICONS[s.id]||NAV_ICONS._default}</span>`+
@@ -2298,7 +2320,7 @@ function renderHome(){
    controls that live in ROW 1 (the primary nav), not here. */
 function renderNav(){
   const nav=$("#topnav"); if(!nav) return;
-  const tabs=[{id:"roster", label:"Roster"},{id:"relations", label:"Relations"}].concat(factionDocs().map(d=>({id:d.id, label:d.label})));
+  const tabs=factionSections();
   nav.innerHTML = tabs.map(t=>
     `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}"><span class="navico">${NAV_ICONS[t.id]||NAV_ICONS._default}</span><span class="navlabel">${esc(t.label)}</span></button>`).join("");
   nav.classList.remove("hidden");
@@ -2359,12 +2381,13 @@ function watchConnector(){
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(positionConnector).catch(()=>{});
 }
 window.addEventListener("resize", ()=>{ clearTimeout(_connResizeT); _connResizeT=setTimeout(positionConnector, 120); });
-/* ROW 1 (umbrella): fill the HOME + WIKI boxes and mark the active one. (The FACTION box between them
-   is built by renderBrand(); the cog sits at the far right.) */
+/* ROW 1 (umbrella): fill every registered global box and mark the active one. (The FACTION box between
+   the nav and settings is built by renderBrand(); the cog sits at the far right.) */
 function renderPrimaryNav(){
-  [["home","Home"],["wiki","Wiki"],["map","Map"],["paperwork","Paperwork"]].forEach(([id,label])=>{
+  UMBRELLA_SECTIONS.forEach(({id,label})=>{
     const b=$("#nav-"+id); if(!b) return;
     b.innerHTML=`<span class="navico">${NAV_ICONS[id]||NAV_ICONS._default}</span><span class="navlabel">${esc(label)}</span>`;
+    b.title=label;
     const on=currentSection===id;
     b.classList.toggle("active", on); b.setAttribute("aria-current", on?"page":"false");
   });
@@ -2925,7 +2948,7 @@ function renderPreparedDoc(reader, prepared, doc){
   buildDocSidebar(reader);
   scrollPendingAnchor();   // a deep-linked doc section scrolls into view now that the doc is rendered
   trackDocSection();
-  reader.dataset.docid = doc.id;
+  reader.dataset.docid = doc.docId;                              // source identity, not a reusable tab id
   resetDocFind();                                             // fresh doc → clear any stale find state
   announceDoc((doc.label||"Document")+" loaded");            // screen-reader cue for the loaded doc
 }
@@ -2950,7 +2973,10 @@ async function loadDoc(doc){
   setDocLink("↗ Docs", "Open this document in Google Docs");
   const reader=$("#docreader"), status=$("#docstatus");
   $("#docscroll").scrollTop=0;
-  if(reader.dataset.docid===doc.id) return;                   // already rendered this doc
+  if(reader.dataset.docid===doc.docId) return;                // already rendered this exact source
+  const ownerFaction=currentFaction;
+  const isCurrent=()=>currentSection===doc.id && currentFaction===ownerFaction &&
+    factionDocs().some(d=>d.id===doc.id && d.docId===doc.docId);
   // prepared (prefetched + cleaned) → inject immediately, no loader flash
   if(_docCache.has(doc.docId)){
     try{ renderPreparedDoc(reader, _docCache.get(doc.docId), doc); status.className="docstatus"; status.textContent=""; }
@@ -2969,16 +2995,16 @@ async function loadDoc(doc){
     // loader — bail out silently instead of clobbering it. Applies to BOTH outcomes:
     // a late success must not overwrite the newer doc, and a late failure must not paint
     // this doc's error over it.
-    if(currentSection!==doc.id) return;
+    if(!isCurrent()) return;
     renderPreparedDoc(reader, prepared, doc);
     status.className="docstatus"; status.textContent="";
   }catch(e){
-    if(currentSection!==doc.id) return;
+    if(!isCurrent()) return;
     docLoadError(status, e);
   }finally{
     // only stop the loader if we're still the current doc — startDocLoader shares one
     // module-level timer, so an unconditional stop here would freeze a newer doc's loader.
-    if(currentSection===doc.id) stopDocLoader();
+    if(isCurrent()) stopDocLoader();
     clearTimeout(timer);
   }
 }
@@ -3513,7 +3539,7 @@ function clearRegionDetail(){
   document.querySelectorAll("#map-region-pins .map-pin.sel").forEach(p=>p.classList.remove("sel"));
 }
 function setSection(id){
-  if(id!=="home" && id!=="map" && id!=="paperwork" && id!=="roster" && id!=="relations" && id!=="wiki" && !factionDocs().some(d=>d.id===id)) id="roster";
+  if(!sectionAvailable(id)) id="roster";
   if(id!=="roster" && id!=="relations") cancelRosterLoad();
   if(id!=="wiki") cancelWikiLoad();
   exitDocFocus();                          // leaving/entering any view drops the reader's focus mode
@@ -3524,7 +3550,7 @@ function setSection(id){
     b.classList.toggle("active", on); b.setAttribute("aria-selected", on);
   });
   positionConnector();  // move the lit faction→selection channel to the new active tab
-  renderPrimaryNav();   // sync the ROW-1 HOME/WIKI active state
+  renderPrimaryNav();   // sync the ROW-1 umbrella active state
   const isHome = id==="home", isRoster = id==="roster", isRelations = id==="relations", isMap = id==="map", isPaper = id==="paperwork";
   const home=$("#home"); if(home) home.classList.toggle("hidden", !isHome);
   $("#docview").classList.toggle("hidden", isRoster || isHome || isRelations || isMap || isPaper);
@@ -3567,13 +3593,10 @@ function setSection(id){
 function setAppHeading(){
   updateCrumb();
   const h=$("#app-h1"); if(!h) return;
-  if(currentSection==="home"){ h.textContent="Misfits Database — Home"; return; }
-  if(currentSection==="map"){ h.textContent="Misfits Database — "+MAP_SCOPES[_mapScope].title; return; }
-  const label = currentSection==="roster" ? "Roster"
-    : currentSection==="relations" ? "Relations"
-    : currentSection==="wiki" ? "Wiki"
-    : (factionDocs().find(d=>d.id===currentSection)||{}).label || currentSection;
-  h.textContent = activeFaction().name + " — " + label;
+  const umbrella=umbrellaSection(currentSection);
+  if(umbrella){ h.textContent="Misfits Database — "+(currentSection==="map" ? MAP_SCOPES[_mapScope].title : umbrella.label); return; }
+  const section=factionSection(currentSection);
+  h.textContent = activeFaction().name + " — " + (section ? section.label : currentSection);
 }
 /* the status-bar breadcrumb (left zone) — echoes the current location (the H1 is the a11y source). */
 function updateCrumb(){
@@ -3582,15 +3605,14 @@ function updateCrumb(){
   if(currentSection==="home") c="Misfits Database";
   else if(currentSection==="map") c="Map ▸ "+MAP_SCOPES[_mapScope].title;
   else if(currentSection==="wiki") c="Wiki ▸ " + String(_wikiPage||WIKI.home).replace(/_/g," ");
-  else{ const label = currentSection==="roster" ? "Roster" : currentSection==="relations" ? "Relations"
-      : (factionDocs().find(d=>d.id===currentSection)||{}).label || currentSection;
-    c = activeFaction().name + " ▸ " + label; }
+  else{ const section=factionSection(currentSection);
+    c = activeFaction().name + " ▸ " + (section ? section.label : currentSection); }
   el.textContent = c;
 }
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
 });
-/* ROW-1 umbrella boxes: HOME + WIKI + MAP navigate; the FACTION box is handled by wireFactionMenu */
+/* ROW-1 umbrella boxes navigate; the FACTION box is handled by wireFactionMenu. */
 $("#primary-nav").addEventListener("click", e=>{
   const b=e.target.closest(".navbox"); if(b) setSection(b.dataset.section);
 });
@@ -4065,18 +4087,19 @@ function runBoot(){
   let active=0, results=[];
 
   function items(){
-    const out=[
-      {label:"Home", sub:"Home", hash:"#home", kw:"home landing start"},
-      {label:"Wasteland Atlas", sub:"Map", hash:"#map", kw:"map atlas wendover locations wasteland"},
-      {label:"Wiki", sub:"Wiki", hash:"#wiki", kw:"wiki encyclopedia"},
-    ];
-    (typeof FACTION_ORDER!=="undefined"?FACTION_ORDER:Object.keys(FACTIONS)).forEach(id=>{
+    const out=UMBRELLA_SECTIONS.map(s=>({
+      label:s.paletteLabel||s.label, sub:s.label, hash:"#"+s.id, kw:s.keywords||s.label,
+    }));
+    FACTION_ORDER.forEach(id=>{
       const f=FACTIONS[id]; if(!f) return;
-      out.push({label:f.name, sub:"Roster", hash:"#"+id+"/roster", kw:"faction roster "+id+" "+f.name});
+      factionSections(f).forEach(s=> out.push({
+        label:s.id==="roster" ? f.name : f.name+" — "+s.label,
+        sub:s.kind==="document" ? "Document" : s.label,
+        hash:"#"+id+"/"+s.id,
+        kw:"faction "+id+" "+f.name+" "+s.id+" "+s.label,
+      }));
       const wp=FACTION_WIKI[id]; if(wp) out.push({label:f.name, sub:"Wiki page", hash:"#wiki/"+encodeURIComponent(wp), kw:"wiki "+f.name+" "+id});
     });
-    out.push({label:"The Tribe — Relations", sub:"Relations", hash:"#tribe/relations", kw:"tribe relations web connections"});
-    (typeof DOCS!=="undefined"?DOCS:[]).forEach(d=> out.push({label:"The Tribe — "+d.label, sub:"Document", hash:"#tribe/"+d.id, kw:"tribe "+d.label+" lore roleplay"}));
     return out;
   }
   function score(it, q){
@@ -4087,7 +4110,7 @@ function runBoot(){
     const q=norm(input.value.trim());
     let list0=items();
     if(q) list0=list0.map(it=>({it,s:score(it,q)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).map(x=>x.it);
-    results=list0.slice(0,40);
+    results=list0.slice(0,80);                                   // enough for every registered destination
     if(active>=results.length) active=Math.max(0,results.length-1);
     list.innerHTML = results.length
       ? results.map((it,i)=>`<div class="cmdk-item${i===active?' active':''}" role="option" aria-selected="${i===active}" data-i="${i}"><span class="cmdk-item-label">${esc(it.label)}</span><span class="cmdk-item-sub">${esc(it.sub)}</span></div>`).join("")
