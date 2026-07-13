@@ -20,7 +20,7 @@ replay every theme × viewport × state combination.
 - **Acceptance:** all surfaces receive a baseline pass; no accepted P0/P1 remains; outstanding lower-priority
   findings are explicitly retained or declined; selfcheck and affected regression journeys pass.
 
-### T102 · Reader scrolling and TOC navigation quality — P1 [bug + interaction] — IN PROGRESS 2026-07-13
+### T102 · Reader scrolling and TOC navigation quality — P1 [bug + interaction] — IMPLEMENTED 2026-07-13
 
 Start with `docs/UI-UX-AUDIT.md` finding UX-001. The earlier T73 fix improved sidebar targeting but did not
 establish one contract across sidebar TOC, inline TOC, deep links, find results, back-to-top, active-section
@@ -35,10 +35,12 @@ tracking, focus mode, and user cancellation. Reproduce and instrument before cha
   snap-back after user input; no visible correction jerk after layout settles; active tracking stays stable;
   reduced motion jumps immediately; regression cases are recorded in the audit run.
 
-The confirmed nested-scroll failure is fixed: all content targets now move `#docscroll` explicitly, active
-rail reveal moves only `#doctoc`, long motion is capped, user input cancels without snap-back, and reduced
-motion is immediate. Wide sidebar/deep-link/rapid/wheel cases and narrow document find pass. Keep T102 open
-until the residual UX-001 matrix in `docs/UI-UX-AUDIT.md` is complete.
+The confirmed nested-scroll failure is fixed: all content targets and back-to-top now move `#docscroll`
+through one bounded coordinator, active rail reveal moves only `#doctoc`, user input cancels without
+snap-back, and reduced motion is immediate. Wide Docs/wiki, deep-link, rapid/wheel, focus-mode, cold
+image-heavy, and narrow document-find cases pass. The two available Google documents contain no exported
+inline TOC anchors. Retain inline-TOC, independent keyboard activation, and real touch-device checks as the
+external follow-ups recorded under UX-001; they do not block the next Phase 0 surface pass.
 
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 

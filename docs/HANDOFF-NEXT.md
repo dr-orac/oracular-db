@@ -72,10 +72,10 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 - **`EXTRA_CHARACTERS`** (top of app.js): hardcoded bios merged into the roster (incl. Wendover chars).
 
 ## Open tasks (priority order, with concrete pointers)
-1. **Continue the UI/UX audit baseline before changing the map interface.** UX-001 / T102 now has a measured
-   core fix and primary Docs regression pass. Complete its recorded residual matrix (wiki, inline TOC,
-   back-to-top, focus mode, cold/image-heavy content, keyboard, and touch), then continue Phase 0 across the
-   other surfaces and fix accepted P0/P1 issues before adding a renderer dependency.
+1. **Continue the UI/UX audit baseline before changing the map interface.** UX-001 / T102 has a measured fix
+   and complete local regression pass across Docs, wiki, narrow search, focus mode, back-to-top, and cold
+   image-heavy loading. Its inline-TOC, independent keyboard, and real-touch checks require external coverage
+   and do not block the next Phase 0 surface. Fix accepted P0/P1 issues before adding a renderer dependency.
 2. **Make the world dataset display-ready** (research may proceed while the audit runs; it does not edit UI).
    `data/world.json` is deliberately `provisional`: its 13 current locations and valid internal references
    are a research starting point, not yet authoritative placements. Follow `docs/MAP-ARCHITECTURE.md`:

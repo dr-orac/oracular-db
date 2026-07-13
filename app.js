@@ -2646,10 +2646,10 @@ function trackDocSection(){
   }
 }
 /* Reader scrolling has one owner: #docscroll. scrollIntoView() is deliberately avoided here because
-   it may also move the page and other scrollable ancestors. The explicit target calculation keeps
-   TOC, deep-link and find navigation inside the reader, respects reduced motion, and corrects once
-   after lazy content has had a chance to settle. New requests replace old ones; direct user input
-   cancels the pending correction so the reader never pulls against them. */
+   it may also move the page and other scrollable ancestors. One bounded coordinator serves content
+   targets and back-to-top, respects reduced motion, and corrects once after lazy content has had a
+   chance to settle. New requests replace old ones; direct user input cancels the pending correction
+   so the reader never pulls against them. */
 let _docScrollCleanup=null;
 const DOC_SCROLL_KEYS=new Set(["ArrowUp","ArrowDown","PageUp","PageDown","Home","End"," "]);
 function docScrollBehavior(){ return document.body.dataset.reducemotion==="on" ? "auto" : "smooth"; }
@@ -2673,13 +2673,12 @@ function revealDocTocEntry(entry){
 function cancelDocScroll(){
   if(_docScrollCleanup) _docScrollCleanup();
 }
-function scrollDocTarget(target, opts){
+function scrollDocTo(resolveTop, opts){
   const sc=$("#docscroll");
-  if(!target || !sc.contains(target)) return;
   opts=opts||{};
   cancelDocScroll();                                                // a newer destination supersedes the old one
-  const block=opts.block==="center" ? "center" : "start";
   const behavior=opts.behavior==="auto" ? "auto" : docScrollBehavior();
+  const destination=()=>Math.max(0, Math.min(sc.scrollHeight-sc.clientHeight, resolveTop()));
   let done=false, settleT=null, frame=null;
   const cleanup=()=>{ if(done) return; done=true; clearTimeout(settleT); cancelAnimationFrame(frame);
     sc.removeEventListener("wheel", onUser, true);
@@ -2688,7 +2687,7 @@ function scrollDocTarget(target, opts){
     window.removeEventListener("keydown", onUser, true);
     if(_docScrollCleanup===cleanup) _docScrollCleanup=null; };
   const settle=()=>{ if(done) return;
-    const exact=docTargetScrollTop(target, block), error=exact-sc.scrollTop;
+    const exact=destination(), error=exact-sc.scrollTop;
     cleanup();
     if(Math.abs(error)>1) sc.scrollTo({top:exact, behavior:"auto"}); // one bounded correction for late layout shifts
   };
@@ -2700,22 +2699,29 @@ function scrollDocTarget(target, opts){
   sc.addEventListener("pointerdown", onUser, {passive:true, capture:true});
   window.addEventListener("keydown", onUser, true);
   if(behavior==="auto"){
-    sc.scrollTop=docTargetScrollTop(target, block);
+    sc.scrollTop=destination();
     frame=requestAnimationFrame(()=>{ settleT=setTimeout(settle, 80); });
     return;
   }
-  const from=sc.scrollTop, distance=Math.abs(docTargetScrollTop(target, block)-from);
+  const from=sc.scrollTop, distance=Math.abs(destination()-from);
   const duration=Math.min(520, Math.max(240, 220+Math.sqrt(distance)*3));
   const started=performance.now();
   const step=now=>{
     if(done) return;
     const p=Math.min(1, (now-started)/duration), eased=1-Math.pow(1-p,3);
-    const destination=docTargetScrollTop(target, block);             // follows bounded layout shifts during the move
-    sc.scrollTop=from+(destination-from)*eased;
+    const dest=destination();                                        // follows bounded layout shifts during the move
+    sc.scrollTop=from+(dest-from)*eased;
     if(p<1) frame=requestAnimationFrame(step);
     else settleT=setTimeout(settle, 120);                            // allow nearby lazy content one brief settling window
   };
   frame=requestAnimationFrame(step);
+}
+function scrollDocTarget(target, opts){
+  const sc=$("#docscroll");
+  if(!target || !sc.contains(target)) return;
+  opts=opts||{};
+  const block=opts.block==="center" ? "center" : "start";
+  scrollDocTo(()=>docTargetScrollTop(target, block), opts);
 }
 $("#doctoc").addEventListener("click", e=>{
   const a=e.target.closest("a"); if(!a) return; e.preventDefault();
@@ -3634,7 +3640,7 @@ $("#docscroll").addEventListener("scroll", ()=>{
   const now=Date.now();
   if(now-_hydLast>120){ _hydLast=now; runHydratePass(); }
 });
-$("#doctop").addEventListener("click", ()=>{ cancelDocScroll(); $("#docscroll").scrollTo({top:0, behavior:docScrollBehavior()}); });
+$("#doctop").addEventListener("click", ()=>scrollDocTo(()=>0));
 /* clicking a Table-of-Contents link scrolls within the rendered doc (no hash pollution) */
 $("#docreader").addEventListener("click", e=>{
   const a=e.target.closest("a.docanchor"); if(!a) return;

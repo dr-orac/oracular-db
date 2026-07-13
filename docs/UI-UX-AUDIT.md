@@ -217,23 +217,27 @@ page from `scrollY=0` to `202`; the reader's top moved from about `201px` to `0`
 about `84px` above it. After routing all content targets through the reader, physical TOC clicks kept the page
 at `0`, the reader at about `202px`, and headings at their `14px` margin. A live wheel takeover stopped an
 in-flight jump and applied exactly the wheel delta with no later snap-back. Reduced motion landed within the
-first 30ms sample. At 390px, physical document-find input centered the result without moving the page.
+first 30ms sample. At 390px, physical document-find input centered the result without moving the page. The
+wiki reader, focus-mode entry/exit, and a genuinely cold Roleplay Guide load with nine deferred figures all
+preserved the same target and page containment. The image-heavy deep link remained aligned after hydration.
 
 **User/maintenance impact:** a core reading/navigation action feels unreliable, and several independent
 handlers can regress differently.
 
 **Recommended direction:** implemented for sidebar TOC, inline TOC, deep links, and document find: explicit
 reader coordinates, a bounded owned animation, one late-layout correction, input cancellation, and an
-independent contents-rail reveal. Active-route writes now occur only when the section changes.
+independent contents-rail reveal. Back-to-top now uses the same coordinator rather than slow native smooth
+scrolling. Active-route writes occur only when the section changes.
 
 **Acceptance check:** sidebar and inline TOCs, direct links, find stepping, and back-to-top always reach the
 correct target; motion is smooth and prompt; layout settling causes no visible final jump; user input cancels
 without snap-back; active tracking never moves the main reader; reduced motion is immediate; no stuck state
 occurs in the tested matrix.
 
-**Status:** in progress — the confirmed structural failure and primary Docs regressions are fixed. Complete
-the residual matrix before closing: wiki reader, an exported document with inline TOC links, back-to-top,
-focus mode, cold/image-heavy loading, keyboard activation, and a touch-device pass.
+**Status:** implemented; local regression pass complete. Neither available Google document exports inline
+TOC anchors, so that path needs a suitable source document. Retain independent keyboard activation and a
+real touch-device pass as external checks; the browser driver could focus the native links but did not
+reliably dispatch its synthetic Enter action, so no application conclusion was drawn from it.
 
 ## Audit runs
 
@@ -243,3 +247,5 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 |---|---|---|---|---|---|
 | A/E | 2026-07-13 | 1280px, pointer, default + reduced motion | Tribe Lore sidebar, deep link, rapid replacement, wheel takeover | Core pass | UX-001 structural failure fixed; headings land at 14px without outer-page movement |
 | B | 2026-07-13 | 390px, physical input, default + reduced motion | Tribe Lore document find | Core pass | Result centered inside reader; outer page remained at 0; residual narrow paths remain under UX-001 |
+| A/E | 2026-07-13 | 1280px, pointer, default + reduced motion | Wiki TOC, focus mode, back-to-top | Pass | Back-to-top joined the bounded coordinator; normal mode reached 0 by 620ms and reduced motion by the 30ms sample |
+| A/F | 2026-07-13 | 1280px, cold load, nine deferred figures | Roleplay Guide TOC and deep link | Pass | Far appendix held its 14px offset before and after hydration; page remained at 0 |
