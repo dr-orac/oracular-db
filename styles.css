@@ -1151,8 +1151,11 @@
   .docreader[data-docid^="wiki:"] .wikibody a{ text-decoration-color:var(--fg-dim); }
   /* the wiki packs sections tightly — open up the vertical rhythm for legibility (more air before each
      heading + between blocks) without touching the Google-Doc reader's own spacing. */
-  .wikibody h2{ margin-top:2.9em; }
-  .wikibody h3, .wikibody h4{ margin-top:2.2em; }
+  /* section headings get a faint rule above them, so the space between sections reads as a deliberate
+     break rather than an empty void — tighter margin, the rule carries the separation. */
+  .wikibody h2{ margin-top:1.9em; padding-top:.85em; border-top:1px solid rgba(var(--fg-rgb),.16); }
+  .wikibody > h2:first-child{ border-top:0; padding-top:0; }
+  .wikibody h3, .wikibody h4{ margin-top:1.7em; }
   .wikibody p, .wikibody ul, .wikibody ol{ margin-bottom:1.45em; }
   .wikibody li{ margin:.4em 0; }
   .wikibody .wiki-hero, .wikibody .wiki-callout, .wikibody .wiki-cardgrid, .wikibody .wiki-cols{ margin-bottom:28px; }

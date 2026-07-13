@@ -2802,6 +2802,7 @@ function renderWiki(node){
   let out="";
   [...node.children].forEach(el=>{
     const tag=el.tagName.toLowerCase();
+    if(tag==="br") return;                                      // drop stray top-level <br> spacers from the source
     if(tag==="div" && wikiStyled(el)){                          // banner / callout / alert
       const raw=el.getAttribute("style")+el.innerHTML;
       const cls = wikiIsAlert(el) ? "wiki-callout wiki-callout--alert"
