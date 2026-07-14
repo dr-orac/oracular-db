@@ -77,17 +77,18 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 1. **Make the world dataset display-ready.** The roster/dossier phase now includes UX-003–UX-006 / T104–T107:
    representations, routes, visual hierarchy, short-phone containment, and load/error/refresh ownership have
    passed at 1440px, 390px, 375px, and 320px. Begin the next map work at the data boundary, not the renderer.
-   `data/world.json` is deliberately `provisional`: its 21 current locations and valid internal references
+   `data/world.json` is deliberately `provisional`: its 32 current locations and valid internal references
    are a research starting point, not yet authoritative placements. Follow `docs/MAP-ARCHITECTURE.md`:
-   - use the completed `data/atlas-migration.json` inventory (12/23 matched; 11 records required) so migration
-     never reduces coverage; `docs/MAP-DATA-INVENTORY.md` contains the delta-only research contract;
+   - use the completed `data/atlas-migration.json` inventory (23/23 matched; no records required) so migration
+     never reduces coverage; `docs/MAP-DATA-INVENTORY.md` separates record coverage from display approval;
    - treat the Fallout 1 record-coverage batch as reconciled, but keep all nine placements provisional or
      withheld until the same-map anchor fit in `docs/MAP-FALLOUT-1-REVIEW.md` passes review;
    - treat the Fallout 2 record-coverage batch as reconciled under `docs/MAP-FALLOUT-2-REVIEW.md`; preserve
      its broad Arroyo and Vault City uncertainty rather than applying one global world-map transform;
-   - collect the next bounded identity and placement delta for New Vegas;
+   - treat the New Vegas record-coverage batch as reconciled under `docs/MAP-NEW-VEGAS-REVIEW.md`; preserve
+     Novac and the three same-area counterparts as inference rather than real-world identities;
    - classify placement basis, review status, and uncertainty separately from location identity;
-   - reconcile the researched records, then change `data_status` only when every published marker passes;
+   - promote defensible direct identities, then change `data_status` only when every published marker passes;
    - migrate one game-sized set at a time behind the existing `renderMap()`/`showMapDetail()` UI.
 2. **Continue the product audit alongside map data work.** Take the next bounded pass through settings and
    modal focus/close/restore behavior, then the remaining cross-surface states. Keep UX-001's VoiceOver,

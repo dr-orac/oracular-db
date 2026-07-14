@@ -174,6 +174,17 @@ two carry 130 km uncertainty rather than false city-level precision. `docs/MAP-F
 the game-file loci, fit residuals, contradictions, and promotion gates. No public marker changed; New Vegas
 is the next bounded record-coverage batch.
 
+### T111 · Complete New Vegas atlas evidence — P1 [map data + anti-entropy] — IMPLEMENTED 2026-07-14
+
+Research all eleven rendered New Vegas markers as one geographic set and reconcile the existing Strip record.
+Separate direct real-world identities from same-area counterparts and fictional corridor inference; assign
+uncertainty at the scale justified by each relationship rather than copying compressed game-map geometry.
+
+All 23 legacy markers now have stable world records. Seven rendered New Vegas locations use direct real-world
+identities; the Fort, Jacobstown, and Black Mountain use broad same-area counterparts; Novac remains a
+fictional Highway 95 corridor hypothesis. The Strip now uses the same evidence shape. Every placement remains
+provisional, `docs/MAP-NEW-VEGAS-REVIEW.md` owns the promotion gate, and no public marker changed.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →

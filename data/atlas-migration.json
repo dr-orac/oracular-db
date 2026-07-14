@@ -18,16 +18,16 @@
     { "legacy_id": "newReno", "game_id": "fallout_2", "name": "New Reno", "world_location_id": "f2_new_reno", "status": "matched" },
     { "legacy_id": "vaultCity", "game_id": "fallout_2", "name": "Vault City", "world_location_id": "f2_vault_city", "status": "matched" },
 
-    { "legacy_id": "goodsprings", "game_id": "fallout_new_vegas", "name": "Goodsprings", "world_location_id": null, "status": "research_required" },
-    { "legacy_id": "primm", "game_id": "fallout_new_vegas", "name": "Primm", "world_location_id": null, "status": "research_required" },
-    { "legacy_id": "novac", "game_id": "fallout_new_vegas", "name": "Novac", "world_location_id": null, "status": "research_required" },
-    { "legacy_id": "boulderCity", "game_id": "fallout_new_vegas", "name": "Boulder City", "world_location_id": null, "status": "research_required" },
-    { "legacy_id": "hooverDam", "game_id": "fallout_new_vegas", "name": "Hoover Dam", "world_location_id": null, "status": "research_required" },
-    { "legacy_id": "theFort", "game_id": "fallout_new_vegas", "name": "The Fort", "world_location_id": null, "status": "research_required" },
-    { "legacy_id": "campMccarran", "game_id": "fallout_new_vegas", "name": "Camp McCarran", "world_location_id": null, "status": "research_required" },
-    { "legacy_id": "cottonwoodCove", "game_id": "fallout_new_vegas", "name": "Cottonwood Cove", "world_location_id": null, "status": "research_required" },
-    { "legacy_id": "nelson", "game_id": "fallout_new_vegas", "name": "Nelson", "world_location_id": null, "status": "research_required" },
-    { "legacy_id": "jacobstown", "game_id": "fallout_new_vegas", "name": "Jacobstown", "world_location_id": null, "status": "research_required" },
-    { "legacy_id": "blackMountain", "game_id": "fallout_new_vegas", "name": "Black Mountain", "world_location_id": null, "status": "research_required" }
+    { "legacy_id": "goodsprings", "game_id": "fallout_new_vegas", "name": "Goodsprings", "world_location_id": "fnv_goodsprings", "status": "matched" },
+    { "legacy_id": "primm", "game_id": "fallout_new_vegas", "name": "Primm", "world_location_id": "fnv_primm", "status": "matched" },
+    { "legacy_id": "novac", "game_id": "fallout_new_vegas", "name": "Novac", "world_location_id": "fnv_novac", "status": "matched" },
+    { "legacy_id": "boulderCity", "game_id": "fallout_new_vegas", "name": "Boulder City", "world_location_id": "fnv_boulder_city", "status": "matched" },
+    { "legacy_id": "hooverDam", "game_id": "fallout_new_vegas", "name": "Hoover Dam", "world_location_id": "fnv_hoover_dam", "status": "matched" },
+    { "legacy_id": "theFort", "game_id": "fallout_new_vegas", "name": "The Fort", "world_location_id": "fnv_the_fort", "status": "matched" },
+    { "legacy_id": "campMccarran", "game_id": "fallout_new_vegas", "name": "Camp McCarran", "world_location_id": "fnv_camp_mccarran", "status": "matched" },
+    { "legacy_id": "cottonwoodCove", "game_id": "fallout_new_vegas", "name": "Cottonwood Cove", "world_location_id": "fnv_cottonwood_cove", "status": "matched" },
+    { "legacy_id": "nelson", "game_id": "fallout_new_vegas", "name": "Nelson", "world_location_id": "fnv_nelson", "status": "matched" },
+    { "legacy_id": "jacobstown", "game_id": "fallout_new_vegas", "name": "Jacobstown", "world_location_id": "fnv_jacobstown", "status": "matched" },
+    { "legacy_id": "blackMountain", "game_id": "fallout_new_vegas", "name": "Black Mountain", "world_location_id": "fnv_black_mountain", "status": "matched" }
   ]
 }

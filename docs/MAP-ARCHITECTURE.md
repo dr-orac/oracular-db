@@ -107,9 +107,9 @@ must be confirmed against the supplied in-game reference or user direction befor
 1. **Scope foundation** — three panels, direct links, accessible tab state, and this contract. Complete.
 2. **Regional base** — original regional schematic plus a small reviewed landmark and route registry.
    Complete with the initial four orientation anchors; extend only with reviewed sources.
-3. **US data migration** — the 23-marker baseline is inventoried in `data/atlas-migration.json` and guarded
-   by selfcheck (12 matched records, 11 still requiring records). Reconcile it with reviewed records in
-   `data/world.json`; preserve coverage while replacing hand-positioned pins in bounded game-by-game sets.
+3. **US data migration** — the 23-marker baseline is inventoried in `data/atlas-migration.json`, guarded by
+   selfcheck, and fully matched to world records. Placement approval remains open. Promote only defensible
+   records, then preserve coverage while replacing hand-positioned pins in bounded game-by-game sets.
 4. **Local base** — original playable-area schematic, using a cleaner in-game overview as spatial reference;
    confirm landmark names and categories before publishing them.
 5. **Personal pins** — versioned browser-local store keyed by scope, create/edit/delete, validation, and
