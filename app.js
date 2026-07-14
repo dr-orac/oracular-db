@@ -2100,7 +2100,7 @@ function fileToDataURL(file, maxDim, mime){
      #home                              the landing page
      #<faction>/<section>[/<target>]    e.g. #tribe/roster · #tribe/lore
      #tribe/roster/big-brom-matlok      a character   ·  #tribe/lore/<heading>  a doc section
-   Legacy #c=<slug> / ?c=<slug> (the c/ OG stubs) still resolve. */
+   Legacy #c=<slug> / ?c=<slug> links from older shares still resolve. */
 let _routing = false;         // true while WE apply a route → our own hash writes don't loop back
 let _pendingTarget = null;    // a character/heading slug to open once its view has rendered
 function slugify(s){ return (s||"").toString().toLowerCase().trim()

@@ -34,7 +34,10 @@ the final evidence of whether a change shipped.
 
 - [`DESIGN-RELATIONSHIPS.md`](DESIGN-RELATIONSHIPS.md) — shipped Relations design rationale.
 - [`CRT-COMPARISON.md`](CRT-COMPARISON.md) and [`CRT-Terminal-Theme-Guide.md`](CRT-Terminal-Theme-Guide.md) —
-  earlier visual research; current UI rules live in `STYLE-GUIDE.md`.
+  earlier visual research; [`crt-theme.css`](crt-theme.css) is the guide's reusable companion stylesheet.
+  Current application UI rules live in `STYLE-GUIDE.md`.
+- [`../lib/prefs/README.md`](../lib/prefs/README.md) — parked reusable preferences prototype. It is not loaded
+  by the application; T19 in `TASKS.md` records the possible future migration.
 - [`AUDIT-2026-07-02.md`](AUDIT-2026-07-02.md) — security snapshot. Re-audit affected boundaries when code changes.
 - [`T6-REGRESSION-SWEEP.md`](T6-REGRESSION-SWEEP.md) — historical regression evidence.
 

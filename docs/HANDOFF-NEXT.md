@@ -133,3 +133,8 @@ Masthead centred-tree and measured SVG connectors, Townsfolk lore routing, the s
 pipeline, fullscreen focus polish + CRT power-on, box-glow, find-bar vector magnifier, dossier folder-tab,
 fuzzy+ranked roster search, ⌘K palette, the 3-scale map + Wendover schematic, `data/world.json`, the Paperwork
 system, the documentation ownership index, and repository guardrails for local links and runtime assets.
+The housekeeping pass also removed unused font archives and orphaned licence notes, recorded verifiable
+provenance for the vendored CRT package and Fallouty font, classified parked reference modules, corrected
+per-character share pages to retain faction identity, and closed the remaining in-repository accessibility
+semantics audit. Generated share pages now have a selfcheck-enforced canonical route and collision-safe
+regeneration path.
