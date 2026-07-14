@@ -90,9 +90,11 @@ Two useful discovery references illustrate the boundary:
   combines shipped grids with canceled-game and mod maps. Its author describes using Google Maps, cross-grid
   comparison, visual alignment, and estimated New Vegas add-on positions. It is useful for relative-position
   diagnostics, not exact placement.
-- King_Kestrel's [Fallout faction map](https://www.reddit.com/r/ImaginaryFallout/comments/k1m9i1/i_made_this_map_of_the_fallout_world_including/)
-  deliberately mixes canon, non-canon, and original factions. It is useful for territory candidates and
-  visual-design lessons, not canonical borders.
+- King_Kestrel's later [Fallout faction map](https://www.reddit.com/r/ImaginaryFallout/comments/pnyati/a_map_of_the_fallout_world_for_anything_that/)
+  is the user-approved broad shape guide for a project-authored territory scenario. Its published 2290 map
+  selects particular game endings and mixes canon, non-canon, mod, and original factions. Redraw and
+  generalise its regional relationships on the geographic base; do not reuse its pixels, trace exact edges,
+  or cite those edges as canonical borders.
 
 This policy keeps discovery cheap: investigate only a reference that exposes a concrete delta. Do not build
 or retain exhaustive fan-map transcriptions.
@@ -101,15 +103,19 @@ or retain exhaustive fan-map transcriptions.
 
 A faction overlay is viable after the geographic renderer proof, but it is a separate optional layer from
 location truth. Point records remain in `world.json`; territory claims will use their own versioned dataset
-and review gate. The first territory work is a claims inventory, not polygon drawing.
+and review gate. The first territory work is a claims inventory, not polygon drawing. A scenario derived from
+the approved shape guide must record its reference year and ending or continuity assumptions so it cannot be
+mistaken for an all-period canon layer.
 
 The eventual layer must:
 
-- record faction, canon scope, time range, source basis, review status, and uncertainty for every claim;
+- record scenario, faction, canon scope, time range, source basis, review status, and uncertainty for every
+  claim;
 - allow contested and overlapping extents instead of forcing every area to one owner;
 - distinguish source-backed control, broad inference, and project-authored territory in both data and style;
 - use labels, border treatment, and patterns as well as colour;
-- generate original, generalised geometry rather than tracing fan artwork;
+- generate original, generalised geometry informed by the approved broad areas rather than tracing fan
+  artwork;
 - remain independently toggleable on US and Region scopes and stay out of the Local gameplay schematic.
 
 If the claims audit cannot support a meaningful boundary, publish named influence points or broad regions
