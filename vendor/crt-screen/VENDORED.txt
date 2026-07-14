@@ -1,10 +1,22 @@
-Vendored from crt-screen v1.5.0 (single source of truth: ~/crt-screen).
+Vendored CRT Screen Effect snapshot
 
-Do NOT edit crt.css / crt.js here — they are a snapshot. To upgrade, re-copy
-both files from the upstream repo and bump the version below.
+Source:  separately versioned `crt-screen` repository
+Tag:     v1.5.0
+Commit:  e5414d24022d696b3d39005bbf29318a5eac97b0
+Licence: MIT (`LICENSE` in this directory)
 
-  vendored: crt.css, crt.js
-  version:  1.5.0
+Files copied without modification:
 
-Integration glue lives in ../../crt-screen-integration.js (project-specific;
-safe to edit). See that file and the "Enhanced CRT" toggle in Theme settings.
+  crt.css  sha256 5a02c11a0a51cd45538f6e43b49baf82837f4b8dd5d6bb8ee984aba2d8ccfaab
+  crt.js   sha256 c94142ec332b05078cb9e2ff5072beb4b41224bf83e5bffb705c667d3562e587
+  LICENSE  sha256 4d21780a66438f8bd1c7ac6274b98cb26d241505c535793ba47937f16adacbf7
+
+Do not edit `crt.css` or `crt.js` in this repository. Integration glue lives in
+`../../crt-screen-integration.js` and is project-specific.
+
+Upgrade procedure:
+
+1. Select and review a tagged release in the source repository.
+2. Copy that tag's `crt.css`, `crt.js`, and `LICENSE` here without modification.
+3. Update the tag, commit, and SHA-256 values in this file.
+4. Run `python3 tools/selfcheck.py` and exercise the Enhanced CRT toggle before committing.

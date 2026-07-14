@@ -1,0 +1,35 @@
+Fallouty 1.7209
+Copyright (c) Sebastien Caisse (Red!), 2002. All rights reserved.
+
+The following licence is transcribed from the embedded name table of the original
+`Fallouty.woff2` file in this directory. Spelling is preserved except for line wrapping.
+
+I) This font is free.
+
+II) You may modify this font at your leisure, HOWEVER, if you decide to
+redistribute it:
+
+  a) The License aggrement and copyrigth notice must remain (along with your own
+     copyright and license restrictions).
+  b) The original author(s) MUST be forwarded this new font, as to possibly update
+     his own with the new data (keeping of course the copryright of the modifications)
+     - given it is possible to do so. See Email address(es) at the top of this document.
+  c) You must provide a copy as metioned in pragraph III and IV.
+
+III) If you use this font in a programme of any kind:
+
+  a) You have provide the ORIGINAL font file along with the programme. It needs not
+     to be installed dureng the normal installation process, but the user has to have
+     easy access to it (On a disk, CD or DVD for example).
+  b) Credits must also be show in any space where a programme reserves credits.
+  c) If you provide documentation, wether it be electronic and/or hard-copy, you
+     must also credit in a similar fashion.
+
+IV) Use of the font in rendered graphics on a web page (OR ANY WEB-ENABLED MEDIA),
+you must provide a VALID link to the original font (in original or compressed format).
+The link MUST indicate the version of the font, and the copyright owners of the font.
+
+V) If you use this font in any type of media, other then the aformentioned
+possibilities, then you must provide credits for it where approriate.
+
+Author contact embedded in the original file: red_nnnno@hotmail.com

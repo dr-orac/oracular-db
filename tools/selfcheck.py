@@ -16,7 +16,7 @@ Exit code 0 = clean, 1 = errors found.  Warnings never fail the build.
 
 Stdlib only. Safe to run anywhere python3 exists.
 """
-import json, os, re, sys
+import hashlib, json, os, re, sys
 from urllib.parse import unquote
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -106,6 +106,38 @@ if os.path.isdir(p("fonts")):
     for fn in sorted(os.listdir(p("fonts"))):
         if fn.lower().endswith((".woff2", ".ttf", ".woff", ".otf")) and fn not in referenced:
             warn(f'orphan font file fonts/{fn} — no @font-face references it (dead weight / license risk)')
+        if fn.lower().endswith((".zip", ".tar", ".gz")):
+            warn(f'font source archive fonts/{fn} is deployed but unused; keep only the extracted runtime files')
+
+# Vendored runtime code must carry its licence and an immutable inventory. The inventory owns the expected
+# hashes so an intentional upgrade updates one provenance record rather than duplicating versions here.
+vendor_root = p("vendor")
+if os.path.isdir(vendor_root):
+    for package in sorted(os.listdir(vendor_root)):
+        package_dir = os.path.join(vendor_root, package)
+        if not os.path.isdir(package_dir):
+            continue
+        inventory_path = os.path.join(package_dir, "VENDORED.txt")
+        licence_path = os.path.join(package_dir, "LICENSE")
+        if not os.path.exists(inventory_path):
+            err(f"vendored package vendor/{package} has no VENDORED.txt provenance record")
+            continue
+        if not os.path.exists(licence_path):
+            err(f"vendored package vendor/{package} has no LICENSE file")
+        with open(inventory_path, encoding="utf-8") as f:
+            inventory = f.read()
+        recorded = re.findall(r"^\s+(\S+)\s+sha256\s+([0-9a-f]{64})\s*$", inventory, flags=re.M)
+        if not recorded:
+            err(f"vendored package vendor/{package} records no file hashes")
+        for filename, expected in recorded:
+            asset_path = os.path.join(package_dir, filename)
+            if not os.path.isfile(asset_path):
+                err(f"vendor/{package}/VENDORED.txt references missing file {filename}")
+                continue
+            with open(asset_path, "rb") as f:
+                actual = hashlib.sha256(f.read()).hexdigest()
+            if actual != expected:
+                err(f"vendor/{package}/{filename} differs from its recorded SHA-256; restore it or record a reviewed upgrade")
 
 # ---------------------------------------------------------------- 6. JS structural sanity
 import shutil, subprocess

@@ -13,7 +13,10 @@ Fonts have their own licence files in `fonts/`.
 
 ## Adapted code (licence obligations)
 
-*(none yet)*
+- **CRT Screen Effect v1.5.0** — vendored without modification from the separately versioned
+  `crt-screen` project at commit `e5414d24022d696b3d39005bbf29318a5eac97b0`, licensed under MIT.
+  The required notice and immutable file hashes live in [`vendor/crt-screen/`](vendor/crt-screen/).
+  Project-specific loading and settings integration remain in `crt-screen-integration.js`.
 
 ## Technique inspiration (no obligation — listed as a courtesy)
 
@@ -57,6 +60,7 @@ Fonts have their own licence files in `fonts/`.
 
 Web-embedded font licences are tracked in `docs/LEGAL-SWEEP.md`. Attributions required by their licences:
 
-- **Fallouty** — © Sébastien Caisse ("Red!"), 2002. Used under the font's own licence (free to use,
-  modify and redistribute with credit). The "Fallouty" display face used across the UI.
+- **Fallouty 1.7209** — © Sébastien Caisse ("Red!"), 2002. Used under the font's own licence,
+  transcribed in [`fonts/Fallouty-LICENSE.txt`](fonts/Fallouty-LICENSE.txt). The unmodified
+  [original font file](fonts/Fallouty.woff2) is shipped with the application as required.
 - Additional bundled faces are SIL OFL / CC0 / Apache (see `docs/LEGAL-SWEEP.md` for the per-font table).
