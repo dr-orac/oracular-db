@@ -278,6 +278,53 @@ routes canonicalise safely; same-id document loads are tied to their faction and
 centred faction control covered Map/Paperwork. Intermediate desktop widths now use four 46px icon controls
 with accessible names/titles; full labels return where measured room exists.
 
+### UX-003 · P1 · correctness and accessibility · Roster List, Cards, dossier
+
+**Observation:** query, section filter, and sort state do not produce one shared visible roster. The List
+applies the section filter only while constructing rows, after the dossier and listbox selection have already
+been derived from the broader search result. Cards uses only the search result and ignores both section and
+sort controls. Filter/sort handlers call `renderRoster()` even when Cards is the active view.
+
+**Reproduction or evidence:** with 55 Tribe characters, select Stacey Webb and change the section filter to
+The Tribe. The List displays 48 in-section rows, but the dossier and URL remain Stacey Webb and
+`aria-activedescendant="row-53"` names an option absent from the DOM. Switching to Cards shows all 55 cards,
+including Stacey. Selecting Name A–Z sorts the List from Andrew Stone onward, while Cards still starts with
+Big Brom Matlok in sheet order. A no-match query leaves zero options but retains the missing `row-53` active
+descendant.
+
+**User/maintenance impact:** a visible filter gives contradictory results across two layouts, the detail pane
+can describe a character the List claims is excluded, and assistive technology receives an invalid selection.
+Future controls would add another place for the representations to drift.
+
+**Recommended direction:** derive one query+section visible-character set, then let List and Cards present it.
+Normalize a displaced selection to the first visible character, clear active-descendant when there are no
+options, render whichever layout is active after control changes, and apply the selected sort to Cards when
+search relevance is not the ordering source.
+
+**Acceptance check:** rows, cards, dossier, route, and active-descendant agree through query/filter changes;
+Cards respects section and sort controls; empty results reference no absent option; pointer and keyboard paths
+pass at representative wide and narrow widths.
+
+**Status:** open — implement as T104 before continuing the roster/dossier visual pass.
+
+### UX-004 · P2 · correctness · Relations routing
+
+**Observation:** an invalid Relations character deep link falls back safely in the UI but retains the invalid
+hash. For example, `#tribe/relations/not-a-character` shows Big Brom Matlok while the URL still names the
+missing target. Valid direct targets and keyboard selection otherwise keep panel, rail, ARIA, and route aligned.
+
+**User/maintenance impact:** copying or refreshing the URL does not describe the visible state and malformed
+Roster and Relations links repair differently.
+
+**Recommended direction:** when a pending Relations slug is absent, clear it and repair to the base Relations
+route after the current route application completes. Do not invent or silently select a different slug in the
+URL.
+
+**Acceptance check:** malformed targets canonicalise to `#<faction>/relations`; valid targets and pointer/
+keyboard selection retain their character slug; selected rail option, panel, and active-descendant agree.
+
+**Status:** open — retain as T105; it is independent of the higher-impact roster visible-data fix.
+
 ## Audit runs
 
 Add one row per representative pass. Link finding IDs in Notes rather than duplicating their contents.
@@ -291,3 +338,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | Static | 2026-07-13 | section-ownership trace | Home, masthead, router, headings, command palette | Finding | UX-002: duplicated section registries have already drifted in continuity and destination coverage |
 | A | 2026-07-13 | 1760px + compact 1280/1024px, pointer | Home, masthead, routes, faction tabs, Docs, Map, Wiki, Paperwork | Pass | UX-002 fixed; global/base continuity, unavailable-doc fallback, malformed-route repair, headings, selected state, and nav hit areas agree |
 | B | 2026-07-13 | 390px, pointer + keyboard | Primary navigation, Map, Paperwork, command palette | Pass | No horizontal overflow; every nav centre resolves to its control; Map/Paperwork pointer path and Paperwork palette selection pass |
+| A/E | 2026-07-14 | 1440px, pointer + keyboard, direct routes | Roster List/Cards/dossier, Relations, unavailable faction | Finding | UX-003: List/Cards/filter/sort/selection drift; UX-004: invalid Relations target is not canonicalised. Valid selection, keyboard stepping, direct roster links, and UI faction-switch unavailable states pass |

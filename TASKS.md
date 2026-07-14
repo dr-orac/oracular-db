@@ -70,6 +70,32 @@ the registry/configuration. Live checks passed at 1760px, the compact 1280/1024p
 pointer and command-palette keyboard input; the intermediate-width nav collision is fixed with labelled,
 46px icon controls that retain their accessible names and titles.
 
+### T104 · Roster visible-data and selection consistency — P1 [correctness + accessibility]
+
+Start with `docs/UI-UX-AUDIT.md` finding UX-003. The roster currently applies query, section, and sort state
+at different rendering layers. List rows may be filtered while the dossier and active-descendant still point
+at an excluded character; Cards ignores the section and sort controls even though those controls remain
+visible and active.
+
+- Introduce one small visible-character helper that applies search ranking plus the section filter.
+- Use that same result for List rows, Cards, dossier selection, and listbox active-descendant state.
+- When a non-empty result excludes the current selection, select the first displayed character and keep the
+  dossier, active row, and character route synchronized.
+- When no result exists, show the truthful empty states and clear `aria-activedescendant` rather than naming
+  an option absent from the DOM.
+- Make filter/sort changes render the active List/Cards view; Cards must respect section filtering and apply
+  the selected sort when no search ranking owns the order.
+- **Acceptance:** visible rows/cards obey the same query/filter; List, dossier, URL, and ARIA selection agree;
+  no-match state references no missing option; List/Cards switching preserves the active controls; wide and
+  narrow pointer/keyboard journeys and selfcheck pass.
+
+### T105 · Canonicalise invalid Relations character routes — P2 [correctness]
+
+Start with `docs/UI-UX-AUDIT.md` finding UX-004. A malformed `#<faction>/relations/<slug>` target safely
+shows the existing/default character, but leaves the invalid hash in place. Repair it to the base Relations
+route after routing completes, matching the existing malformed Roster behavior, without disturbing valid
+deep links or keyboard selection.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →
