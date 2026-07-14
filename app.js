@@ -1371,9 +1371,11 @@ function renderRelations(){
   if(!chars.length){ $("#rel-rail").innerHTML=""; $("#rel-panel").innerHTML=`<div class="rel-empty">No characters to map yet.</div>`; return; }
 
   // consume a deep-linked target (#<faction>/relations/<slug>) if one is pending
+  let invalidTarget=null;
   if(_pendingTarget){
     const pi=chars.findIndex(c=>c.slug===_pendingTarget);
     if(pi>=0) state.selected=pi;
+    else invalidTarget=_pendingTarget;
     _pendingTarget=null;
   }
   const sel = chars[state.selected] || chars[0];
@@ -1398,6 +1400,10 @@ function renderRelations(){
   $("#rel-rail").setAttribute("aria-activedescendant", sel ? "rel-opt-"+sel.slug : "");
   $("#rel-panel").innerHTML = relationsPanelHTML(sel, graph);
   const active=$("#rel-rail .rel-railitem.active"); if(active) active.scrollIntoView({block:"nearest"});
+  if(invalidTarget) queueMicrotask(()=>{
+    const route=parseRoute();
+    if(currentSection==="relations" && route.section==="relations" && route.target===invalidTarget) writeRoute();
+  });
 }
 
 /* re-centre the web on a character (from the rail or any in-panel cross-link). Kept in the

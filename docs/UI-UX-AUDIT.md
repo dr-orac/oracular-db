@@ -328,7 +328,10 @@ URL.
 **Acceptance check:** malformed targets canonicalise to `#<faction>/relations`; valid targets and pointer/
 keyboard selection retain their character slug; selected rail option, panel, and active-descendant agree.
 
-**Status:** open — retain as T105; it is independent of the higher-impact roster visible-data fix.
+**Status:** implemented 2026-07-14. An absent pending slug schedules a guarded repair that runs only if the
+URL still contains that exact stale target. The invalid route canonicalises to base Relations without
+changing the current panel; a valid Stacey Webb deep link and keyboard Home selection retain their character
+routes and keep rail, panel, and active-descendant aligned.
 
 ### UX-005 · P1 · boot and correctness · fresh direct Roster route
 
@@ -372,3 +375,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | A/B | 2026-07-14 | 1440px + 390px, pointer + keyboard | Roster List/Cards/dossier, filters, sorting, empty search | Pass | UX-003 fixed: shared 48-character filter, A–Z Cards, route/selection/ARIA sync, no-match state, and display-order `j` navigation pass with 0px overflow |
 | E | 2026-07-14 | fresh direct route, remembered Tribe faction | Roster boot and character link | Finding | UX-005: route equals the internal default, so no section lifecycle or sheet load starts; Roster tab activation recovers |
 | E | 2026-07-14 | fresh direct routes, remembered matching faction | Tribe Roster/base + Stacey Webb; NCR unavailable Roster | Pass | UX-005 fixed: linked routes enter one lifecycle and restore the target; unlinked route remains truthful |
+| A/E | 2026-07-14 | 1440px, direct route + keyboard | Relations valid/invalid target and Home selection | Pass | UX-004 fixed: invalid slug repairs to base route; valid Stacey Webb and keyboard Big Brom routes retain full selection agreement |

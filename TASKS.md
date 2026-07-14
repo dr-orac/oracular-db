@@ -96,12 +96,16 @@ results clear the active descendant and character route, explicit character jump
 would hide their target, and the List/Cards tab state is exposed semantically. The original 55/48-character,
 Name A–Z, no-match, and display-order keyboard reproductions pass at 1440px and 390px with no overflow.
 
-### T105 · Canonicalise invalid Relations character routes — P2 [correctness]
+### T105 · Canonicalise invalid Relations character routes — P2 [correctness] — IMPLEMENTED 2026-07-14
 
 Start with `docs/UI-UX-AUDIT.md` finding UX-004. A malformed `#<faction>/relations/<slug>` target safely
 shows the existing/default character, but leaves the invalid hash in place. Repair it to the base Relations
 route after routing completes, matching the existing malformed Roster behavior, without disturbing valid
 deep links or keyboard selection.
+
+Invalid pending slugs now schedule a guarded repair: the hash is replaced with the base Relations route only
+if it still contains that exact stale target. Valid Stacey Webb deep links and keyboard Home selection retain
+their character routes; the invalid target canonicalises without changing the current panel selection.
 
 ### T106 · Start a fresh direct Roster route — P1 [boot + correctness] — IMPLEMENTED 2026-07-14
 
