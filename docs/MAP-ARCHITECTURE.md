@@ -6,7 +6,7 @@ The Map tab has three deliberate scales, selected by one route-aware pill:
 |---|---|---|
 | **US** | Reference atlas for established wasteland locations and timelines. | Original US outline and paraphrased, reviewed lore entries. |
 | **Region** | Wider Wendover context: approaches, settlements, routes, and regional landmarks. | Original schematic informed by verified place data. |
-| **Local** | The playable Wendover game space at useful encounter-planning scale. | Original schematic informed by supplied game references and confirmed landmark names. |
+| **Local** | The playable Wendover game space at useful encounter-planning scale. | Original cartography exported from an authorised game-grid source, with reviewed landmark names. |
 
 `#map` opens the US atlas. `#map/region` and `#map/local` open the corresponding scale directly.
 The Wendover marker on the US atlas opens **Region**, preserving the natural zoom order.
@@ -14,12 +14,13 @@ The Wendover marker on the US atlas opens **Region**, preserving the natural zoo
 ## Data boundary
 
 Raw editor exports, screenshots, and research notes are references only. They live under the ignored
-`added files by user/` folder and are never shipped or committed. Published maps use original vector
+`added files by user/` folder and are never shipped or committed. Published maps use original presentation
 geometry and compact reviewed data. Do not trace a game screenshot or embed its tiles/sprites.
 
-Region and Local map data will use a fixed `1000 × 700` coordinate space. This keeps coordinates stable
-across responsive rendering and makes pins, routes, import/export, and a later shared store independent
-of the artwork implementation.
+Region map data uses a fixed `1000 × 700` schematic coordinate space. Local must preserve the authoritative
+game grid's native bounds, origin, axis direction, and cell size in its export manifest. A renderer may
+normalise those values internally, but stored landmarks, routes, import/export, and later shared pins must
+round-trip through native grid coordinates rather than a hand-scaled illustration.
 
 `data/world.json` is a research dataset until its top-level `data_status` becomes `display_ready`. The app
 must not consume provisional coordinates merely because they are syntactically valid. A coordinate is a
@@ -153,10 +154,10 @@ belongs to a separately toggleable scenario layer with a reference year, continu
 evidence, review status, and uncertainty. Where the evidence is insufficient, use broad condition shading or
 withhold the feature instead of editing the base terrain.
 
-Keep the production view two-dimensional (`pitch: 0`). Relief should add orientation and atmosphere without
+Keep the geographic production view two-dimensional (`pitch: 0`). Relief should add orientation and atmosphere without
 distorting marker relationships, hiding territory overlaps, or competing with labels. Use transparent fills,
-patterns, borders, and restrained faction hues above it. The Local scope stays in the stable `1000 × 700`
-game-space coordinate system and does not inherit continental terrain.
+patterns, borders, and restrained faction hues above it. Local does not inherit continental terrain or its
+geographic coordinate system.
 
 A single georeferenced image is technically possible through MapLibre's
 [image source](https://maplibre.org/maplibre-gl-js/docs/API/classes/ImageSource/), but it is not the preferred
@@ -166,17 +167,67 @@ overlays. Retain the SVG atlas during the proof and lazy-load MapLibre only when
 earns inclusion only if self-hosting, transfer cost, narrow-screen containment, accessibility, failure
 fallback, and label clarity pass T114's recorded gates without requiring a client token or paid tile service.
 
+## Local game-map pipeline
+
+The current `Wendover.yml` establishes the scale of the problem: approximately 40 MB, 1.79 million lines,
+206,710 entities, and 1,998 occupied `16 × 16` chunks spanning chunk coordinates `[-33,-21]` to `[30,19]`.
+It is a rich editor source, not a web payload. Loading it in the browser, rendering every entity into the DOM,
+or manually painting a replacement would create unnecessary cost and immediate drift.
+
+T116 makes the separate map-editor project the preferred source adapter. After access is provided, audit its
+existing parser and renderer before writing another YAML implementation. The ideal editor-side export is
+deterministic and produces two kinds of output:
+
+- a compact semantic manifest in native grid coordinates, containing source hash, source format, bounds,
+  axis convention, palette version, layer registry, and reviewed landmarks;
+- generated presentation assets: initially one responsive overview raster, with a multiresolution tile
+  pyramid or semantic canvas data added only if the viewer proof earns the extra complexity.
+
+Raw tile IDs and hundreds of thousands of entities do not deserve equal visual weight. The cartographic
+export should classify them into a small project-owned vocabulary: open terrain, water, roads, walls and
+buildings, major compounds, hazards, and selected landmarks. Minor furniture, loot, effects, and runtime
+objects remain absent until a demonstrated use case needs them. Original colours, fills, patterns, outlines,
+and labels should make the layout readable without reproducing game sprites or textures. Confirm permission
+for the map layout and record the licence of any retained source-derived data before publishing it.
+
+### Local renderer decision
+
+| Candidate | Strength | Cost or risk | Decision gate |
+|---|---|---|---|
+| Responsive WebP/PNG + vector labels | Fastest, smallest system, excellent overview. | Deep zoom eventually softens; one large image may be heavy. | Build first as the baseline and fallback. |
+| Multiresolution raster tiles + vector labels | Crisp progressive zoom and visible-area loading. | Export, cache, request, and viewer complexity. | Adopt only if the baseline cannot preserve district detail within its weight budget. |
+| Semantic canvas renderer | Themeable, selective detail, native interaction. | Highest rendering, testing, and accessibility burden. | Adopt only if the editor already exposes clean semantic layers and measured interaction value justifies it. |
+| MapLibre image/raster source | Reuses the geographic renderer and its controls. | Local coordinates are not geographic; projection is artificial and couples unrelated systems. | Prototype only if reuse materially lowers total complexity without coordinate distortion. |
+
+The recommended product boundary is one map shell with two renderer families: MapLibre may earn US + Region,
+while Local uses native game-grid coordinates behind the same zoom, reset, selection, loading, and error
+contract. Moving from Region to Local is a short labelled scale transition, not a claim of continuous
+geographic zoom. This preserves a coherent experience without pretending the playable grid is a survey map.
+
 ```json
 {
   "version": 1,
   "scope": "local",
-  "viewBox": [0, 0, 1000, 700],
+  "coordinate_system": "ss14_grid",
+  "source": {
+    "hash": "sha256-of-authorised-source",
+    "format": 7
+  },
+  "grid": {
+    "chunk_size": 16,
+    "min_chunk": [-33, -21],
+    "max_chunk": [30, 19],
+    "axis": "confirm-during-editor-audit"
+  },
+  "layers": [
+    { "id": "terrain", "asset": "generated-overview.webp", "palette_version": 1 }
+  ],
   "landmarks": [
     {
       "id": "stable-kebab-id",
       "name": "Published name",
-      "x": 500,
-      "y": 350,
+      "grid_x": 0,
+      "grid_y": 0,
       "kind": "settlement",
       "summary": "Original concise description",
       "status": "verified"
@@ -204,8 +255,9 @@ must be confirmed against the supplied in-game reference or user direction befor
    layers, measured loading cost, and the existing SVG fallback. Keep Local in game-space coordinates.
 5. **Faction claims proof** — after the geographic renderer passes, inventory a small source-backed set and
    test overlapping, uncertain, independently toggleable territories without changing location records.
-6. **Local base** — original playable-area schematic, using a cleaner in-game overview as spatial reference;
-   confirm landmark names and categories before publishing them.
+6. **Local export proof** — run T116 against the map editor: preserve native coordinates, generate original
+   cartography and a compact manifest, prove a labelled raster baseline, then earn tiles or canvas by
+   measurement. Confirm landmark names and categories before publishing them.
 7. **Personal pins** — versioned browser-local store keyed by scope, create/edit/delete, validation, and
    JSON export/import. Keep one storage seam so a shared source can replace it later.
 8. **Navigation** — pan/zoom with mouse, keyboard, and touch support; reduced-motion-safe transitions.

@@ -68,8 +68,10 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
   `watchConnector()` rebinds observation after the faction control is replaced.
 - **Map:** 3 scales (US atlas / Wendover Region / Local) sharing `#map[/<scope>]` with `_mapScope`. US pins
   are the hardcoded `MAP_LOCATIONS` (pixel coords in a 650×500 viewBox) + a Wendover hero marker. Region is
-  a small original schematic. `renderMap()`/`showMapDetail()`/`setMapScope()`. Region drawing + coordinate
-  contract are documented in `docs/MAP-ARCHITECTURE.md`.
+  a small original schematic. Local is deliberately a separate native game-grid renderer; T116 scopes a
+  deterministic export from the user's map editor rather than loading `Wendover.yml` in the browser.
+  `renderMap()`/`showMapDetail()`/`setMapScope()`. Renderer and coordinate contracts are documented in
+  `docs/MAP-ARCHITECTURE.md`.
 - **Command palette:** ⌘K/Ctrl-K, fuzzy-ranked, deep-links via hash. Self-contained IIFE at end of app.js.
 - **Roster search:** `filtered()` + `scoreMatch()`/`fuzzySubseq()` — fuzzy + ranked; flat "Results" list
   while searching, section-grouped when browsing.
@@ -107,9 +109,12 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
    or paid tile service, measure transfer and failure behavior, and preserve the SVG atlas as fallback. Keep
    Local in its original game-space coordinates. The dependency must pass the Phase 4 gate. Keep faction
    territory out of the base proof; then run T112's claims audit before drawing any overlay polygons.
-5. **Extend Region, then build Local.** Keep the original Wendover schematic and its verified real-world
-   anchors. Add reviewed regional routes/landmarks next; build the playable Local schematic only from the
-   supplied in-game overview and user-confirmed landmarks.
+5. **Audit the map editor, then prove the Local export (T116).** The ignored 40 MB YAML is source material,
+   never a browser payload. Once the separate editor repository is available, inspect its parser, renderer,
+   licences, coordinate conventions, and export seams before duplicating anything here. Generate original
+   cartography plus a compact native-grid manifest; start with a labelled raster baseline and adopt tiles or
+   canvas only after measurements justify them. This audit may happen before T114, but geographic Region and
+   game-grid Local remain separate renderer decisions.
 6. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
    Sheet/wiki like the rest of the roster (forks the data model — pick one and note it).
 7. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;

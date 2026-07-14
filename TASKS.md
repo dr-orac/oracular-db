@@ -256,6 +256,44 @@ parent stem lit; Screen/Chassis changes never leave stale geometry; and no conne
 or narrow layout. Verify different faction-name lengths, two-tab and multi-tab factions, font presets, text
 sizes, 1751/1440/1280/1024/860/859px widths, zoom/reflow, and rapid faction/section/frame changes.
 
+### T116 · Prove a Wendover game-map export pipeline — P1 [local map + tooling] — ROADMAP
+
+Treat the Local map as a separate game-grid product, not the deepest geographic MapLibre zoom. The supplied
+`Wendover.yml` is an ignored 40 MB source export with 1,998 occupied `16 × 16` chunks across a `64 × 41`
+chunk envelope and 206,710 entities. Do not ship it, parse it at page load, create one SVG node per entity,
+or manually redraw a snapshot that will drift from the playable map. The map-editor project is the preferred
+integration point because it already understands the source format; its code, ownership, licence boundary,
+and export seams must be audited after access is provided before implementation is chosen.
+
+Scope the work as five gated increments:
+
+1. **Editor audit** — identify its parser, coordinate/axis conventions, tile and entity registries, renderer,
+   update workflow, licences, and whether the supplied YAML is the canonical map or a dated export.
+2. **Deterministic export** — produce a compact, versioned manifest in native grid coordinates containing
+   source hash, bounds, palette version, semantic terrain/road/structure layers, and reviewed landmark data.
+   Generate presentation assets from that manifest; never hand-edit generated output.
+3. **Cartographic style proof** — group raw tiles and selected static entities into a small visual vocabulary:
+   open ground, water, roads, walls/buildings, major compounds, hazards, and landmarks. Use original colours,
+   shapes, patterns, and labels rather than game sprites or textures. Prove overview, district, and encounter
+   zoom readability before preserving minor props.
+4. **Viewer decision** — begin with a responsive labelled WebP/PNG plus vector landmark overlays. Measure it
+   against a multiresolution raster-tile viewport and a semantic canvas renderer. Adopt the simplest option
+   that keeps important buildings readable, pan/zoom responsive, downloads bounded, and labels crisp.
+   MapLibre may host an image or raster source experimentally, but must not force grid coordinates into a
+   misleading geographic model merely to reuse a dependency.
+5. **Product integration and drift guard** — keep `#map/local`, provide the same reset/zoom/selection language
+   as US + Region, and use a short scale-transition between the geographic Region and game-grid Local views.
+   Add a reproducible export command and stale-source check so a changed YAML cannot silently leave the public
+   map behind.
+
+Acceptance: the editor and website agree on native bounds, orientation, and a reviewed sample of landmarks;
+repeating an export from the same source is byte-stable; no source YAML or unapproved game asset is deployed;
+the overview is intelligible without zoom while district/encounter zooms preserve meaningful structure; all
+labels and controls remain accessible outside the raster; pan/zoom works with pointer, touch, and keyboard;
+1440×900, 1366×768, 1024×768, 390×844, and 320×700 contain the viewer; and measured asset weight, first-open
+delay, tile requests, memory, and failure fallback determine whether the static proof graduates to tiles or
+canvas. Phase 0 may start as soon as the map-editor repository is available; it does not block T113 or T114.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →
@@ -286,8 +324,8 @@ detail, clear, no console errors). **Scope foundation complete locally:** the ro
 **US** (`#map`), **Region** (`#map/region`), and **Local** (`#map/local`) panels; the atlas's Wendover
 marker opens Region, and the accessible selection state, title, breadcrumb, and narrow-screen layout stay
 in sync. **Region base complete locally:** an original orientation schematic now carries four reviewed
-anchors and a landmark detail panel. **REMAINING INCREMENTS:** (1) original Local game-space schematic +
-confirmed landmarks; (2) browser-local player pins with edit/delete and JSON
+anchors and a landmark detail panel. **REMAINING INCREMENTS:** (1) T116's deterministic Local game-map
+export, cartographic proof, and confirmed landmarks; (2) browser-local player pins with edit/delete and JSON
 export/import; (3) mouse, keyboard, and touch pan/zoom. The source of truth for the data boundary and
 delivery order is `docs/MAP-ARCHITECTURE.md`.
 
@@ -296,9 +334,11 @@ The map is a top-level, theme-integrated view with **three scales**: US referenc
 Region, and the playable Wendover Local space. The full contract, coordinate system, source boundary, and
 delivery order live in `docs/MAP-ARCHITECTURE.md`; do not reintroduce a separate, conflicting map spec here.
 The app stays browser-local for personal pins in v1, with one future storage seam for shared canon. Every
-published regional/local shape must be original rather than traced from a game map, and every name or blurb
-must be reviewed before it ships. The end-state acceptance is all three URLs working, responsive and
-accessible maps, persistent personal pins with JSON export/import, and touch + mouse pan/zoom.
+published presentation must be original rather than traced from a screenshot, and every name or blurb must
+be reviewed before it ships. Regional art remains original. Local geometry may be deterministically
+abstracted from an authorised game-map source, but never by copying its sprites or textures. The end-state
+acceptance is all three URLs working, responsive and accessible maps, persistent personal pins with JSON
+export/import, and touch + mouse pan/zoom.
 
 ### T87 · TOC readability — varied styling + a "never too small" floor — SMALL/MED
 Make the in-reader Contents rail (`#doctoc`, `.tl2/.tl3/.tl4`) read better: differentiate levels with more
