@@ -108,8 +108,11 @@ banners to jump around:
 ```bash
 python3 tools/make-og-card.py                          # rebuild og-card.png
 python3 tools/make-og-stubs.py --base-url "https://…/" # rebuild c/ Discord stubs
-# refresh tools/roster-dump.json first via tools/dump-roster.js (console snippet)
+# create the ignored tools/roster-dump.json via tools/dump-roster.js; repeat per linked faction
 ```
+
+`make-og-card.py` requires Pillow. The stub generator uses only the Python standard library and refuses
+to overwrite a same-slug stub owned by another faction.
 
 ## Before you deploy or commit
 

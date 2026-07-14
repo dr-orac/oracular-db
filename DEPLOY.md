@@ -153,23 +153,25 @@ Two independent pieces. Use either or both.
 ### 5a. Rich per-character link previews
 
 **The catch:** Discord's unfurler doesn't run JavaScript and ignores `#hash`, so a
-plain `…/index.html#c=dres` only ever shows the generic `og-card.png`. To get a
+plain `…/index.html#tribe/roster/dres` only ever shows the generic `og-card.png`. To get a
 **per-character** card, each character needs its own tiny HTML stub with baked-in
 `og:` tags. `tools/make-og-stubs.py` writes them into `c/`.
 
-1. **Refresh the data** (only if the sheet has changed): open the live page,
+1. **Refresh one faction's data** (only if its sheet has changed): open that faction's live roster,
    DevTools → Console, paste `tools/dump-roster.js`, save the clipboard output over
    `tools/roster-dump.json`.
 2. **Generate the stubs with your real URL:**
    ```
    python3 tools/make-og-stubs.py --base-url "https://<you>.github.io/<repo>/"
    ```
-3. **Deploy** `c/`. Share `…/c/dres.html` in Discord → rich card with Dres's name and
-   blurb. Clicking redirects to `#c=dres` so it lands on his dossier.
+3. Repeat steps 1–2 for each linked faction, then **deploy** `c/`. The generator preserves other
+   factions' existing stubs and refuses a cross-faction slug collision instead of silently overwriting it.
+   Share `…/c/dres.html` in Discord → rich card with Dres's name and blurb. Clicking redirects to the
+   canonical faction/roster/character route.
 
-The `c/` already in the repo uses **relative** links — click-through works on any host
-already, but you must re-run step 2 with `--base-url` for Discord cards to unfurl
-per-character.
+The committed `c/` pages are stamped with this project's live URL. Re-run step 2 with
+`--base-url` when deploying to another host so both click-through and preview metadata
+point at that host.
 
 ### 5b. Channel notification on edits (webhook)
 
@@ -197,3 +199,5 @@ Post a one-line note to a Discord channel after every successful edit/upload.
   **original sheet** — don't change it, and never write to that sheet by any means.
 - **Regenerating the OG card:** if you change the title/tagline, run
   `python3 tools/make-og-card.py` from this folder to rebuild `og-card.png`.
+- **Character share pages:** files under `c/` are stamped with the current live URL. Run the roster-dump
+  and stub-generation steps again when deploying to a different host.

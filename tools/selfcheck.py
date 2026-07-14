@@ -341,6 +341,30 @@ for source_path in sorted(markdown_files):
     ):
         err(f"docs/{filename} must identify itself as a historical snapshot and point to HANDOFF-NEXT.md")
 
+# Generated social-card pages are part of the public routing surface. Require a canonical faction route;
+# the legacy factionless form silently opened the remembered/default faction and broke cross-faction links.
+faction_order = re.search(r"const FACTION_ORDER\s*=\s*\[([^\]]+)\]", js)
+known_factions = set(re.findall(r'"([a-z0-9-]+)"', faction_order.group(1))) if faction_order else set()
+stub_dir = p("c")
+if os.path.isdir(stub_dir):
+    for filename in sorted(os.listdir(stub_dir)):
+        if not filename.endswith(".html"):
+            continue
+        slug = filename[:-5]
+        with open(os.path.join(stub_dir, filename), encoding="utf-8") as f:
+            stub = f.read()
+        if "#c=" in stub:
+            err(f"c/{filename} still uses a factionless legacy character route")
+        routes = set(re.findall(r"#([a-z0-9-]+)/roster/([a-z0-9-]+)", stub))
+        if len(routes) != 1:
+            err(f"c/{filename} must contain one consistent canonical faction/roster route")
+            continue
+        faction, target = next(iter(routes))
+        if faction not in known_factions:
+            err(f'c/{filename} routes to unknown faction "{faction}"')
+        if target != slug:
+            err(f'c/{filename} routes to character "{target}" instead of its filename slug')
+
 # ---------------------------------------------------------------- 9. world/map data integrity
 # The map dataset is edited independently from the rendering code. Validate its internal graph here so a
 # renamed or omitted location cannot silently break routes, faction zones, or event markers.

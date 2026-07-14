@@ -7,14 +7,19 @@
    1. Open the deployed/preview roster in a browser and let it finish loading.
    2. Open DevTools → Console.
    3. Paste the whole snippet below and press Enter.
-   4. It copies the JSON to your clipboard (and logs it). Paste it over
-      tools/roster-dump.json, then run:  python3 tools/make-og-stubs.py --base-url "<your url>"
+   4. It copies the active faction's JSON to your clipboard (and logs it). Save it as
+      tools/roster-dump.json, then run: python3 tools/make-og-stubs.py --base-url "<your url>"
+   5. Repeat for each linked faction. The generator updates matching files without deleting
+      other factions' stubs; flat stub filenames require character slugs to be unique across factions.
 */
 (() => {
   const clip = (s, n) => {
     s = (s || "").replace(/\s+/g, " ").trim();
     return s.length <= n ? s : s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…";
   };
+  const faction = currentFaction;
+  const factionName = activeFaction().name;
+  const brand = activeFaction().brand;
   const data = state.model.characters.map(c => {
     const f = c.fields, b = [];
     if ((f.honorific || "").trim()) b.push("“" + f.honorific.trim() + "”");
@@ -25,13 +30,16 @@
     return {
       slug: c.slug,
       name: c.name,
-      desc: clip(line, 190) || "A member of the Yuma Tribe.",
+      faction,
+      factionName,
+      brand,
+      desc: clip(line, 190) || "A member of " + factionName + ".",
       img: /^https?:/.test((f.image || "").trim()) ? f.image.trim() : ""
     };
   });
   const json = JSON.stringify(data);
   (navigator.clipboard?.writeText(json) || Promise.reject())
-    .then(() => console.log("roster-dump.json copied to clipboard (" + data.length + " characters)."))
+    .then(() => console.log(faction + " roster copied to clipboard (" + data.length + " characters)."))
     .catch(() => console.log(json));
   return json;
 })();

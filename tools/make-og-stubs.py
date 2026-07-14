@@ -4,21 +4,21 @@ make-og-stubs.py — generate per-character Open Graph "unfurl" pages for Discor
 
 WHY THIS EXISTS
   Discord's link preview crawler does NOT run JavaScript and ignores the URL #hash.
-  So a pasted link like  https://site/#c=dres  only ever shows the generic site card.
+  So a pasted link like https://site/#tribe/roster/dres only ever shows the generic site card.
   To get a rich PER-CHARACTER card (name + blurb + image), each character needs its
   own tiny HTML page with real <meta property="og:*"> tags baked in. This script
   writes one such stub per character into ./c/<slug>.html. Each stub instantly
-  redirects a human on to the real app at  index.html#c=<slug>.
+  redirects a human to the canonical #<faction>/roster/<slug> route.
   Works on any static host (GitHub Pages, Netlify, …) — no server needed.
 
 INPUT
-  tools/roster-dump.json — the authoritative roster, exported straight from the app
-  (so slugs/names match exactly). To refresh it after the sheet changes, open the
-  app, open the browser console, and run the one-liner in tools/dump-roster.js,
-  then save the output over roster-dump.json.
+  tools/roster-dump.json — an ephemeral active-faction roster exported straight from the
+  app, so faction ids, slugs, names, and brands match exactly. It is intentionally ignored
+  by git. Capture and generate each linked faction in turn; existing stubs for other factions
+  are left in place.
 
 USAGE
-  python3 tools/make-og-stubs.py --base-url "https://you.github.io/yuma/"
+  python3 tools/make-og-stubs.py --base-url "https://you.github.io/project/"
   # omit --base-url for relative links (click-through works, but Discord needs the
   # absolute --base-url form to show per-character cards).
 
@@ -47,17 +47,17 @@ def describe(c):
     app = (c.get("appearance") or "").strip()
     if app:
         line = (line + " — " + app) if line else app
-    return clip(line, 190) or "A member of the Tribe."
+    return clip(line, 190) or "A member of %s." % (c.get("factionName") or "this faction")
 
 STUB = """<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{name} // The Tribe Database</title>
+<title>{name} // {brand}</title>
 <meta name="description" content="{desc}">
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="Misfits Database">
-<meta property="og:title" content="{name} — The Tribe Database">
+<meta property="og:title" content="{name} — {brand}">
 <meta property="og:description" content="{desc}">
 <meta property="og:image" content="{image}">
 <meta property="og:url" content="{ogurl}">
@@ -85,31 +85,54 @@ def main():
     if base and not base.endswith("/"):
         base += "/"
 
-    with open(a.dump, encoding="utf-8") as f:
-        chars = json.load(f)
+    try:
+        with open(a.dump, encoding="utf-8") as f:
+            chars = json.load(f)
+    except FileNotFoundError:
+        sys.exit("roster dump not found: %s — create it with tools/dump-roster.js" % a.dump)
+    if not isinstance(chars, list):
+        sys.exit("roster dump must be a JSON array")
 
     os.makedirs(a.out, exist_ok=True)
     n = 0
     for c in chars:
-        slug = c["slug"]
+        slug = str(c.get("slug") or "")
+        faction = str(c.get("faction") or "")
+        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
+            sys.exit("invalid or missing character slug: %r" % slug)
+        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", faction):
+            sys.exit("invalid or missing faction id for %s" % slug)
         name = relabel(c["name"])
+        brand = relabel(c.get("brand") or c.get("factionName") or faction)
         desc = relabel(c.get("desc") or describe(c))   # prefer the app-built description
-        # human redirect target — relative so it works on any host
-        appurl = (base + "index.html#c=" + slug) if base else ("../index.html#c=" + slug)
+        # Canonical faction route; relative form keeps click-through working on any static host.
+        appurl = (base + "index.html#" + faction + "/roster/" + slug) if base else (
+            "../index.html#" + faction + "/roster/" + slug
+        )
         ogurl  = (base + a.out + "/" + slug + ".html") if base else (slug + ".html")
         # per-character image if the sheet had a real http(s) URL, else the default card
         img = c.get("img") or ""
         if not re.match(r"^https?:", img):
             img = (base + a.image) if base else a.image
+        output_path = os.path.join(a.out, slug + ".html")
+        if os.path.exists(output_path):
+            with open(output_path, encoding="utf-8") as f:
+                existing = f.read()
+            existing_route = re.search(r"#[a-z0-9-]+/roster/[a-z0-9-]+", existing)
+            if existing_route:
+                existing_faction = existing_route.group(0)[1:].split("/", 1)[0]
+                if existing_faction != faction:
+                    sys.exit("stub collision: %s already belongs to faction %s" % (slug, existing_faction))
         page = STUB.format(
             name=html.escape(name),
+            brand=html.escape(brand),
             desc=html.escape(desc),
             image=html.escape(img),
             ogurl=html.escape(ogurl),
             appurl=html.escape(appurl),
             appurl_js=json.dumps(appurl),
         )
-        with open(os.path.join(a.out, slug + ".html"), "w", encoding="utf-8") as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             f.write(page)
         n += 1
 

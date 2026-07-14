@@ -1471,7 +1471,7 @@ function shotsSectionHTML(ch){
 }
 
 function permalink(slug){
-  return location.origin + location.pathname + "#c=" + slug;
+  return location.origin + location.pathname + "#" + currentFaction + "/roster/" + encodeURIComponent(slug);
 }
 
 /* edit form for one character (only columns that exist in the sheet are shown) */
