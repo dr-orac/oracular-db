@@ -76,7 +76,7 @@ banners to jump around:
 - `rendering` — dossier, portrait, cards, roster, search highlight, empty state
 - `Relations view` — `renderRelations` builds a character's relationship web from the roster's
   Relationships field (rail + panel; a per-faction `relations` section, no extra data source)
-- `section nav / doc reader` — `DOCS` tabs that fetch + re-theme Google Docs (`docClean`/`styleTOC`)
+- `section nav / doc reader` — faction-scoped `FACTION_DOCS` tabs that fetch + re-theme Google Docs (`docClean`/`styleTOC`)
 - `WIKI reader` — `loadWiki`/`renderWiki` fetch a MediaWiki page (CORS parse API) and re-skin its
   own layout (hero / callouts / faction card grid / tables) as native components (`#wiki/<Page>`);
   `normaliseWikiImages` keeps + themes any images the page carries
@@ -93,9 +93,10 @@ banners to jump around:
   a foreign sheet under our URL).
 - `CONFIG.webAppUrl` — paste the deployed Apps Script `/exec` URL here to enable
   write-back. Empty = read-only (uploads/edits persist only in the local browser).
-- `DOCS` — array of `{ id, label, docId }`; each adds a top-nav tab that fetches a Google Doc
-  and re-renders it in-theme. Each doc must be shared *Anyone with the link → Viewer*. In the
-  Doc, start a paragraph with `> ` for a pull-quote. (See MAINTENANCE.md → "Doc reader".)
+- `FACTION_DOCS` — faction-keyed arrays of `{ id, label, docId }`; each entry adds a faction tab
+  that fetches a Google Doc and re-renders it in-theme. Each doc must be shared *Anyone with the
+  link → Viewer*. In the Doc, start a paragraph with `> ` for a pull-quote. (See MAINTENANCE.md →
+  "Doc reader".)
 
 ## Regenerating assets
 

@@ -15,7 +15,7 @@
      · rendering                           — dossier, portrait, cards, roster, home
      · Relations view                      — renderRelations: a character's relationship web from roster data
      · hash router                         — #home · #<faction>/<section>[/<target>] (roster·relations·doc) · #wiki/<Page>
-     · section nav / doc reader            — DOCS tabs; fetch + re-theme Google Docs (docClean/styleTOC)
+     · section nav / doc reader            — FACTION_DOCS tabs; fetch + re-theme Google Docs (docClean/styleTOC)
      · WIKI reader                         — loadWiki/normaliseWikiImages/renderWiki: re-skin a MediaWiki page (with images) in-theme
      · photo upload                        — single-photo upload modal + write-back
      · edit mode / icon picker             — write-back UIs (gated by passphrase)
@@ -54,7 +54,7 @@ const CONFIG = {
    uses the classic Fallout font (FACTION_FONT_DEFAULT). Per-faction differences live in the CONTENT
    (data, colour, docs). Users can still pick fonts in Settings (remembered per faction). */
 const FACTIONS = {
-  tribe:       { name:"The Tribe",                   brand:"THE TRIBE DATABASE",      tagline:"// PIP-LINK",     theme:{color:"rust",    bg:"warm"},     data:{sheetId:CONFIG.sheetId, gid:CONFIG.gid}, docs:[] /* set to DOCS below */ },
+  tribe:       { name:"The Tribe",                   brand:"THE TRIBE DATABASE",      tagline:"// PIP-LINK",     theme:{color:"rust",    bg:"warm"},     data:{sheetId:CONFIG.sheetId, gid:CONFIG.gid}, docs:[] /* set from FACTION_DOCS below */ },
   brotherhood: { name:"Brotherhood of Steel",        brand:"BROTHERHOOD OF STEEL",    tagline:"// CODEX-LINK",   theme:{color:"blue",    bg:"cool"},     data:{sheetId:"1hG6V1ddnlr8jZZm8Rg0jJ4360WrH7zUD-TvNqaPkuUg", gid:"735572717"}, docs:[] },
   ncr:         { name:"New California Republic",      brand:"NEW CALIFORNIA REPUBLIC", tagline:"// RANGER-NET",   theme:{color:"gold",    bg:"warm"},     data:{sheetId:"", gid:""}, docs:[] },
   legion:      { name:"Caesar's Legion",             brand:"CAESAR'S LEGION",         tagline:"// TRVE-NET",     theme:{color:"red",     bg:"warm"},     data:{sheetId:"", gid:""}, docs:[] },
@@ -93,7 +93,7 @@ function factionAppearance(id){
   };
 }
 /* Switcher order (top→bottom in the dropdown). Add each new faction id here too.
-   docs: a faction's own doc tabs — [] until linked (the Tribe's are wired below to DOCS).
+   docs: a faction's own doc tabs — [] until linked (configured below in FACTION_DOCS).
    data.sheetId: "" = "not linked yet" → the app shows a themed coming-soon roster. */
 const FACTION_ORDER = ["tribe","brotherhood","ncr","legion","enclave","vault","followers","townsfolk","wastelanders","outlaws","synthetics","supermutants","unity"];
 const DEFAULT_FACTION = "tribe";   // the only faction with data today — new visitors start here
@@ -281,15 +281,19 @@ function wireFactionMenu(){
   });
 }
 
-/* Extra top-nav sections that embed a Google Doc (read-only, in the terminal frame).
-   Each doc must be shared "Anyone with the link -> Viewer" to render in the iframe.
-   To add another: append { id, label, docId } (docId = the long string in the doc URL,
-   .../document/d/<docId>/edit). `label` is what shows on the nav tab. */
-const DOCS = [
-  { id: "lore",     label: "Tribe Lore",     docId: "1N_gne2LAWEJpjp6CfLhtvuHHD8bm97d64V0dHoXnlIE" },
-  { id: "roleplay", label: "Roleplay Guide", docId: "1lQrOZ-UPOR8-FP58l8ZFMvSPOyYDb5BYvvkwg0dR1oU" },
-];
-FACTIONS.tribe.docs = DOCS;   // the Tribe's doc tabs (other factions start with none — link later)
+/* Faction-scoped top-nav sections that embed Google Docs read-only in the terminal frame.
+   Each doc must be shared "Anyone with the link -> Viewer". `id` is unique within its faction and
+   becomes #<faction>/<id>; `label` is the tab text; `docId` is the long string in the Doc URL. */
+const FACTION_DOCS = {
+  tribe: [
+    { id: "lore",     label: "Tribe Lore",     docId: "1N_gne2LAWEJpjp6CfLhtvuHHD8bm97d64V0dHoXnlIE" },
+    { id: "roleplay", label: "Roleplay Guide", docId: "1lQrOZ-UPOR8-FP58l8ZFMvSPOyYDb5BYvvkwg0dR1oU" },
+  ],
+  townsfolk: [
+    { id: "lore", label: "Townsfolk Lore", docId: "1JQAmG2bKNDHSQBtoPoqTypG5Y2zLeH3umJY59JBc3vM" },
+  ],
+};
+Object.entries(FACTION_DOCS).forEach(([factionId, docs])=>{ if(FACTIONS[factionId]) FACTIONS[factionId].docs=docs; });
 
 /* Code-defined entries that aren't rows in the sheet (e.g. visiting characters).
    Each: { name, section, fields:{ usename, honorific, ... image, icon } }. */

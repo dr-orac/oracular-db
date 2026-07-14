@@ -52,10 +52,10 @@ Most additions are one config entry — the app wires the rest.
   header substring; a row with a single filled cell is a section divider). For a
   character that isn't in the sheet (a visitor / NPC), append to `EXTRA_CHARACTERS` in
   `app.js`: `{ name, section, fields:{ usename, honorific, role, species, appearance, … } }`.
-- **A doc tab.** Append to `DOCS` in `app.js`: `{ id, label, docId }` — `docId` is the long
-  string in the Google Doc URL; share the doc *"anyone with the link → Viewer"*. The tab
-  appears automatically. Give it a Fallout glyph by adding an entry to `NAV_ICONS` keyed by
-  the tab `id` (else it gets the default document icon).
+- **A doc tab.** Append `{ id, label, docId }` to that faction's array in `FACTION_DOCS` in `app.js` —
+  `docId` is the long string in the Google Doc URL; share the doc *"anyone with the link → Viewer"*.
+  The tab, Home card, route, heading, and command entry appear automatically. Give it a Fallout glyph by
+  adding an entry to `NAV_ICONS` keyed by the tab `id` (else it gets the default document icon).
 - **Linking a faction.** The `FACTIONS` map in `app.js` already lists the server's factions,
   each with its signature `theme` colour. A faction whose `data.sheetId` is `""` is *not linked
   yet* — the switcher re-skins the app in its colour and shows a "roster not linked yet"

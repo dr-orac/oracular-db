@@ -44,7 +44,7 @@ remote-data path, what was fixed, what was deferred and why. Read it before touc
 |---|---|
 | `CONFIG` | sheet id, gid, defaultSection, webAppUrl |
 | `FACTIONS` | multi-faction config map + `FACTION_ORDER` / `FACTION_ICONS` / `FACTION_WIKI`. `activeFaction()`, `applyFaction()`, `factionAppearance()`, `fkey()`. Only linked factions (non-empty `data.sheetId`) show data; others → a themed "coming soon" |
-| `DOCS` | the tribe's configured Google Doc tabs — other factions start with `docs:[]` (see "Doc reader" below) |
+| `FACTION_DOCS` | faction-keyed Google Doc tabs; each configured array is assigned to its `FACTIONS` entry (see "Doc reader" below) |
 | section registry | `UMBRELLA_SECTIONS` owns global section metadata; `factionSections()` combines universal Roster/Relations with a faction's configured docs. These drive validity, continuity, labels, Home/tabs, headings, and command discovery. |
 | `EXTRA_CHARACTERS` | code-defined dossiers not in the sheet (visitors etc.), each tagged with its `faction` |
 | `FIELDS` / `ID_ORDER` / `BLOCK_ORDER` | the **data contract** (see below) |
@@ -167,7 +167,7 @@ the app — at worst a doc tab looks off and the roster is unaffected.
   shown as a mono caption underneath.
 - **Authoring conventions:** start a paragraph with `> ` for a pull-quote; inline `"…"` is
   auto-emphasised; Title/Subtitle paragraph styles become the masthead. To add a doc: append
-  to `DOCS` and share the doc. Full authoring guidance for non-technical editors (image sizing,
+  to that faction's array in `FACTION_DOCS` and share the doc. Full authoring guidance for non-technical editors (image sizing,
   headings, pull-quotes) is in **[docs/DOC-AUTHORING.md](docs/DOC-AUTHORING.md)**.
 
 ---
