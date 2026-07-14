@@ -95,7 +95,8 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
    axe/Lighthouse, and physical iOS Safari checks external rather than claiming them locally.
 3. **Run a bounded geographic-renderer proof.** After the dataset inventory, test MapLibre for US + Region
    geographic layers, lazy-loaded and self-hosted where practical. Keep Local in its original game-space
-   coordinates and design the transition between systems. The dependency must pass the Phase 4 gate.
+   coordinates and design the transition between systems. The dependency must pass the Phase 4 gate. Keep
+   faction territory out of the base proof; then run T112's claims audit before drawing any overlay polygons.
 4. **Extend Region, then build Local.** Keep the original Wendover schematic and its verified real-world
    anchors. Add reviewed regional routes/landmarks next; build the playable Local schematic only from the
    supplied in-game overview and user-confirmed landmarks.

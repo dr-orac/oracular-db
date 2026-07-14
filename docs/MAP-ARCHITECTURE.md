@@ -76,6 +76,45 @@ The rendered map may simplify an accepted placement, but it must not imply great
 underlying record. The repository self-check validates graph references and coordinate ranges; evidence
 review remains a separate human gate.
 
+## Discovery references
+
+Fan maps are indexes, not placement evidence. Use them to find candidate locations, missing coverage,
+same-game relationships, contradictions, and stronger source leads. A candidate enters `world.json` only
+after it is traced to game material, a direct geographic identity, or an explicitly documented inference
+with conservative uncertainty. Never copy a coordinate or trace geometry merely because several fan maps
+repeat it.
+
+Two useful discovery references illustrate the boundary:
+
+- Golbolco's [Composite Fallout Map](https://www.nma-fallout.com/threads/composite-fallout-map.219487/)
+  combines shipped grids with canceled-game and mod maps. Its author describes using Google Maps, cross-grid
+  comparison, visual alignment, and estimated New Vegas add-on positions. It is useful for relative-position
+  diagnostics, not exact placement.
+- King_Kestrel's [Fallout faction map](https://www.reddit.com/r/ImaginaryFallout/comments/k1m9i1/i_made_this_map_of_the_fallout_world_including/)
+  deliberately mixes canon, non-canon, and original factions. It is useful for territory candidates and
+  visual-design lessons, not canonical borders.
+
+This policy keeps discovery cheap: investigate only a reference that exposes a concrete delta. Do not build
+or retain exhaustive fan-map transcriptions.
+
+## Faction territory overlay
+
+A faction overlay is viable after the geographic renderer proof, but it is a separate optional layer from
+location truth. Point records remain in `world.json`; territory claims will use their own versioned dataset
+and review gate. The first territory work is a claims inventory, not polygon drawing.
+
+The eventual layer must:
+
+- record faction, canon scope, time range, source basis, review status, and uncertainty for every claim;
+- allow contested and overlapping extents instead of forcing every area to one owner;
+- distinguish source-backed control, broad inference, and project-authored territory in both data and style;
+- use labels, border treatment, and patterns as well as colour;
+- generate original, generalised geometry rather than tracing fan artwork;
+- remain independently toggleable on US and Region scopes and stay out of the Local gameplay schematic.
+
+If the claims audit cannot support a meaningful boundary, publish named influence points or broad regions
+instead of fabricating a precise polygon.
+
 ```json
 {
   "version": 1,
@@ -110,12 +149,14 @@ must be confirmed against the supplied in-game reference or user direction befor
 3. **US data migration** — the 23-marker baseline is inventoried in `data/atlas-migration.json`, guarded by
    selfcheck, and fully matched to world records. Placement approval remains open. Promote only defensible
    records, then preserve coverage while replacing hand-positioned pins in bounded game-by-game sets.
-4. **Local base** — original playable-area schematic, using a cleaner in-game overview as spatial reference;
+4. **Faction claims proof** — after the geographic renderer passes, inventory a small source-backed set and
+   test overlapping, uncertain, independently toggleable territories without changing location records.
+5. **Local base** — original playable-area schematic, using a cleaner in-game overview as spatial reference;
    confirm landmark names and categories before publishing them.
-5. **Personal pins** — versioned browser-local store keyed by scope, create/edit/delete, validation, and
+6. **Personal pins** — versioned browser-local store keyed by scope, create/edit/delete, validation, and
    JSON export/import. Keep one storage seam so a shared source can replace it later.
-6. **Navigation** — pan/zoom with mouse, keyboard, and touch support; reduced-motion-safe transitions.
-7. **Shared canon, only when needed** — add a reviewed external source after its ownership and moderation
+7. **Navigation** — pan/zoom with mouse, keyboard, and touch support; reduced-motion-safe transitions.
+8. **Shared canon, only when needed** — add a reviewed external source after its ownership and moderation
    rules are decided. Do not overload the roster sheet as an incidental map database.
 
 Each step must preserve the three-scope URLs, work at narrow widths, and pass the repository self-check.

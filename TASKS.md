@@ -185,6 +185,15 @@ identities; the Fort, Jacobstown, and Black Mountain use broad same-area counter
 fictional Highway 95 corridor hypothesis. The Strip now uses the same evidence shape. Every placement remains
 provisional, `docs/MAP-NEW-VEGAS-REVIEW.md` owns the promotion gate, and no public marker changed.
 
+### T112 · Add a source-aware faction territory seam — P2 [map architecture] — ROADMAP
+
+Treat fan-made maps as discovery indexes only: follow concrete location, relationship, or source leads, and
+do not transcribe their coordinates, borders, or mixed continuities. After the geographic renderer proof,
+inventory a small set of faction control claims before drawing polygons. Keep territory in an independently
+toggleable dataset with canon scope, time, evidence, review status, and uncertainty; support overlap and
+contestation rather than assigning every area to one owner. The data and styling boundary is owned by
+`docs/MAP-ARCHITECTURE.md`.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →
