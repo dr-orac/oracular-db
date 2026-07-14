@@ -781,36 +781,39 @@
   body[data-section="home"]:not([data-frame="border"]) .titlebar-right{
     position:absolute; top:var(--edge); right:var(--edge); margin-left:0; z-index:30; }
   body[data-section="home"]:not([data-frame="border"]) main{ padding:var(--edge); }
-  /* Laid out by HIERARCHY: a TOP row (brand + the umbrella Wiki), then a two-column LOWER split —
+  /* Laid out by HIERARCHY: a TOP row (brand + the umbrella destinations), then a two-column LOWER split —
      faction picker (left) · the picked faction's own sections (right). See renderHome(). */
-  /* ── TOP (stacked, one clean left edge): the brand, then a FULL-WIDTH Wiki bar directly below it so
-        its edges line up with the two columns beneath — nothing hangs in space. ── */
+  /* ── TOP: the brand, then one equal registry-generated row for Wiki · Map · Paperwork. ── */
   .home-brand{ flex:0 0 auto; display:flex; flex-direction:column; gap:clamp(1px,.5vh,3px);
     margin-bottom:clamp(8px,1.3vh,15px); }
   .home-brand-name{ font-family:var(--font-head); font-size:clamp(24px,3.2vw,44px); letter-spacing:1.5px;
     line-height:1; color:var(--fg-bright); text-shadow:var(--glow-strong); }
   .home-brand-tag{ font-family:var(--font-body); font-size:clamp(11px,1vw,13px); letter-spacing:2px;
     text-transform:uppercase; color:var(--fg-dim); }
-  .home-wiki{ flex:0 0 auto; margin-bottom:clamp(12px,1.8vh,22px);
-    display:flex; align-items:center; gap:clamp(12px,1.6vw,22px); text-align:left;
-    padding:clamp(9px,1.5vh,17px) clamp(16px,1.8vw,26px); cursor:pointer; font-family:var(--font-head);
+  .home-umbrella{ flex:0 0 auto; display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:clamp(8px,1vw,14px); margin-bottom:clamp(12px,1.8vh,22px); }
+  .home-umbrella-card{ min-width:0; min-height:clamp(88px,11vh,116px);
+    display:flex; align-items:center; gap:clamp(10px,1.2vw,16px); text-align:left;
+    padding:clamp(10px,1.4vh,15px) clamp(12px,1.3vw,20px); cursor:pointer; font-family:var(--font-head);
     background:var(--bg-panel); border:1px solid var(--fg-faint); color:var(--fg); box-shadow:var(--box-glow);
-    transition:border-color .18s, background .18s, box-shadow .18s, transform .16s; }
-  .home-wiki:hover, .home-wiki:focus-visible{ outline:none; border-color:var(--fg); background:var(--bg-panel-2);
+    transition:border-color .18s, background .18s, box-shadow .18s, transform .16s;
+    animation:hometile .4s cubic-bezier(.2,.8,.3,1) backwards; animation-delay:calc(var(--i,0) * 55ms); }
+  .home-umbrella-card:hover, .home-umbrella-card:focus-visible{ outline:none; border-color:var(--fg); background:var(--bg-panel-2);
     transform:translateY(-2px); box-shadow:0 0 26px -10px rgba(var(--fg-rgb),.5), inset 0 0 0 1px rgba(var(--fg-rgb),.2); }
-  .home-wiki-ico{ flex:0 0 auto; width:clamp(38px,4vw,52px); height:clamp(38px,4vw,52px); display:grid; place-items:center;
+  .home-umbrella-ico{ flex:0 0 auto; width:clamp(38px,4vw,50px); height:clamp(38px,4vw,50px); display:grid; place-items:center;
     border:1px solid var(--fg-faint); background:rgba(var(--fg-rgb),.05); transition:border-color .18s, color .18s; }
-  .home-wiki-ico svg{ width:62%; height:62%; fill:currentColor; }
-  .home-wiki:hover .home-wiki-ico{ border-color:var(--fg); color:var(--fg-bright); }
-  .home-wiki-body{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:3px; }
-  .home-wiki-title{ font-size:clamp(19px,2.4vw,30px); letter-spacing:2px; text-transform:uppercase; line-height:1;
+  .home-umbrella-ico svg{ width:62%; height:62%; fill:currentColor; }
+  .home-umbrella-card:hover .home-umbrella-ico{ border-color:var(--fg); color:var(--fg-bright); }
+  .home-umbrella-body{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .home-umbrella-title{ font-size:clamp(17px,1.8vw,24px); letter-spacing:1.5px; text-transform:uppercase; line-height:1.3;
     color:var(--fg-bright); text-shadow:var(--glow); }
-  .home-wiki-desc{ font-family:var(--font-body); font-size:clamp(12px,1.2vw,15px); color:var(--fg-dim);
-    letter-spacing:.3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .home-wiki-cta{ flex:0 0 auto; display:inline-flex; align-items:center; gap:7px; font-size:clamp(11px,1.1vw,14px);
-    letter-spacing:2px; text-transform:uppercase; color:var(--fg-bright); opacity:.7; }
-  .home-wiki-cta svg{ width:16px; height:16px; fill:currentColor; transition:transform .2s; }
-  .home-wiki:hover .home-wiki-cta{ opacity:1; }  .home-wiki:hover .home-wiki-cta svg{ transform:translateX(4px); }
+  .home-umbrella-desc{ font-family:var(--font-body); font-size:clamp(12px,1vw,14px); color:var(--fg-dim);
+    letter-spacing:.3px; line-height:1.35; overflow-wrap:anywhere; }
+  .home-umbrella-cta{ flex:0 0 auto; display:inline-flex; align-items:center; gap:5px; font-size:clamp(10px,.8vw,12px);
+    letter-spacing:1.5px; text-transform:uppercase; color:var(--fg-bright); opacity:.65; }
+  .home-umbrella-cta svg{ width:15px; height:15px; fill:currentColor; transition:transform .2s; }
+  .home-umbrella-card:hover .home-umbrella-cta{ opacity:1; }
+  .home-umbrella-card:hover .home-umbrella-cta svg{ transform:translateX(3px); }
 
   /* ── LOWER: two columns — faction picker (left) · the picked faction's sections (right) ── */
   .home-cols{ flex:0 1 auto; min-height:0; display:grid; gap:clamp(12px,1.6vw,22px); align-items:start;
@@ -879,6 +882,8 @@
 
   /* SHORT viewports: one-line blurbs + slightly smaller headings so the whole landing fits, no scroll */
   @media (max-height:820px){
+    .home-umbrella-card{ min-height:76px; padding-block:8px; }
+    .home-umbrella-desc{ font-size:12px; }
     .home-sec-desc{ -webkit-line-clamp:1; }
     .home-brand-name{ font-size:clamp(20px,2.6vw,32px); }
     .home-sec-title{ font-size:clamp(17px,2vw,24px); }
@@ -892,6 +897,8 @@
      shrunk grid track could otherwise collapse the rows into each other. The whole home scrolls
      here (it can't fit a phone), so the columns take their natural height. */
   @media (max-width:720px){
+    .home-umbrella{ grid-template-columns:1fr; }
+    .home-umbrella-card{ min-height:72px; }
     .home-cols{ display:flex; flex-direction:column; gap:clamp(16px,3vh,26px); flex:0 0 auto; }
     /* stacked → the icon tiles flow full-width; keep them compact but tall enough for icon-over-name */
     .home-fac{ min-height:clamp(72px,9vh,88px); }
@@ -902,8 +909,8 @@
     .home-sec-desc{ -webkit-line-clamp:1; }
   }
   @media (prefers-reduced-motion:reduce){
-    .home-sec{ animation:none; }
-    .home-wiki:hover, .home-sec:hover, .home-fac:hover{ transform:none; }
+    .home-sec, .home-umbrella-card{ animation:none; }
+    .home-umbrella-card:hover, .home-sec:hover, .home-fac:hover{ transform:none; }
   }
 
   /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */
@@ -1417,8 +1424,10 @@
   body[data-section="relations"] .commandbar{ display:none; }
 
   /* ===================== T86 · MAP (increment 1: US reference atlas) ===================== */
-  .map-view{ display:flex; flex-direction:column; min-height:0; padding-top:clamp(6px,1.4vh,16px); }
-  .map-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:14px 20px; flex-wrap:wrap; padding:0 var(--sp-2) var(--sp-3); }
+  .map-view{ display:flex; flex-direction:column; height:100%; min-height:0; overflow:hidden;
+    padding-top:clamp(6px,1.4vh,16px); }
+  .map-head{ flex:0 0 auto; display:flex; justify-content:space-between; align-items:flex-end;
+    gap:14px 20px; flex-wrap:wrap; padding:0 var(--sp-2) var(--sp-3); }
   .map-modes{ flex:0 0 auto; }   /* reuses the .seg pill (List/Cards) look */
   .seg.map-modes button{ min-width:0; padding:9px clamp(10px,4.4vw,24px); white-space:nowrap; }
   .seg.map-modes::before{ width:calc(33.333% - 3px); }
@@ -1427,11 +1436,13 @@
   .map-title{ margin:0; font-family:var(--font-head); font-size:clamp(20px,3vw,30px); letter-spacing:2px;
     text-transform:uppercase; color:var(--fg-bright); text-shadow:var(--glow); }
   .map-sub{ margin:5px 0 0; color:var(--fg-dim); font-size:13px; letter-spacing:.4px; }
+  .map-panel{ flex:1 1 auto; min-height:0; }
   .map-body{ display:grid; grid-template-columns:minmax(0,1fr) clamp(220px,27%,300px);
-    gap:clamp(12px,2vw,24px); align-items:start; padding:0 var(--sp-2) var(--sp-4); }
-  .map-stage{ position:relative; padding:10px; border:1px solid var(--fg-faint);
+    gap:clamp(12px,2vw,24px); align-items:stretch; min-height:0; padding:0 var(--sp-2) var(--sp-4); }
+  .map-stage{ position:relative; min-width:0; min-height:0; overflow:hidden; display:flex;
+    align-items:center; justify-content:center; padding:10px; border:1px solid var(--fg-faint);
     background:var(--bg-panel); box-shadow:var(--box-glow); }
-  .map-svg{ display:block; width:100%; height:auto; }
+  .map-svg{ display:block; width:100%; height:100%; max-width:100%; max-height:100%; }
   .map-states path{ fill:var(--bg-panel-2); stroke:var(--fg); stroke-width:.8; stroke-linejoin:round;
     opacity:.5; transition:opacity .2s; }
   .map-stage:hover .map-states path{ opacity:.62; }
@@ -1474,10 +1485,11 @@
   .map-home:hover .map-home-dot, .map-home:focus-visible .map-home-dot{ r:6; }
   .map-home:focus{ outline:none; }
   /* sidebar: legend + detail */
-  .map-side{ position:sticky; top:8px; display:flex; flex-direction:column; gap:14px; }
+  .map-side{ min-height:0; overflow:hidden; display:flex; flex-direction:column; gap:14px; }
   .map-legend, .map-detail{ border:1px solid var(--fg-faint); background:var(--bg-panel);
     box-shadow:var(--box-glow); padding:12px 15px; }
-  .map-legend{ display:flex; flex-direction:column; gap:9px; }
+  .map-legend{ flex:0 0 auto; display:flex; flex-direction:column; gap:9px; }
+  .map-detail{ flex:1 1 auto; min-height:0; overflow:auto; }
   .map-legend-title{ font-family:var(--font-head); font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--fg-dim); }
   .map-legend-item{ display:flex; align-items:center; gap:9px; font-size:13px; color:var(--fg); }
   .map-legend-note{ color:var(--fg-dim); font-size:12px; line-height:1.45; }
@@ -1496,14 +1508,24 @@
   /* Regional and local panels deliberately remain separate from the US atlas: each will own a
      different original schematic and landmark dataset, while sharing this stable selector shell. */
   .map-reference{ margin:0 var(--sp-2) var(--sp-4); border:1px solid var(--fg-faint); background:var(--bg-panel);
-    box-shadow:var(--box-glow); min-height:clamp(240px,38vh,420px); display:flex; align-items:center; justify-content:center; padding:24px; }
+    box-shadow:var(--box-glow); overflow:auto; display:flex; align-items:center; justify-content:center; padding:24px; }
   .map-reference-inner{ max-width:500px; text-align:center; }
   .map-reference-kicker{ color:var(--fg-dim); font-size:12px; letter-spacing:2px; text-transform:uppercase; }
   .map-reference-title{ margin-top:5px; font-family:var(--font-head); font-size:clamp(16px,2.4vw,22px); letter-spacing:2px; text-transform:uppercase; color:var(--fg-bright); text-shadow:var(--glow); }
   .map-reference-msg{ margin:12px 0 0; color:var(--fg-dim); font-size:14px; line-height:1.6; }
   @media (max-width:760px){
-    .map-body{ grid-template-columns:1fr; }
-    .map-side{ position:static; }
+    /* Stacked maps need natural height: the map view becomes the vertical scroll owner while the app
+       chrome stays fixed. Width-only SVG sizing is safe here because the stage is no longer height-bound. */
+    .map-view{ overflow-x:hidden; overflow-y:auto; }
+    .map-modes{ width:100%; margin-left:0; }
+    .seg.map-modes button{ padding-inline:8px; }
+    .map-panel{ flex:0 0 auto; min-height:auto; }
+    .map-body{ grid-template-columns:1fr; align-items:start; }
+    .map-stage{ display:block; overflow:visible; }
+    .map-svg{ width:100%; height:auto; max-height:none; }
+    .map-side{ min-height:auto; overflow:visible; }
+    .map-detail{ min-height:auto; overflow:visible; }
+    .map-reference{ min-height:clamp(240px,38vh,420px); }
   }
 
   .toolbar{

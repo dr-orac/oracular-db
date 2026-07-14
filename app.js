@@ -2303,12 +2303,14 @@ const HOME_INFO = {
   lore:     "The world, beliefs, and history — customs and how things work.",
   roleplay: "How to play the faction well — voice, conflict, and etiquette.",
   wiki:     "The Misfits wiki — factions, gameplay, crafting, survival and more.",
+  map:      "Explore the wasteland from the US atlas down to Wendover's local game space.",
+  paperwork:"Open practical in-world forms ready to fill, copy, and use in play.",
   _default: "An in-world document, rendered on the terminal.",
 };
 /* the home landing page: a full-height tile per section (icon + title + explainer). */
 const HOME_ARROW = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 9h9.2l-3.7-3.7L11 4l6 6-6 6-1.5-1.3L13.2 11H4z"/></svg>`;
 /* The landing, laid out by HIERARCHY (not a flat list):
-   · TOP — the umbrella brand + the WIKI (spans all factions, so it sits above the faction stuff).
+   · TOP — the umbrella brand + every global section (Wiki · Map · Paperwork).
    · LOWER-LEFT — the faction picker.
    · LOWER-RIGHT — the SELECTED faction's own sections (Roster · Relations · its docs), updating live as
      you pick a faction on the left. A two-column master–detail: choose a faction, see what it offers. */
@@ -2317,16 +2319,18 @@ function renderHome(){
   const f = activeFaction();
   const single = FACTION_ORDER.length < 2;
 
-  // TOP (stacked, all left-aligned to the same edge): the brand wordmark, then a FULL-WIDTH Wiki bar
-  // directly below it so its edges line up with the two columns underneath — nothing hangs in space.
+  // TOP: generate every global destination except Home from the same registry used by routing and row 1.
+  // This keeps Home discovery in lockstep when another umbrella surface is added later.
+  const umbrellaCards = UMBRELLA_SECTIONS.filter(s=>s.id!=="home").map((s,i)=>
+    `<button class="home-umbrella-card" type="button" data-section="${escAttr(s.id)}" aria-label="Open ${escAttr(s.label)}" style="--i:${i}">`+
+      `<span class="home-umbrella-ico">${NAV_ICONS[s.id]||NAV_ICONS._default}</span>`+
+      `<span class="home-umbrella-body"><span class="home-umbrella-title">${esc(s.label)}</span>`+
+        `<span class="home-umbrella-desc">${esc(HOME_INFO[s.id]||HOME_INFO._default)}</span></span>`+
+      `<span class="home-umbrella-cta" aria-hidden="true">Open ${HOME_ARROW}</span>`+
+    `</button>`).join("");
   const top = `<div class="home-brand"><span class="home-brand-name">Misfits Database</span>`+
       `<span class="home-brand-tag">Multi-faction archive</span></div>`+
-    `<button class="home-wiki" type="button" data-section="wiki" aria-label="Open the wiki">`+
-      `<span class="home-wiki-ico">${NAV_ICONS.wiki}</span>`+
-      `<span class="home-wiki-body"><span class="home-wiki-title">Wiki</span>`+
-        `<span class="home-wiki-desc">${esc(HOME_INFO.wiki)}</span></span>`+
-      `<span class="home-wiki-cta" aria-hidden="true">Open ${HOME_ARROW}</span>`+
-    `</button>`;
+    `<nav class="home-umbrella" aria-label="Global sections">${umbrellaCards}</nav>`;
 
   // LOWER-LEFT: the faction picker (omitted when there's only one faction)
   const left = single ? "" :
@@ -2341,7 +2345,7 @@ function renderHome(){
       `</div>`+
     `</section>`;
 
-  // LOWER-RIGHT: the selected faction's sections (Roster · Relations · its docs — NOT Wiki; that's on top)
+  // LOWER-RIGHT: the selected faction's sections (Roster · Relations · its docs; global sections are above).
   const sections = factionSections();
   const secCards = sections.map((s,i)=>
     `<button class="home-sec" type="button" data-section="${escAttr(s.id)}" style="--i:${i}">`+
@@ -3689,11 +3693,11 @@ $("#primary-nav").addEventListener("click", e=>{
   if(modes) modes.addEventListener("click", e=>{ const b=e.target.closest("[data-mapscope]"); if(b) setMapScope(b.dataset.mapscope); });
 })();
 /* home landing: a faction cell (left) SELECTS the faction — re-skins + re-renders home so the right
-   column shows that faction's sections, without leaving home. A section card (right) or the Wiki (top)
-   navigates into that section. */
+   column shows that faction's sections, without leaving home. Faction and umbrella cards navigate
+   through the same section router. */
 $("#home").addEventListener("click", e=>{
   const fac=e.target.closest(".home-fac"); if(fac){ applyFaction(fac.dataset.faction); return; }
-  const sec=e.target.closest(".home-sec, .home-wiki"); if(sec) setSection(sec.dataset.section);
+  const sec=e.target.closest(".home-sec, .home-umbrella-card"); if(sec) setSection(sec.dataset.section);
 });
 /* prefetch a doc the moment its tab is hovered or focused (just-in-time cache warming) */
 ["pointerover","focusin"].forEach(ev => $("#topnav").addEventListener(ev, e=>{

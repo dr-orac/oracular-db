@@ -78,6 +78,8 @@ retry, error, and recovery controls never drift from the actual request state.
 ### Section ownership (keep one source of truth)
 
 - Global, faction-agnostic identity lives in `UMBRELLA_SECTIONS`.
+- Home generates its global Wiki/Map/Paperwork cards by filtering `UMBRELLA_SECTIONS` only; do not restore a
+  hardcoded Home destination list. `HOME_INFO` owns the optional concise card description.
 - Faction navigation comes from `factionSections(f)`: Roster + Relations + `f.docs`.
 - Availability checks use `sectionAvailable()`; labels use `umbrellaSection()` or `factionSection()`.
 - `setSection()` remains an explicit renderer/visibility dispatcher. The metadata registry must not become a
@@ -88,6 +90,16 @@ retry, error, and recovery controls never drift from the actual request state.
 - To add a faction document, add it to that faction's `docs` configuration. Tabs, Home cards, validation,
   headings, and command discovery derive from that entry. Use a distinct id unless same-id documents are
   intentionally equivalent destinations across factions.
+
+### Map viewport ownership
+
+- `main` owns the available application height; `.map-view` fills it and keeps the heading intrinsic.
+- Above the stacked breakpoint, the active `.map-panel` takes the remaining height. `.map-stage` and
+  `.map-side` both require `min-height:0`; the SVG is constrained by width and height, and `.map-detail` is
+  the sidebar's scroll owner. Do not return the atlas to width-only `height:auto` sizing on desktop.
+- At ≤760px the map itself becomes the vertical scroll owner. Panels return to natural height, the stage and
+  sidebar stack, and the SVG returns to width-led sizing so every map and detail remains reachable while the
+  application chrome stays fixed.
 
 ---
 

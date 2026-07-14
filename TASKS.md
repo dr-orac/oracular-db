@@ -200,7 +200,7 @@ with scenario, canon scope, time, evidence, review status, and uncertainty; supp
 rather than assigning every area to one owner. The data and styling boundary is owned by
 `docs/MAP-ARCHITECTURE.md`.
 
-### T113 · Complete Home discovery and map viewport containment — P1 [navigation + responsive] — ROADMAP
+### T113 · Complete Home discovery and map viewport containment — P1 [navigation + responsive] — IMPLEMENTED 2026-07-14
 
 Expose Wiki, Map, and Paperwork together in the Home landing's umbrella row. Generate those cards from
 `UMBRELLA_SECTIONS` excluding Home rather than adding a second hardcoded section list; add concise Map and
@@ -217,6 +217,19 @@ page flow so map and details remain reachable without horizontal overflow.
 Acceptance: no overlap with the status or lower chrome, no clipped panel padding, and no document overflow at
 1440×900, 1366×768, 1280×800, 1024×768, 390×844, 375×667, or 320×700. Verify US, Region, and Local routes,
 both default and chassis frames at a representative laptop size, keyboard focus order, and reduced motion.
+
+Home now derives its equal Wiki, Map, and Paperwork cards from `UMBRELLA_SECTIONS`; concise `HOME_INFO`
+descriptions and the shared icons render without clipping, and all three clicks enter the existing canonical
+routes. The Map view now owns the bounded height inside `main`: its heading is intrinsic, its active panel
+absorbs the remainder, the stage and sidebar can shrink, SVGs meet both width and height without changing
+their viewBox ratio, and detail content scrolls inside the sidebar. At ≤760px the view deliberately switches
+to natural stacked panel height with its own vertical scroll and no horizontal overflow.
+
+The full viewport matrix passed with zero document/map horizontal overflow and no contact with the status
+bar. Desktop map panels had zero vertical overflow; phone US/Region/Local panels remained fully represented
+inside their map scroll range. US, Region, and Local routes agreed with their selected tab/title; all three
+passed at 1366×768 in Screen and Chassis frames. Home and map focusables remain in visual/source order, the
+three Home click paths passed, and Reduce Motion removed the map pulse animation without changing geometry.
 
 ### T114 · Prove an original terrain underlay — P1 [map renderer + visual system] — ROADMAP
 

@@ -97,29 +97,26 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
    - classify placement basis, review status, and uncertainty separately from location identity;
    - promote defensible direct identities, then change `data_status` only when every published marker passes;
    - migrate one game-sized set at a time behind the existing `renderMap()`/`showMapDetail()` UI.
-2. **Complete Home discovery and map viewport containment (T113).** Generate equal Wiki, Map, and Paperwork
-   Home cards from the umbrella registry, then make the active map panel fit the bounded `main` height at
-   laptop sizes without overlapping lower chrome. Preserve natural stacked flow on phones and verify the
-   viewport matrix recorded in `TASKS.md` before beginning the geographic-renderer proof.
-3. **Continue the product audit alongside map data work.** Take the next bounded pass through settings and
+2. **Continue the product audit alongside map data work.** Take the next bounded pass through settings and
    modal focus/close/restore behavior, then the remaining cross-surface states. Keep UX-001's VoiceOver,
    axe/Lighthouse, and physical iOS Safari checks external rather than claiming them locally.
-4. **Run the bounded terrain and geographic-renderer proof (T114).** After T113 and the dataset inventory,
+3. **Run the bounded terrain and geographic-renderer proof (T114).** After the completed T113 containment work
+   and the dataset inventory,
    test MapLibre for an original, two-dimensional US + Region underlay. Separate licensed elevation and
    hydrography from toggleable, evidence-aware post-war condition masks; keep locations and labels above the
    terrain. Lazy-load and self-host the renderer and selected assets where practical, require no client token
    or paid tile service, measure transfer and failure behavior, and preserve the SVG atlas as fallback. Keep
    Local in its original game-space coordinates. The dependency must pass the Phase 4 gate. Keep faction
    territory out of the base proof; then run T112's claims audit before drawing any overlay polygons.
-5. **Audit the map editor, then prove the Local export (T116).** The ignored 40 MB YAML is source material,
+4. **Audit the map editor, then prove the Local export (T116).** The ignored 40 MB YAML is source material,
    never a browser payload. Once the separate editor repository is available, inspect its parser, renderer,
    licences, coordinate conventions, and export seams before duplicating anything here. Generate original
    cartography plus a compact native-grid manifest; start with a labelled raster baseline and adopt tiles or
    canvas only after measurements justify them. This audit may happen before T114, but geographic Region and
    game-grid Local remain separate renderer decisions.
-6. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
+5. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
    Sheet/wiki like the rest of the roster (forks the data model — pick one and note it).
-7. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
+6. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
    full step-by-step (pandoc / VisualEditor paste, hub + two-card page shape) is in `docs/WIKI-INTEGRATION.md`.
    When those pages exist, flip the tribe's Lore/Roleplay tabs from the Google-Doc source to the wiki pages.
 
@@ -138,3 +135,5 @@ provenance for the vendored CRT package and Fallouty font, classified parked ref
 per-character share pages to retain faction identity, and closed the remaining in-repository accessibility
 semantics audit. Generated share pages now have a selfcheck-enforced canonical route and collision-safe
 regeneration path.
+T113 then made Home expose Wiki, Map, and Paperwork as one registry-derived row and gave the three map scales
+a bounded desktop viewport plus reachable natural phone flow, clearing the containment gate for T114.
