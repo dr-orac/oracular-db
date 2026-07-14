@@ -3895,16 +3895,24 @@ let _rosterRequest=0, _rosterController=null;
 function cancelRosterLoad(){
   _rosterRequest++;
   if(_rosterController){ _rosterController.abort(); _rosterController=null; }
+  document.body.classList.remove("roster-loading");
   const main=document.querySelector("main"); if(main) main.setAttribute("aria-busy","false");
 }
 async function load(isRefresh){
   cancelRosterLoad();
   const request=_rosterRequest, faction=currentFaction, sheet=effectiveSheetId(), url=sheetUrl();
+  // A refresh may preserve only data owned by this exact sheet. A model left in memory from a
+  // different faction is useful if the user goes back, but it is not a valid fallback for this load.
+  const preserveLastGood=!!(isRefresh && state.model && state.loadedSheet===sheet);
   const isCurrent=()=>request===_rosterRequest && faction===currentFaction && sheet===effectiveSheetId();
   const ctrl=new AbortController(); _rosterController=ctrl;
   document.body.classList.remove("coming-soon");
   const _main=document.querySelector("main"); if(_main) _main.setAttribute("aria-busy","true");   // a11y: fetching
-  if(!isRefresh) showState("ACCESSING PIP-LINK", "Establishing read-only link to the archive…");
+  if(!preserveLastGood){
+    document.body.classList.add("roster-loading");
+    showState(isRefresh?"RETRYING PIP-LINK":"ACCESSING PIP-LINK",
+      isRefresh?"Re-establishing the read-only archive link…":"Establishing read-only link to the archive…");
+  }
   setLink(isRefresh?"RE-SYNCING…":"CONNECTING…");
   try{
     const res=await fetch(url, {cache:"no-store", signal:ctrl.signal});
@@ -3920,6 +3928,7 @@ async function load(isRefresh){
     buildConnections(model);               // mentions / mentioned-by graph data
     renderListControls(model);             // roster filter + sort controls
     if(state.selected>=model.characters.length) state.selected=0;
+    document.body.classList.remove("load-error");
     setLink("ONLINE");
     render();
     if(!isRefresh) openPendingChar();     // honour a deep-linked character on first load
@@ -3928,12 +3937,13 @@ async function load(isRefresh){
     setLink("OFFLINE", true);
     // a failed REFRESH keeps the last good roster on screen (don't blank working data
     // over a transient network error) — the full error state is for first load only
-    if(isRefresh && state.model){ toast("Refresh failed ("+err.message+") — showing the last good data."); return; }
+    if(preserveLastGood){ toast("Refresh failed ("+err.message+") — showing the last good data."); return; }
     showState("", `Could not read the sheet (<code>${esc(err.message)}</code>).<br><br>
       Make sure the Google Sheet is shared <b>“Anyone with the link → Viewer”</b>.
       Then hit <b>⟳ Refresh</b>. Nothing is ever written back to the sheet.`, true);
   }finally{
     if(isCurrent()){
+      document.body.classList.remove("roster-loading");
       if(_main) _main.setAttribute("aria-busy","false");
       if(_rosterController===ctrl) _rosterController=null;
     }

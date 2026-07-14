@@ -120,6 +120,19 @@ fresh Roster route with no model or in-flight request. The latter enters `setSec
 Tribe base and Stacey Webb character routes load and restore correctly; a fresh remembered-NCR route retains
 its truthful unavailable state.
 
+### T107 · Contain the phone dossier and make roster recovery truthful — P1 [responsive + resilience] — IMPLEMENTED 2026-07-14
+
+Start with `docs/UI-UX-AUDIT.md` finding UX-006. Compact the phone command zone without removing actions;
+keep both roster grid tracks inside `main` on short phones; hide inert search/layout controls before a model
+exists; and make a failed-load retry visibly re-enter loading. A refresh may retain last-good data only when
+`state.loadedSheet` owns the exact sheet being refreshed.
+
+At 390×844 the command zone now occupies two rows (124px rather than 198px), while the dossier viewport grows
+from 129px to 219px. At 375×667 and 320×700, the roster tracks and short-screen dossier padding stay inside
+their owner with zero overlap or document overflow. Initial loading hides the inactive toolbar; an error
+shows only Refresh in a 383px state region; retry returns to a loader; successful refresh keeps the current
+dossier visible. The wide 1440px hierarchy and dimensions remain unchanged.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →

@@ -358,6 +358,34 @@ already owns loading, from a same-faction fresh Roster route with no model or in
 latter re-enters `setSection()`. Fresh remembered-Tribe base and Stacey Webb character routes leave the
 loader and restore selection/ARIA/URL correctly; a fresh remembered-NCR route retains the unavailable state.
 
+### UX-006 · P1 · responsive hierarchy and resilience · phone dossier and roster loading
+
+**Observation:** at 390×844 the bottom roster toolbar wraps Search, List/Cards, and Refresh into three rows,
+occupying 198px while the dossier receives only 129px. At 375×667, the mobile roster's 120px minimum rail plus
+the dossier's 78px minimum padding exceeds its owner and runs 33px beneath the command bar. First-load and
+error states also present search/layout controls that cannot act without a model; retry leaves the old error
+message visible while fetching. Refresh fallback tests only whether any model exists, not whether that model
+belongs to the sheet being refreshed.
+
+**User/maintenance impact:** the primary record reads through a narrow slit, common short phones contain
+overlapping scroll owners, failure feedback does not describe the current work, and cached data from another
+faction is structurally eligible to be treated as current last-good data.
+
+**Recommended direction:** make the phone toolbar exactly two compact rows, give the roster two bounded grid
+tracks, reduce trailing dossier breathing only on short phones, and expose only controls valid for each load
+state. Derive refresh preservation from the current sheet owner rather than model truthiness.
+
+**Acceptance check:** no document overflow or command-bar overlap at 1440×900, 390×844, 375×667, or 320×700;
+the 390px dossier gains useful height; initial load is announced and shows no inert toolbar; error exposes a
+working Refresh action; retry visibly loads; refresh with current data keeps the dossier; stale-faction data
+cannot qualify as the fallback.
+
+**Status:** implemented 2026-07-14. The 390px command bar is 124px and dossier 219px (formerly 198px/129px).
+The 375px and 320px layouts have zero owner overlap and zero horizontal overflow. Loading hides the roster
+toolbar; error retains only Refresh and expands its state region to 383px; retry uses a distinct loading
+message. `preserveLastGood` requires `state.loadedSheet===sheet`, and a live refresh kept Stacey Webb visible
+and the route stable while `aria-busy` changed true→false. The 1440px dossier remains unchanged.
+
 ## Audit runs
 
 Add one row per representative pass. Link finding IDs in Notes rather than duplicating their contents.
@@ -376,3 +404,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | E | 2026-07-14 | fresh direct route, remembered Tribe faction | Roster boot and character link | Finding | UX-005: route equals the internal default, so no section lifecycle or sheet load starts; Roster tab activation recovers |
 | E | 2026-07-14 | fresh direct routes, remembered matching faction | Tribe Roster/base + Stacey Webb; NCR unavailable Roster | Pass | UX-005 fixed: linked routes enter one lifecycle and restore the target; unlinked route remains truthful |
 | A/E | 2026-07-14 | 1440px, direct route + keyboard | Relations valid/invalid target and Home selection | Pass | UX-004 fixed: invalid slug repairs to base route; valid Stacey Webb and keyboard Big Brom routes retain full selection agreement |
+| A/C/E | 2026-07-14 | 1440×900, 390×844, 375×667, 320×700; valid + invalid sheet | Dossier hierarchy, phone containment, initial load, link error, retry, live refresh | Pass | UX-006 fixed: 70% more 390px dossier height; no narrow overlap/overflow; load/error controls and exact-sheet refresh ownership agree |

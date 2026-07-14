@@ -1524,6 +1524,12 @@
   .toolbar{
     margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; min-height:52px;
   }
+  /* Search and layout controls cannot act until a roster exists. Keep first-load chrome quiet;
+     after a link error, retain only the recovery action instead of presenting inert controls. */
+  body.roster-loading .toolbar{ display:none; }
+  body.load-error .toolbar{ justify-content:center; margin-top:0; }
+  body.load-error .toolbar .search,
+  body.load-error .toolbar .seg{ display:none; }
   .search{
     flex:0 0 calc(var(--rail) - var(--sp-2)); min-width:160px; display:flex; align-items:center; gap:8px;   /* sits over the rail: right edge meets the divider */
     background:var(--bg-panel); border:1px solid var(--fg-faint);
@@ -2185,7 +2191,14 @@
     .navico{ width:17px; height:17px; }
     /* shrink the cog + faction box on small screens so the tabs keep their width */
     .cogbtn{ width:40px; height:40px; } .cogbtn .cog-ico{ width:24px; height:24px; }
-    .search{ flex:1 1 auto; }   /* rail is full-width on mobile → let the search fill too */
+    /* Keep the bottom command zone to two compact rows. Previously the pill's desktop padding
+       forced List/Cards and Refresh onto separate rows, leaving only 129px of a 390×844 screen
+       for the dossier. */
+    .toolbar{ margin-top:0; gap:8px; row-gap:8px; min-height:0; }
+    .toolbar .search{ flex:1 1 100%; }   /* rail is full-width on mobile → let search own row one */
+    .toolbar .seg{ flex:1 1 0; margin-left:0; min-width:0; }
+    .toolbar .seg button{ min-width:0; padding:7px 12px; }
+    .toolbar #refresh{ flex:0 0 auto; min-height:44px; padding-inline:10px; }
     .docview{ padding:0; }
     .docbar{ padding:0; }   /* docbar lives in the header now — it inherits the header's mobile inset, like .search */
     .docfind-wrap{ flex:1 1 auto; }   /* no TOC on mobile → let find fill, like the roster search */
@@ -2196,8 +2209,12 @@
     .docreader table{ min-width:460px; }   /* scroll horizontally in its wrapper, not cram */
     .doctitle{ font-size:19px; }
     .doclink{ font-size:15px; }
-    .roster{ grid-template-columns:1fr; grid-template-rows:minmax(120px,38%) 1fr; }
+    /* Both tracks must fit inside main. The former 120px minimum plus an auto-sized dossier
+       exceeded short phone viewports and let dossier content run underneath the command bar. */
+    .roster{ grid-template-columns:1fr; grid-template-rows:minmax(96px,32%) minmax(0,1fr); }
     .listcol{ border-right:0; border-bottom:1px solid var(--fg-faint); }
+    .listctl{ padding-top:6px; padding-bottom:6px; }
+    .listctl .selctl-btn{ font-size:15px; padding:7px 8px; }
     /* Relations: stack the character rail above the panel (like the roster list) */
     .rel-body{ flex-direction:column; }
     .rel-rail{ flex:0 0 40%; min-height:120px; border-right:0; border-bottom:1px solid var(--fg-faint);
@@ -2238,6 +2255,11 @@
     .doss-head{ padding:14px 0; }
     .doss-head::before{ inset:-8px -12px; }   /* keep the glow within the 16px mobile gutter (no h-scroll) */
     .idgrid{ margin-top:16px; padding-top:14px; }
+  }
+  /* The dossier's ordinary 60px scroll-end breathing is taller than its whole grid track on a
+     short phone. Reduce only that trailing padding so the panel cannot protrude into the controls. */
+  @media (max-width:760px) and (max-height:740px){
+    .dossier{ padding-bottom:20px; }
   }
   .hidden{ display:none !important; }
 

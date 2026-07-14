@@ -70,6 +70,12 @@ layout-specific filter path. Search relevance owns ordering while a query is act
 `sortChars()`, and List applies the same sort within its section groups. Filter/sort handlers call `render()`
 so the currently active List/Cards layout is the one refreshed.
 
+Roster requests are owned by request id, faction, and effective sheet. `cancelRosterLoad()` invalidates and
+aborts the previous owner. A refresh preserves visible data only when `state.loadedSheet` equals the exact
+sheet being refreshed; a model retained from another faction is not a fallback. Keep `roster-loading` and
+`load-error` lifecycle classes paired with `showState()`/the current request's `finally` block so loading,
+retry, error, and recovery controls never drift from the actual request state.
+
 ### Section ownership (keep one source of truth)
 
 - Global, faction-agnostic identity lives in `UMBRELLA_SECTIONS`.
