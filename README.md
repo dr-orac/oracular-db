@@ -6,23 +6,26 @@
 A Fallout-style ("Pip-Boy" terminal) web viewer for SS14 RP factions. The **Misfits Database**
 is the umbrella: it hosts the factions from the Misfits wiki's own faction listing (the Tribe,
 Brotherhood of Steel, NCR, Caesar's Legion, the Enclave, and more), each a config *skin* with its
-own brand, colour, fonts, sheet and docs — a masthead selector switches between them. Each faction
-reads a Google Sheet **live and read-only** and renders each character as a CRT dossier, with
+own brand, colour, roster source and docs — a masthead selector switches between them. Linked factions
+read a Google Sheet **live and read-only** and render each character as a CRT dossier, with
 optional write-back (uploads / edits) via a Google Apps Script. Beyond rosters it also renders
 **Google Docs lore** and the **Misfits wiki** itself in the terminal theme (a `#wiki/<Page>`
-reader that re-skins the wiki's own layout). (The source folder is still named `Yuma Tribe Roster`
-for history.)
+reader that re-skins the wiki's own layout).
 
-No framework, no build step — three static files plus assets.
+No framework or build step: the browser runs the static HTML, CSS, and JavaScript directly. Runtime code,
+fonts, and other assets are self-hosted in this repository.
 
 **Live:** https://dr-orac.github.io/oracular-db/ (GitHub Pages, repo `dr-orac/oracular-db`,
 deploys automatically on push to `main`).
 
-> **New here? Read in this order:** this README → the newest `docs/HANDOFF-*.md` (current state +
-> the sandbox gotchas) → `MAINTENANCE.md` (internals + invariants) → `CONTRIBUTING.md` (house rules).
+> **New here? Read in this order:** this README → [`docs/HANDOFF-NEXT.md`](docs/HANDOFF-NEXT.md) (current
+> state and operational gotchas) → [`MAINTENANCE.md`](MAINTENANCE.md) (internals and invariants) →
+> [`CONTRIBUTING.md`](CONTRIBUTING.md) (house rules). [`docs/README.md`](docs/README.md) classifies every
+> planning and historical document.
 > The live backlog is `TASKS.md`. To add a faction/character/doc, see CONTRIBUTING's "Adding things"
 > — most additions are one config entry. **Hard rules:** never write to the tribe's source sheet; no
-> AI-generated signals in the repo; one task = one commit; `python3 tools/selfcheck.py` must be clean.
+> process or tool attribution in project history; one task = one commit; `python3 tools/selfcheck.py` must
+> be clean.
 
 ---
 
@@ -43,6 +46,7 @@ To go live, follow **[DEPLOY.md](DEPLOY.md)**.
 index.html        markup shell + the Theme popover + all modals
 styles.css        everything visual (theme vars, CRT, frame modes, typography)
 app.js            all logic — see the MODULE MAP banner at the top of the file
+crt-screen-integration.js  optional enhanced-CRT loader (default mode does not load the engine)
 apps-script.gs    the write-back web app (pasted into Google, NOT hosted here)
 
 favicon.svg       tab icon (pixel-Y monogram)
@@ -54,9 +58,10 @@ c/                per-character Open-Graph stubs for rich Discord embeds (genera
 tools/            dev scripts — selfcheck.py (integrity linter), preview.py (rebuild
                   the local preview), regenerate c/ stubs / OG card / roster dump,
                   git-hooks/ (pre-commit guard)
-docs/             design + planning docs. START with the newest HANDOFF-*.md (current state +
-                  gotchas); then ACCESSIBILITY-PLAN, WIKI-INTEGRATION, MASTER-SHEET-PLAN,
-                  DESIGN-RELATIONSHIPS, AUDIT-2026-07-02 (security), the CRT theme guide
+docs/             current plans, evidence, references, and historical snapshots. START with
+                  docs/README.md, then use HANDOFF-NEXT.md as the canonical handoff
+data/             structured world data + the guarded legacy-atlas migration inventory
+vendor/           reviewed, locally hosted runtime code with provenance notes
 
 CONTRIBUTING.md   house rules — self-review, anti-entropy, run selfcheck, conventions
 MAINTENANCE.md    how it's built + how not to break it (read this first when resuming)

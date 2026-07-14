@@ -1,8 +1,8 @@
 # Phosphor Terminal — CSS Theme Style Guide
 
 A guide for building a CRT/atompunk "terminal readout" CSS theme, distilled from the
-Yuma Tribe Roster. Written so another agent (or person) can reproduce the *system*, not
-just copy the surface. The aesthetic: **green phosphor on deep black, monospace/pixel
+Misfits Database. Written so a future contributor can reproduce the *system*, not just
+copy the surface. The aesthetic: **green phosphor on deep black, monospace/pixel
 type, soft glowing edges — a Fallout-1 Pip-Boy terminal rendered with restraint.**
 
 It is plain hand-written CSS + vanilla JS. No framework, no build step, no CDN. Everything

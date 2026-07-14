@@ -1,6 +1,6 @@
-# Go-Live Checklist — Yuma Tribe Roster
+# Deployment and recovery — Misfits Database
 
-## ✅ CURRENT LIVE STATE (deployed 2026-07-02)
+## Current repository configuration (reconciled 2026-07-14)
 
 - **Live URL:** https://dr-orac.github.io/oracular-db/
 - **Repo:** `dr-orac/oracular-db` (public) · Pages serves `main` branch root ·
@@ -25,20 +25,23 @@ Discord polish.
 
 ## What needs to ship
 
-From this folder (`Yuma Tribe Roster/`):
+From the repository root:
+
+The safest deployment is the repository root. A minimal runtime copy must include:
 
 ```
-index.html      styles.css      app.js
-favicon.svg     (tab icon)
-fonts/          (self-hosted woff2/ttf — keep the whole folder)
-media/          (code-defined character portraits referenced by app.js — required)
-og-card.png     (Discord/social link-preview card)
-c/              (per-character Discord embed stubs — see step 5a)
+index.html      styles.css      app.js      crt-screen-integration.js
+favicon.svg     og-card.png
+fonts/          media/          c/          vendor/
 ```
 
-`apps-script.gs` is **not** uploaded — it's pasted into Google Apps Script (step 3).
-`tools/`, `docs/`, and `README.md` are dev/reference only; they don't need to ship
-(harmless if they do).
+Keep `data/` with the project even though the current legacy atlas has not yet migrated to it; it is the
+guarded source for the next map renderer. GitHub Pages already publishes the whole repository root.
+
+`apps-script.gs` is source/reference code only: a static host does not execute it. Enabling write-back means
+pasting it into Google Apps Script and following the gated procedure in step 3.
+`tools/`, `docs/`, and the root Markdown files are operational/reference material rather than browser
+runtime dependencies. Preserve them in every source clone even if a separate minimal host omits them.
 
 ---
 
@@ -81,7 +84,7 @@ It must be shared **Anyone with the link → Viewer** (it already is). Never wri
 
 > Same applies to any **Google Doc added as a nav tab** (the Guide tab, etc.): set each
 > to *Anyone with the link → Viewer*, or its tab shows a "not shared yet" message.
-> (Docs are configured in the `DOCS` array near the top of `app.js`.)
+> (Docs are configured by faction in `FACTION_DOCS` near the top of `app.js`.)
 
 > **Check** — visiting
 > `https://docs.google.com/spreadsheets/d/10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY/gviz/tq?tqx=out:csv`

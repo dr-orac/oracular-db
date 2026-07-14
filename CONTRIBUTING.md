@@ -1,7 +1,8 @@
 # Contributing — house rules
 
-How we keep this project correct, legible, and resistant to rot. Architecture and invariants
-are in **MAINTENANCE.md**; the design system is in **STYLE-GUIDE.md**.
+How we keep this project correct, legible, and resistant to rot. Current document ownership is indexed in
+[`docs/README.md`](docs/README.md); architecture and invariants are in [`MAINTENANCE.md`](MAINTENANCE.md),
+and the design system is in [`STYLE-GUIDE.md`](STYLE-GUIDE.md).
 
 ## Working principles
 
@@ -21,7 +22,7 @@ are in **MAINTENANCE.md**; the design system is in **STYLE-GUIDE.md**.
 ```bash
 ./tools/setup-git.sh           # once after a fresh clone: activate the commit guard
 python3 tools/selfcheck.py     # integrity linter: element ids, CSS vars, fonts/media,
-                               # JS structure, dead CSS classes, orphan fonts, token drift
+                               # docs links, JS structure, world data, assets, and token drift
 python3 tools/preview.py       # rebuild the local preview, then open /
 ```
 
@@ -43,6 +44,9 @@ request. Let the linter do mechanical checks — reserve review effort for desig
 - **Tokens over literals.** Prefer `var(--..)` so a theme change propagates.
 - **Commits.** One logical change per commit; imperative subject line + a body that says
   *why*. No trailers or attributions — just the change and its reason.
+- **Documentation ownership.** Update the narrowest document that owns the changed behavior. Keep
+  `HANDOFF-NEXT.md` concise and current, keep implementation truth in `MAINTENANCE.md`, and do not revise
+  dated handoffs to look current. Link to an existing contract instead of copying it into another file.
 
 ## Adding things
 

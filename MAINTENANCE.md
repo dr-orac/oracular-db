@@ -1,32 +1,31 @@
 # MAINTENANCE — how this project is built and how not to break it
 
-The durable, in-repo source of truth for anyone picking this up cold. If an
-assistant's working memory is lost, **start here.** Last structural update: 2026-07-02.
+The durable, in-repo source of truth for implemented architecture and invariants. Start with
+[`docs/HANDOFF-NEXT.md`](docs/HANDOFF-NEXT.md) for current priorities and [`docs/README.md`](docs/README.md)
+for document ownership. Last reconciled with the application: 2026-07-14.
 
 ---
 
 ## What this is
 
-A **Fallout-1 / Pip-Boy themed roster viewer** for SS14 RP factions. The umbrella brand is the
+A **Fallout-1 / Pip-Boy themed faction database** for SS14 RP factions. The umbrella brand is the
 **Misfits Database**, hosting multiple factions (the Tribe, the Brotherhood of Steel, and more);
 each faction keeps its own brand (e.g. **"The Tribe Database"**) and a masthead selector switches
-between them. Each faction reads a Google Sheet live and renders one dossier per character. Pure
-static site:
+between them. It combines live roster dossiers, faction documents, a themed MediaWiki reader,
+Paperwork, and a three-scale Map. It is a static site:
 
-- **No build step, no framework, no CDN, no dependencies.** Just `index.html` + `styles.css`
-  + `app.js` + self-hosted `fonts/`. Open the file, it runs.
+- **No build step, package manager, framework, or CDN.** Browser code and assets are self-hosted;
+  the CRT module in `vendor/` carries its own provenance record. Open `index.html` and the app runs.
 - Reads the sheet **read-only** via the gviz CSV endpoint. It never writes to the sheet
   unless an (optional, undeployed) Apps Script `webAppUrl` is configured.
 - **LIVE at https://dr-orac.github.io/oracular-db/** — GitHub Pages, repo
   `dr-orac/oracular-db`, serves `main` branch root, redeploys on every push (~1 min).
 
-**Data flow (two sheets — don't confuse them):** the deployed site reads the tribe's
-**ORIGINAL sheet** (`10n4T…`, `CONFIG.sheetId`) read-only — the community edits it and
-changes appear on the site on next load, no sync involved. **Never write to the
-original** (by hand, tool, or script — standing user directive). A private
-experimental **working copy** (`1649x…`) exists from the write-back spike; it is
-stale, nothing reads it, and it only matters if write-back is ever deployed (see
-"Open / future work" — that needs a data-flow decision first).
+**Roster data flow:** Tribe and Brotherhood each read their configured Google Sheet directly through the
+read-only CSV endpoint; the other factions currently show a truthful unlinked state. `CONFIG.sheetId` is the
+Tribe's original source sheet and must never be written to. A private experimental working copy from the
+write-back spike is stale and unused; it matters only if write-back is deliberately revisited (see
+"Settled decisions").
 
 Design language is documented in **STYLE-GUIDE.md**. Deploy steps in **DEPLOY.md**.
 Security posture: **docs/AUDIT-2026-07-02.md** — full audit of every innerHTML sink and
@@ -271,6 +270,8 @@ Catches the rot a no-build app can't catch otherwise:
 - `app.js` truncated or brace-unbalanced (uses `node --check` if node is present, else a
   regex-aware heuristic warning)
 - index.html no longer loading styles.css / app.js
+- broken local links in tracked Markdown documentation
+- invalid or dangling world-data and legacy-atlas references
 
 Stdlib Python only. No node required (but used if available).
 
@@ -300,6 +301,8 @@ is committed; nothing sensitive lives in the repo.
 | Shared `/tmp` + run config clobbered by neighbouring projects | `tools/preview.py` rebuilds the server + live dir idempotently; work in this subfolder as its own project to isolate |
 | Design drift from the system | STYLE-GUIDE.md + selfcheck token-drift warning |
 | Cross-surface UI regressions and duplicated local fixes | `docs/UI-UX-AUDIT.md` representative journey matrix + cause-based tasks |
+| Current instructions mixed with historical snapshots | `docs/README.md` ownership index + `docs/HANDOFF-NEXT.md` canonical handoff |
+| Documentation links silently rot after a rename | local-link validation in `tools/selfcheck.py` |
 
 ---
 
@@ -330,8 +333,6 @@ decision or asset first and are parked, not specced:
 
 - **Scratchy's portrait**: a code-defined character with no image yet — drop a file in
   `media/` and add it to the `MEDIA` map in app.js.
-- **Astro port** (sibling `../Yuma Roster - Astro POC/`): only if first-class Discord
-  link-unfurl embeds become a priority. Parked.
 - *(Done 2026-07-02: deploy to GitHub Pages, security audit, backend hardening, Theme
   font-picker rebuild, widescreen dossier cap, and the Discord per-character cards +
   OG-card rebrand — all live.)*

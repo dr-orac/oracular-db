@@ -3,8 +3,10 @@
 **This is the canonical entry point.** The dated `HANDOFF-2026-07-*.md` files are historical; read those only
 for backstory. Keep THIS file current — each work session should update "Open tasks" + "Recently shipped".
 
-This is the authoritative "what's done / what's next" doc. Run `git status --short --branch` before relying
-on deployment state; local checkpoints may intentionally be ahead of GitHub Pages (`dr-orac.github.io/oracular-db`).
+This is the authoritative "what's done / what's next" doc. The [documentation index](README.md) classifies
+every project document and explains which files are current contracts versus historical context. Run
+`git status --short --branch` before relying on deployment state; local checkpoints may intentionally be
+ahead of GitHub Pages (`dr-orac.github.io/oracular-db`).
 
 ## Working protocol (multiple people/tools alternate on this repo — one at a time)
 - **Before starting:** `git fetch && git pull` (or fast-forward). Someone else may have pushed.
@@ -127,6 +129,7 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
   coverage, but do not grow a second template library independently.
 
 ## Recently shipped (so you don't redo it)
-Masthead centred-tree, connector overshoot fix (left+width), fullscreen focus polish + CRT power-on,
-box-glow, find-bar vector magnifier, dossier folder-tab, fuzzy+ranked roster search, ⌘K palette, the 3-scale
-map + Wendover schematic, `data/world.json`, the Paperwork system, and repo guardrails (setup-git.sh + CI).
+Masthead centred-tree and measured SVG connectors, Townsfolk lore routing, the scoped Wendover Local export
+pipeline, fullscreen focus polish + CRT power-on, box-glow, find-bar vector magnifier, dossier folder-tab,
+fuzzy+ranked roster search, ⌘K palette, the 3-scale map + Wendover schematic, `data/world.json`, the Paperwork
+system, the documentation ownership index, and repository guardrails for local links and runtime assets.

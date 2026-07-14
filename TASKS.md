@@ -3,6 +3,10 @@
 Well-scoped work, specced so any contributor can execute without re-deriving context.
 Work top-to-bottom unless told otherwise. **One task = one commit.**
 
+The current queue is this top section, cross-checked against [`docs/HANDOFF-NEXT.md`](docs/HANDOFF-NEXT.md).
+Everything after the current numbered tasks is a chronological specification and completion record; older
+"next" wording is historical and does not override the handoff. Do not renumber or rewrite shipped tasks.
+
 ## Queued 2026-07-13 (batch 7 — quality baseline before map UI expansion)
 
 ### T101 · Whole-application UI/UX and entropy audit — LARGE [audit, then bounded fixes]

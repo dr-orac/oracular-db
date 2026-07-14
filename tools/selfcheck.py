@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-selfcheck.py — integrity linter for the Yuma Tribe Roster (a no-build vanilla app).
+selfcheck.py — integrity linter for the Misfits Database (a no-build vanilla app).
 
 Without a compiler or test runner, this is the safety net that catches the kinds of rot
 that creep in as the project evolves:
@@ -17,6 +17,7 @@ Exit code 0 = clean, 1 = errors found.  Warnings never fail the build.
 Stdlib only. Safe to run anywhere python3 exists.
 """
 import json, os, re, sys
+from urllib.parse import unquote
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def p(*a): return os.path.join(ROOT, *a)
@@ -43,6 +44,12 @@ js   = read("app.js")
 # ---------------------------------------------------------------- 1. wiring
 if "styles.css" not in html: err("index.html does not reference styles.css")
 if "app.js"     not in html: err("index.html does not reference app.js")
+for target in re.findall(r'\b(?:src|href)\s*=\s*["\']([^"\']+)["\']', html):
+    if target.startswith(("#", "//", "/", "data:")) or re.match(r"^[a-z][a-z0-9+.-]*:", target, re.I):
+        continue
+    local_target = target.split("#", 1)[0].split("?", 1)[0]
+    if local_target and not os.path.exists(p(unquote(local_target))):
+        err(f'index.html references missing local asset: {local_target}')
 
 # ---------------------------------------------------------------- 2. element ids
 # All ids that actually exist somewhere (static in HTML, or emitted in JS templates).
@@ -251,6 +258,56 @@ def check_css_comment_balance(css):
         err(f'unterminated "/*" comment starting at styles.css:{line} — a "/*" is never closed')
 
 check_css_comment_balance(css)
+
+# ---------------------------------------------------------------- 8e. documentation links
+# Documentation is part of the handoff contract. Validate repository-local Markdown links so a rename or
+# move cannot silently strand the next contributor. External URLs and same-page anchors are out of scope.
+DOC_REQUIRED = [
+    "README.md", "MAINTENANCE.md", "CONTRIBUTING.md", "STYLE-GUIDE.md", "DEPLOY.md", "CREDITS.md",
+    "TASKS.md",
+    "docs/README.md", "docs/HANDOFF-NEXT.md",
+]
+for rel in DOC_REQUIRED:
+    if not os.path.exists(p(rel)):
+        err(f"canonical documentation missing: {rel}")
+
+markdown_files = []
+for base, dirs, files in os.walk(ROOT):
+    dirs[:] = [d for d in dirs if d not in {".git", "added files by user"}]
+    for filename in files:
+        if filename.endswith(".md"):
+            markdown_files.append(os.path.join(base, filename))
+
+def check_markdown_link(source_path, raw_target):
+    target = raw_target.strip()
+    if target.startswith("<") and ">" in target:
+        target = target[1:target.index(">")]
+    else:
+        # Optional Markdown titles follow the destination after whitespace.
+        target = target.split()[0] if target else ""
+    if not target or target.startswith(("#", "/", "//")) or re.match(r"^[a-z][a-z0-9+.-]*:", target, re.I):
+        return
+    target = unquote(target.split("#", 1)[0].split("?", 1)[0])
+    if not target:
+        return
+    resolved = os.path.normpath(os.path.join(os.path.dirname(source_path), target))
+    if not os.path.exists(resolved):
+        rel_source = os.path.relpath(source_path, ROOT)
+        err(f'{rel_source} links to missing local path "{target}"')
+
+for source_path in sorted(markdown_files):
+    with open(source_path, encoding="utf-8") as f:
+        markdown = f.read()
+    markdown = re.sub(r"```.*?```", "", markdown, flags=re.S)
+    for raw_target in re.findall(r"!?\[[^\]]*\]\(([^)]+)\)", markdown):
+        check_markdown_link(source_path, raw_target)
+    for raw_target in re.findall(r"^\s*\[[^\]]+\]:\s*(\S+)", markdown, flags=re.M):
+        check_markdown_link(source_path, raw_target)
+    filename = os.path.basename(source_path)
+    if re.fullmatch(r"HANDOFF-\d{4}-\d{2}-\d{2}\.md", filename) and not markdown.startswith(
+        "> **Historical snapshot.**"
+    ):
+        err(f"docs/{filename} must identify itself as a historical snapshot and point to HANDOFF-NEXT.md")
 
 # ---------------------------------------------------------------- 9. world/map data integrity
 # The map dataset is edited independently from the rendering code. Validate its internal graph here so a
@@ -483,7 +540,7 @@ if os.path.exists(world_path):
             info(f"US atlas migration inventory: {matched}/{len(markers)} markers matched to world records")
 
 # ---------------------------------------------------------------- report
-print("── Yuma Roster self-check ──")
+print("── Misfits Database self-check ──")
 print(f"   ids: {len(ref_ids)} refs / {len(defined_ids)} defined   "
       f"css vars: {len(used_vars)} used / {len(defined_vars)} defined")
 for m in infos:     print("·  " + m)

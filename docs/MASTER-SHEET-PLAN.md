@@ -3,7 +3,7 @@
 **Roadmap only. Nothing is created or changed yet.** The user asked for a single master Google Sheet
 with a tab per faction, holding all the info from the Tribe + Brotherhood sheets, standardised where
 it overlaps (with room for faction-specific fields, e.g. only tribals have a Spirit Animal), linked to
-the app — and asked whether a *live editable link* between the assistant and that sheet is viable.
+the app — and asked whether a *live editable tooling link* to that sheet is viable.
 
 ---
 
