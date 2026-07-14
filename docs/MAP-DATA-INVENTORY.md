@@ -9,28 +9,28 @@ records intended to replace them in `data/world.json`. The machine-readable ledg
 | Game batch | Rendered markers | Matched world records | Records still required |
 |---|---:|---:|---:|
 | Fallout 1 | 9 | 9 | 0 |
-| Fallout 2 | 3 | 1 | 2 |
+| Fallout 2 | 3 | 3 | 0 |
 | Fallout: New Vegas | 11 | 0 | 11 |
-| **Total** | **23** | **10** | **13** |
+| **Total** | **23** | **12** | **11** |
 
-The ten structural matches are all nine Fallout 1 markers plus New Reno. “Matched” means only that the old
+The twelve structural matches are all Fallout 1 and Fallout 2 markers. “Matched” means only that the old
 marker has a corresponding world record; it does **not** mean its coordinates are reviewed. Three Fallout 1
 records deliberately have no coordinates because their placement is withheld.
 
-`data/world.json` currently has 19 locations in total. Nine are outside this 23-marker migration: Canyon,
-Megaton, New Vegas Strip, Diamond City, Vault 76, and four Wendover records. The nine Fallout 1 records now
-use the placement and evidence shape required by `docs/MAP-ARCHITECTURE.md`; the other ten locations still
-need that reconciliation, and every Fallout 1 placement remains provisional or withheld. The dataset
-therefore remains provisional.
+`data/world.json` currently has 21 locations in total. Nine are outside this 23-marker migration: Canyon,
+Megaton, New Vegas Strip, Diamond City, Vault 76, and four Wendover records. All twelve Fallout 1 and Fallout 2
+migration records now use the placement and evidence shape required by `docs/MAP-ARCHITECTURE.md`; the other
+nine locations still need that reconciliation, and every migrated placement remains provisional or withheld.
+The dataset therefore remains provisional.
 
 ## Batch order
 
 1. **Fallout 1 record coverage — complete:** all nine rendered markers have records. The evidence review is
    recorded in `docs/MAP-FALLOUT-1-REVIEW.md`; placement approval remains open and requires a consistent
    same-map anchor fit before any provisional or withheld point is promoted.
-2. **Fallout 2:** review New Reno and add Arroyo and Vault City. Gather additional named real-world anchors
-   from the Fallout 2 map even when they are not yet rendered; three displayed points alone are not enough
-   to justify a transform.
+2. **Fallout 2 record coverage — complete:** New Reno, Arroyo, and Vault City are reconciled in
+   `docs/MAP-FALLOUT-2-REVIEW.md`. The review uses additional shipped-map loci and documents why the map's
+   distortion supports only broad regional inference for Arroyo and Vault City.
 3. **New Vegas:** add the eleven rendered markers and review the existing Strip record. Prefer explicit
    real-world identities for named towns, roads, mountains, the airport, and Hoover Dam; use inference only
    where the fictional site is not directly identified.

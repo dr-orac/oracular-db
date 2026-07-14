@@ -160,6 +160,20 @@ Shady Sands retain their legacy candidates only as wide-uncertainty research hyp
 payload is not tracked, no public markers changed, and `docs/MAP-FALLOUT-1-REVIEW.md` owns the audit trail
 and promotion gate. Fallout 2 is the next bounded record-coverage batch.
 
+### T110 · Reconcile the Fallout 2 atlas evidence — P1 [map data + anti-entropy] — IMPLEMENTED 2026-07-14
+
+Research the full same-game spatial context rather than deriving Arroyo and Vault City from the three
+rendered markers alone. Record shipped world-map positions for additional named loci, compare them with
+real-world identity anchors, quantify transform residuals, and preserve contradictions between the game map,
+travel log, and post-release design reference.
+
+All three Fallout 2 markers now have stable world records, moving the migration inventory from 10/23 to
+12/23. New Reno uses its explicit Reno identity; Arroyo has a broad northern California–southern Oregon
+frontier placement; Vault City has a broad northeast California–northwest Nevada border placement. The latter
+two carry 130 km uncertainty rather than false city-level precision. `docs/MAP-FALLOUT-2-REVIEW.md` records
+the game-file loci, fit residuals, contradictions, and promotion gates. No public marker changed; New Vegas
+is the next bounded record-coverage batch.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →
