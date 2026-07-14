@@ -103,13 +103,18 @@ shows the existing/default character, but leaves the invalid hash in place. Repa
 route after routing completes, matching the existing malformed Roster behavior, without disturbing valid
 deep links or keyboard selection.
 
-### T106 · Start a fresh direct Roster route — P1 [boot + correctness]
+### T106 · Start a fresh direct Roster route — P1 [boot + correctness] — IMPLEMENTED 2026-07-14
 
 Start with `docs/UI-UX-AUDIT.md` finding UX-005. If a linked faction is already remembered and the browser
 loads directly on that same faction's Roster route, internal `currentSection` already equals `roster`, so
 `applyRoute()` skips `setSection()` and no sheet request begins. Ensure first route application enters the
 Roster lifecycle even when the section id is unchanged. Preserve valid character targets until the model is
 ready; do not introduce duplicate loads on ordinary hash changes.
+
+`applyRoute()` now distinguishes a faction change (whose existing lifecycle owns loading) from a same-faction
+fresh Roster route with no model or in-flight request. The latter enters `setSection()` once. Fresh remembered-
+Tribe base and Stacey Webb character routes load and restore correctly; a fresh remembered-NCR route retains
+its truthful unavailable state.
 
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 

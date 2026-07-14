@@ -350,7 +350,10 @@ idempotent and retain a valid pending character until data arrives.
 load, leave the loader, render the correct faction, and restore the character target; ordinary hash changes
 do not duplicate requests; unlinked faction routes still show their truthful unavailable state.
 
-**Status:** open — implement next as T106 before continuing the visual audit.
+**Status:** implemented 2026-07-14. `applyRoute()` now distinguishes faction changes, whose existing lifecycle
+already owns loading, from a same-faction fresh Roster route with no model or in-flight request. Only the
+latter re-enters `setSection()`. Fresh remembered-Tribe base and Stacey Webb character routes leave the
+loader and restore selection/ARIA/URL correctly; a fresh remembered-NCR route retains the unavailable state.
 
 ## Audit runs
 
@@ -368,3 +371,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | A/E | 2026-07-14 | 1440px, pointer + keyboard, direct routes | Roster List/Cards/dossier, Relations, unavailable faction | Finding | UX-003: List/Cards/filter/sort/selection drift; UX-004: invalid Relations target is not canonicalised. Valid in-session selection, keyboard stepping, and UI faction-switch unavailable states pass |
 | A/B | 2026-07-14 | 1440px + 390px, pointer + keyboard | Roster List/Cards/dossier, filters, sorting, empty search | Pass | UX-003 fixed: shared 48-character filter, A–Z Cards, route/selection/ARIA sync, no-match state, and display-order `j` navigation pass with 0px overflow |
 | E | 2026-07-14 | fresh direct route, remembered Tribe faction | Roster boot and character link | Finding | UX-005: route equals the internal default, so no section lifecycle or sheet load starts; Roster tab activation recovers |
+| E | 2026-07-14 | fresh direct routes, remembered matching faction | Tribe Roster/base + Stacey Webb; NCR unavailable Roster | Pass | UX-005 fixed: linked routes enter one lifecycle and restore the target; unlinked route remains truthful |

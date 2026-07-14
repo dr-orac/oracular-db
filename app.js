@@ -2122,7 +2122,8 @@ function applyRoute(){
   let repairRoute=false;
   _routing = true;
   try{
-    if(r.faction && FACTIONS[r.faction] && r.faction!==currentFaction) applyFaction(r.faction);
+    const factionChanged=!!(r.faction && FACTIONS[r.faction] && r.faction!==currentFaction);
+    if(factionChanged) applyFaction(r.faction);
     let sec = r.section || "home";
     if(sec==="paperwork"){ if(sec!==currentSection) setSection("paperwork"); _pendingTarget=null; return; }
     if(!sectionAvailable(sec)){ sec="roster"; repairRoute=true; }
@@ -2135,7 +2136,10 @@ function applyRoute(){
       _pendingTarget = null;
       return;
     }
-    if(sec!==currentSection) setSection(sec);
+    // On a fresh direct #<remembered-faction>/roster load, the internal default already says "roster";
+    // enter its lifecycle once anyway. A faction change or in-flight request already owns that work.
+    const rosterNeedsStart=sec==="roster" && !state.model && !factionChanged && !_rosterController;
+    if(sec!==currentSection || rosterNeedsStart) setSection(sec);
     _pendingTarget = r.target || null;
     if(sec==="roster") openPendingChar();   // doc anchors are consumed by loadDoc when it finishes
     else if(sec==="relations" && state.model) renderRelations();   // consume the pending target now (else a pending load's render() will)
