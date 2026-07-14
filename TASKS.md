@@ -242,6 +242,20 @@ coherent visual language; no unsupported landscape change is presented as fact; 
 slow/failing asset delivery, keyboard access, and the SVG fallback. Record transfer size, request count,
 first-open delay, pan/zoom behavior, and label clarity before deciding whether MapLibre earns inclusion.
 
+### T115 · Replace the masthead connector with measured geometry — P1 [responsive + visual system] — IMPLEMENTED 2026-07-14
+
+Replace the separately positioned CSS stem, bus, risers, and arrowheads with one non-interactive SVG overlay.
+Measure the faction control and every section tab in the masthead's coordinate system, then draw the complete
+orthogonal path from those live rectangles. Recompute after faction/tab rendering, active-section changes,
+font settlement, element resize, frame changes, and viewport resize. If the tab row wraps or the vertical
+channel collapses, hide the connector rather than drawing an ambiguous path across controls.
+
+Acceptance: the faction stem meets the bus without a gap; every riser and arrowhead lands on the horizontal
+centre of its current tab; the lit route ends at the active faction section; umbrella sections leave only the
+parent stem lit; Screen/Chassis changes never leave stale geometry; and no connector is drawn across a wrapped
+or narrow layout. Verify different faction-name lengths, two-tab and multi-tab factions, font presets, text
+sizes, 1751/1440/1280/1024/860/859px widths, zoom/reflow, and rapid faction/section/frame changes.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →

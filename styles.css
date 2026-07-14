@@ -60,7 +60,7 @@
     --edge: clamp(38px, 4.6vw, 90px);
     --rail: clamp(312px, 26vw, 432px);   /* the left index column (roster rail) — the search sits over it */
     --row-gap: 30px;                     /* gap between masthead row 1 (titlebar) and row 2 (tabs); the
-                                            faction-box stem length derives from this so it always reaches the bus */
+                                            measured SVG connector uses the real boxes inside this channel */
     --box-glow: 0 0 24px -8px rgba(var(--fg-rgb), .34), 0 0 2px 0 rgba(var(--fg-rgb), .12);   /* ONE subtle
                                             outer glow shared by boxed components (cards, callouts, tiles,
                                             tables) — theme-tracking. Wide soft bloom + a faint edge seat so
@@ -719,45 +719,30 @@
      label and inverts to the screen colour on the active (filled) tab. */
   .navico{ flex:0 0 auto; width:22px; height:22px; display:inline-flex; }   /* ROW-2 section-tab icon (ROW-1 boxes use 32px via .navbox .navico) */
   .navico svg{ width:100%; height:100%; display:block; fill:currentColor; }
-  /* ---------- T61/T68: flow-chart connectors — row 2 hangs off the FACTION box ----------
-     A STEM drops from the FACTION box to a horizontal BUS above row 2, and a RISER (tipped with a small
-     down-ARROWHEAD, to show flow) drops from the bus into each section tab; the active tab's is brightest.
-     The bus FADES OUT at both ends so it reads as emanating from the faction rather than hard-running left
-     under Home. Shown only on the wide single-row masthead in the screen frame. #topnav shrinks to its
-     tabs (fit-content) so the bus spans exactly the tab group. */
+  /* ---------- flow-chart connectors — row 2 hangs off the FACTION box ----------
+     One SVG overlay owns the complete connector. positionConnector() measures the faction control and
+     every tab in masthead coordinates, so the stem, bus, risers and arrowheads cannot drift apart when
+     fonts, labels, frame modes or viewport dimensions change. Wrapped rows deliberately hide the diagram. */
+  .masthead-connectors{ display:none; }
   @media (min-width:860px){
-    /* connector geometry — ONE set of vars on the body-scoped ancestor so the bus, risers, stem and
-       arrowheads all stay coherent + responsive. --bus-top = riser depth (bus→tab); --conn-w = line
-       weight; --ah-half × --ah-tall = arrowhead size. */
     body:not([data-frame="border"]):not([data-section="home"]){
-      --conn-w:1.5px; --bus-top:18px;
-      --ah-half:clamp(4.4px,0.6vw,5.4px); --ah-tall:clamp(5.8px,0.75vw,7px);
-      /* two connector states. --conn-dim = the UNSELECTED lines: keyed to the unselected-tab shade
-         (--fg-dim) but nudged a hair brighter so they never fade to invisibility. --conn-lit = the
-         SELECTED channel (faction→active section): full phosphor + a soft glow so it reads as live. */
+      --conn-w:1.5px;
       --conn-dim:rgba(var(--fg-rgb),.6); --conn-lit:var(--fg);
-      --conn-w-lit:2.4px;                                 /* the LIT channel is chunkier than the dim lines */
-      --conn-glow:0 0 9px rgba(var(--fg-rgb),.72); }      /* …and glows harder */
+      --conn-w-lit:2.4px; }
     body:not([data-frame="border"]):not([data-section="home"]) #topnav{ position:relative; width:fit-content; max-width:100%; }
-    body:not([data-frame="border"]):not([data-section="home"]) #topnav::before{      /* the bus — spans exactly the outer RISERS (first→last tab centre), set by positionConnector() */
-      content:""; position:absolute; left:var(--bus-l,0); width:var(--bus-w,0); top:calc(-1 * var(--bus-top)); height:var(--conn-w); pointer-events:none; z-index:0;
-      background:var(--conn-dim); }   /* left+width (not left+right) → pinned to the risers, immune to nav-width changes */
-    body:not([data-frame="border"]):not([data-section="home"]) #topnav::after{       /* LIT segment: faction stem → active riser, sits on top of the dim bus */
-      content:""; position:absolute; left:var(--busA-l,0); width:var(--busA-w,0); top:calc(-1 * var(--bus-top) - .5px); height:var(--conn-w-lit); pointer-events:none; z-index:1;
-      background:var(--conn-lit); box-shadow:var(--conn-glow); }
-    body:not([data-frame="border"]):not([data-section="home"]) .navtab{ position:relative; }
-    body:not([data-frame="border"]):not([data-section="home"]) .navtab::before{       /* bus → tab riser (vertical line) */
-      content:""; position:absolute; left:50%; top:calc(-1 * var(--bus-top)); width:var(--conn-w); height:calc(var(--bus-top) - var(--ah-tall) + 2px);
-      transform:translateX(-50%); background:var(--conn-dim); pointer-events:none; }
-    body:not([data-frame="border"]):not([data-section="home"]) .navtab::after{        /* riser arrowhead (points into the tab) */
-      content:""; position:absolute; left:50%; top:calc(-1 * var(--ah-tall)); transform:translateX(-50%); pointer-events:none;
-      border-left:var(--ah-half) solid transparent; border-right:var(--ah-half) solid transparent; border-top:var(--ah-tall) solid var(--conn-dim); }
-    /* the ACTIVE tab's riser + arrowhead complete the lit channel — full phosphor + matching glow */
-    body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::before{ width:var(--conn-w-lit); background:var(--conn-lit); box-shadow:var(--conn-glow); }
-    body:not([data-frame="border"]):not([data-section="home"]) .navtab.active::after{ border-top-color:var(--conn-lit); filter:drop-shadow(var(--conn-glow)); }
-    body:not([data-frame="border"]):not([data-section="home"]) .faction-box::after{   /* FACTION box → bus stem — always lit: it's the head of the channel */
-      content:""; position:absolute; left:50%; top:100%; width:var(--conn-w-lit); height:calc(var(--row-gap) - var(--bus-top) + 3px);
-      transform:translateX(-50%); background:var(--conn-lit); box-shadow:var(--conn-glow); pointer-events:none; }
+    .masthead{ position:relative; }
+    .masthead > .titlebar, .masthead > #topnav{ position:relative; z-index:2; }
+    .masthead-connectors{ position:absolute; inset:0; z-index:1; width:100%; height:100%; overflow:visible;
+      display:none; pointer-events:none; }
+    body:not([data-frame="border"]):not([data-section="home"]) .masthead-connectors.is-visible{ display:block; }
+    .masthead-connector-dim, .masthead-connector-lit{ fill:none; vector-effect:non-scaling-stroke;
+      stroke-linecap:square; stroke-linejoin:miter; }
+    .masthead-connector-dim{ stroke:var(--conn-dim); stroke-width:var(--conn-w); }
+    .masthead-connector-lit{ stroke:var(--conn-lit); stroke-width:var(--conn-w-lit);
+      filter:drop-shadow(0 0 4px rgba(var(--fg-rgb),.72)); }
+    .masthead-connector-arrow{ fill:var(--conn-dim); }
+    .masthead-connector-arrow.is-active{ fill:var(--conn-lit);
+      filter:drop-shadow(0 0 4px rgba(var(--fg-rgb),.72)); }
   }
   /* on a doc section, hide the roster-only chrome (search / view toggle / refresh / status) */
   /* command-bar slot in the header: the roster toolbar shows on the roster, the doc find bar

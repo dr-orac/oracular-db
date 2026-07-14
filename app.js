@@ -485,6 +485,7 @@ function applyFrame(key){
   document.body.dataset.frame = key;
   localStorage.setItem("mdb-frame", key);
   document.querySelectorAll("#frame-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
+  if(typeof scheduleConnector==="function") scheduleConnector();
 }
 function applyFrameTint(key){
   if(key!=="theme") key="olive";                    // olive = authentic fixed palette
@@ -2363,60 +2364,70 @@ function renderNav(){
   renderPrimaryNav();
   watchConnector();
 }
-/* The flow-chart BUS (#topnav::before) should span exactly the outer RISERS — first tab centre to
-   last tab centre — not the full tab-row edges (which left it floating half a tab past each end).
-   Tab widths vary, so measure and feed the ends in as CSS vars. A 1px overlap past each outer riser
-   guarantees a clean join despite subpixel rounding. */
+/* One measured SVG owns the full faction → section flow chart. Mixing a CSS-derived stem with a
+   separately measured bus caused recurring gaps whenever the title row changed height. Every point below
+   is expressed in the same masthead coordinate system, directly from the current rendered rectangles. */
 function positionConnector(){
-  const nav=$("#topnav"); if(!nav) return;
-  const clearVars=()=>["--bus-l","--bus-w","--busA-l","--busA-w"].forEach(p=>nav.style.removeProperty(p));
+  const mast=document.querySelector(".masthead"), nav=$("#topnav"), svg=$("#masthead-connectors");
+  if(!mast || !nav || !svg) return;
   const tabs=[...nav.querySelectorAll(".navtab")];
-  // BAIL on any degenerate/mid-layout measurement: nav or a tab not laid out yet (offsetWidth 0). Setting
-  // vars from a half-measured layout is exactly how a stale, over-wide bus used to get stuck. Leave the last
-  // good vars in place; watchConnector's rAF + RO + fonts.ready re-run once layout settles.
-  if(tabs.length<2 || !nav.offsetWidth || tabs.some(t=>!t.offsetWidth)){ if(tabs.length<2) clearVars(); return; }
-  const first=tabs[0], last=tabs[tabs.length-1];
-  const firstC=first.offsetLeft + first.offsetWidth/2;                // first riser centre (offsetParent = #topnav)
-  const lastC =last.offsetLeft + last.offsetWidth/2;                  // last riser centre
-  let lo=firstC, hi=lastC;
-  // MAGNET: nudge the bus toward the FACTION-BOX centre so the stem lands ON it — but clamp STRICTLY to the
-  // riser span [firstC,lastC] so the bus can NEVER extend past the outer risers, whatever the faction box
-  // measures (wide name, open dropdown, mid-animation). This is the "extends too far" fix.
-  let fcx=null;
   const fbox=document.querySelector(".faction-box");
-  if(fbox){ const fr=fbox.getBoundingClientRect(), nr=nav.getBoundingClientRect();
-    fcx = Math.max(firstC, Math.min(lastC, fr.left + fr.width/2 - nr.left));
-    lo=Math.min(lo,fcx); hi=Math.max(hi,fcx); }   // (no-op given the clamp, but keeps intent explicit)
-  // Position by LEFT + WIDTH (both measured from #topnav's left edge) — NOT left+right insets. The old
-  // right-inset form depended on nav.offsetWidth, so any stale/changed nav width stretched the bus across
-  // the whole row. left+width is pinned to the risers and immune to nav-width changes.
-  nav.style.setProperty("--bus-l", (Math.round(lo)-1)+"px");          // -1px so the bus meets the outer risers
-  nav.style.setProperty("--bus-w", (Math.round(hi-lo)+2)+"px");
-  // LIT CHANNEL: the bright segment from the stem (faction centre) to the ACTIVE tab's riser. Same left+width
-  // scheme; re-run by setSection() on every tab change.
-  const act=nav.querySelector(".navtab.active");
-  if(act && fcx!=null){
-    const acx=act.offsetLeft + act.offsetWidth/2;
-    const aLo=Math.min(fcx,acx), aHi=Math.max(fcx,acx);
-    nav.style.setProperty("--busA-l", (Math.round(aLo)-1)+"px");
-    nav.style.setProperty("--busA-w", (Math.round(aHi-aLo)+2)+"px");
-  }else{ nav.style.removeProperty("--busA-l"); nav.style.removeProperty("--busA-w"); }
+  const canDraw=fbox && tabs.length>=2 && matchMedia("(min-width:860px)").matches
+    && document.body.dataset.frame!=="border" && document.body.dataset.section!=="home";
+  if(!canDraw){ svg.classList.remove("is-visible"); return; }
+
+  const mr=mast.getBoundingClientRect(), fr=fbox.getBoundingClientRect();
+  const rects=tabs.map(t=>t.getBoundingClientRect());
+  // A wrapped tab row has no unambiguous single bus. Hide it instead of drawing across controls.
+  if(!mr.width || !mr.height || !fr.width || rects.some(r=>!r.width)
+      || rects.some(r=>Math.abs(r.top-rects[0].top)>2)){
+    svg.classList.remove("is-visible"); return;
+  }
+  const snap=n=>Math.round(n*2)/2;
+  const fx=snap(fr.left+fr.width/2-mr.left), fy=snap(fr.bottom-mr.top);
+  const tabTop=snap(Math.min(...rects.map(r=>r.top-mr.top)));
+  const xs=rects.map(r=>snap(r.left+r.width/2-mr.left));
+  const busY=snap(tabTop-18), arrowTall=7, arrowHalf=5.5, arrowBase=tabTop-arrowTall;
+  // If responsive layout removes the clear channel, suppress the diagram until the next observation.
+  if(busY<=fy+2){ svg.classList.remove("is-visible"); return; }
+  const busL=snap(Math.min(fx,...xs)-1), busR=snap(Math.max(fx,...xs)+1);
+  const dim=svg.querySelector(".masthead-connector-dim");
+  const lit=svg.querySelector(".masthead-connector-lit");
+  const arrows=svg.querySelector(".masthead-connector-arrows");
+  const activeIndex=tabs.findIndex(t=>t.classList.contains("active"));
+
+  svg.setAttribute("viewBox",`0 0 ${snap(mr.width)} ${snap(mr.height)}`);
+  dim.setAttribute("d",`M ${busL} ${busY} H ${busR} `+
+    xs.map(x=>`M ${x} ${busY} V ${arrowBase+1}`).join(" "));
+  let litD=`M ${fx} ${fy} V ${busY}`;
+  if(activeIndex>=0){ const ax=xs[activeIndex];
+    litD+=` M ${fx} ${busY} H ${ax} M ${ax} ${busY} V ${arrowBase+1}`; }
+  lit.setAttribute("d",litD);
+  arrows.innerHTML=xs.map((x,i)=>
+    `<polygon class="masthead-connector-arrow${i===activeIndex?' is-active':''}" points="${x-arrowHalf},${arrowBase} ${x+arrowHalf},${arrowBase} ${x},${tabTop}" />`
+  ).join("");
+  svg.classList.add("is-visible");
 }
-/* Keep the bus aligned to the risers ROBUSTLY: the tab labels use a web font, so the tabs REFLOW after
-   the font loads (and on zoom / window resize) — recomputing only once at render left the bus ends short.
-   A ResizeObserver on the tab row re-runs positionConnector on every reflow; fonts.ready covers the first
-   paint. (Setting the CSS vars doesn't change #topnav's box, so this can't loop.) */
-let _connRO=null, _connResizeT=null;
+/* Observe every geometry owner. renderBrand() replaces the faction control, so renderNav() calls this again
+   and the observer is rebound to the new nodes. Animation frames and fonts.ready cover initial settlement. */
+let _connRO=null, _connRAF=0, _connResizeT=null;
+function scheduleConnector(){
+  if(_connRAF) cancelAnimationFrame(_connRAF);
+  _connRAF=requestAnimationFrame(()=>{ _connRAF=0; positionConnector(); });
+}
 function watchConnector(){
-  const nav=$("#topnav"); if(!nav) return;
-  positionConnector();
-  // re-run after the next two frames — the first synchronous call can land mid-layout (a tab still
-  // measuring 0, the faction box mid-transition); by the second frame the row has settled.
-  requestAnimationFrame(()=>requestAnimationFrame(positionConnector));
-  if(window.ResizeObserver && !_connRO){ _connRO=new ResizeObserver(()=>positionConnector()); _connRO.observe(nav); }
-  if(document.fonts && document.fonts.ready) document.fonts.ready.then(positionConnector).catch(()=>{});
+  const mast=document.querySelector(".masthead"), nav=$("#topnav"), fbox=document.querySelector(".faction-box");
+  if(!mast || !nav) return;
+  if(_connRO) _connRO.disconnect();
+  if(window.ResizeObserver){
+    _connRO=new ResizeObserver(scheduleConnector);
+    [mast,nav,fbox,...nav.querySelectorAll(".navtab")].filter(Boolean).forEach(el=>_connRO.observe(el));
+  }
+  scheduleConnector();
+  requestAnimationFrame(()=>requestAnimationFrame(scheduleConnector));
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleConnector).catch(()=>{});
 }
-window.addEventListener("resize", ()=>{ clearTimeout(_connResizeT); _connResizeT=setTimeout(positionConnector, 120); });
+window.addEventListener("resize", ()=>{ clearTimeout(_connResizeT); _connResizeT=setTimeout(scheduleConnector, 120); });
 /* ROW 1 (umbrella): fill every registered global box and mark the active one. (The FACTION box between
    the nav and settings is built by renderBrand(); the cog sits at the far right.) */
 function renderPrimaryNav(){

@@ -19,7 +19,10 @@ on deployment state; local checkpoints may intentionally be ahead of GitHub Page
 - **Wiki migration go-ahead** — moving Tribe Lore/Roleplay onto the MediaWiki (steps in `docs/WIKI-INTEGRATION.md`).
 
 ## Sharp edges (don't re-break these)
-- **Connector** must stay positioned by **left+width** (never left+right insets) — that was the "bus overshoot" bug.
+- **Connector:** `#masthead-connectors` is one measured SVG overlay. `positionConnector()` owns the stem,
+  bus, risers, and arrowheads in one masthead coordinate system; `watchConnector()` observes every geometry
+  owner. Do not restore separately positioned pseudo-elements. Wrapped or collapsed layouts intentionally
+  hide the diagram.
 - **Preview width quirk:** the dev preview evaluates media queries at a wider CSS width than `window.innerWidth`
   reports (downscaling) — width-gated CSS can't be tested by resizing; verify at the target width by measurement.
 - **CRT motion** is gated on the app's **Reduce-Motion toggle** (`body[data-reducemotion]`), NOT the system pref.
@@ -61,8 +64,8 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
   surface, add its metadata once, then add its explicit renderer/visibility branch, `NAV_ICONS` entry if
   needed, `<section>` markup, and `#primary-nav` button. Do not add another section-validity or label list.
 - **Masthead:** 3-zone grid ≥1024px — nav left, faction centred, settings right; row-2 section tabs centre
-  under the faction; the flow-chart connector is positioned by `positionConnector()` (left+width vars, not
-  left+right — don't reintroduce right-inset positioning, it caused the "bus overshoot" bug).
+  under the faction. `positionConnector()` draws one SVG from the actual faction/tab rectangles;
+  `watchConnector()` rebinds observation after the faction control is replaced.
 - **Map:** 3 scales (US atlas / Wendover Region / Local) sharing `#map[/<scope>]` with `_mapScope`. US pins
   are the hardcoded `MAP_LOCATIONS` (pixel coords in a 650×500 viewBox) + a Wendover hero marker. Region is
   a small original schematic. `renderMap()`/`showMapDetail()`/`setMapScope()`. Region drawing + coordinate
