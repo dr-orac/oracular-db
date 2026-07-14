@@ -121,6 +121,51 @@ The eventual layer must:
 If the claims audit cannot support a meaningful boundary, publish named influence points or broad regions
 instead of fabricating a precise polygon.
 
+## Terrain underlay
+
+The supplied North America relief image is visual direction, not a reusable asset or geographic source. Its
+muted relief, readable mountain chains, and layered-paper character are useful qualities to pursue in an
+original underlay. Its pixels, exact styling, labels, rivers, boundaries, and apparent post-war changes must
+not be copied or traced. A perceived changed coastline or watercourse is a fan interpretation unless a
+reviewed source establishes it.
+
+The shipped map currently uses responsive SVG schematics; it does not yet include a geographic map library.
+T114 is the bounded decision point for MapLibre. MapLibre can keep source data separate from presentation and
+compose raster, vector, hillshade, and colour-relief layers; its raster DEM source can support hillshade
+without requiring a tilted 3D camera. See the official [layer specification](https://maplibre.org/maplibre-style-spec/layers/),
+[raster DEM source documentation](https://maplibre.org/maplibre-gl-js/docs/API/classes/RasterDEMTileSource/),
+and [hillshade example](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-hillshade-layer/).
+
+The proposed US + Region stack, from bottom to top, is:
+
+1. neutral ocean, land, and lake base;
+2. low-saturation colour relief derived from licensed elevation data;
+3. restrained hillshade derived from the same elevation data;
+4. coast, major lakes, and major rivers;
+5. optional post-war condition or geography-change masks;
+6. optional faction territories and contested-area treatments;
+7. routes, boundaries, and travel corridors;
+8. locations, uncertainty symbols, and labels.
+
+Keep physical geography and post-war interpretation in different datasets. Elevation and ordinary
+hydrography belong to the factual base. A dried lake, irradiated zone, redirected river, or altered coastline
+belongs to a separately toggleable scenario layer with a reference year, continuity, placement basis,
+evidence, review status, and uncertainty. Where the evidence is insufficient, use broad condition shading or
+withhold the feature instead of editing the base terrain.
+
+Keep the production view two-dimensional (`pitch: 0`). Relief should add orientation and atmosphere without
+distorting marker relationships, hiding territory overlaps, or competing with labels. Use transparent fills,
+patterns, borders, and restrained faction hues above it. The Local scope stays in the stable `1000 × 700`
+game-space coordinate system and does not inherit continental terrain.
+
+A single georeferenced image is technically possible through MapLibre's
+[image source](https://maplibre.org/maplibre-gl-js/docs/API/classes/ImageSource/), but it is not the preferred
+production design: it becomes soft at zoom, bakes several meanings together, resists theme adaptation, and
+can hide unsupported geography inside the artwork. Prefer renderer-native DEM relief plus original vector
+overlays. Retain the SVG atlas during the proof and lazy-load MapLibre only when Map opens. The dependency
+earns inclusion only if self-hosting, transfer cost, narrow-screen containment, accessibility, failure
+fallback, and label clarity pass T114's recorded gates without requiring a client token or paid tile service.
+
 ```json
 {
   "version": 1,
@@ -155,14 +200,16 @@ must be confirmed against the supplied in-game reference or user direction befor
 3. **US data migration** — the 23-marker baseline is inventoried in `data/atlas-migration.json`, guarded by
    selfcheck, and fully matched to world records. Placement approval remains open. Promote only defensible
    records, then preserve coverage while replacing hand-positioned pins in bounded game-by-game sets.
-4. **Faction claims proof** — after the geographic renderer passes, inventory a small source-backed set and
+4. **Terrain and renderer proof** — run T114's 2D US + Region proof with separate physical and post-war
+   layers, measured loading cost, and the existing SVG fallback. Keep Local in game-space coordinates.
+5. **Faction claims proof** — after the geographic renderer passes, inventory a small source-backed set and
    test overlapping, uncertain, independently toggleable territories without changing location records.
-5. **Local base** — original playable-area schematic, using a cleaner in-game overview as spatial reference;
+6. **Local base** — original playable-area schematic, using a cleaner in-game overview as spatial reference;
    confirm landmark names and categories before publishing them.
-6. **Personal pins** — versioned browser-local store keyed by scope, create/edit/delete, validation, and
+7. **Personal pins** — versioned browser-local store keyed by scope, create/edit/delete, validation, and
    JSON export/import. Keep one storage seam so a shared source can replace it later.
-7. **Navigation** — pan/zoom with mouse, keyboard, and touch support; reduced-motion-safe transitions.
-8. **Shared canon, only when needed** — add a reviewed external source after its ownership and moderation
+8. **Navigation** — pan/zoom with mouse, keyboard, and touch support; reduced-motion-safe transitions.
+9. **Shared canon, only when needed** — add a reviewed external source after its ownership and moderation
    rules are decided. Do not overload the roster sheet as an incidental map database.
 
 Each step must preserve the three-scope URLs, work at narrow widths, and pass the repository self-check.

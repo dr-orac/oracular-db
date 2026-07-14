@@ -97,10 +97,13 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 3. **Continue the product audit alongside map data work.** Take the next bounded pass through settings and
    modal focus/close/restore behavior, then the remaining cross-surface states. Keep UX-001's VoiceOver,
    axe/Lighthouse, and physical iOS Safari checks external rather than claiming them locally.
-4. **Run a bounded geographic-renderer proof.** After the dataset inventory, test MapLibre for US + Region
-   geographic layers, lazy-loaded and self-hosted where practical. Keep Local in its original game-space
-   coordinates and design the transition between systems. The dependency must pass the Phase 4 gate. Keep
-   faction territory out of the base proof; then run T112's claims audit before drawing any overlay polygons.
+4. **Run the bounded terrain and geographic-renderer proof (T114).** After T113 and the dataset inventory,
+   test MapLibre for an original, two-dimensional US + Region underlay. Separate licensed elevation and
+   hydrography from toggleable, evidence-aware post-war condition masks; keep locations and labels above the
+   terrain. Lazy-load and self-host the renderer and selected assets where practical, require no client token
+   or paid tile service, measure transfer and failure behavior, and preserve the SVG atlas as fallback. Keep
+   Local in its original game-space coordinates. The dependency must pass the Phase 4 gate. Keep faction
+   territory out of the base proof; then run T112's claims audit before drawing any overlay polygons.
 5. **Extend Region, then build Local.** Keep the original Wendover schematic and its verified real-world
    anchors. Add reviewed regional routes/landmarks next; build the playable Local schematic only from the
    supplied in-game overview and user-confirmed landmarks.

@@ -214,6 +214,34 @@ Acceptance: no overlap with the status or lower chrome, no clipped panel padding
 1440×900, 1366×768, 1280×800, 1024×768, 390×844, 375×667, or 320×700. Verify US, Region, and Local routes,
 both default and chassis frames at a representative laptop size, keyboard focus order, and reduced motion.
 
+### T114 · Prove an original terrain underlay — P1 [map renderer + visual system] — ROADMAP
+
+Treat the supplied relief map as visual direction only. Do not ship, trace, or derive geometry from its
+pixels, and do not interpret apparent changed rivers or coastlines as established lore. The current atlas is
+responsive SVG; MapLibre remains a proposed dependency. After T113, run one bounded US + Region proof that
+earns or rejects that dependency while preserving the SVG atlas as the working fallback. Local remains an
+original game-space schematic rather than a geographic terrain view.
+
+Build the proof as independent layers in this order: neutral land and water, muted colour relief, restrained
+hillshade, coast/lakes/major rivers, optional post-war condition masks, faction territories, routes and
+borders, then locations and labels. Generate the physical terrain from suitably licensed elevation and
+hydrography data. Keep the camera two-dimensional; relief communicates landform through colour and shading,
+not a tilted or extruded world. Draw any post-war change as a separate, toggleable project layer with date,
+continuity, evidence status, and uncertainty. Never silently alter the factual base geography.
+
+Prefer tiled relief or renderer-native DEM layers over one baked continent image. A georeferenced image may
+be used only as a disposable performance prototype: it must not become the production source of truth. The
+proof must lazy-load its code and assets when Map opens, require no client API token or ongoing paid service,
+self-host dependencies and selected data where practical, and fail gracefully to the existing SVG. Record
+the origin, licence, and required credit for every retained terrain or hydrography source.
+
+Acceptance: terrain remains legible but subordinate to pins, labels, and overlapping territory treatments;
+land/water meaning survives every app theme and high-contrast mode; US overview and Region zoom share a
+coherent visual language; no unsupported landscape change is presented as fact; and the same 1440×900,
+1366×768, 1280×800, 1024×768, 390×844, 375×667, and 320×700 viewport matrix passes with reduced motion,
+slow/failing asset delivery, keyboard access, and the SVG fallback. Record transfer size, request count,
+first-open delay, pan/zoom behavior, and label clarity before deciding whether MapLibre earns inclusion.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →
