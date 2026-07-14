@@ -79,8 +79,9 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
    passed at 1440px, 390px, 375px, and 320px. Begin the next map work at the data boundary, not the renderer.
    `data/world.json` is deliberately `provisional`: its 13 current locations and valid internal references
    are a research starting point, not yet authoritative placements. Follow `docs/MAP-ARCHITECTURE.md`:
-   - inventory the existing 23 US atlas entries so migration never reduces coverage;
-   - collect identity anchors and map-relative evidence game by game;
+   - use the completed `data/atlas-migration.json` inventory (4/23 matched; 19 records required) so migration
+     never reduces coverage; `docs/MAP-DATA-INVENTORY.md` contains the delta-only research contract;
+   - collect identity anchors and map-relative evidence game by game, beginning with Fallout 1;
    - classify placement basis, review status, and uncertainty separately from location identity;
    - reconcile the researched records, then change `data_status` only when every published marker passes;
    - migrate one game-sized set at a time behind the existing `renderMap()`/`showMapDetail()` UI.

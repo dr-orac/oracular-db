@@ -383,6 +383,74 @@ if os.path.exists(world_path):
         else:
             warn('data/world.json data_status should be "provisional" or "display_ready"')
 
+        # The current US atlas still renders a legacy in-code marker list. Keep an explicit migration
+        # manifest in lockstep with it until every marker is backed by a reviewed world record.
+        migration_path = p("data", "atlas-migration.json")
+        try:
+            with open(migration_path, encoding="utf-8") as f:
+                migration = json.load(f)
+        except (OSError, json.JSONDecodeError) as exc:
+            err(f"data/atlas-migration.json cannot be read as JSON: {exc}")
+            migration = None
+
+        if migration is not None:
+            markers = migration.get("markers")
+            if not isinstance(markers, list):
+                err('data/atlas-migration.json field "markers" must be an array')
+                markers = []
+
+            map_block = re.search(r'const MAP_LOCATIONS\s*=\s*\[([\s\S]*?)\n\];', js)
+            legacy_rows = [] if not map_block else re.findall(
+                r'\{\s*id:"([^"]+)",\s*name:"([^"]+)",\s*game:"([^"]+)"', map_block.group(1)
+            )
+            legacy = {item_id: {"name": name, "game": game} for item_id, name, game in legacy_rows}
+            if not legacy_rows:
+                err("app.js MAP_LOCATIONS could not be inventoried")
+            if migration.get("marker_count") != len(markers):
+                err("data/atlas-migration.json marker_count does not match its markers array")
+            if len(markers) != len(legacy_rows):
+                err("data/atlas-migration.json does not cover every app.js MAP_LOCATIONS marker")
+
+            migration_ids = set()
+            matched = 0
+            for index, marker in enumerate(markers):
+                if not isinstance(marker, dict):
+                    err(f"data/atlas-migration.json markers[{index}] must be an object")
+                    continue
+                legacy_id = marker.get("legacy_id")
+                if not isinstance(legacy_id, str) or not legacy_id:
+                    err(f"data/atlas-migration.json markers[{index}] has no legacy_id")
+                    continue
+                if legacy_id in migration_ids:
+                    err(f'data/atlas-migration.json has duplicate legacy_id "{legacy_id}"')
+                migration_ids.add(legacy_id)
+                source = legacy.get(legacy_id)
+                if source is None:
+                    err(f'data/atlas-migration.json references unknown legacy marker "{legacy_id}"')
+                    continue
+                if marker.get("name") != source["name"]:
+                    err(f'data/atlas-migration.json marker "{legacy_id}" name differs from app.js')
+                expected_game = {
+                    "Fallout 1": "fallout_1", "Fallout 2": "fallout_2", "New Vegas": "fallout_new_vegas"
+                }.get(source["game"])
+                if marker.get("game_id") != expected_game:
+                    err(f'data/atlas-migration.json marker "{legacy_id}" game_id differs from app.js')
+                world_id = marker.get("world_location_id")
+                marker_status = marker.get("status")
+                if world_id is None:
+                    if marker_status != "research_required":
+                        err(f'data/atlas-migration.json marker "{legacy_id}" without a world record must require research')
+                else:
+                    matched += 1
+                    if world_id not in location_ids:
+                        err(f'data/atlas-migration.json marker "{legacy_id}" references unknown world location "{world_id}"')
+                    if marker_status != "matched":
+                        err(f'data/atlas-migration.json marker "{legacy_id}" with a world record must be matched')
+
+            for legacy_id in sorted(set(legacy) - migration_ids):
+                err(f'data/atlas-migration.json omits legacy marker "{legacy_id}"')
+            info(f"US atlas migration inventory: {matched}/{len(markers)} markers matched to world records")
+
 # ---------------------------------------------------------------- report
 print("── Yuma Roster self-check ──")
 print(f"   ids: {len(ref_ids)} refs / {len(defined_ids)} defined   "

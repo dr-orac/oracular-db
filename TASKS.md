@@ -133,6 +133,19 @@ their owner with zero overlap or document overflow. Initial loading hides the in
 shows only Refresh in a 383px state region; retry returns to a loader; successful refresh keeps the current
 dossier visible. The wide 1440px hierarchy and dimensions remain unchanged.
 
+### T108 · Inventory the US atlas migration boundary — P1 [map data + anti-entropy] — IMPLEMENTED 2026-07-14
+
+Create one machine-readable ledger for every marker still rendered by `MAP_LOCATIONS` before adding or
+replacing coordinates. Guard the ledger against the live array and `world.json` in selfcheck; record matched
+versus research-required entries by game; define a delta-only research contract; and preserve the current
+display source until one complete game batch is reviewed.
+
+`data/atlas-migration.json` now covers all 23 markers: Fallout 1 has 3/9 world matches, Fallout 2 has 1/3,
+and New Vegas has 0/11, leaving 19 missing records. The four matches are structural only; every imported
+world location still needs placement/evidence review. Selfcheck rejects omitted, duplicate, renamed,
+misclassified, or dangling migration entries. `docs/MAP-DATA-INVENTORY.md` owns the batch order and compact
+research output shape; Fallout 1 is the first bounded research/migration batch.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →
