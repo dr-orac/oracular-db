@@ -265,7 +265,7 @@ if os.path.exists(world_path):
         world = None
 
     if world is not None:
-        collections = ("terrain_types", "regions", "locations", "connections", "faction_zones", "event_hooks")
+        collections = ("terrain_types", "regions", "sources", "locations", "connections", "faction_zones", "event_hooks")
         for key in collections:
             if not isinstance(world.get(key), list):
                 err(f'data/world.json field "{key}" must be an array')
@@ -288,6 +288,7 @@ if os.path.exists(world_path):
 
         terrain_ids = collect_ids("terrain_types")
         region_ids = collect_ids("regions")
+        source_ids = collect_ids("sources")
         location_ids = collect_ids("locations")
         collect_ids("faction_zones")
         collect_ids("event_hooks")
@@ -295,14 +296,36 @@ if os.path.exists(world_path):
         confidence_values = {"low", "medium", "high"}
         placement_bases = {"real_world_identity", "game_map_inference", "regional_inference", "project_authored", "unknown"}
         placement_statuses = {"reviewed", "provisional", "withheld"}
+        source_kinds = {"official_game_material", "developer_statement", "reference_work", "community_reference"}
+        evidence_supports = {"identity", "placement", "relative_position", "contradiction"}
+        sources = world.get("sources", []) if isinstance(world.get("sources"), list) else []
+        source_urls = set()
+        for source in sources:
+            if not isinstance(source, dict):
+                continue
+            source_id = source.get("id", "(missing id)")
+            if not isinstance(source.get("title"), str) or not source.get("title"):
+                err(f'data/world.json source "{source_id}" has no title')
+            source_url = source.get("url")
+            if not isinstance(source_url, str) or not source_url.startswith("https://"):
+                err(f'data/world.json source "{source_id}" must have an https URL')
+            elif source_url in source_urls:
+                err(f'data/world.json source "{source_id}" duplicates URL "{source_url}"')
+            else:
+                source_urls.add(source_url)
+            if source.get("kind") not in source_kinds:
+                err(f'data/world.json source "{source_id}" has invalid kind "{source.get("kind")}"')
+
         locations = world.get("locations", []) if isinstance(world.get("locations"), list) else []
         for loc in locations:
             if not isinstance(loc, dict):
                 continue
             loc_id = loc.get("id", "(missing id)")
+            placement = loc.get("placement")
             coords = loc.get("coordinates")
             if not isinstance(coords, dict):
-                err(f'data/world.json location "{loc_id}" has no coordinates object')
+                if not isinstance(placement, dict) or placement.get("status") != "withheld":
+                    err(f'data/world.json location "{loc_id}" may omit coordinates only when placement is withheld')
             else:
                 lat, lon = coords.get("latitude"), coords.get("longitude")
                 if not isinstance(lat, (int, float)) or not -90 <= lat <= 90:
@@ -313,7 +336,6 @@ if os.path.exists(world_path):
                 err(f'data/world.json location "{loc_id}" references unknown terrain_type_id "{loc.get("terrain_type_id")}"')
             if "source_confidence" in loc and loc.get("source_confidence") not in confidence_values:
                 err(f'data/world.json location "{loc_id}" has invalid source_confidence "{loc.get("source_confidence")}"')
-            placement = loc.get("placement")
             if placement is not None:
                 if not isinstance(placement, dict):
                     err(f'data/world.json location "{loc_id}" placement must be an object')
@@ -328,6 +350,15 @@ if os.path.exists(world_path):
             evidence = loc.get("evidence")
             if evidence is not None and (not isinstance(evidence, list) or not all(isinstance(item, dict) for item in evidence)):
                 err(f'data/world.json location "{loc_id}" evidence must be an array of objects')
+            elif isinstance(evidence, list):
+                for index, item in enumerate(evidence):
+                    if item.get("source_id") not in source_ids:
+                        err(f'data/world.json location "{loc_id}" evidence[{index}] references unknown source "{item.get("source_id")}"')
+                    if item.get("supports") not in evidence_supports:
+                        err(f'data/world.json location "{loc_id}" evidence[{index}] has invalid supports "{item.get("supports")}"')
+                    for field in ("locator", "note"):
+                        if not isinstance(item.get(field), str) or not item.get(field):
+                            err(f'data/world.json location "{loc_id}" evidence[{index}] has no {field}')
 
         connections = world.get("connections", []) if isinstance(world.get("connections"), list) else []
         for index, connection in enumerate(connections):

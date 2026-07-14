@@ -108,7 +108,7 @@ must be confirmed against the supplied in-game reference or user direction befor
 2. **Regional base** — original regional schematic plus a small reviewed landmark and route registry.
    Complete with the initial four orientation anchors; extend only with reviewed sources.
 3. **US data migration** — the 23-marker baseline is inventoried in `data/atlas-migration.json` and guarded
-   by selfcheck (4 matched records, 19 still requiring records). Reconcile it with reviewed records in
+   by selfcheck (10 matched records, 13 still requiring records). Reconcile it with reviewed records in
    `data/world.json`; preserve coverage while replacing hand-positioned pins in bounded game-by-game sets.
 4. **Local base** — original playable-area schematic, using a cleaner in-game overview as spatial reference;
    confirm landmark names and categories before publishing them.

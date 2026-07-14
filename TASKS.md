@@ -146,6 +146,20 @@ world location still needs placement/evidence review. Selfcheck rejects omitted,
 misclassified, or dangling migration entries. `docs/MAP-DATA-INVENTORY.md` owns the batch order and compact
 research output shape; Fallout 1 is the first bounded research/migration batch.
 
+### T109 · Reconcile the Fallout 1 atlas evidence — P1 [map data + anti-entropy] — IMPLEMENTED 2026-07-14
+
+Validate the nine-location research delta rather than accepting its coordinates wholesale; preserve useful
+identity coverage, record contradictions, and withhold points that cannot survive source reconciliation.
+Add a deduplicated source registry and guard source kinds, evidence links, support types, and coordinate
+omission rules in selfcheck.
+
+All nine Fallout 1 markers now have stable world records, moving the migration inventory from 4/23 to 10/23.
+Necropolis is anchored to Bakersfield and the Boneyard to Los Angeles; the Cathedral and Lost Hills remain
+broad provisional loci; the Hub, Mariposa, and the Glow deliberately have no coordinates. Vault 13 and
+Shady Sands retain their legacy candidates only as wide-uncertainty research hypotheses. The raw research
+payload is not tracked, no public markers changed, and `docs/MAP-FALLOUT-1-REVIEW.md` owns the audit trail
+and promotion gate. Fallout 2 is the next bounded record-coverage batch.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →
