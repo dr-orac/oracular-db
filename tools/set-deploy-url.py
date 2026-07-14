@@ -2,9 +2,8 @@
 """
 set-deploy-url.py — stamp the deployed site URL into index.html's social-card meta tags.
 
-Open Graph / Twitter card images must be ABSOLUTE urls (Discord/Twitter crawlers read the
-static HTML and can't resolve a relative path). The app ships with a relative og:image so it
-works locally; run this once at deploy time with your live base URL:
+Open Graph / Twitter card images must use absolute URLs. The committed page is stamped for
+the current GitHub Pages host; run this when the deployment URL changes:
 
     python3 tools/set-deploy-url.py https://<username>.github.io/<repo>/
 
@@ -12,13 +11,17 @@ It sets og:image + twitter:image to <base>og-card.png and og:url to <base> (inse
 if absent). Idempotent — safe to re-run if the URL changes. Everything else (relative
 styles.css/app.js/fonts) already works under a subpath, so this is the only deploy edit.
 """
-import sys, re, os
+import os
+import re
+import sys
+from urllib.parse import urlsplit
 
 if len(sys.argv) != 2:
     sys.exit("usage: python3 tools/set-deploy-url.py https://<username>.github.io/<repo>/")
 base = sys.argv[1].strip()
-if not base.startswith("http"):
-    sys.exit("base URL must start with http(s)://")
+parsed = urlsplit(base)
+if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.query or parsed.fragment:
+    sys.exit("base URL must be an absolute http(s) URL without a query or fragment")
 if not base.endswith("/"):
     base += "/"
 

@@ -7,8 +7,13 @@ Run from the project root:
     python3 tools/make-og-card.py
 Writes: og-card.png  (drop this at the deployed site root)
 """
-import os, sys
-from PIL import Image, ImageDraw, ImageFont
+import os
+import sys
+
+try:
+    from PIL import Image, ImageDraw, ImageFont
+except ImportError:
+    sys.exit("Pillow is required: install it before rebuilding og-card.png.")
 
 W, H   = 1200, 630
 BG     = (4, 6, 10)            # deep phosphor-dark
