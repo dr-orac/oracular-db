@@ -90,19 +90,23 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
    - classify placement basis, review status, and uncertainty separately from location identity;
    - promote defensible direct identities, then change `data_status` only when every published marker passes;
    - migrate one game-sized set at a time behind the existing `renderMap()`/`showMapDetail()` UI.
-2. **Continue the product audit alongside map data work.** Take the next bounded pass through settings and
+2. **Complete Home discovery and map viewport containment (T113).** Generate equal Wiki, Map, and Paperwork
+   Home cards from the umbrella registry, then make the active map panel fit the bounded `main` height at
+   laptop sizes without overlapping lower chrome. Preserve natural stacked flow on phones and verify the
+   viewport matrix recorded in `TASKS.md` before beginning the geographic-renderer proof.
+3. **Continue the product audit alongside map data work.** Take the next bounded pass through settings and
    modal focus/close/restore behavior, then the remaining cross-surface states. Keep UX-001's VoiceOver,
    axe/Lighthouse, and physical iOS Safari checks external rather than claiming them locally.
-3. **Run a bounded geographic-renderer proof.** After the dataset inventory, test MapLibre for US + Region
+4. **Run a bounded geographic-renderer proof.** After the dataset inventory, test MapLibre for US + Region
    geographic layers, lazy-loaded and self-hosted where practical. Keep Local in its original game-space
    coordinates and design the transition between systems. The dependency must pass the Phase 4 gate. Keep
    faction territory out of the base proof; then run T112's claims audit before drawing any overlay polygons.
-4. **Extend Region, then build Local.** Keep the original Wendover schematic and its verified real-world
+5. **Extend Region, then build Local.** Keep the original Wendover schematic and its verified real-world
    anchors. Add reviewed regional routes/landmarks next; build the playable Local schematic only from the
    supplied in-game overview and user-confirmed landmarks.
-5. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
+6. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
    Sheet/wiki like the rest of the roster (forks the data model — pick one and note it).
-6. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
+7. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
    full step-by-step (pandoc / VisualEditor paste, hub + two-card page shape) is in `docs/WIKI-INTEGRATION.md`.
    When those pages exist, flip the tribe's Lore/Roleplay tabs from the Google-Doc source to the wiki pages.
 

@@ -196,6 +196,24 @@ with scenario, canon scope, time, evidence, review status, and uncertainty; supp
 rather than assigning every area to one owner. The data and styling boundary is owned by
 `docs/MAP-ARCHITECTURE.md`.
 
+### T113 · Complete Home discovery and map viewport containment — P1 [navigation + responsive] — ROADMAP
+
+Expose Wiki, Map, and Paperwork together in the Home landing's umbrella row. Generate those cards from
+`UMBRELLA_SECTIONS` excluding Home rather than adding a second hardcoded section list; add concise Map and
+Paperwork entries to `HOME_INFO`, reuse `NAV_ICONS`, and route through the existing `data-section` handler.
+At laptop and wider widths the three cards must share one equal three-column row. At narrow widths they may
+wrap or stack without truncating their titles, descriptions, focus treatment, or touch targets.
+
+Make the Map view own the height actually available inside `main`: the heading stays intrinsic, the active
+panel takes the remaining bounded space, and both the stage and sidebar use `min-height:0`. Contain the SVG by
+width and height while preserving its viewBox ratio instead of allowing width-only scaling to make it taller
+than the viewport; let detail content scroll inside its owner. On stacked phone layouts, restore natural
+page flow so map and details remain reachable without horizontal overflow.
+
+Acceptance: no overlap with the status or lower chrome, no clipped panel padding, and no document overflow at
+1440×900, 1366×768, 1280×800, 1024×768, 390×844, 375×667, or 320×700. Verify US, Region, and Local routes,
+both default and chassis frames at a representative laptop size, keyboard focus order, and reduced motion.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →
