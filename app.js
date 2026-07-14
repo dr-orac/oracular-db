@@ -1609,6 +1609,22 @@ function filtered(){
   hits.sort((a,b)=> b.s-a.s || a.c.name.localeCompare(b.c.name));   // rank by relevance, then name
   return hits.map(h=>h.c);
 }
+/* One visible-data boundary for every roster representation. Search owns relevance ordering; the section
+   filter then narrows that same result for List rows, Cards, dossier selection and keyboard navigation. */
+function visibleRosterCharacters(){
+  const chars=filtered();
+  return state.filterSection==="all" ? chars : chars.filter(c=>c.section===state.filterSection);
+}
+function syncVisibleRosterSelection(chars){
+  let sel=state.model.characters[state.selected];
+  if(chars.length && !chars.includes(sel)){
+    sel=chars[0]; state.selected=state.model.characters.indexOf(sel);
+    if(!_routing) writeRoute(sel.slug);
+  }else if(!chars.length){
+    sel=null; if(!_routing) writeRoute();                         // truthful base route: no visible character
+  }
+  return sel;
+}
 
 /* ---- in-theme custom dropdown ----------------------------------------------------------
    A themed replacement for native <select>, so the popup list renders in the terminal theme
@@ -1640,8 +1656,10 @@ function closeAllSelects(except){
 }
 /* what a committed selection does, keyed by the select's id (the two roster filters) */
 function onSelectChange(id, val){
-  if(id==="filter-section"){ state.filterSection=val; renderRoster(); }
-  else if(id==="sort-by"){ state.sortBy=val; renderRoster(); }
+  if(id==="filter-section") state.filterSection=val;
+  else if(id==="sort-by") state.sortBy=val;
+  else return;
+  render();                                  // update whichever roster layout (List/Cards) is active
 }
 document.addEventListener("click", e=>{
   const opt=e.target.closest(".selctl-opt");
@@ -1687,9 +1705,12 @@ function sortChars(arr){
   return arr;                       // "sheet" = preserve original order
 }
 function renderRoster(){
-  const chars=filtered();
+  const chars=visibleRosterCharacters();
   const q=norm(state.query);                 // used to highlight matched substrings in rows
   const list=$("#list");
+  // A detail selection must exist in the visible master list. If a query/filter displaces it, move to
+  // the first displayed result so row, dossier, URL and assistive state describe the same character.
+  const sel=syncVisibleRosterSelection(chars);
   const rowHTML=(c)=>{
     const gi = state.model.characters.indexOf(c);
     const sub = shortRole(c.fields.role) || c.fields.species || "";
@@ -1703,7 +1724,7 @@ function renderRoster(){
   if(q){
     // SEARCH MODE — one relevance-RANKED list (filtered() already ranked it); section grouping is dropped
     // so the best match is always first. The section filter still narrows the pool.
-    const hits = state.filterSection==="all" ? chars : chars.filter(c=>c.section===state.filterSection);
+    const hits = chars;
     if(hits.length){
       html+=`<div class="sectionhdr">Results · ${hits.length}</div>`;
       for(const c of hits) html+=rowHTML(c);
@@ -1720,13 +1741,10 @@ function renderRoster(){
     }
   }
   list.innerHTML = html || emptyStateHTML(state.query);
-  // tell assistive tech which option is current (listbox pattern)
-  list.setAttribute("aria-activedescendant",
-    state.model.characters[state.selected] ? "row-"+state.selected : "");
+  // Name only an option that exists in this rendered listbox; empty results have no active descendant.
+  const activeRow=list.querySelector(".row.active");
+  list.setAttribute("aria-activedescendant", activeRow ? activeRow.id : "");
 
-  // dossier for current selection (if it's in the filtered set, else first match)
-  let sel = state.model.characters[state.selected];
-  if(!chars.includes(sel)) sel=chars[0];
   const doss=$("#dossier");
   doss.innerHTML = sel ? dossierHTML(sel)
     : `<div class="empty-doss termbox">// NO UNIT SELECTED</div>`;
@@ -1734,7 +1752,9 @@ function renderRoster(){
 }
 
 function renderCards(){
-  const chars=filtered();
+  let chars=visibleRosterCharacters();
+  syncVisibleRosterSelection(chars);                           // keep latent route/state out of filtered Cards
+  if(!norm(state.query)) chars=sortChars(chars);              // search relevance wins while searching
   const wrap=$("#cards");
   if(!chars.length){ wrap.innerHTML=emptyStateHTML(state.query); return; }
   wrap.innerHTML = chars.map(c=>cardHTML(c, state.model.characters.indexOf(c))).join("");
@@ -1856,7 +1876,10 @@ function gotoChar(slug){
   if(idx<0) return;
   ["#modalback","#shotback","#iconback","#uploadback"].forEach(id=>$(id).classList.remove("open"));
   if(state.view!=="roster") setView("roster");
-  // make sure the target isn't hidden by an active section filter
+  // make sure the explicit destination isn't hidden by an active search or section filter
+  if(state.query){
+    state.query=""; const s=$("#search"); if(s){ s.value=""; s.closest(".search").classList.remove("has-value"); }
+  }
   if(state.filterSection!=="all" && state.model.characters[idx].section!==state.filterSection){
     state.filterSection="all"; setSelectValue("filter-section", "all");
   }
@@ -2214,8 +2237,11 @@ $("#view-roster").addEventListener("click", ()=>setView("roster"));
 $("#view-cards").addEventListener("click", ()=>setView("cards"));
 function setView(v){
   state.view=v;
-  $("#view-roster").classList.toggle("active", v==="roster");
-  $("#view-cards").classList.toggle("active", v==="cards");
+  const listBtn=$("#view-roster"), cardsBtn=$("#view-cards");
+  listBtn.classList.toggle("active", v==="roster");
+  cardsBtn.classList.toggle("active", v==="cards");
+  listBtn.setAttribute("aria-selected", v==="roster");
+  cardsBtn.setAttribute("aria-selected", v==="cards");
   localStorage.setItem("mdb-view", v);
   render();
 }
@@ -3759,11 +3785,11 @@ document.addEventListener("keydown", e=>{
   const down=e.key==="ArrowDown"||e.key==="j", up=e.key==="ArrowUp"||e.key==="k";
   if(!down && !up) return;
   e.preventDefault();
-  const list=filtered(); if(!list.length) return;
-  let pos=list.indexOf(state.model.characters[state.selected]);
+  const idxs=[...$("#list").querySelectorAll(".row")].map(r=>+r.dataset.idx); if(!idxs.length) return;
+  let pos=idxs.indexOf(state.selected);
   // if the current selection isn't in the filtered set, down→first, up→last
-  pos = (pos<0) ? (down?0:list.length-1) : Math.max(0, Math.min(list.length-1, pos + (down?1:-1)));
-  selectIndex(state.model.characters.indexOf(list[pos]));
+  pos = (pos<0) ? (down?0:idxs.length-1) : Math.max(0, Math.min(idxs.length-1, pos + (down?1:-1)));
+  selectIndex(idxs[pos]);
   const a=$("#list .row.active"); if(a) a.scrollIntoView({block:"nearest"});
 });
 

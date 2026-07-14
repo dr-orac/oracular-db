@@ -74,10 +74,11 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 - **`EXTRA_CHARACTERS`** (top of app.js): hardcoded bios merged into the roster (incl. Wendover chars).
 
 ## Open tasks (priority order, with concrete pointers)
-1. **Continue the UI/UX audit baseline before changing the map interface.** UX-001 / T102 and UX-002 / T103
-   have complete local passes; retain UX-001's three external checks. Continue Phase 0 with the roster/list/
-   cards/dossier/relations journeys, especially selected-character state, empty/error/loading behavior,
-   keyboard parity, and narrow reflow. Record evidence before accepting another bounded fix.
+1. **Fix the fresh direct-Roster boot path (UX-005 / T106), then the malformed Relations target (UX-004 /
+   T105).** UX-003 / T104 has a complete local pass: List, Cards, dossier, filter/sort, route, ARIA selection,
+   and display-order keyboard state now share one visible-character boundary. After those two bounded route
+   fixes, continue Phase 0 with roster/dossier visual hierarchy and slow/offline loading behavior. Retain
+   UX-001's three external checks.
 2. **Make the world dataset display-ready** (research may proceed while the audit runs; it does not edit UI).
    `data/world.json` is deliberately `provisional`: its 13 current locations and valid internal references
    are a research starting point, not yet authoritative placements. Follow `docs/MAP-ARCHITECTURE.md`:

@@ -64,6 +64,12 @@ remote-data path, what was fixed, what was deferred and why. Read it before touc
 Global error nets: `render()` is wrapped in try/catch, and `window.onerror` /
 `unhandledrejection` surface an on-screen `toast()` — **nothing fails silently.**
 
+Roster representations share `visibleRosterCharacters()`: ranked search results are narrowed by the section
+filter once, then consumed by List rows, Cards, dossier selection, and keyboard navigation. Do not add a
+layout-specific filter path. Search relevance owns ordering while a query is active; otherwise Cards applies
+`sortChars()`, and List applies the same sort within its section groups. Filter/sort handlers call `render()`
+so the currently active List/Cards layout is the one refreshed.
+
 ### Section ownership (keep one source of truth)
 
 - Global, faction-agnostic identity lives in `UMBRELLA_SECTIONS`.

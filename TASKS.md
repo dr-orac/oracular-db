@@ -70,7 +70,7 @@ the registry/configuration. Live checks passed at 1760px, the compact 1280/1024p
 pointer and command-palette keyboard input; the intermediate-width nav collision is fixed with labelled,
 46px icon controls that retain their accessible names and titles.
 
-### T104 · Roster visible-data and selection consistency — P1 [correctness + accessibility]
+### T104 · Roster visible-data and selection consistency — P1 [correctness + accessibility] — IMPLEMENTED 2026-07-14
 
 Start with `docs/UI-UX-AUDIT.md` finding UX-003. The roster currently applies query, section, and sort state
 at different rendering layers. List rows may be filtered while the dossier and active-descendant still point
@@ -89,12 +89,27 @@ visible and active.
   no-match state references no missing option; List/Cards switching preserves the active controls; wide and
   narrow pointer/keyboard journeys and selfcheck pass.
 
+`visibleRosterCharacters()` now owns query + section filtering for List, Cards, dossier selection, and
+keyboard movement. Filter/sort changes render the active layout; Cards applies the selected section and sort
+unless search relevance owns ordering. An excluded selection moves to the first displayed character, empty
+results clear the active descendant and character route, explicit character jumps clear constraints that
+would hide their target, and the List/Cards tab state is exposed semantically. The original 55/48-character,
+Name A–Z, no-match, and display-order keyboard reproductions pass at 1440px and 390px with no overflow.
+
 ### T105 · Canonicalise invalid Relations character routes — P2 [correctness]
 
 Start with `docs/UI-UX-AUDIT.md` finding UX-004. A malformed `#<faction>/relations/<slug>` target safely
 shows the existing/default character, but leaves the invalid hash in place. Repair it to the base Relations
 route after routing completes, matching the existing malformed Roster behavior, without disturbing valid
 deep links or keyboard selection.
+
+### T106 · Start a fresh direct Roster route — P1 [boot + correctness]
+
+Start with `docs/UI-UX-AUDIT.md` finding UX-005. If a linked faction is already remembered and the browser
+loads directly on that same faction's Roster route, internal `currentSection` already equals `roster`, so
+`applyRoute()` skips `setSection()` and no sheet request begins. Ensure first route application enters the
+Roster lifecycle even when the section id is unchanged. Preserve valid character targets until the model is
+ready; do not introduce duplicate loads on ordinary hash changes.
 
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 

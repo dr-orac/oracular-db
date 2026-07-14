@@ -305,7 +305,12 @@ search relevance is not the ordering source.
 Cards respects section and sort controls; empty results reference no absent option; pointer and keyboard paths
 pass at representative wide and narrow widths.
 
-**Status:** open — implement as T104 before continuing the roster/dossier visual pass.
+**Status:** implemented 2026-07-14. `visibleRosterCharacters()` now supplies List, Cards, dossier selection,
+and keyboard movement. Filter/sort handlers render the active layout; Cards honors section and non-search
+sort order; excluded selections move to the first displayed character; empty results clear active-descendant
+and the character route; explicit character jumps clear constraints that would hide them. List/Cards now
+expose their selected tab state. The original 55/48-character, Name A–Z, no-match, and keyboard display-order
+reproductions pass at 1440px and 390px with no document overflow.
 
 ### UX-004 · P2 · correctness · Relations routing
 
@@ -325,6 +330,28 @@ keyboard selection retain their character slug; selected rail option, panel, and
 
 **Status:** open — retain as T105; it is independent of the higher-impact roster visible-data fix.
 
+### UX-005 · P1 · boot and correctness · fresh direct Roster route
+
+**Observation:** a fresh load on `#<faction>/roster[/<character>]` can remain indefinitely on “ACCESSING
+PIP-LINK” when that linked faction is already the remembered faction. `currentSection` is initialised to
+`roster`; `applyRoute()` sees no faction or section change and therefore never enters `setSection()` or starts
+the sheet request. Loading the same link while another faction is remembered works because `applyFaction()`
+starts the roster lifecycle, which makes the defect preference-dependent.
+
+**User/maintenance impact:** a valid shared Roster or character URL can fail on first load based only on the
+visitor's previous faction, with no error or recovery instruction. Clicking the visible Roster tab starts the
+load, but a direct link must not require that undocumented action.
+
+**Recommended direction:** make first route application enter the Roster lifecycle when no model/load owns
+the view, even if the section id already equals the internal default. Keep subsequent same-section routing
+idempotent and retain a valid pending character until data arrives.
+
+**Acceptance check:** with the route faction already remembered, fresh Roster and character URLs start one
+load, leave the loader, render the correct faction, and restore the character target; ordinary hash changes
+do not duplicate requests; unlinked faction routes still show their truthful unavailable state.
+
+**Status:** open — implement next as T106 before continuing the visual audit.
+
 ## Audit runs
 
 Add one row per representative pass. Link finding IDs in Notes rather than duplicating their contents.
@@ -338,4 +365,6 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | Static | 2026-07-13 | section-ownership trace | Home, masthead, router, headings, command palette | Finding | UX-002: duplicated section registries have already drifted in continuity and destination coverage |
 | A | 2026-07-13 | 1760px + compact 1280/1024px, pointer | Home, masthead, routes, faction tabs, Docs, Map, Wiki, Paperwork | Pass | UX-002 fixed; global/base continuity, unavailable-doc fallback, malformed-route repair, headings, selected state, and nav hit areas agree |
 | B | 2026-07-13 | 390px, pointer + keyboard | Primary navigation, Map, Paperwork, command palette | Pass | No horizontal overflow; every nav centre resolves to its control; Map/Paperwork pointer path and Paperwork palette selection pass |
-| A/E | 2026-07-14 | 1440px, pointer + keyboard, direct routes | Roster List/Cards/dossier, Relations, unavailable faction | Finding | UX-003: List/Cards/filter/sort/selection drift; UX-004: invalid Relations target is not canonicalised. Valid selection, keyboard stepping, direct roster links, and UI faction-switch unavailable states pass |
+| A/E | 2026-07-14 | 1440px, pointer + keyboard, direct routes | Roster List/Cards/dossier, Relations, unavailable faction | Finding | UX-003: List/Cards/filter/sort/selection drift; UX-004: invalid Relations target is not canonicalised. Valid in-session selection, keyboard stepping, and UI faction-switch unavailable states pass |
+| A/B | 2026-07-14 | 1440px + 390px, pointer + keyboard | Roster List/Cards/dossier, filters, sorting, empty search | Pass | UX-003 fixed: shared 48-character filter, A–Z Cards, route/selection/ARIA sync, no-match state, and display-order `j` navigation pass with 0px overflow |
+| E | 2026-07-14 | fresh direct route, remembered Tribe faction | Roster boot and character link | Finding | UX-005: route equals the internal default, so no section lifecycle or sheet load starts; Roster tab activation recovers |
