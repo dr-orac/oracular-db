@@ -80,14 +80,17 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
       view by `setAppHeading()` — "The Tribe — Wiki", "Brotherhood of Steel — Roster", "Misfits Database
       — Home". Content headings stay h2+, so the outline is clean (verified single h1).
 - [x] ✅ Landmarks present: `<header>` (banner), `<main>`, two labelled `<nav>`s ("Faction sections",
-      "Document contents"). `aria-current` — still TODO on the active nav tab / faction option.
-- [ ] `aria-current` on the active row-1 box + row-2 tab + faction option (partially done on the navbox).
-- [ ] Icon-only buttons have `aria-label` (cog does — audit the rest: camera/upload, doc steppers).
+      "Document contents").
+- [x] ✅ Selection state uses the appropriate semantic for each control: row-1 navigation links use
+      `aria-current`; row-2 tabs, faction tabs, and faction listbox options use `aria-selected`.
+- [x] ✅ Icon-only buttons have explicit accessible names: navigation, settings, roster search, document
+      steppers/focus/back-to-top, portrait/sigil, personal-log, screenshot, and text-size controls audited.
 - [x] ✅ A polite **live region** for loading state. Roster already had one (`#state`). Added
       `#doc-announce` (dedicated sr-only, stable — the animated `#docstatus` repaints 12×/s so can't be
       one) firing once per state ("Loading document…" / "<page> loaded" / error), + `aria-busy` on
       `#docreader` while loading (d7a76ae). `aria-busy` on `main` during the roster fetch — DONE.
-- [ ] `aria-expanded` on all disclosure controls (faction/select dropdowns — done; audit others).
+- [x] ✅ `aria-expanded` is synchronized on custom disclosure controls: settings, faction and generated
+      selectors, plus dossier More menus. Native `<details>` elements retain their native state semantics.
 
 ## Motion
 - [x] ✅ SWEPT — clean. All 5 keyframe animations are disabled under `prefers-reduced-motion`: flicker +

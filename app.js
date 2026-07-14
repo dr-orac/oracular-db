@@ -1447,7 +1447,7 @@ function logSectionHTML(ch){
     return `<div class="logentry"><div class="logmeta">▶ ${esc(when)}</div><div class="logbody">${esc(e.s)}</div></div>`;
   }).join("");
   return `<div class="field">
-    <div class="label">Personal Log <button class="mini addlog" data-slug="${esc(ch.slug)}" title="Add an entry">＋</button></div>
+    <div class="label">Personal Log <button class="mini addlog" data-slug="${esc(ch.slug)}" title="Add an entry" aria-label="Add a personal log entry">＋</button></div>
     ${items?`<div class="loglist">${items}</div>`:""}
     <div class="composer hidden" data-slug="${esc(ch.slug)}">
       <textarea class="logtext" rows="4" placeholder="A short story / journal entry from the game…"></textarea>
@@ -1466,7 +1466,7 @@ function shotsSectionHTML(ch){
     `<div class="screenshot" role="button" tabindex="0" data-slug="${esc(ch.slug)}" data-shotidx="${i}" title="View full" aria-label="View screenshot ${i+1}">
        <img src="${escAttr(s)}" loading="lazy" alt=""><span class="scan"></span></div>`).join("");
   return `<div class="field">
-    <div class="label">Screenshots <button class="mini addshot" data-slug="${esc(ch.slug)}" title="Add a screenshot">＋</button></div>
+    <div class="label">Screenshots <button class="mini addshot" data-slug="${esc(ch.slug)}" title="Add a screenshot" aria-label="Add a screenshot">＋</button></div>
     ${shots.length?`<div class="shotgrid">${tiles}</div>`:""}</div>`;
 }
 
