@@ -11,7 +11,7 @@ everything in one safe-to-re-run command:
 
 It:
   1. (re)writes /tmp/yuma-serve.py from the known-good template embedded below
-  2. (re)creates /tmp/yuma-live and copies the runtime files + fonts/ media/ c/ vendor/
+  2. (re)creates /tmp/yuma-live and copies the runtime files + fonts/ media/ data/ c/ vendor/
   3. prints the URL to open — with ?sheet=<public mirror> so the SOURCE app.js is never edited
 
 Then start/refresh the existing preview server on port 4173. No sheet-id replacement, ever (that footgun is
@@ -31,8 +31,8 @@ SERVE_TEMPLATE = r'''#!/usr/bin/env python3
 # and routes any foreign path back to index.html so neighbour demos can't leak in.
 import http.server, socketserver, os
 DIR = "/tmp/yuma-live"
-ALLOW = {"/", "/index.html", "/app.js", "/styles.css", "/favicon.ico", "/favicon.svg", "/og-card.png", "/crt-screen-integration.js"}
-PREFIX = ("/fonts/", "/media/", "/c/", "/vendor/")
+ALLOW = {"/", "/index.html", "/app.js", "/map-terrain.js", "/styles.css", "/favicon.ico", "/favicon.svg", "/og-card.png", "/crt-screen-integration.js"}
+PREFIX = ("/fonts/", "/media/", "/data/", "/c/", "/vendor/")
 class H(http.server.SimpleHTTPRequestHandler):
     def translate_path(self, path):
         clean = path.split("?", 1)[0].split("#", 1)[0]
