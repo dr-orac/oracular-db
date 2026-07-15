@@ -105,8 +105,9 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
    - classify placement basis, review status, and uncertainty separately from location identity;
    - promote defensible direct identities, then change `data_status` only when every published marker passes;
    - migrate one game-sized set at a time behind the existing `renderMap()`/`showMapDetail()` UI.
-2. **Continue the product audit alongside map data work.** Take the next bounded pass through settings and
-   modal focus/close/restore behavior, then the remaining cross-surface states. Keep UX-001's VoiceOver,
+2. **Continue the product audit alongside map data work.** UX-007 closed the settings, palette, and nested
+   modal focus/close/restore defects. Take the next bounded pass through settings persistence/reset and the
+   Paperwork form/copy lifecycle, then the remaining cross-surface states. Keep UX-001's VoiceOver,
    axe/Lighthouse, and physical iOS Safari checks external rather than claiming them locally.
 3. **Audit the map editor, then prove the Local export (T116).** The ignored 40 MB YAML is source material,
    never a browser payload. Once the separate editor repository is available, inspect its parser, renderer,
@@ -145,3 +146,6 @@ separate for T116, and faction territory stayed outside the renderer pending T11
 T112 then removed five ambiguous faction zones from location truth and migrated them into a guarded claims
 inventory. Two unsupported broad NCR claims are withheld; three overlapping Wendover claims remain
 provisional influence/site points; exact geometry and the art-direction fan map are excluded from evidence.
+UX-007 then made every closed overlay inert, gave settings and the command palette bounded focus restoration,
+and replaced the shared dossier-modal target with a chronological stack that unwinds nested tools one layer
+at a time on desktop and phone.

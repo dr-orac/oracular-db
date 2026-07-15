@@ -2177,55 +2177,96 @@ function scrollPendingAnchor(){
 window.addEventListener("hashchange", ()=>{ if(!_routing) applyRoute(); });
 $("#modalclose").addEventListener("click", ()=>$("#modalback").classList.remove("open"));
 $("#modalback").addEventListener("click", e=>{ if(e.target.id==="modalback") $("#modalback").classList.remove("open"); });
-document.addEventListener("keydown", e=>{
-  if(e.key!=="Escape") return;
-  // close any open overlay; if search is focused with text, clear it instead
-  const s=$("#search");
-  if(document.activeElement===s && s.value){ s.value=""; state.query=""; s.closest(".search").classList.remove("has-value"); render(); return; }
-  let closed=false;
-  ["#modalback","#iconback","#uploadback","#shotback"].forEach(id=>{
-    const el=$(id); if(el && el.classList.contains("open")){ el.classList.remove("open"); closed=true; }
-  });
-  if($("#settings-pop").classList.contains("open")){ setSettingsOpen(false); closed=true; }
-  if(closed && document.activeElement===s) s.blur();
-});
+const OVERLAY_FOCUSABLE='button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+const overlayFocusables=el=>[...el.querySelectorAll(OVERLAY_FOCUSABLE)]
+  .filter(n=>n.offsetParent!==null && !n.closest("[inert]"));
+const canRestoreFocus=el=>!!(el && document.contains(el) && !el.closest("[inert]") && el.offsetParent!==null);
 
-/* ---------- modal focus management (a11y) ----------
-   Driven by a MutationObserver so it needs no changes at the many open/close
-   call sites: when a .modal-back gains `.open` we remember the previously-focused
-   element, move focus inside, and trap Tab; when it loses `.open` we restore focus. */
-(function modalFocusLayer(){
+/* ---------- modal stack + focus management (a11y) ----------
+   Dossier tools can open on top of the dossier itself. Track that chronology explicitly:
+   only the top layer is exposed, Escape closes one layer, and focus walks back through the
+   opener chain. Mutation observers keep every existing open/close call site on one path. */
+const modalLayer=(function modalFocusLayer(){
   const ids=["#modalback","#iconback","#uploadback","#shotback"];
-  const FOCUSABLE='button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-  let restoreTo=null;
-  const openModalEl=()=> ids.map(id=>$(id)).find(el=>el && el.classList.contains("open"));
-  const focusables=el=>[...el.querySelectorAll(FOCUSABLE)].filter(n=>n.offsetParent!==null);
+  const layers=ids.map(id=>$(id)).filter(Boolean);
+  const restoreTargets=new WeakMap();
+  let stack=[];
+  let reconcileQueued=false;
 
-  ids.forEach(id=>{
-    const el=$(id); if(!el) return;
-    new MutationObserver(()=>{
-      if(el.classList.contains("open")){
-        if(el.dataset.wasOpen) return;          // already handled
-        el.dataset.wasOpen="1";
-        restoreTo=document.activeElement;
-        const f=focusables(el); (f[0]||el).focus();
-      }else if(el.dataset.wasOpen){
-        delete el.dataset.wasOpen;
-        if(restoreTo && document.contains(restoreTo)){ restoreTo.focus(); restoreTo=null; }
-      }
-    }).observe(el,{attributes:true, attributeFilter:["class"]});
-  });
+  function top(){ return stack[stack.length-1] || null; }
+  function focusFirst(el){ const f=overlayFocusables(el); (f[0]||el).focus(); }
+  function rootRestoreTarget(layer){
+    let target=restoreTargets.get(layer), guard=0;
+    while(target && guard++<layers.length){
+      const owner=target.closest && target.closest(".modal-back");
+      if(!owner || owner.classList.contains("open")) break;
+      target=restoreTargets.get(owner);
+    }
+    return target;
+  }
+  function syncExposure(){
+    const activeTop=top();
+    layers.forEach(el=>{
+      const exposed=el===activeTop;
+      el.inert=!exposed;
+      el.setAttribute("aria-hidden", exposed ? "false" : "true");
+    });
+  }
+  function reconcile(){
+    reconcileQueued=false;
+    const was=stack.slice();
+    const openNow=layers.filter(el=>el.classList.contains("open"));
+    const newlyOpen=openNow.filter(el=>!was.includes(el));
+    const closedTop=[...was].reverse().find(el=>!openNow.includes(el));
 
-  // trap Tab within whichever modal is open
+    stack=was.filter(el=>openNow.includes(el));
+    newlyOpen.forEach(el=>{
+      restoreTargets.set(el, document.activeElement);
+      stack.push(el);
+    });
+    syncExposure();
+
+    if(newlyOpen.length){
+      focusFirst(top());
+    }else if(closedTop){
+      const target=rootRestoreTarget(closedTop);
+      if(top()){
+        if(canRestoreFocus(target) && top().contains(target)) target.focus();
+        else focusFirst(top());
+      }else if(canRestoreFocus(target)) target.focus();
+    }
+    was.filter(el=>!openNow.includes(el)).forEach(el=>restoreTargets.delete(el));
+  }
+  function queueReconcile(){
+    if(reconcileQueued) return;
+    reconcileQueued=true;
+    queueMicrotask(reconcile);
+  }
+
+  layers.forEach(el=>new MutationObserver(queueReconcile)
+    .observe(el,{attributes:true, attributeFilter:["class"]}));
+  syncExposure();
+
   document.addEventListener("keydown", e=>{
     if(e.key!=="Tab") return;
-    const el=openModalEl(); if(!el) return;
-    const f=focusables(el); if(!f.length){ e.preventDefault(); return; }
+    const el=top(); if(!el) return;
+    const f=overlayFocusables(el); if(!f.length){ e.preventDefault(); return; }
     const first=f[0], last=f[f.length-1];
     if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
     else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
   });
+  return { top };
 })();
+
+document.addEventListener("keydown", e=>{
+  if(e.key!=="Escape") return;
+  // Clear an active roster query first; otherwise unwind exactly one visible overlay.
+  const s=$("#search");
+  if(document.activeElement===s && s.value){ s.value=""; state.query=""; s.closest(".search").classList.remove("has-value"); render(); return; }
+  const topModal=modalLayer.top();
+  if(topModal){ topModal.classList.remove("open"); return; }
+  if($("#settings-pop").classList.contains("open")) setSettingsOpen(false);
+});
 
 /* keyboard activation for clickable non-button elements (role=button + tabindex):
    tag chips, cross-links, cards, screenshot thumbs. Enter/Space → reuse the click path. */
@@ -3901,17 +3942,35 @@ document.addEventListener("keydown", e=>{
 
 /* settings popover */
 /* settings drawer (right-hand sidebar) open/close */
+let settingsRestoreTo=null;
 function setSettingsOpen(open){
-  $("#settings-pop").classList.toggle("open", open);
-  $("#settings-back").classList.toggle("open", open);
-  $("#settings-pop").setAttribute("aria-hidden", open ? "false" : "true");
-  $("#settings-back").setAttribute("aria-hidden", open ? "false" : "true");
-  $("#settings-btn").setAttribute("aria-expanded", open ? "true" : "false");
-  if(open) $("#settings-close").focus();
+  const drawer=$("#settings-pop"), back=$("#settings-back"), button=$("#settings-btn");
+  const wasOpen=drawer.classList.contains("open");
+  open=!!open;
+  if(open && !wasOpen) settingsRestoreTo=document.activeElement;
+  drawer.classList.toggle("open", open);
+  back.classList.toggle("open", open);
+  drawer.inert=!open;
+  drawer.setAttribute("aria-hidden", open ? "false" : "true");
+  back.setAttribute("aria-hidden", open ? "false" : "true");
+  button.setAttribute("aria-expanded", open ? "true" : "false");
+  if(open && !wasOpen) $("#settings-close").focus();
+  else if(!open && wasOpen){
+    const target=canRestoreFocus(settingsRestoreTo) ? settingsRestoreTo : button;
+    settingsRestoreTo=null;
+    target.focus();
+  }
 }
 $("#settings-btn").addEventListener("click", ()=> setSettingsOpen(!$("#settings-pop").classList.contains("open")));
 $("#settings-close").addEventListener("click", ()=> setSettingsOpen(false));
 $("#settings-back").addEventListener("click", ()=> setSettingsOpen(false));
+$("#settings-pop").addEventListener("keydown", e=>{
+  if(e.key!=="Tab" || !$("#settings-pop").classList.contains("open")) return;
+  const f=overlayFocusables($("#settings-pop")); if(!f.length){ e.preventDefault(); return; }
+  const first=f[0], last=f[f.length-1];
+  if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+});
 document.addEventListener("click", e=>{
   if(!e.target.closest(".morewrap")) closeMoreMenus();   // click outside any dossier "More" menu closes it
 });
@@ -4219,14 +4278,14 @@ function runBoot(){
    contained: it builds its own overlay, reuses the roster search's fuzzySubseq for typo tolerance. */
 (function cmdk(){
   const el=document.createElement("div");
-  el.id="cmdk"; el.className="cmdk hidden"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true"); el.setAttribute("aria-label","Command palette");
+  el.id="cmdk"; el.className="cmdk hidden"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true"); el.setAttribute("aria-label","Command palette"); el.setAttribute("aria-hidden","true"); el.inert=true;
   el.innerHTML=`<div class="cmdk-panel">`
     +`<input id="cmdk-input" class="cmdk-input" type="text" autocomplete="off" placeholder="Jump to a faction, page or section…" aria-label="Search" />`
     +`<div id="cmdk-list" class="cmdk-list" role="listbox" aria-label="Results"></div>`
     +`<div class="cmdk-hint">↑↓ move · ↵ open · esc close</div></div>`;
   document.body.appendChild(el);
   const input=el.querySelector("#cmdk-input"), list=el.querySelector("#cmdk-list");
-  let active=0, results=[];
+  let active=0, results=[], returnFocus=null;
 
   function items(){
     const out=UMBRELLA_SECTIONS.map(s=>({
@@ -4259,8 +4318,19 @@ function runBoot(){
       : `<div class="cmdk-empty">No matches</div>`;
     const a=list.querySelector(".cmdk-item.active"); if(a) a.scrollIntoView({block:"nearest"});
   }
-  function open(){ el.classList.remove("hidden"); active=0; input.value=""; render(); input.focus(); }
-  function close(){ el.classList.add("hidden"); }
+  function open(){
+    if(document.querySelector(".modal-back.open")) return;
+    if($("#settings-pop").classList.contains("open")) setSettingsOpen(false);
+    returnFocus=document.activeElement;
+    el.classList.remove("hidden"); el.inert=false; el.setAttribute("aria-hidden","false");
+    active=0; input.value=""; render(); input.focus();
+  }
+  function close(){
+    if(el.classList.contains("hidden")) return;
+    el.classList.add("hidden"); el.inert=true; el.setAttribute("aria-hidden","true");
+    const target=returnFocus; returnFocus=null;
+    if(canRestoreFocus(target)) target.focus();
+  }
   function isOpen(){ return !el.classList.contains("hidden"); }
   function go(i){ const it=results[i]; if(!it) return; close(); if(location.hash===it.hash) applyRoute(); else location.hash=it.hash; }
 
@@ -4273,6 +4343,7 @@ function runBoot(){
     else if(e.key==="ArrowUp"){ e.preventDefault(); active=Math.max(active-1,0); render(); }
     else if(e.key==="Enter"){ e.preventDefault(); go(active); }
     else if(e.key==="Escape"){ e.preventDefault(); close(); }
+    else if(e.key==="Tab"){ e.preventDefault(); input.focus(); }
   });
   el.addEventListener("click", e=>{ if(e.target===el){ close(); return; } const it=e.target.closest(".cmdk-item"); if(it) go(+it.dataset.i); });
 })();

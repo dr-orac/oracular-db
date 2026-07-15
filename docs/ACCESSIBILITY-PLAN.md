@@ -70,10 +70,11 @@ the `.row-sub` 17px rule); `--fs-note` **14px** (captions/counts/TOC); `--fs-hin
       listbox per the activedescendant pattern). Verified END-TO-END with live roster data (2026-07-12):
       arrows/Home/End move the selection + `aria-activedescendant`, focus stays on the listbox, the dossier
       follows. The **Relations rail** now has the same listbox ARIA + keyboard nav (shared `listboxStep`).
-- [x] ✅ **Modal focus-trap VERIFIED** (2026-07-12, live data). Opened the icon picker (`#iconback`, 32
-      focusable): focus moves inside on open, Tab from the last wraps to the first and Shift+Tab from the
-      first wraps to the last (trap holds both ways), Escape closes and focus RESTORES to the trigger. The
-      MutationObserver focus layer works across the modal set.
+- [x] ✅ **Overlay focus management VERIFIED** (2026-07-15, live data). Settings, the command palette, and
+      all four dossier overlays leave the tab order while closed. Tab/Shift+Tab wrap inside the visible layer.
+      The dossier → icon-picker nested path exposes only the top layer; consecutive Escape presses restore
+      focus first to the dossier's sigil control and then to the exact roster card. The same settings trap and
+      restoration pass at 390×844. One chronological stack, rather than DOM order, owns nested modal focus.
 
 ## ARIA / semantics
 - [x] ✅ Heading order: the page had ZERO `<h1>`. Added ONE sr-only `#app-h1` in `<main>`, updated per

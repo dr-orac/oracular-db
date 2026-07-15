@@ -389,6 +389,34 @@ toolbar; error retains only Refresh and expands its state region to 383px; retry
 message. `preserveLastGood` requires `state.loadedSheet===sheet`, and a live refresh kept Stacey Webb visible
 and the route stable while `aria-busy` changed true→false. The 1440px dossier remains unchanged.
 
+### UX-007 · P1 · accessibility and state · settings, command palette, nested modals
+
+**Observation:** closed settings and command-palette controls remain focusable because their visual hiding
+does not remove them from interaction. Closing either overlay leaves focus inside the hidden layer. The four
+dossier overlays share one restore target and choose the first open element in DOM order, so opening the icon
+or upload tool over a dossier traps focus in the underlying dossier; Escape closes every open modal at once.
+
+**User/maintenance impact:** keyboard users can enter invisible controls, lose their place after closing a
+layer, or be ejected from a nested task. A later modal inherits correctness from DOM order rather than the
+order in which the user opened it, making each new overlay more likely to regress the others.
+
+**Recommended direction:** make every closed overlay inert and hidden from assistive state; give settings and
+the command palette explicit focus restoration and Tab containment; replace the shared modal target with one
+chronological stack whose top layer alone is exposed. Escape must unwind one layer and restore through the
+opener chain. Do not allow the command palette to open over a dossier modal.
+
+**Acceptance check:** closed layers cannot receive focus; settings and palette close to their trigger; Tab and
+Shift+Tab remain inside the visible layer; a nested dossier tool makes its parent inert, one Escape returns to
+the nested trigger, and the next returns to the original card; pointer/backdrop close uses the same contract;
+desktop and phone bounds remain valid with no console errors.
+
+**Status:** implemented 2026-07-15. Settings, the command palette, and all four dossier overlays now maintain
+`aria-hidden` and inert state with explicit focus restoration. One chronological modal stack owns exposure,
+Tab containment, one-layer Escape, and nested opener restoration. A live Brotherhood dossier → icon-picker
+path returned first to the dossier sigil control and then to the exact roster card; the palette remained
+closed over the dossier. Settings and palette paths passed at desktop size, and settings focus wrapping plus
+the 358×784 dossier bounds passed at 390×844. The browser console reported no errors.
+
 ## Audit runs
 
 Add one row per representative pass. Link finding IDs in Notes rather than duplicating their contents.
@@ -411,3 +439,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | A/C | 2026-07-14 | 1751/1440/1280/1024/860/859px; two- and four-tab factions; font, text-size, active-route, Screen/Chassis changes | Masthead faction-to-section connector | Pass | T115: one measured SVG keeps the stem, bus, risers, and arrowheads joined; arrow-tip residual stayed below 0.23px, 860px reflow stayed connected, 859px and Chassis hid cleanly, and console/document overflow remained zero |
 | A/B/C | 2026-07-14 | 1440×900, 1366×768, 1280×800, 1024×768, 390×844, 375×667, 320×700; Screen/Chassis; default/reduced motion | Home discovery; US, Region, Local map panels | Pass | T113: three registry-derived equal Home cards route correctly; desktop panels remain bounded with zero overflow/status overlap; phone panels use reachable stacked flow with zero horizontal overflow; visible focus order is coherent |
 | A/B/C/E/F | 2026-07-15 | 1440×900, 1366×768, 1280×800, 1024×768, 390×844, 375×667, 320×700; default/high contrast/reduced motion; slow/missing renderer | US and Region terrain, clusters, location details, SVG handoff, Region transition | Pass | T114: lazy self-hosted MapLibre passed containment and keyboard paths; clusters progressively exposed Hoover; Region labels did not collide; slow load retained the focusable SVG and failure restored it; cold local first open 1.618s/13 requests, ~401 KB estimated compressed production payload |
+| A/B/C | 2026-07-15 | desktop + 390×844, pointer + keyboard | Settings, command palette, dossier and nested icon modal | Pass | UX-007 fixed: closed layers are inert; Tab wraps; Escape unwinds one layer; focus restores icon trigger → exact card; palette/modal collision blocked; phone drawer/modal bounded; zero console errors |

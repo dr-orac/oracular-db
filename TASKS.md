@@ -24,6 +24,11 @@ replay every theme × viewport × state combination.
 - **Acceptance:** all surfaces receive a baseline pass; no accepted P0/P1 remains; outstanding lower-priority
   findings are explicitly retained or declined; selfcheck and affected regression journeys pass.
 
+Progress through 2026-07-15: UX-001–UX-007 are recorded and their accepted fixes have shipped. The latest
+bounded pass removed hidden settings/palette controls from interaction and replaced shared modal focus state
+with a chronological nested-layer contract. T101 remains open for the remaining cross-surface baseline;
+continue with settings persistence/reset and Paperwork form/copy state before expanding scope.
+
 ### T102 · Reader scrolling and TOC navigation quality — P1 [bug + interaction] — IMPLEMENTED 2026-07-13
 
 Start with `docs/UI-UX-AUDIT.md` finding UX-001. The earlier T73 fix improved sidebar targeting but did not

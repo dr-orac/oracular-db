@@ -56,7 +56,7 @@
         </div>
         <div class="popwrap">
           <div class="settings-back" id="settings-back" aria-hidden="true"></div>
-          <aside class="settings-drawer" id="settings-pop" role="dialog" aria-modal="false" aria-label="Settings" aria-hidden="true">
+          <aside class="settings-drawer" id="settings-pop" role="dialog" aria-modal="true" aria-label="Settings" aria-hidden="true" inert>
             <header class="sd-head">
               <h2 class="sd-title">⚙ Settings</h2>
               <button class="btn sd-close" id="settings-close" type="button" aria-label="Close settings">✕</button>
@@ -394,7 +394,7 @@
          style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);" />
 
   <!-- card -> dossier modal -->
-  <div class="modal-back" id="modalback" role="dialog" aria-modal="true" aria-label="Character dossier">
+  <div class="modal-back" id="modalback" role="dialog" aria-modal="true" aria-label="Character dossier" aria-hidden="true" inert>
     <div class="modal" id="modal">
       <button class="btn close" id="modalclose">✕ Close</button>
       <div id="modalbody"></div>
@@ -402,7 +402,7 @@
   </div>
 
   <!-- icon picker modal -->
-  <div class="modal-back" id="iconback" role="dialog" aria-modal="true" aria-label="Choose a sigil icon">
+  <div class="modal-back" id="iconback" role="dialog" aria-modal="true" aria-label="Choose a sigil icon" aria-hidden="true" inert>
     <div class="modal" id="iconmodal">
       <button class="btn close" id="iconclose">✕ Close</button>
       <div id="iconpickhead"></div>
@@ -411,7 +411,7 @@
   </div>
 
   <!-- photo upload modal (single "front" photo) -->
-  <div class="modal-back" id="uploadback" role="dialog" aria-modal="true" aria-label="Upload a photo">
+  <div class="modal-back" id="uploadback" role="dialog" aria-modal="true" aria-label="Upload a photo" aria-hidden="true" inert>
     <div class="modal" id="uploadmodal">
       <button class="btn close" id="uploadclose">✕ Close</button>
       <div id="uploadhead"></div>
@@ -425,7 +425,7 @@
   </div>
 
   <!-- screenshot lightbox (rendered "in-screen") -->
-  <div class="modal-back" id="shotback" role="dialog" aria-modal="true" aria-label="Screenshot viewer">
+  <div class="modal-back" id="shotback" role="dialog" aria-modal="true" aria-label="Screenshot viewer" aria-hidden="true" inert>
     <div class="modal shotmodal" id="shotmodal">
       <button class="btn close" id="shotclose">✕ Close</button>
       <div id="shotview"></div>

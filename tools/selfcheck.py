@@ -10,6 +10,7 @@ that creep in as the project evolves:
   • an @font-face / url("fonts/..") / media file is referenced but missing on disk
   • app.js looks truncated or has unbalanced braces/brackets/parens/backticks
   • index.html stops loading styles.css or app.js
+  • a closed dialog loses its inert / hidden initial state
 
 Run it before every deploy or commit:   python3 tools/selfcheck.py
 Exit code 0 = clean, 1 = errors found.  Warnings never fail the build.
@@ -295,7 +296,25 @@ def check_css_comment_balance(css):
 
 check_css_comment_balance(css)
 
-# ---------------------------------------------------------------- 8e. documentation links
+# ---------------------------------------------------------------- 8e. overlay lifecycle baseline
+# Visually off-screen overlays are still keyboard-reachable unless their closed state is inert. These
+# attributes are the no-script baseline as well as the state that app.js restores after each close.
+for overlay_id in ("settings-pop", "modalback", "iconback", "uploadback", "shotback"):
+    match = re.search(rf'<[^>]+\bid=["\']{re.escape(overlay_id)}["\'][^>]*>', html, flags=re.I)
+    if not match:
+        continue  # missing ids are reported by the wiring checks
+    tag = match.group(0)
+    if not re.search(r'\baria-hidden=["\']true["\']', tag, flags=re.I):
+        err(f'closed overlay #{overlay_id} must start with aria-hidden="true"')
+    if not re.search(r'\binert(?:\s|=|>)', tag, flags=re.I):
+        err(f'closed overlay #{overlay_id} must start inert so its controls leave the tab order')
+
+if not re.search(r'cmdk hidden[^\n]+aria-hidden["\'],["\']true', js):
+    err('the command palette must initialise hidden from assistive state')
+if not re.search(r'\bconst\s+modalLayer\s*=.*?restoreTargets\s*=\s*new WeakMap', js, flags=re.S):
+    err('nested dossier overlays must retain the chronological modalLayer focus stack')
+
+# ---------------------------------------------------------------- 8f. documentation links
 # Documentation is part of the handoff contract. Validate repository-local Markdown links so a rename or
 # move cannot silently strand the next contributor. External URLs and same-page anchors are out of scope.
 DOC_REQUIRED = [
