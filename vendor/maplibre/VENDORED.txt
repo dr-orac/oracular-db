@@ -1,0 +1,24 @@
+MapLibre GL JS
+===============
+
+Version: 5.24.0
+Upstream: https://github.com/maplibre/maplibre-gl-js
+Distribution source: https://unpkg.com/maplibre-gl@5.24.0/dist/
+Retrieved: 2026-07-15
+Licence: BSD-3-Clause and bundled component notices; see LICENSE.
+
+Files retained:
+
+- maplibre-gl.js — browser distribution, loaded only when the Map view opens.
+- maplibre-gl.css — matching control/canvas styles, loaded with the script.
+- LICENSE — upstream licence and third-party notices.
+
+Do not replace these with `@latest` URLs or a runtime CDN.  Pin a reviewed
+version, update this record and the checksums below, run the renderer matrix,
+and retain the SVG fallback whenever the dependency is upgraded.
+
+SHA-256:
+
+  maplibre-gl.js  sha256 45a9b07a9189ce56054c620a947ccf41e291e58c95e9b61533b740aaa65ee5cb
+  maplibre-gl.css sha256 ab1e70d59ec40465bae7e7030da2f3ccf28133fd502e62bd598eefbadfd7a732
+  LICENSE          sha256 ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2

@@ -194,10 +194,13 @@ found during the audit.
 
 ### Phase 4 — map integration review
 
-Run the geographic renderer proof against the baseline. Compare interaction quality, load cost, visual fit,
-reduced-motion behaviour, failure handling, attribution, and the handoff into Local game-space coordinates.
+Completed 2026-07-15. The geographic proof compared interaction quality, load cost, visual fit, reduced-motion
+and high-contrast behaviour, slow/failing delivery, keyboard access, attribution, and the Local boundary.
 
-**Gate:** the renderer earns its permanent dependency; otherwise retain the original SVG architecture.
+**Gate passed:** self-hosted MapLibre earned inclusion for US + Region under T114's lazy, bounded,
+token-free constraints. The original SVG architecture remains the progressive-enhancement fallback, and
+Local remains a separate game-space renderer. Cold local first open was 1.618 seconds / 13 requests; estimated
+compressed production cold payload is about 401 KB. Treat those as regression budgets, not targets to spend.
 
 ### Phase 5 — continuous regression
 
@@ -407,3 +410,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | A/C/E | 2026-07-14 | 1440×900, 390×844, 375×667, 320×700; valid + invalid sheet | Dossier hierarchy, phone containment, initial load, link error, retry, live refresh | Pass | UX-006 fixed: 70% more 390px dossier height; no narrow overlap/overflow; load/error controls and exact-sheet refresh ownership agree |
 | A/C | 2026-07-14 | 1751/1440/1280/1024/860/859px; two- and four-tab factions; font, text-size, active-route, Screen/Chassis changes | Masthead faction-to-section connector | Pass | T115: one measured SVG keeps the stem, bus, risers, and arrowheads joined; arrow-tip residual stayed below 0.23px, 860px reflow stayed connected, 859px and Chassis hid cleanly, and console/document overflow remained zero |
 | A/B/C | 2026-07-14 | 1440×900, 1366×768, 1280×800, 1024×768, 390×844, 375×667, 320×700; Screen/Chassis; default/reduced motion | Home discovery; US, Region, Local map panels | Pass | T113: three registry-derived equal Home cards route correctly; desktop panels remain bounded with zero overflow/status overlap; phone panels use reachable stacked flow with zero horizontal overflow; visible focus order is coherent |
+| A/B/C/E/F | 2026-07-15 | 1440×900, 1366×768, 1280×800, 1024×768, 390×844, 375×667, 320×700; default/high contrast/reduced motion; slow/missing renderer | US and Region terrain, clusters, location details, SVG handoff, Region transition | Pass | T114: lazy self-hosted MapLibre passed containment and keyboard paths; clusters progressively exposed Hoover; Region labels did not collide; slow load retained the focusable SVG and failure restored it; cold local first open 1.618s/13 requests, ~401 KB estimated compressed production payload |

@@ -1,6 +1,6 @@
 # Deployment and recovery — Misfits Database
 
-## Current repository configuration (reconciled 2026-07-14)
+## Current repository configuration (reconciled 2026-07-15)
 
 - **Live URL:** https://dr-orac.github.io/oracular-db/
 - **Repo:** `dr-orac/oracular-db` (public) · Pages serves `main` branch root ·
@@ -30,13 +30,15 @@ From the repository root:
 The safest deployment is the repository root. A minimal runtime copy must include:
 
 ```
-index.html      styles.css      app.js      crt-screen-integration.js
+index.html      styles.css      app.js      map-terrain.js      crt-screen-integration.js
 favicon.svg     og-card.png
-fonts/          media/          c/          vendor/
+fonts/          media/          data/       c/                  vendor/
 ```
 
-Keep `data/` with the project even though the current legacy atlas has not yet migrated to it; it is the
-guarded source for the next map renderer. GitHub Pages already publishes the whole repository root.
+`data/`, `media/map-terrain/`, and `vendor/maplibre/` are runtime dependencies for the lazy US/Region map.
+They must ship together with `map-terrain.js`; otherwise the view deliberately falls back to its SVG atlas.
+No map key, server process, or live tile account is required. GitHub Pages already publishes the whole
+repository root.
 
 `apps-script.gs` is source/reference code only: a static host does not execute it. Enabling write-back means
 pasting it into Google Apps Script and following the gated procedure in step 3.

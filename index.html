@@ -261,6 +261,7 @@
         </div>
         <div class="map-body map-panel" id="map-panel-us" role="tabpanel" aria-labelledby="mapmode-us">
           <div class="map-stage">
+            <div id="map-terrain-us" class="map-terrain" aria-hidden="true"></div>
             <svg id="map-svg" class="map-svg" viewBox="0 0 650 500" role="img" aria-label="Map of the western wasteland" xmlns="http://www.w3.org/2000/svg">
               <g class="map-states">
               <path d="m581,120.000183l3,-6l-1,-9l0,-8l3,-8l3,0l2,1l5,-4l4,1l3,6l2,9l2,3l4,1l2,4l4,1l2,3l-6,6l-8,7l-1,4l-4,5l-5,5l-2,8l-6,-9l-3,-8l-3,-12z"/>
@@ -324,6 +325,7 @@
         </div>
         <div class="map-body map-panel hidden" id="map-panel-region" role="tabpanel" aria-labelledby="mapmode-region">
           <div class="map-stage">
+            <div id="map-terrain-region" class="map-terrain" aria-hidden="true"></div>
             <svg id="map-region-svg" class="map-svg map-region-svg" viewBox="0 0 1000 700" role="img" aria-label="Schematic overview of the Wendover region" xmlns="http://www.w3.org/2000/svg">
               <rect class="region-field" x="0" y="0" width="1000" height="700"/>
               <path class="region-flats" d="M262 166 C380 93 667 104 856 199 L814 487 C619 542 371 523 188 425 Z"/>
@@ -341,7 +343,9 @@
             <div class="map-legend" aria-label="Regional map legend">
               <div class="map-legend-title">Regional orientation</div>
               <span class="map-legend-item"><span class="map-legend-swatch pin-other"></span>Reviewed landmark</span>
-              <span class="map-legend-note">Schematic only — not a road or terrain survey.</span>
+              <span class="map-legend-note map-schematic-note">Schematic only — not a road or terrain survey.</span>
+              <span class="map-legend-note terrain-credit">Relief: USGS 3DEP · coast and water: Natural Earth · public domain.</span>
+              <span class="map-legend-note terrain-fallback-note">Enhanced terrain unavailable — using the schematic.</span>
             </div>
             <div class="map-detail" id="map-region-detail" aria-live="polite"></div>
           </aside>

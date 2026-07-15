@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "generated_by": "tools/build-map-terrain.py",
+  "source": {
+    "name": "USGS National Map 3D Elevation Program (3DEP)",
+    "service": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
+    "rendering": "Hillshade Gray",
+    "snapshot": "USGS 3DEP service data published 2026-06-23",
+    "retrieved": "2026-07-15",
+    "usage": "Public domain; 3DEP products are free and have no use restrictions."
+  },
+  "coast_mask": {
+    "name": "Natural Earth 1:110m land",
+    "path": "data/geography/natural-earth-110m-land.geojson",
+    "sha256": "9e0729ee253ca7d7a5c4ae9395fb1902264c5377c52e224d13dd85010e2835d9",
+    "usage": "Public domain."
+  },
+  "presentation": {
+    "format": "WebP",
+    "tile_size": 256,
+    "palette": {
+      "shadow": "#4b4335",
+      "highlight": "#b9ae91"
+    },
+    "quality": 74
+  },
+  "scopes": {
+    "us": {
+      "bounds": [
+        -125.0,
+        24.0,
+        -66.0,
+        50.0
+      ],
+      "minzoom": 2,
+      "maxzoom": 5,
+      "tile_count": 42,
+      "tile_template": "media/map-terrain/us/{z}/{x}/{y}.webp",
+      "combined_tile_sha256": "3f3304f8ebdd14a2a2d66ad4518a39838e0677fd7eeced921c73bcab2adfe88c"
+    },
+    "region": {
+      "bounds": [
+        -114.9,
+        39.4,
+        -112.4,
+        41.6
+      ],
+      "minzoom": 6,
+      "maxzoom": 9,
+      "tile_count": 42,
+      "tile_template": "media/map-terrain/region/{z}/{x}/{y}.webp",
+      "combined_tile_sha256": "a9476eb5fe0d76feb7a5b6c7bbf6281768f86ae565e28eaf2623bb4a11a0ed5e"
+    }
+  },
+  "total_tile_bytes": 231114
+}

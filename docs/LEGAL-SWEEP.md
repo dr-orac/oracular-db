@@ -39,7 +39,7 @@ are low-risk, official art/logos are the trigger.**
 | **Faction names** (Brotherhood of Steel, NCR, Enclave, Caesar's Legion, Followers of the Apocalypse) | ✅ Safe | Same as above — referencing the fictional orgs by name to filter/colour-code pins is nominative use. | Fine as text labels and filter categories. Don't reproduce their official **insignia** (see logos row) — invent your own simple colour-coding or an original glyph if you want a visual marker. |
 | **Lore/timeline text** — paraphrased | ✅ Safe | Facts and paraphrase in your own words aren't copyright infringement; only the specific expression is protected. | Write pin blurbs and timeline copy in your own words, informed by the games/wiki as reference. |
 | **Lore/timeline text** — verbatim | ⛔ Avoid | Copying Bethesda's (or the Fallout Fandom wiki's) actual sentences is straightforward copyright infringement regardless of commercial status; "it's just a paragraph" doesn't create a fair-use safe harbor for a wholesale copy. | Never paste wiki/game text directly into pin blurbs — summarise from memory/notes instead. |
-| **Map likeness** of the in-game world | ⚠ Needs attention | Real-world geography (Nevada, actual highway layout, Wendover's real map) isn't copyrightable. Bethesda's *specific rendering* of the game map — its terrain textures, colour palette, iconography — is copyrighted expression. Tracing or rescaling an actual in-game/loading-screen map image would cross the line. | Build the US-wide + Wendover maps as **original stylised art** (the app already reuses the `fallout-map-standalone` prototype's US SVG *paths*, which is fine if those paths are your own vector tracing of real US geography, not a lift of Bethesda's in-game map texture — confirm the prototype's SVG source before reusing it). Style it in the app's own CRT/terminal look, not a copy of the Pip-Boy map screen's specific look. |
+| **Map likeness** of the in-game world | ✅ Safe for the implemented base | Real-world geography is factual. The enhanced US/Region base uses public-domain Natural Earth geometry and an original subdued relief generated from public-domain USGS 3DEP elevation; it does not copy fan-map or in-game pixels, textures, labels, icons, or geometry. | Keep physical geography sourced and reproducible. Treat supplied/fan maps only as discovery or visual direction; never trace them. Post-war conditions and faction territory must remain separate evidence-aware project layers. |
 | **Trademarked logos/art** — Vault Boy, Vault-Tec logo, Pip-Boy device imagery | ⛔ Avoid | Vault Boy is a registered US trademark (Bethesda Softworks LLC, Reg. No. 6033938) *and* a copyrighted character design; Vault-Tec's logo and the Pip-Boy's specific device art are likewise protected. This is exactly the category of asset Bethesda has historically enforced against, even for non-commercial sites. | Never embed, trace, or closely imitate official art. If you want a "vault door" or "wrist computer" motif, draw an **original** stylised version — which is already this project's practice for its hand-authored SVG icon set (see §2) and its CRT effects (see `CREDITS.md`'s "Technique inspiration" section, which explicitly reimplements effects from scratch rather than copying assets). Keep doing that for any map markers/mascots. |
 | **Pip-Boy/CRT terminal aesthetic** in general | ✅ Safe | A green-phosphor CRT-terminal look is a *style/genre*, shared by dozens of unrelated retro-computing fan projects — general aesthetics aren't protectable the way specific art assets are. | Keep reimplementing effects yourself (as documented in `CREDITS.md`) rather than lifting the actual in-game UI's specific icon set, exact font pairing, or a screenshot of the real Pip-Boy bezel. |
 | **Monetisation / implied endorsement** | ⛔ Avoid (if it ever changes) | Confirmed non-commercial status is the biggest risk-reducer on this whole list; ads, paid access, merch, or any donation button framed around "Fallout" content pushes this from "tolerated fan work" toward "commercial use of someone else's IP," which is what triggers enforcement. | Stay free, stay unaffiliated, never state or imply Bethesda/ZeniMax endorsement or involvement. A small "unofficial fan project, not affiliated with Bethesda/ZeniMax" line in the footer or About/CREDITS is cheap insurance. |
@@ -49,6 +49,18 @@ Sources: [Bethesda Fan Video Policy](https://bethesda.net/en/article/3XrnHrB0iAe
 [VAULT BOY trademark registration #6033938 (Justia)](https://trademarks.justia.com/866/49/vault-86649770.html) ·
 [Bethesda policy towards Fallout fan projects — NMA thread, incl. Fallout-Posters.com C&D](https://www.nma-fallout.com/threads/bethesda-policy-towards-fallout-fan-projects.199869/) ·
 [Starfield, Mods, and Derivative Works — Tyz Law Group](https://www.tyzlaw.com/games-blog-archive/starfield-mods-and-derivative-works-an-in-depth-look)
+
+### Geographic renderer and source data added by T114
+
+| Item | Licence/status | Project handling |
+|---|---|---|
+| **MapLibre GL JS 5.24.0** | BSD-3-Clause plus bundled component notices | Version, distribution source, licence, and SHA-256 hashes travel in `vendor/maplibre/`; loaded locally only for US/Region. |
+| **Natural Earth 1:110m land/lakes/rivers** | Public domain; attribution not required | Unmodified pinned GeoJSON and hashes live in `data/geography/`; credited for provenance. |
+| **USGS 3DEP relief source** | US government public-domain data with no use restrictions | Only bounded generated WebP presentation tiles ship; service snapshot, processing, scope, and hashes live in the manifest. |
+
+No Google/Mapbox tile service, client API key, paid feed, supplied relief artwork, or fan-map image is part of
+the implemented terrain base. A future source or overlay requires its own licence/provenance entry before it
+ships.
 
 ---
 
@@ -183,8 +195,8 @@ Add a new `## Fonts` and/or `## Icons` section to `CREDITS.md` (it currently onl
   path and needs zero licence bookkeeping.
 - Paraphrase all Fallout lore/timeline text for map pins in your own words; never paste wiki/game text
   verbatim.
-- Build the wasteland map (T86) as original stylised art referencing real-world geography + your own
-  lore summaries, not a trace of an in-game map texture.
+- Keep the wasteland map's implemented public-domain geography + original presentation boundary; add lore
+  summaries and overlays without tracing an in-game or fan-map texture.
 - Attribute game-icons.net icons per-author as you adapt them (T88) — do it as you go, not as a batch
   cleanup later.
 - Keep font credits and readable licence files with the distributed font files.

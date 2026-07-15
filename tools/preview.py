@@ -60,7 +60,7 @@ def main():
 
     # 2. live dir + assets
     os.makedirs(LIVE, exist_ok=True)
-    for fn in ["index.html", "styles.css", "app.js", "favicon.svg", "og-card.png", "crt-screen-integration.js"]:
+    for fn in ["index.html", "styles.css", "app.js", "map-terrain.js", "favicon.svg", "og-card.png", "crt-screen-integration.js"]:
         s = os.path.join(SRC, fn)
         if os.path.exists(s):
             shutil.copy2(s, os.path.join(LIVE, fn))
@@ -76,11 +76,11 @@ def main():
             doc = doc.replace("</head>", "  " + inject + "\n</head>", 1)
             with open(live_index, "w", encoding="utf-8") as f:
                 f.write(doc)
-    for d in ["fonts", "media", "c", "vendor"]:
+    for d in ["fonts", "media", "data", "c", "vendor"]:
         s = os.path.join(SRC, d)
         if os.path.isdir(s):
             shutil.copytree(s, os.path.join(LIVE, d), dirs_exist_ok=True)
-    print(f"✓ synced app + fonts/ media/ c/ vendor/ into {LIVE}")
+    print(f"✓ synced app + fonts/ media/ data/ c/ vendor/ into {LIVE}")
 
     print(f"✓ injected preview sheet override ({sheet[:8]}…) into served index.html (source untouched)")
     print("\nNext:")

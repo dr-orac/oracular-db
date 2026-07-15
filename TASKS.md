@@ -231,33 +231,31 @@ inside their map scroll range. US, Region, and Local routes agreed with their se
 passed at 1366×768 in Screen and Chassis frames. Home and map focusables remain in visual/source order, the
 three Home click paths passed, and Reduce Motion removed the map pulse animation without changing geometry.
 
-### T114 · Prove an original terrain underlay — P1 [map renderer + visual system] — ROADMAP
+### T114 · Prove an original terrain underlay — P1 [map renderer + visual system] — IMPLEMENTED 2026-07-15
 
-Treat the supplied relief map as visual direction only. Do not ship, trace, or derive geometry from its
-pixels, and do not interpret apparent changed rivers or coastlines as established lore. The current atlas is
-responsive SVG; MapLibre remains a proposed dependency. After T113, run one bounded US + Region proof that
-earns or rejects that dependency while preserving the SVG atlas as the working fallback. Local remains an
-original game-space schematic rather than a geographic terrain view.
+MapLibre GL JS 5.24.0 earned inclusion for US and Region only. It is pinned and self-hosted under
+`vendor/maplibre/`, lazy-loads after a geographic Map route opens, requires no token or paid service, and
+keeps the Local game-grid map outside the geographic renderer. The production stack is deliberately flat:
+Natural Earth land/water geometry, a subdued presentation cache generated from public-domain USGS 3DEP
+relief, major rivers/lakes/coastline, then accessible HTML location controls and labels. No supplied fan-map
+pixels, traced geometry, speculative post-war landscape change, or faction territory entered the base map.
 
-Build the proof as independent layers in this order: neutral land and water, muted colour relief, restrained
-hillshade, coast/lakes/major rivers, optional post-war condition masks, faction territories, routes and
-borders, then locations and labels. Generate the physical terrain from suitably licensed elevation and
-hydrography data. Keep the camera two-dimensional; relief communicates landform through colour and shading,
-not a tilted or extruded world. Draw any post-war change as a separate, toggleable project layer with date,
-continuity, evidence status, and uncertainty. Never silently alter the factual base geography.
+The retained relief is 84 bounded WebP tiles (42 US at zooms 2–5 and 42 Region at zooms 6–9), totalling
+231,114 bytes. `tools/build-map-terrain.py` rebuilds it and records the source, scope, counts, and hashes in
+`media/map-terrain/manifest.json`; pinned Natural Earth inputs and provenance live under `data/geography/`.
+The renderer reads the existing reviewed world/migration data instead of creating another coordinate truth.
+Unavailable or withheld legacy placements remain represented by the complete SVG fallback rather than being
+promoted merely to fill the enhanced map.
 
-Prefer tiled relief or renderer-native DEM layers over one baked continent image. A georeferenced image may
-be used only as a disposable performance prototype: it must not become the production source of truth. The
-proof must lazy-load its code and assets when Map opens, require no client API token or ongoing paid service,
-self-host dependencies and selected data where practical, and fail gracefully to the existing SVG. Record
-the origin, licence, and required credit for every retained terrain or hydrography source.
-
-Acceptance: terrain remains legible but subordinate to pins, labels, and overlapping territory treatments;
-land/water meaning survives every app theme and high-contrast mode; US overview and Region zoom share a
-coherent visual language; no unsupported landscape change is presented as fact; and the same 1440×900,
-1366×768, 1280×800, 1024×768, 390×844, 375×667, and 320×700 viewport matrix passes with reduced motion,
-slow/failing asset delivery, keyboard access, and the SVG fallback. Record transfer size, request count,
-first-open delay, pan/zoom behavior, and label clarity before deciding whether MapLibre earns inclusion.
+The dependency passed the acceptance gate at 1440×900, 1366×768, 1280×800, 1024×768, 390×844, 375×667,
+and 320×700 with zero horizontal spill, bounded desktop panels, reachable phone scrolling, high contrast,
+reduced motion, keyboard-operable markers/clusters, and responsive label suppression. A deliberately delayed
+renderer left the SVG visible and focusable until handoff; missing/failed WebGL restored that SVG and its
+controls. Cold local first-open measurement was 1.618 seconds and 13 requests; the measured raw response
+total was 1,233,618 bytes, while the estimated compressed production cold payload is about 401 KB. The lazy
+code itself is about 291 KB gzip, lazy data about 93 KB gzip, and initial US relief about 17 KB. MapLibre is
+therefore accepted under these bounded, lazy, fallback-preserving constraints. Faction claims remain T112;
+native DEM or broader tile coverage requires a new measured need rather than becoming the default.
 
 ### T115 · Replace the masthead connector with measured geometry — P1 [responsive + visual system] — IMPLEMENTED 2026-07-14
 

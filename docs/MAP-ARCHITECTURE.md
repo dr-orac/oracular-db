@@ -130,23 +130,25 @@ original underlay. Its pixels, exact styling, labels, rivers, boundaries, and ap
 not be copied or traced. A perceived changed coastline or watercourse is a fan interpretation unless a
 reviewed source establishes it.
 
-The shipped map currently uses responsive SVG schematics; it does not yet include a geographic map library.
-T114 is the bounded decision point for MapLibre. MapLibre can keep source data separate from presentation and
-compose raster, vector, hillshade, and colour-relief layers; its raster DEM source can support hillshade
-without requiring a tilted 3D camera. See the official [layer specification](https://maplibre.org/maplibre-style-spec/layers/),
-[raster DEM source documentation](https://maplibre.org/maplibre-gl-js/docs/API/classes/RasterDEMTileSource/),
-and [hillshade example](https://maplibre.org/maplibre-gl-js/docs/examples/add-a-hillshade-layer/).
+T114 accepted self-hosted MapLibre GL JS 5.24.0 for **US + Region only**. `app.js` loads its CSS, JavaScript,
+and the project adapter in `map-terrain.js` only after one of those routes opens. Home, Wiki, Paperwork,
+rosters, and Local pay no renderer cost. The camera stays two-dimensional with rotation and pitch disabled;
+cooperative gestures and bounded pan/zoom keep the atlas subordinate to the surrounding application.
 
-The proposed US + Region stack, from bottom to top, is:
+The production layer stack, from bottom to top, is:
 
-1. neutral ocean, land, and lake base;
-2. low-saturation colour relief derived from licensed elevation data;
-3. restrained hillshade derived from the same elevation data;
-4. coast, major lakes, and major rivers;
-5. optional post-war condition or geography-change masks;
-6. optional faction territories and contested-area treatments;
-7. routes, boundaries, and travel corridors;
-8. locations, uncertainty symbols, and labels.
+1. themed neutral water;
+2. Natural Earth land geometry;
+3. muted relief tiles generated from public-domain USGS 3DEP elevation;
+4. Natural Earth major rivers, lakes, lake shore, and coastline;
+5. accessible HTML location/cluster controls and labels.
+
+Physical inputs are pinned and documented under `data/geography/`. The rendered relief is a deterministic
+presentation cache under `media/map-terrain/`, not a second source of geographic truth. It contains 42 US
+tiles at zooms 2–5 and 42 Region tiles at zooms 6–9; `tools/build-map-terrain.py` rebuilds the cache and writes
+its source snapshot, bounds, counts, and hashes to `media/map-terrain/manifest.json`. MapLibre may overzoom
+the bounded US raster during marker exploration, but a wider or deeper tile set requires a new measured need.
+The renderer continues to read `data/world.json` and `data/atlas-migration.json`; it does not own placement.
 
 Keep physical geography and post-war interpretation in different datasets. Elevation and ordinary
 hydrography belong to the factual base. A dried lake, irradiated zone, redirected river, or altered coastline
@@ -159,13 +161,25 @@ distorting marker relationships, hiding territory overlaps, or competing with la
 patterns, borders, and restrained faction hues above it. Local does not inherit continental terrain or its
 geographic coordinate system.
 
-A single georeferenced image is technically possible through MapLibre's
-[image source](https://maplibre.org/maplibre-gl-js/docs/API/classes/ImageSource/), but it is not the preferred
-production design: it becomes soft at zoom, bakes several meanings together, resists theme adaptation, and
-can hide unsupported geography inside the artwork. Prefer renderer-native DEM relief plus original vector
-overlays. Retain the SVG atlas during the proof and lazy-load MapLibre only when Map opens. The dependency
-earns inclusion only if self-hosting, transfer cost, narrow-screen containment, accessibility, failure
-fallback, and label clarity pass T114's recorded gates without requiring a client token or paid tile service.
+A single baked continent image remains rejected: it becomes soft at zoom, bakes meanings together, resists
+theme adaptation, and can hide unsupported geography inside artwork. Native DEM rendering also remains
+unnecessary at the present scale; the small generated cache gives predictable cost and appearance without a
+live service. Optional post-war masks, territories, routes, and boundaries can be added later as independent,
+reviewed datasets above the factual base.
+
+The original SVG atlases are permanent progressive-enhancement fallbacks, not disposable migration code.
+Until MapLibre reaches `idle`, the matching SVG remains visible and keyboard-operable. On successful handoff
+it becomes hidden and inert; renderer errors, WebGL context loss, or the readiness timeout remove the enhanced
+view and restore it. Location controls are HTML buttons rather than canvas-only hit areas. Nearby US points
+collapse into labelled cluster buttons that zoom toward their members; Region exposes only the currently
+focused/selected label to prevent overlap. High Contrast and Reduce Motion are reflected in both renderer
+paint and controls.
+
+The acceptance matrix covered 1440×900, 1366×768, 1280×800, 1024×768, 390×844, 375×667, and 320×700,
+including slow/failing delivery and keyboard use. Cold local first-open measurement was 1.618 seconds and 13
+requests (1,233,618 raw response bytes); the estimated compressed production cold payload is about 401 KB.
+These measurements are the budget baseline. MapLibre remains accepted only while it is lazy, self-hosted,
+token-free, bounded to geographic scopes, and able to fall back without losing map access.
 
 ## Local game-map pipeline
 
@@ -251,9 +265,10 @@ must be confirmed against the supplied in-game reference or user direction befor
 3. **US data migration** — the 23-marker baseline is inventoried in `data/atlas-migration.json`, guarded by
    selfcheck, and fully matched to world records. Placement approval remains open. Promote only defensible
    records, then preserve coverage while replacing hand-positioned pins in bounded game-by-game sets.
-4. **Terrain and renderer proof** — run T114's 2D US + Region proof with separate physical and post-war
-   layers, measured loading cost, and the existing SVG fallback. Keep Local in game-space coordinates.
-5. **Faction claims proof** — after the geographic renderer passes, inventory a small source-backed set and
+4. **Terrain and renderer proof** — complete. T114 accepted bounded, lazy, self-hosted MapLibre for a flat
+   US + Region physical base with measured loading cost and the existing SVG fallback. Local remains in
+   game-space coordinates; speculative post-war geography remains withheld.
+5. **Faction claims proof** — now that the geographic renderer has passed, inventory a small source-backed set and
    test overlapping, uncertain, independently toggleable territories without changing location records.
 6. **Local export proof** — run T116 against the map editor: preserve native coordinates, generate original
    cartography and a compact manifest, prove a labelled raster baseline, then earn tiles or canvas by

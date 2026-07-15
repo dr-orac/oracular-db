@@ -35,7 +35,9 @@ deploys automatically on push to `main`).
    (works for any sheet shared *"Anyone with the link → Viewer"*; no API key).
 2. `app.js` parses the CSV, merges in code-defined extras, and renders the UI.
 3. Theme/font/size/frame choices are CSS custom properties persisted in `localStorage`.
-4. Optional **write-back** (photo uploads, log entries, field edits) POSTs to a deployed
+4. The US and Region maps lazy-load a self-hosted MapLibre terrain renderer; Local remains a separate
+   game-grid schematic, and the original SVG atlases remain accessible failure fallbacks.
+5. Optional **write-back** (photo uploads, log entries, field edits) POSTs to a deployed
    Apps Script web app, which writes to the sheet. The static page never holds credentials.
 
 To go live, follow **[DEPLOY.md](DEPLOY.md)**.
@@ -46,6 +48,7 @@ To go live, follow **[DEPLOY.md](DEPLOY.md)**.
 index.html        markup shell + the Theme popover + all modals
 styles.css        everything visual (theme vars, CRT, frame modes, typography)
 app.js            all logic — see the MODULE MAP banner at the top of the file
+map-terrain.js    lazy US/Region MapLibre adapter, layers, markers, clusters, and SVG fallback
 crt-screen-integration.js  optional enhanced-CRT loader (default mode does not load the engine)
 apps-script.gs    the write-back web app (pasted into Google, NOT hosted here)
 
@@ -53,14 +56,14 @@ favicon.svg       tab icon (pixel-Y monogram)
 og-card.png       Discord/social link-preview card (1200×630)
 
 fonts/            self-hosted woff2/ttf — Fallout, Fixedsys, VT323, IBM Plex Mono, …
-media/            code-defined character portraits (referenced by MEDIA in app.js)
+media/            character portraits + generated bounded map-terrain tiles
 c/                per-character Open-Graph stubs for rich Discord embeds (generated)
 tools/            dev scripts — selfcheck.py (integrity linter), preview.py (rebuild
                   the local preview), regenerate c/ stubs / OG card / roster dump,
                   git-hooks/ (pre-commit guard)
 docs/             current plans, evidence, references, and historical snapshots. START with
                   docs/README.md, then use HANDOFF-NEXT.md as the canonical handoff
-data/             structured world data + the guarded legacy-atlas migration inventory
+data/             structured world data, atlas migration inventory, and pinned geography inputs
 vendor/           reviewed, locally hosted runtime code with provenance notes
 
 CONTRIBUTING.md   house rules — self-review, anti-entropy, run selfcheck, conventions
@@ -108,11 +111,14 @@ banners to jump around:
 ```bash
 python3 tools/make-og-card.py                          # rebuild og-card.png
 python3 tools/make-og-stubs.py --base-url "https://…/" # rebuild c/ Discord stubs
+python3 tools/build-map-terrain.py --force             # rebuild bounded USGS terrain tiles (network)
 # create the ignored tools/roster-dump.json via tools/dump-roster.js; repeat per linked faction
 ```
 
-`make-og-card.py` requires Pillow. The stub generator uses only the Python standard library and refuses
-to overwrite a same-slug stub owned by another faction.
+`make-og-card.py` and the terrain builder require Pillow. The terrain builder reads the pinned Natural Earth
+land mask in `data/geography/` and records reproducible output metadata and hashes in
+`media/map-terrain/manifest.json`. The stub generator uses only the Python standard library and refuses to
+overwrite a same-slug stub owned by another faction.
 
 ## Before you deploy or commit
 

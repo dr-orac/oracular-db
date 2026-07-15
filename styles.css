@@ -1442,7 +1442,77 @@
   .map-stage{ position:relative; min-width:0; min-height:0; overflow:hidden; display:flex;
     align-items:center; justify-content:center; padding:10px; border:1px solid var(--fg-faint);
     background:var(--bg-panel); box-shadow:var(--box-glow); }
-  .map-svg{ display:block; width:100%; height:100%; max-width:100%; max-height:100%; }
+  .map-svg{ position:relative; z-index:0; display:block; width:100%; height:100%; max-width:100%; max-height:100%;
+    transition:opacity .16s ease; }
+  /* MapLibre is a lazy, progressively enhanced terrain surface. The complete SVG stays in layout and
+     remains interactive until the raster tiles reach idle; failure restores it without a layout shift. */
+  .map-terrain{ position:absolute; inset:10px; z-index:1; overflow:hidden; visibility:hidden; opacity:0;
+    background:#11171a; transition:opacity .16s ease; }
+  .map-panel.terrain-ready .map-terrain{ visibility:visible; opacity:1; }
+  .map-panel.terrain-ready .map-svg{ visibility:hidden; opacity:0; pointer-events:none; }
+  .terrain-credit, .terrain-fallback-note{ display:none; }
+  .map-panel.terrain-ready .terrain-credit{ display:block; }
+  .map-panel.terrain-ready .map-schematic-note{ display:none; }
+  .map-panel.terrain-failed .terrain-fallback-note{ display:block; }
+  .map-terrain .maplibregl-canvas{ outline:none; }
+  .map-terrain .maplibregl-canvas:focus-visible{ outline:2px solid var(--fg-bright); outline-offset:-3px; }
+  .map-terrain .maplibregl-ctrl-top-right{ top:8px; right:8px; }
+  .map-terrain .maplibregl-ctrl-group{ overflow:hidden; border:1px solid var(--fg-faint); border-radius:0;
+    background:rgba(12,14,13,.86); box-shadow:var(--box-glow); }
+  .map-terrain .maplibregl-ctrl-group button{ width:32px; height:32px; color:var(--fg-bright); }
+  .map-terrain .maplibregl-ctrl-group button + button{ border-top:1px solid var(--fg-faint); }
+  .map-terrain .maplibregl-ctrl-icon{ filter:sepia(1) saturate(.55) brightness(1.45); }
+  .map-terrain .maplibregl-cooperative-gesture-screen{ background:rgba(7,9,8,.78); color:var(--fg-bright);
+    font-family:var(--font-body); font-size:13px; letter-spacing:.4px; }
+  /* DOM markers preserve real buttons and focus semantics above the WebGL canvas. Labels remain quiet at
+     continental scale, then appear on hover/focus/selection; the four Region labels can stay visible. */
+  .terrain-marker{ position:absolute; width:30px; height:30px; padding:0; border:0; border-radius:50%;
+    background:transparent; color:inherit; cursor:pointer; }
+  .terrain-marker-dot{ position:absolute; left:50%; top:50%; width:8px; height:8px; border-radius:50%;
+    transform:translate(-50%,-50%); background:currentColor; border:1px solid rgba(255,255,255,.6);
+    box-shadow:0 0 0 4px rgba(0,0,0,.5), 0 0 8px currentColor; transition:transform .14s, box-shadow .14s; }
+  .terrain-marker-label{ position:absolute; left:50%; bottom:27px; width:max-content; max-width:150px;
+    transform:translateX(-50%); padding:2px 5px; border:1px solid rgba(238,221,177,.25);
+    background:rgba(10,11,10,.9); color:#ead9ac; font-family:var(--font-head); font-size:10px;
+    line-height:1.2; letter-spacing:1px; text-transform:uppercase; white-space:nowrap; opacity:0;
+    pointer-events:none; transition:opacity .14s; }
+  .terrain-marker:hover .terrain-marker-label,
+  .terrain-marker:focus-visible .terrain-marker-label,
+  .terrain-marker.sel .terrain-marker-label,
+  .terrain-marker--labelled .terrain-marker-label{ opacity:1; }
+  .terrain-marker:hover .terrain-marker-dot,
+  .terrain-marker:focus-visible .terrain-marker-dot,
+  .terrain-marker.sel .terrain-marker-dot{ transform:translate(-50%,-50%) scale(1.35);
+    box-shadow:0 0 0 5px rgba(0,0,0,.64), 0 0 12px currentColor; }
+  .terrain-marker:focus{ outline:none; }
+  .terrain-marker:focus-visible{ outline:2px solid #f4e2b6; outline-offset:0; }
+  .terrain-marker--hero .terrain-marker-dot{ width:11px; height:11px; border-width:2px;
+    box-shadow:0 0 0 5px rgba(0,0,0,.65), 0 0 14px currentColor; }
+  .terrain-marker--hero .terrain-marker-label{ bottom:29px; font-size:11px; }
+  .terrain-cluster{ position:absolute; width:34px; height:34px; padding:0; border:2px solid #ead9ac;
+    border-radius:50%; background:rgba(12,14,13,.92); color:#ead9ac; font-family:var(--font-head);
+    font-size:13px; line-height:30px; text-align:center; cursor:zoom-in;
+    box-shadow:0 0 0 4px rgba(0,0,0,.55), 0 0 12px rgba(234,217,172,.55); }
+  .terrain-cluster:hover{ background:#ead9ac; color:#111; }
+  .terrain-cluster:focus{ outline:none; }
+  .terrain-cluster:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+  /* Region has four close points. Give each label a deterministic quadrant so the default camera is
+     readable without a collision engine; hover/focus still brings the active marker above its peers. */
+  #map-terrain-region .terrain-marker{ z-index:1; }
+  #map-terrain-region .terrain-marker:hover,
+  #map-terrain-region .terrain-marker:focus-visible,
+  #map-terrain-region .terrain-marker.sel{ z-index:2; }
+  #map-terrain-region .terrain-marker[data-id="misfits_wendover_town"] .terrain-marker-label{
+    left:auto; right:25px; bottom:17px; transform:none; }
+  #map-terrain-region .terrain-marker[data-id="misfits_great_salt_flats"] .terrain-marker-label{
+    left:25px; bottom:17px; transform:none; }
+  #map-terrain-region .terrain-marker[data-id="misfits_toana_range_overlook"] .terrain-marker-label{
+    left:auto; right:25px; top:23px; bottom:auto; transform:none; }
+  #map-terrain-region .terrain-marker[data-id="misfits_vault_facility"] .terrain-marker-label{
+    left:25px; top:23px; bottom:auto; transform:none; }
+  #map-terrain-region:has(.terrain-marker:hover) .terrain-marker--labelled:not(:hover) .terrain-marker-label,
+  #map-terrain-region:has(.terrain-marker:focus-visible) .terrain-marker--labelled:not(:focus-visible) .terrain-marker-label,
+  #map-terrain-region:has(.terrain-marker.sel) .terrain-marker--labelled:not(.sel) .terrain-marker-label{ opacity:0; }
   .map-states path{ fill:var(--bg-panel-2); stroke:var(--fg); stroke-width:.8; stroke-linejoin:round;
     opacity:.5; transition:opacity .2s; }
   .map-stage:hover .map-states path{ opacity:.62; }
@@ -1526,7 +1596,16 @@
     .map-side{ min-height:auto; overflow:visible; }
     .map-detail{ min-height:auto; overflow:visible; }
     .map-reference{ min-height:clamp(240px,38vh,420px); }
+    .map-terrain{ overflow:hidden; }
+    .terrain-marker-label{ max-width:112px; overflow:hidden; text-overflow:ellipsis; }
   }
+
+  body[data-contrast="high"] .terrain-marker-dot{ border-color:#fff; box-shadow:0 0 0 4px #000, 0 0 9px currentColor; }
+  body[data-contrast="high"] .terrain-marker-label{ border-color:currentColor; background:#000; color:#fff; }
+  body[data-reducemotion="on"] .map-svg,
+  body[data-reducemotion="on"] .map-terrain,
+  body[data-reducemotion="on"] .terrain-marker-dot,
+  body[data-reducemotion="on"] .terrain-marker-label{ transition:none; }
 
   .toolbar{
     margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; min-height:52px;

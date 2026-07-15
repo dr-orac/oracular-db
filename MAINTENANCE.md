@@ -2,7 +2,7 @@
 
 The durable, in-repo source of truth for implemented architecture and invariants. Start with
 [`docs/HANDOFF-NEXT.md`](docs/HANDOFF-NEXT.md) for current priorities and [`docs/README.md`](docs/README.md)
-for document ownership. Last reconciled with the application: 2026-07-14.
+for document ownership. Last reconciled with the application: 2026-07-15.
 
 ---
 
@@ -15,7 +15,8 @@ between them. It combines live roster dossiers, faction documents, a themed Medi
 Paperwork, and a three-scale Map. It is a static site:
 
 - **No build step, package manager, framework, or CDN.** Browser code and assets are self-hosted;
-  the CRT module in `vendor/` carries its own provenance record. Open `index.html` and the app runs.
+  the CRT and MapLibre modules in `vendor/` carry their own provenance records. Open `index.html` and the
+  app runs.
 - Reads the sheet **read-only** via the gviz CSV endpoint. It never writes to the sheet
   unless an (optional, undeployed) Apps Script `webAppUrl` is configured.
 - **LIVE at https://dr-orac.github.io/oracular-db/** — GitHub Pages, repo
@@ -100,6 +101,29 @@ retry, error, and recovery controls never drift from the actual request state.
 - At ≤760px the map itself becomes the vertical scroll owner. Panels return to natural height, the stage and
   sidebar stack, and the SVG returns to width-led sizing so every map and detail remains reachable while the
   application chrome stays fixed.
+
+### Geographic renderer ownership
+
+- `app.js` owns route/scope state, the lazy asset loader, and map-detail integration. `map-terrain.js` owns
+  MapLibre instances, sources/layers, marker clustering, renderer state, and the SVG handoff. Do not merge
+  this adapter into the main application file or create another coordinate store inside it.
+- MapLibre GL JS 5.24.0 is pinned under `vendor/maplibre/`. Update the distribution files, `LICENSE`,
+  `VENDORED.txt`, and its hashes together; then rerun the complete T114 matrix. Never replace it with a CDN
+  or `@latest` URL.
+- `data/world.json` and `data/atlas-migration.json` remain location truth. The enhanced US renderer includes
+  only placements allowed by their current review state; the SVG fallback deliberately retains the complete
+  legacy atlas. Region markers come from the authored Misfits records in `world.json` and expose confidence.
+- Natural Earth overview geometry is pinned under `data/geography/`. Generated USGS 3DEP relief lives under
+  `media/map-terrain/`; its manifest owns source snapshot, bounds, palette, tile counts, and output hashes.
+  Rebuild with `python3 tools/build-map-terrain.py --force` when the input snapshot or presentation changes.
+  The command needs network access; an ordinary clone/deploy does not.
+- US relief is bounded to zooms 2–5 and Region to 6–9. MapLibre may visually overzoom those tiles, but wider
+  coverage or native DEM rendering needs a measured product requirement and a new payload/fallback review.
+- US and Region progressively enhance their existing SVGs. The SVG stays visible and focusable until the
+  renderer reaches idle; failure, timeout, or WebGL loss restores it. Do not remove the fallback, hide it
+  before readiness, or place required controls only in the canvas.
+- Local is a different renderer family in native game-grid space. It must not inherit geographic coordinates
+  merely because the other two scopes use MapLibre.
 
 ---
 
@@ -233,7 +257,8 @@ element-id or CSS-var references remain. The screen-only view is byte-for-byte u
 2. **Legibility floor.** Min text size 17px for prose/labels (short uppercase chip labels
    like tags are an allowed ~15px exception). `--fg-dim` is the darkest any *text* may be
    (AA-contrast); `--fg-faint` is borders only, never text. No glow on small text.
-3. **Self-host everything.** No CDN. New fonts go in `fonts/` as `woff2` with an `@font-face`.
+3. **Self-host everything.** No CDN. New fonts go in `fonts/` as `woff2` with an `@font-face`; runtime
+   libraries require a pinned version, local licence, provenance, and reviewed hashes under `vendor/`.
 4. **Soft edges for content, crisp for chrome** (see STYLE-GUIDE.md §3). Don't feather grids,
    modals, or form controls.
 5. **Tokens first.** New colors should be `var(--..)`, not fresh hex. `selfcheck.py` warns on
@@ -315,6 +340,8 @@ is committed; nothing sensitive lives in the repo.
 | Cross-surface UI regressions and duplicated local fixes | `docs/UI-UX-AUDIT.md` representative journey matrix + cause-based tasks |
 | Current instructions mixed with historical snapshots | `docs/README.md` ownership index + `docs/HANDOFF-NEXT.md` canonical handoff |
 | Documentation links silently rot after a rename | local-link validation in `tools/selfcheck.py` |
+| Generated terrain silently drifts from its source or palette | `tools/build-map-terrain.py` + hashed `media/map-terrain/manifest.json` |
+| Geographic and game-grid coordinates get conflated | `docs/MAP-ARCHITECTURE.md` renderer boundary; Local stays outside MapLibre |
 
 ---
 
@@ -336,6 +363,9 @@ is committed; nothing sensitive lives in the repo.
   makes the layout read as intentional, and 2-col would risk the tuned prose measure /
   reading flow and the lead-lists' own internal columns for marginal gain above ~1600px.
   Revisit only if a user specifically wants the void filled.
+- **MapLibre stays bounded to US + Region.** T114 accepted the dependency only because it is lazy-loaded,
+  self-hosted, token-free, two-dimensional, small at first open, and backed by the original accessible SVG.
+  Keep Local in game-grid space; add post-war masks or faction territory only as separately reviewed layers.
 
 ## Open / future work
 

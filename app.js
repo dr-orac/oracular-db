@@ -3505,6 +3505,64 @@ const MAP_SCOPES = {
   local:  { title:"Wendover Local", sub:"The playable game space — landmark detail is shown at a closer scale." },
 };
 let _mapScope="us";
+let _terrainApi=null, _terrainLoad=null, _terrainStartedAt=0;
+function terrainAsset(type, id, src){
+  const existing=document.getElementById(id);
+  if(existing && existing.dataset.ready==="1") return Promise.resolve(existing);
+  return new Promise((resolve,reject)=>{
+    const element=existing || document.createElement(type==="style" ? "link" : "script");
+    let timer;
+    const done=()=>{ clearTimeout(timer); element.dataset.ready="1"; resolve(element); };
+    const fail=()=>{ clearTimeout(timer); reject(new Error(`Could not load ${src}`)); };
+    element.id=id;
+    element.addEventListener("load",done,{once:true});
+    element.addEventListener("error",fail,{once:true});
+    if(!existing){
+      if(type==="style"){
+        element.rel="stylesheet"; element.href=src;
+        const appStyle=document.querySelector('link[href="styles.css"]');
+        (appStyle?.parentNode || document.head).insertBefore(element, appStyle || null);
+      }else{
+        element.src=src; element.defer=true; document.body.appendChild(element);
+      }
+    }
+    timer=setTimeout(fail,15000);
+  });
+}
+function markTerrainFailure(scope, error){
+  const panel=$("#map-panel-"+scope);
+  if(panel){ panel.classList.remove("terrain-ready"); panel.classList.add("terrain-failed"); }
+  if(error) console.warn("Enhanced terrain unavailable; retained SVG map.", error);
+}
+function ensureTerrainRenderer(){
+  if(_terrainLoad) return _terrainLoad;
+  _terrainStartedAt=performance.now();
+  _terrainLoad=Promise.all([
+    terrainAsset("style","maplibre-style","vendor/maplibre/maplibre-gl.css"),
+    terrainAsset("script","maplibre-script","vendor/maplibre/maplibre-gl.js"),
+  ]).then(()=>terrainAsset("script","map-terrain-script","map-terrain.js"))
+    .then(()=>{
+      if(!window.OracularTerrain) throw new Error("Terrain adapter did not initialise");
+      _terrainApi=window.OracularTerrain.init({
+        locations:MAP_LOCATIONS,
+        factions:MAP_FACTIONS,
+        onUsSelect:showMapDetail,
+        onRegionSelect:showTerrainRegionDetail,
+        onOpenRegion:()=>setMapScope("region"),
+        startedAt:_terrainStartedAt,
+      });
+      return _terrainApi;
+    })
+    .catch(error=>{ markTerrainFailure(_mapScope,error); return null; });
+  return _terrainLoad;
+}
+function requestTerrainScope(scope){
+  if(scope!=="us" && scope!=="region") return;
+  ensureTerrainRenderer().then(api=>{
+    if(api) api.show(scope);
+    else markTerrainFailure(scope);
+  });
+}
 function setMapScope(scope, opts={}){
   scope=MAP_SCOPES[scope] ? scope : "us";
   _mapScope=scope;
@@ -3517,6 +3575,7 @@ function setMapScope(scope, opts={}){
   if(currentSection==="map"){
     setAppHeading();
     if(opts.route!==false) writeRoute();
+    requestTerrainScope(scope);
   }
 }
 function renderMap(){
@@ -3538,7 +3597,9 @@ function renderMap(){
   + `</g>`;
   const leg = $("#map-legend");
   if(leg) leg.innerHTML = `<div class="map-legend-title">Allegiance</div>`
-    + Object.values(MAP_FACTIONS).map(f=>`<span class="map-legend-item"><span class="map-legend-swatch ${f.cls}"></span>${esc(f.label)}</span>`).join("");
+    + Object.values(MAP_FACTIONS).map(f=>`<span class="map-legend-item"><span class="map-legend-swatch ${f.cls}"></span>${esc(f.label)}</span>`).join("")
+    + `<span class="map-legend-note terrain-credit">Relief: USGS 3DEP · coast and water: Natural Earth · public domain.</span>`
+    + `<span class="map-legend-note terrain-fallback-note">Enhanced terrain unavailable — using the SVG atlas.</span>`;
   const det = $("#map-detail");
   if(det && !det.dataset.sel) det.innerHTML = mapDetailPrompt();
   else if(det && det.dataset.sel) showMapDetail(det.dataset.sel);   // keep the selection across re-renders
@@ -3557,11 +3618,13 @@ function showMapDetail(id){
         : "")
     + `<button type="button" class="btn map-detail-clear">◂ All markers</button>`;
   document.querySelectorAll('#map-pins .map-pin').forEach(p=>p.classList.toggle('sel', p.dataset.id===id));
+  _terrainApi?.select("us",id);
 }
 function clearMapDetail(){
   const det=$("#map-detail"); if(!det) return;
   delete det.dataset.sel; det.innerHTML = mapDetailPrompt();
   document.querySelectorAll('#map-pins .map-pin.sel').forEach(p=>p.classList.remove('sel'));
+  _terrainApi?.select("us",null);
 }
 function regionDetailPrompt(){
   return `<div class="map-detail-empty">Select a landmark to orient yourself in the wider region.</div>`;
@@ -3587,11 +3650,24 @@ function showRegionDetail(id){
     +`<p class="map-detail-desc">${esc(loc.desc)}</p>`
     +`<button type="button" class="btn map-region-clear">◂ All landmarks</button>`;
   document.querySelectorAll("#map-region-pins .map-pin").forEach(p=>p.classList.toggle("sel", p.dataset.id===id));
+  _terrainApi?.select("region",null);
+}
+function showTerrainRegionDetail(location){
+  const det=$("#map-region-detail"); if(!location || !det) return;
+  const body=location.terminal_entry?.body || [];
+  const confidence=location.source_confidence || location.placement?.status || "provisional";
+  det.dataset.sel=location.id;
+  det.innerHTML=`<div class="map-detail-head"><span class="map-detail-dot pin-other"></span><h3 class="map-detail-name">${esc(location.name)}</h3></div>`
+    +`<div class="map-detail-meta">${esc(String(location.type||"landmark").replaceAll("_"," "))} · ${esc(confidence)} confidence</div>`
+    +(body.length ? body.slice(0,2).map(text=>`<p class="map-detail-desc">${esc(text)}</p>`).join("") : `<p class="map-detail-desc">Reviewed regional orientation point.</p>`)
+    +`<button type="button" class="btn map-region-clear">◂ All landmarks</button>`;
+  _terrainApi?.select("region",location.id);
 }
 function clearRegionDetail(){
   const det=$("#map-region-detail"); if(!det) return;
   delete det.dataset.sel; det.innerHTML=regionDetailPrompt();
   document.querySelectorAll("#map-region-pins .map-pin.sel").forEach(p=>p.classList.remove("sel"));
+  _terrainApi?.select("region",null);
 }
 function setSection(id){
   if(!sectionAvailable(id)) id="roster";
@@ -3624,6 +3700,7 @@ function setSection(id){
     $("#state").classList.add("hidden");
   }else if(isMap){
     renderMap();
+    requestTerrainScope(_mapScope);
     $("#roster").classList.add("hidden");
     $("#cards").classList.add("hidden");
     $("#state").classList.add("hidden");

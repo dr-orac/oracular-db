@@ -69,11 +69,13 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
   under the faction. `positionConnector()` draws one SVG from the actual faction/tab rectangles;
   `watchConnector()` rebinds observation after the faction control is replaced.
 - **Map:** 3 scales (US atlas / Wendover Region / Local) sharing `#map[/<scope>]` with `_mapScope`. US pins
-  are the hardcoded `MAP_LOCATIONS` (pixel coords in a 650×500 viewBox) + a Wendover hero marker. Region is
-  a small original schematic. Local is deliberately a separate native game-grid renderer; T116 scopes a
-  deterministic export from the user's map editor rather than loading `Wendover.yml` in the browser.
-  `renderMap()`/`showMapDetail()`/`setMapScope()`. Renderer and coordinate contracts are documented in
-  `docs/MAP-ARCHITECTURE.md`.
+  progressively enhance with the lazy self-hosted `map-terrain.js` adapter and MapLibre 5.24.0. It reads
+  reviewed/provisional location state from `data/world.json` and the legacy migration inventory, while the
+  existing SVG retains complete fallback coverage. Region uses authored world records with visible confidence.
+  Local is deliberately a separate native game-grid renderer; T116 scopes a deterministic export from the
+  user's map editor rather than loading `Wendover.yml` in the browser. `renderMap()`/`showMapDetail()`/
+  `setMapScope()` remain application integration points; `map-terrain.js` owns renderer/layer/marker state.
+  Full renderer and coordinate contracts are in `docs/MAP-ARCHITECTURE.md`.
 - **Command palette:** ⌘K/Ctrl-K, fuzzy-ranked, deep-links via hash. Self-contained IIFE at end of app.js.
 - **Roster search:** `filtered()` + `scoreMatch()`/`fuzzySubseq()` — fuzzy + ranked; flat "Results" list
   while searching, section-grouped when browsing.
@@ -100,20 +102,17 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 2. **Continue the product audit alongside map data work.** Take the next bounded pass through settings and
    modal focus/close/restore behavior, then the remaining cross-surface states. Keep UX-001's VoiceOver,
    axe/Lighthouse, and physical iOS Safari checks external rather than claiming them locally.
-3. **Run the bounded terrain and geographic-renderer proof (T114).** After the completed T113 containment work
-   and the dataset inventory,
-   test MapLibre for an original, two-dimensional US + Region underlay. Separate licensed elevation and
-   hydrography from toggleable, evidence-aware post-war condition masks; keep locations and labels above the
-   terrain. Lazy-load and self-host the renderer and selected assets where practical, require no client token
-   or paid tile service, measure transfer and failure behavior, and preserve the SVG atlas as fallback. Keep
-   Local in its original game-space coordinates. The dependency must pass the Phase 4 gate. Keep faction
-   territory out of the base proof; then run T112's claims audit before drawing any overlay polygons.
+3. **Inventory faction claims before drawing territory (T112).** The geographic renderer now provides the
+   technical seam, but it does not make the user-approved 2290 fan map authoritative. Start with a small,
+   versioned claims dataset recording scenario, canon scope, time, evidence, review state, uncertainty,
+   overlap, and contestation. Use the reference only for broad discovery/art direction; do not trace pixels
+   or exact edges. Publish influence points or broad regions when evidence cannot support a polygon.
 4. **Audit the map editor, then prove the Local export (T116).** The ignored 40 MB YAML is source material,
    never a browser payload. Once the separate editor repository is available, inspect its parser, renderer,
    licences, coordinate conventions, and export seams before duplicating anything here. Generate original
    cartography plus a compact native-grid manifest; start with a labelled raster baseline and adopt tiles or
-   canvas only after measurements justify them. This audit may happen before T114, but geographic Region and
-   game-grid Local remain separate renderer decisions.
+   canvas only after measurements justify them. Geographic Region and game-grid Local remain separate
+   renderer decisions.
 5. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
    Sheet/wiki like the rest of the roster (forks the data model — pick one and note it).
 6. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
@@ -137,3 +136,8 @@ semantics audit. Generated share pages now have a selfcheck-enforced canonical r
 regeneration path.
 T113 then made Home expose Wiki, Map, and Paperwork as one registry-derived row and gave the three map scales
 a bounded desktop viewport plus reachable natural phone flow, clearing the containment gate for T114.
+T114 accepted lazy self-hosted MapLibre 5.24.0 for US + Region: public-domain Natural Earth geography and a
+bounded USGS 3DEP relief cache now form an original flat terrain base, accessible HTML clusters/markers own
+interaction, and the original SVG remains available through slow/failing WebGL. The full desktop/phone matrix,
+high contrast, reduced motion, label collision, scope transition, and cold-load budgets passed; Local remains
+separate for T116, and faction territory remains an evidence task under T112.

@@ -192,9 +192,12 @@ def strip_js(src):
 node = shutil.which("node")
 if node:
     # authoritative: a real parser
-    r = subprocess.run([node, "--check", p("app.js")], capture_output=True, text=True)
-    if r.returncode != 0:
-        err("node --check failed on app.js:\n   " + (r.stderr.strip().splitlines() or ["(no detail)"])[0])
+    for script in ["app.js", "map-terrain.js"]:
+        if not os.path.exists(p(script)):
+            continue
+        r = subprocess.run([node, "--check", p(script)], capture_output=True, text=True)
+        if r.returncode != 0:
+            err(f"node --check failed on {script}:\n   " + (r.stderr.strip().splitlines() or ["(no detail)"])[0])
 else:
     # heuristic fallback (no node here) — imbalance is a warning, not a hard fail
     pairs = {")": "(", "]": "[", "}": "{"}; opens = set(pairs.values()); stack = []; ok = True
@@ -230,10 +233,11 @@ for hexv in sorted(set(re.findall(r'#[0-9a-fA-F]{3,8}', body_css))):
 # require a selector boundary before the dot so url("x.ttf")/format("woff2") aren't matched.
 FILE_EXT = {"ttf","woff","woff2","eot","svg","png","jpg","jpeg","gif","webp","ico","css","js","json","html"}
 css_classes = set(re.findall(r'(?:^|[\s,>+~({])\.([a-zA-Z][\w-]+)', css, re.M))
-hay = html + js
+runtime_js = js + (read("map-terrain.js") if os.path.exists(p("map-terrain.js")) else "")
+hay = html + runtime_js
 dead_classes = []
 for c in sorted(css_classes):
-    if c in FILE_EXT: continue
+    if c in FILE_EXT or c.startswith("maplibregl-"): continue
     if re.search(r'(?<![\w-])' + re.escape(c) + r'(?![\w-])', hay): continue   # token appears in HTML/JS
     dead_classes.append(c)
 for c in dead_classes:
@@ -594,6 +598,64 @@ if os.path.exists(world_path):
             for legacy_id in sorted(set(legacy) - migration_ids):
                 err(f'data/atlas-migration.json omits legacy marker "{legacy_id}"')
             info(f"US atlas migration inventory: {matched}/{len(markers)} markers matched to world records")
+
+# ---------------------------------------------------------------- 11. generated terrain cache
+terrain_manifest_path = p("media", "map-terrain", "manifest.json")
+if os.path.exists(p("map-terrain.js")):
+    try:
+        with open(terrain_manifest_path, encoding="utf-8") as f:
+            terrain_manifest = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        err(f"media/map-terrain/manifest.json cannot be read as JSON: {exc}")
+        terrain_manifest = None
+
+    if terrain_manifest is not None:
+        scopes_data = terrain_manifest.get("scopes")
+        if not isinstance(scopes_data, dict) or set(scopes_data) != {"us", "region"}:
+            err('terrain manifest scopes must be exactly "us" and "region"')
+            scopes_data = {}
+        total_tile_bytes = 0
+        total_tile_count = 0
+        for scope_name, scope_data in scopes_data.items():
+            tile_root = p("media", "map-terrain", scope_name)
+            tile_paths = []
+            for directory, _subdirs, filenames in os.walk(tile_root):
+                for filename in filenames:
+                    if filename.endswith(".webp"):
+                        tile_paths.append(os.path.join(directory, filename))
+            try:
+                tile_paths.sort(key=lambda path: tuple(
+                    int(part.removesuffix(".webp"))
+                    for part in os.path.relpath(path, tile_root).split(os.sep)
+                ))
+            except ValueError:
+                err(f"terrain scope {scope_name} contains a non-numeric tile path")
+            recorded_count = scope_data.get("tile_count") if isinstance(scope_data, dict) else None
+            if recorded_count != len(tile_paths):
+                err(f"terrain scope {scope_name} has {len(tile_paths)} tiles but manifest records {recorded_count}")
+            hashes = []
+            for tile_path in tile_paths:
+                with open(tile_path, "rb") as f:
+                    tile_bytes = f.read()
+                hashes.append(hashlib.sha256(tile_bytes).hexdigest())
+                total_tile_bytes += len(tile_bytes)
+            total_tile_count += len(tile_paths)
+            combined = hashlib.sha256("".join(hashes).encode("ascii")).hexdigest()
+            if isinstance(scope_data, dict) and scope_data.get("combined_tile_sha256") != combined:
+                err(f"terrain scope {scope_name} differs from its recorded combined SHA-256")
+        if terrain_manifest.get("total_tile_bytes") != total_tile_bytes:
+            err("terrain manifest total_tile_bytes does not match the generated tile cache")
+
+        coast = terrain_manifest.get("coast_mask")
+        coast_path = coast.get("path") if isinstance(coast, dict) else None
+        if not isinstance(coast_path, str) or not os.path.exists(p(coast_path)):
+            err("terrain manifest coast mask is missing")
+        else:
+            with open(p(coast_path), "rb") as f:
+                coast_hash = hashlib.sha256(f.read()).hexdigest()
+            if coast.get("sha256") != coast_hash:
+                err("terrain coast mask differs from its recorded SHA-256")
+        info(f"terrain cache: {total_tile_count} tiles / {total_tile_bytes:,} bytes verified")
 
 # ---------------------------------------------------------------- report
 print("── Misfits Database self-check ──")
