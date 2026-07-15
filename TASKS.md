@@ -338,7 +338,7 @@ click; Screen/Chassis and 860/859px transitions clear and restore geometry synch
 settle on the final semantic selection; arrow tips remain within 0.5px of their tab centres; selfcheck guards
 the invalidation and illumination contract.
 
-### T118 · Reuse measured connectors for meaningful hierarchy — P2 [TOC + visual system] — ROADMAP
+### T118 · Reuse measured connectors for meaningful hierarchy — P2 [TOC + visual system] — IMPLEMENTED 2026-07-15
 
 Treat the connector as a small visual grammar, not a masthead-specific decoration to copy. Begin only from
 T117's reliable state contract. Extract a renderer only when the second real use is implemented; it should
@@ -357,6 +357,17 @@ master/detail or step flows where the relationship clarifies navigation. Do not 
 lists, cards, or controls merely for decoration. Acceptance for each adopter: one shared renderer/state
 contract, exact active semantics, no stale frame after rerender, no hit-area or scroll change, no overlap or
 horizontal overflow at 1440/1024/390/320px, and a clear visual benefit retained in high contrast.
+
+Implementation: the masthead and shared `#doctoc` now paint through one atomic active/idle/hidden renderer.
+The contents rail derives a real heading tree from H1–H4 levels, keeps native links and the bounded reader
+scroll coordinator authoritative, and lights a branch only when one link agrees in CSS and `aria-current`.
+Document/wiki loads clear the previous rail synchronously; focus/collapsed states clear geometry; the sticky
+header is deliberately excluded from the coordinate source so rail scrolling cannot distort the tree.
+The visible 1280px proof covered the eight-entry MediaWiki landing and a 32-entry Google Doc, deep H3 rail
+scroll, rapid link changes, focus mode, high contrast, reduced motion, and rerender/error invalidation. Exact
+state held at one active link/arrow with 0px vertical tip residual and no rail horizontal overflow. Below the
+1180px rail breakpoint the whole optional layer remains absent. Roster reuse remains an evaluation, not a
+commitment.
 
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 

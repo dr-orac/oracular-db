@@ -323,15 +323,38 @@ connector_start = js.find("function positionConnector()", render_nav_start)
 render_nav_block = js[render_nav_start:connector_start] if render_nav_start >= 0 and connector_start >= 0 else ""
 if not render_nav_block or render_nav_block.find("resetConnector();") > render_nav_block.find("nav.innerHTML"):
     err("renderNav() must invalidate connector geometry before replacing faction tabs")
-if 'dim.setAttribute("d",`M ${fx} ${fy} V ${busY}' not in js:
+if 'dimPath:`M ${fx} ${fy} V ${busY}' not in js:
     err("the connector's parent stem must remain part of the dim tree")
 if 'let litD=""' not in js or 't.getAttribute("aria-selected")==="true"' not in js \
         or 't.dataset.section===document.body.dataset.section' not in js:
     err("connector illumination must start empty and require matching CSS, ARIA, and route state")
-if 'svg.dataset.state=activeIndex>=0 ? "active" : "idle"' not in js:
+if 'function renderMeasuredConnector(svg, frame)' not in js \
+        or 'svg.dataset.state=active ? "active" : "idle"' not in js:
     err("connector must expose its active/idle state for regression checks")
+if js.count('data-connector-dim') < 3 or js.count('renderMeasuredConnector(svg,{') < 2:
+    err("masthead and contents rail must share the measured-connector paint contract")
 
-# ---------------------------------------------------------------- 8g. documentation links
+# ---------------------------------------------------------------- 8g. contents-rail connector contract
+# The outline SVG is decorative and state-exact. Loading a replacement document clears the previous rail;
+# active links agree in class + ARIA; revealing them changes only the rail's own scrollTop.
+if 'class="doctoc-connectors" aria-hidden="true" focusable="false"' not in js:
+    err("the document outline connector must remain decorative and unfocusable")
+if 'function clearDocSidebar()' not in js or js.count('clearDocSidebar();') < 2:
+    err("document/wiki replacement must synchronously clear stale outline geometry")
+if 'a.getAttribute("aria-current")==="location"' not in js \
+        or 'a.setAttribute("aria-current","location")' not in js:
+    err("contents-rail illumination must agree with the active link's ARIA location state")
+if 'const sourceY=roots.length ? snap(points[roots[0]].y-14.5)' not in js:
+    err("contents connector source must not depend on the sticky header's moving offset")
+if not re.search(r'\.doctoc-connectors\s*\{[^}]*pointer-events\s*:\s*none', css, flags=re.S):
+    err("the contents connector must not intercept native link hit areas")
+reveal_start = js.find("function revealDocTocEntry(entry)")
+reveal_end = js.find("function cancelDocScroll()", reveal_start)
+reveal_block = js[reveal_start:reveal_end] if reveal_start >= 0 and reveal_end >= 0 else ""
+if "toc.scrollTop" not in reveal_block or "scrollIntoView" in reveal_block:
+    err("active contents entries must reveal by scrolling only the contents rail")
+
+# ---------------------------------------------------------------- 8h. documentation links
 # Documentation is part of the handoff contract. Validate repository-local Markdown links so a rename or
 # move cannot silently strand the next contributor. External URLs and same-page anchors are out of scope.
 DOC_REQUIRED = [

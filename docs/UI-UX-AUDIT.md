@@ -440,7 +440,34 @@ Screen/Chassis and 860/859px transitions clear/restore immediately; tip residual
 and no lit path on Map. Active and idle matrices passed at 1751/1440/1280/1024/900/860px; 859px cleared all
 geometry. Active state contained exactly one lit arrow, idle state none, rapid Relations→Roleplay→Lore changes
 settled on Lore immediately and after observation, and Screen↔Chassis cleared/restored synchronously. Maximum
-measured arrow-tip residual was 0.31px. T118 owns any reuse beyond the masthead.
+measured arrow-tip residual was 0.31px. T118 subsequently proved the shared renderer in the contents rail.
+
+### UX-009 · P2 · hierarchy and scroll resilience · shared contents connector
+
+**Observation:** the wiki and Google-Doc readers already expose real H1–H4 hierarchy through the same
+contents rail, but indentation alone makes long outlines harder to scan. Reusing the masthead look directly
+would risk duplicating its state machinery, intercepting links, or coupling geometry to the rail's sticky
+header and two independent scroll containers.
+
+**User/maintenance impact:** a measured tree can clarify parentage and current reading context, provided it
+cannot become another navigation owner. A copied implementation would create parallel invalidation rules and
+make stale branches likely during document replacement, focus mode, or deep rail scrolling.
+
+**Recommended direction:** share only an atomic active/idle/hidden paint contract. Let the contents surface
+derive parent targets from rendered links, require one CSS + `aria-current` selection for illumination, keep
+the SVG decorative and pointer-transparent, and clear the old rail before loading a replacement. Use stable
+content coordinates rather than the sticky header's moving reported offset.
+
+**Acceptance check:** MediaWiki and Google Docs use the same implementation; inactive has no lit geometry;
+active has one link, one ARIA location, and one arrow; deep rail scroll retains geometry; focus/loading/error
+states clear synchronously; native links and both scroll owners remain unchanged; no horizontal overflow.
+
+**Status:** implemented 2026-07-15 as T118. At 1280px the eight-entry wiki outline and 32-entry Tribe Lore
+outline rendered complete parent trees. Deep H3 navigation scrolled the rail to 675.5px while preserving all
+32 arrows, one active link/location/arrow, and a three-segment current branch; vertical tip residual was 0px
+and rail scroll width equalled client width. Idle wiki state had a complete dim tree and an empty lit path.
+Focus mode synchronously cleared paths/arrows and restored them on exit; high contrast and reduced motion
+retained exact state. Replacement wiki loading exposed zero old links/SVG, including the error path.
 
 ## Audit runs
 
@@ -466,3 +493,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | A/B/C/E/F | 2026-07-15 | 1440×900, 1366×768, 1280×800, 1024×768, 390×844, 375×667, 320×700; default/high contrast/reduced motion; slow/missing renderer | US and Region terrain, clusters, location details, SVG handoff, Region transition | Pass | T114: lazy self-hosted MapLibre passed containment and keyboard paths; clusters progressively exposed Hoover; Region labels did not collide; slow load retained the focusable SVG and failure restored it; cold local first open 1.618s/13 requests, ~401 KB estimated compressed production payload |
 | A/B/C | 2026-07-15 | desktop + 390×844, pointer + keyboard | Settings, command palette, dossier and nested icon modal | Pass | UX-007 fixed: closed layers are inert; Tab wraps; Escape unwinds one layer; focus restores icon trigger → exact card; palette/modal collision blocked; phone drawer/modal bounded; zero console errors |
 | A/C | 2026-07-15 | 1751/1440/1280/1024/900/860/859px; two/four tabs; active/idle; rapid section/faction/frame changes | Masthead connector geometry and illumination | Pass | UX-008/T117: no stale replacement frame; idle wholly dim; exactly one active route; Chassis and 859px clear geometry; maximum arrow-tip residual 0.31px |
+| A/C/E/F | 2026-07-15 | 1280×720; idle/active; focus; high contrast; reduced motion; replacement/error load | Shared wiki and Google-Doc contents rail; 8/32 headings; deep H3 | Pass | UX-009/T118: one shared renderer; exact CSS/ARIA/arrow state; 675.5px rail scroll retained 32 arrows; 0px vertical residual and horizontal overflow; replacement exposed no stale outline |

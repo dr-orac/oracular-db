@@ -2414,17 +2414,40 @@ function renderNav(){
   renderPrimaryNav();
   watchConnector();
 }
+/* Shared connector paint contract. Each adopting surface owns its semantic selection and measurement, then
+   hands one complete frame to this renderer. Invalid frames are cleared synchronously, and an idle frame has
+   no lit geometry. The SVG is always decorative: native controls/links remain the interaction and a11y layer. */
+function resetMeasuredConnector(svg){
+  if(!svg) return;
+  svg.classList.remove("is-visible");
+  svg.dataset.state="hidden";
+  delete svg.dataset.activeKey;
+  svg.querySelector("[data-connector-dim]")?.setAttribute("d","");
+  svg.querySelector("[data-connector-lit]")?.setAttribute("d","");
+  const arrows=svg.querySelector("[data-connector-arrows]"); if(arrows) arrows.innerHTML="";
+}
+function renderMeasuredConnector(svg, frame){
+  if(!svg || !frame || !frame.width || !frame.height || !frame.dimPath){
+    resetMeasuredConnector(svg); return;
+  }
+  const dim=svg.querySelector("[data-connector-dim]");
+  const lit=svg.querySelector("[data-connector-lit]");
+  const arrows=svg.querySelector("[data-connector-arrows]");
+  if(!dim || !lit || !arrows){ resetMeasuredConnector(svg); return; }
+  const active=frame.activeKey!==null && frame.activeKey!==undefined;
+  svg.setAttribute("viewBox",`0 0 ${frame.width} ${frame.height}`);
+  dim.setAttribute("d",frame.dimPath);
+  lit.setAttribute("d",active ? (frame.litPath||"") : "");
+  arrows.innerHTML=frame.arrows||"";
+  svg.dataset.state=active ? "active" : "idle";
+  if(active) svg.dataset.activeKey=String(frame.activeKey); else delete svg.dataset.activeKey;
+  svg.classList.add("is-visible");
+}
 /* One measured SVG owns the full faction → section flow chart. Mixing a CSS-derived stem with a
    separately measured bus caused recurring gaps whenever the title row changed height. Every point below
    is expressed in the same masthead coordinate system, directly from the current rendered rectangles. */
 function resetConnector(){
-  const svg=$("#masthead-connectors"); if(!svg) return;
-  svg.classList.remove("is-visible");
-  svg.dataset.state="hidden";
-  delete svg.dataset.activeSection;
-  svg.querySelector(".masthead-connector-dim")?.setAttribute("d","");
-  svg.querySelector(".masthead-connector-lit")?.setAttribute("d","");
-  const arrows=svg.querySelector(".masthead-connector-arrows"); if(arrows) arrows.innerHTML="";
+  resetMeasuredConnector($("#masthead-connectors"));
 }
 function positionConnector(){
   const mast=document.querySelector(".masthead"), nav=$("#topnav"), svg=$("#masthead-connectors");
@@ -2450,9 +2473,6 @@ function positionConnector(){
   // If responsive layout removes the clear channel, suppress the diagram until the next observation.
   if(busY<=fy+2 || arrowBase<=busY+2){ resetConnector(); return; }
   const busL=snap(Math.min(fx,...xs)-1), busR=snap(Math.max(fx,...xs)+1);
-  const dim=svg.querySelector(".masthead-connector-dim");
-  const lit=svg.querySelector(".masthead-connector-lit");
-  const arrows=svg.querySelector(".masthead-connector-arrows");
   // Illumination is stricter than appearance: exactly one tab must agree in CSS, ARIA, and route state.
   // An umbrella section therefore keeps the complete tree visible but entirely dim.
   const selected=tabs.filter(t=>t.classList.contains("active")
@@ -2460,20 +2480,19 @@ function positionConnector(){
     && t.dataset.section===document.body.dataset.section);
   const activeIndex=selected.length===1 ? tabs.indexOf(selected[0]) : -1;
 
-  svg.setAttribute("viewBox",`0 0 ${snap(mr.width)} ${snap(mr.height)}`);
-  dim.setAttribute("d",`M ${fx} ${fy} V ${busY} M ${busL} ${busY} H ${busR} `+
-    xs.map(x=>`M ${x} ${busY} V ${arrowBase+1}`).join(" "));
   let litD="";
   if(activeIndex>=0){ const ax=xs[activeIndex];
     litD=`M ${fx} ${fy} V ${busY} M ${fx} ${busY} H ${ax} M ${ax} ${busY} V ${arrowBase+1}`; }
-  lit.setAttribute("d",litD);
-  arrows.innerHTML=xs.map((x,i)=>
-    `<polygon class="masthead-connector-arrow${i===activeIndex?' is-active':''}" points="${x-arrowHalf},${arrowBase} ${x+arrowHalf},${arrowBase} ${x},${tabTop}" />`
-  ).join("");
-  svg.dataset.state=activeIndex>=0 ? "active" : "idle";
-  if(activeIndex>=0) svg.dataset.activeSection=tabs[activeIndex].dataset.section;
-  else delete svg.dataset.activeSection;
-  svg.classList.add("is-visible");
+  renderMeasuredConnector(svg,{
+    width:snap(mr.width), height:snap(mr.height),
+    dimPath:`M ${fx} ${fy} V ${busY} M ${busL} ${busY} H ${busR} `+
+      xs.map(x=>`M ${x} ${busY} V ${arrowBase+1}`).join(" "),
+    litPath:litD,
+    arrows:xs.map((x,i)=>
+      `<polygon class="masthead-connector-arrow${i===activeIndex?' is-active':''}" points="${x-arrowHalf},${arrowBase} ${x+arrowHalf},${arrowBase} ${x},${tabTop}" />`
+    ).join(""),
+    activeKey:activeIndex>=0 ? tabs[activeIndex].dataset.section : null,
+  });
 }
 /* Observe every geometry owner. renderBrand() replaces the faction control, so renderNav() calls this again
    and the observers are rebound to the new nodes. State mutation, font settlement, and both leading/trailing
@@ -2500,10 +2519,14 @@ function watchConnector(){
   requestAnimationFrame(()=>requestAnimationFrame(scheduleConnector));
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleConnector).catch(()=>{});
 }
-if(document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone",scheduleConnector);
+if(document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone",()=>{
+  scheduleConnector(); scheduleDocTocConnector();
+});
 window.addEventListener("resize", ()=>{
   scheduleConnector();
   clearTimeout(_connResizeT); _connResizeT=setTimeout(scheduleConnector, 120);
+  scheduleDocTocConnector();
+  clearTimeout(_docTocResizeT); _docTocResizeT=setTimeout(scheduleDocTocConnector, 120);
 });
 /* ROW 1 (umbrella): fill every registered global box and mark the active one. (The FACTION box between
    the nav and settings is built by renderBrand(); the cog sits at the far right.) */
@@ -2761,18 +2784,119 @@ let docHeads=[], _docRouteIdx=null;
 function buildDocSidebar(reader){
   const toc=$("#doctoc");
   _docRouteIdx=null;
+  resetDocTocConnector();                                      // old document geometry must not survive replacement
   docHeads=[...reader.querySelectorAll("h1,h2,h3,h4")]                                     // full outline, not just h1/h2
     .filter(h=>h.textContent.trim() && !h.classList.contains("doc-title"));                // …minus the masthead title
-  if(docHeads.length<3){ toc.innerHTML=""; return; }            // too short to bother
+  if(docHeads.length<3){ toc.innerHTML=""; watchDocTocConnector(); return; } // too short to bother
   // reuse the roster's own section-header component so the two index rails share one
   // element (»-prefix + trailing dashed rule come with the class) — not a parallel style.
-  toc.innerHTML = '<div class="sectionhdr">CONTENTS</div>' + docHeads.map((h,i)=>{
+  toc.innerHTML = '<svg class="doctoc-connectors" aria-hidden="true" focusable="false">'+
+      '<path class="doctoc-connector-dim" data-connector-dim></path>'+
+      '<path class="doctoc-connector-lit" data-connector-lit></path>'+
+      '<g class="doctoc-connector-arrows" data-connector-arrows></g></svg>'+
+    '<div class="sectionhdr">CONTENTS</div>' + docHeads.map((h,i)=>{
     if(!h.id) h.id="doch-"+i;                                   // ensure a jump target (URL / in-doc anchors)
     // data-i scrolls to the ELEMENT by its index in docHeads — immune to duplicate ids that Google's
     // export can emit (getElementById would return the first match → jump to the wrong heading). data-h
     // stays for the current-section highlight in trackDocSection.
     return `<a href="#${escAttr(h.id)}" class="tl${h.tagName[1]}" data-i="${i}" data-h="${escAttr(h.id)}">${esc(h.textContent.trim())}</a>`;
   }).join("");
+  watchDocTocConnector();
+}
+/* The shared contents rail is the second measured-connector adopter. Heading order and levels define a
+   real tree; native anchors and trackDocSection() remain authoritative. The SVG sits behind them, never
+   handles input, and uses content coordinates so scrolling the rail cannot distort its geometry. */
+let _docTocRO=null, _docTocMO=null, _docTocRAF=0, _docTocResizeT=null;
+function resetDocTocConnector(){
+  resetMeasuredConnector($("#doctoc .doctoc-connectors"));
+}
+function clearDocSidebar(){
+  resetDocTocConnector();
+  if(_docTocRO) _docTocRO.disconnect();
+  if(_docTocMO) _docTocMO.disconnect();
+  docHeads=[]; _docRouteIdx=null;
+  const toc=$("#doctoc"); if(toc) toc.innerHTML="";
+  const now=$("#docnow"); if(now) now.textContent="";
+}
+function scheduleDocTocConnector(){
+  if(_docTocRAF) cancelAnimationFrame(_docTocRAF);
+  _docTocRAF=requestAnimationFrame(()=>{ _docTocRAF=0; positionDocTocConnector(); });
+}
+function positionDocTocConnector(){
+  const toc=$("#doctoc"), svg=toc&&toc.querySelector(".doctoc-connectors");
+  if(!toc || !svg) return;
+  const links=[...toc.querySelectorAll("a[data-i]")];
+  const canDraw=links.length>=3 && !$("#docview").classList.contains("hidden")
+    && document.body.dataset.focus!=="doc" && matchMedia("(min-width:1180px)").matches
+    && toc.clientWidth>0 && toc.clientHeight>0;
+  if(!canDraw){ resetMeasuredConnector(svg); return; }
+
+  const snap=n=>Math.round(n*2)/2;
+  const levels=links.map(a=>Math.max(1,Math.min(4,parseInt(a.className.match(/\btl([1-4])\b/)?.[1]||"1",10))));
+  const parents=[], stack=[];
+  levels.forEach((level,i)=>{
+    while(stack.length && levels[stack[stack.length-1]]>=level) stack.pop();
+    parents[i]=stack.length ? stack[stack.length-1] : -1;
+    stack.push(i);
+  });
+  const points=links.map(a=>{
+    const style=getComputedStyle(a), textX=parseFloat(style.paddingLeft)||0;
+    const y=snap(a.offsetTop+a.offsetHeight/2), tipX=snap(Math.max(13,textX-6));
+    return {y, tipX, lineX:snap(tipX-5), textX};
+  });
+  // Suppress a frame if the measured gutter cannot keep arrowheads clear of the link text.
+  if(points.some(p=>p.tipX+2>=p.textX) || points.some((p,i)=>i && p.y<=points[i-1].y)){
+    resetMeasuredConnector(svg); return;
+  }
+  const rootX=7;
+  const roots=parents.map((p,i)=>p<0?i:-1).filter(i=>i>=0);
+  // Derive the source from the first real target, not the sticky header's offsetTop: browsers adjust a
+  // sticky element's reported offset as its own rail scrolls, which would make valid geometry self-hide.
+  const sourceY=roots.length ? snap(points[roots[0]].y-14.5) : 0;
+  if(!roots.length || sourceY>=points[roots[0]].y){ resetMeasuredConnector(svg); return; }
+  const dimParts=[`M ${rootX} ${sourceY} V ${points[roots[roots.length-1]].y}`];
+  roots.forEach(i=>dimParts.push(`M ${rootX} ${points[i].y} H ${points[i].lineX}`));
+  parents.forEach((parent,i)=>{ if(parent>=0)
+    dimParts.push(`M ${points[parent].lineX} ${points[parent].y} V ${points[i].y} H ${points[i].lineX}`); });
+
+  // Exact illumination: one link must agree in visual and ARIA state and still address its heading index.
+  const selected=links.filter(a=>a.classList.contains("active") && a.getAttribute("aria-current")==="location"
+    && docHeads[+a.dataset.i]);
+  const activeIndex=selected.length===1 ? links.indexOf(selected[0]) : -1;
+  let litPath="";
+  if(activeIndex>=0){
+    const chain=[]; for(let i=activeIndex;i>=0;i=parents[i]) chain.unshift(i);
+    const root=chain[0], lit=[`M ${rootX} ${sourceY} V ${points[root].y} H ${points[root].lineX}`];
+    for(let c=1;c<chain.length;c++){ const parent=chain[c-1], child=chain[c];
+      lit.push(`M ${points[parent].lineX} ${points[parent].y} V ${points[child].y} H ${points[child].lineX}`); }
+    litPath=lit.join(" ");
+  }
+  const height=snap(Math.max(toc.scrollHeight,points[points.length-1].y+14));
+  svg.style.height=height+"px";
+  renderMeasuredConnector(svg,{
+    width:snap(toc.clientWidth), height, dimPath:dimParts.join(" "), litPath,
+    arrows:points.map((p,i)=>
+      `<polygon class="doctoc-connector-arrow${i===activeIndex?' is-active':''}" points="${p.lineX},${p.y-3.5} ${p.lineX},${p.y+3.5} ${p.tipX+1},${p.y}" />`
+    ).join(""),
+    activeKey:activeIndex>=0 ? links[activeIndex].dataset.i : null,
+  });
+}
+function watchDocTocConnector(){
+  if(_docTocRO) _docTocRO.disconnect();
+  if(_docTocMO) _docTocMO.disconnect();
+  const toc=$("#doctoc"), svg=toc&&toc.querySelector(".doctoc-connectors");
+  if(!toc || !svg) return;
+  if(window.ResizeObserver){
+    _docTocRO=new ResizeObserver(scheduleDocTocConnector);
+    [toc,toc.querySelector(".sectionhdr"),...toc.querySelectorAll("a[data-i]")].filter(Boolean)
+      .forEach(el=>_docTocRO.observe(el));
+  }
+  _docTocMO=new MutationObserver(scheduleDocTocConnector);
+  _docTocMO.observe(document.body,{attributes:true,attributeFilter:["data-section","data-focus","data-font-head","data-font-body"]});
+  positionDocTocConnector();
+  scheduleDocTocConnector();
+  requestAnimationFrame(()=>requestAnimationFrame(scheduleDocTocConnector));
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleDocTocConnector).catch(()=>{});
 }
 /* update the sticky "current section" label + sidebar highlight as the doc scrolls */
 function trackDocSection(){
@@ -2785,7 +2909,11 @@ function trackDocSection(){
   $("#docnow").textContent = cur ? "› "+cur.textContent.trim() : "";
   const toc=$("#doctoc"); let act=null;
   // match by index (not id) so duplicate export ids can't highlight two entries at once
-  toc.querySelectorAll("a").forEach(a=>{ const on = (+a.dataset.i)===curIdx; a.classList.toggle("active", on); if(on) act=a; });
+  toc.querySelectorAll("a").forEach(a=>{ const on = (+a.dataset.i)===curIdx;
+    a.classList.toggle("active", on);
+    if(on){ a.setAttribute("aria-current","location"); act=a; } else a.removeAttribute("aria-current");
+  });
+  scheduleDocTocConnector();
   if(act) revealDocTocEntry(act);                                  // move only the contents rail, never the page
   if(curIdx!==_docRouteIdx){
     _docRouteIdx=curIdx;
@@ -2885,6 +3013,7 @@ function setDocFocus(on){
   if(on && $("#docview").classList.contains("hidden")) return;     // only meaningful while the reader shows
   document.body.dataset.focus = on ? "doc" : "";
   const btn=$("#docfs"); if(btn) btn.setAttribute("aria-pressed", on ? "true" : "false");
+  positionDocTocConnector();                                      // clear/restore in the same focus-state change
 }
 function exitDocFocus(){ if(docFocusOn()) setDocFocus(false); }
 $("#docfs").addEventListener("click", ()=> setDocFocus(!docFocusOn()));
@@ -3108,6 +3237,7 @@ async function loadDoc(doc){
     return;
   }
   // cold path → animated ASCII loader while we fetch + clean
+  clearDocSidebar();                                          // loading never displays the previous document's outline
   reader.innerHTML="";
   startDocLoader(status);
   const ctrl=new AbortController();
@@ -3287,6 +3417,7 @@ async function loadWiki(page){
   $("#doctitle").textContent = "Wiki";
   $("#doclink").href = "https://"+WIKI.host+"/index.php/"+encodeURIComponent(page);
   setDocLink("↗ Source Wiki", "Open this page on the source wiki");   // the reader shows OUR themed copy; this opens the original
+  clearDocSidebar();                                          // invalidate the previous page before this request can paint
   reader.innerHTML=""; startDocLoader(status);
   const ctrl=new AbortController(); _wikiController=ctrl;
   const timer=setTimeout(()=>ctrl.abort(),15000);

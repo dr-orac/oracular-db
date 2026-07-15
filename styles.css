@@ -1019,7 +1019,7 @@
   @media (min-width:1180px){
     /* the TOC IS the roster rail for the doc view: SAME width (--rail), same left edge (--edge),
        same border + bottom-fade mask (bottom-only so the sticky "» CONTENTS" header stays crisp). */
-    .doctoc{ display:block; flex:0 0 var(--rail); min-height:0; overflow:auto; padding:0 16px 60px 0;
+    .doctoc{ display:block; position:relative; flex:0 0 var(--rail); min-height:0; overflow:auto; padding:0 16px 60px 0;
       border-right:1px solid var(--fg-faint);
       -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 22px), transparent 100%);
       mask-image:linear-gradient(to bottom, #000 calc(100% - 22px), transparent 100%); }
@@ -1033,16 +1033,28 @@
      ≥17px so it stays readable, and a nested outline reads cleaner without per-row rules. */
   /* T87 — TOC levels differ by FACE + weight + colour + a marker (not just indent), with a legible
      size floor so deep levels never get too small. */
-  .doctoc a{ display:block; text-decoration:none; color:var(--fg-dim); font-family:var(--font-body);
-    font-size:16px; line-height:1.32; padding:6px 12px 6px var(--sp-2); }
+  .doctoc .sectionhdr{ z-index:3; padding-top:8px; }
+  .doctoc-connectors{ display:none; position:absolute; z-index:2; top:0; left:0; width:100%; overflow:visible;
+    pointer-events:none; }
+  .doctoc-connectors.is-visible{ display:block; }
+  .doctoc-connector-dim, .doctoc-connector-lit{ fill:none; vector-effect:non-scaling-stroke;
+    stroke-linecap:square; stroke-linejoin:miter; }
+  .doctoc-connector-dim{ stroke:rgba(var(--fg-rgb),.45); stroke-width:1.25px; }
+  .doctoc-connector-lit{ stroke:var(--fg); stroke-width:2px;
+    filter:drop-shadow(0 0 3px rgba(var(--fg-rgb),.7)); }
+  .doctoc-connector-arrow{ fill:rgba(var(--fg-rgb),.55); }
+  .doctoc-connector-arrow.is-active{ fill:var(--fg-bright);
+    filter:drop-shadow(0 0 3px rgba(var(--fg-rgb),.75)); }
+  .doctoc a{ display:block; position:relative; z-index:1; text-decoration:none; color:var(--fg-dim); font-family:var(--font-body);
+    font-size:16px; line-height:1.32; padding:6px 12px 6px 24px; }
   .doctoc a:hover{ color:var(--fg-bright); background:var(--bg-panel-2); }
   .doctoc a.active{ color:var(--fg-bright); }   /* bar + rightward glow come from the shared T82 rule */
   .doctoc a.tl1{ font-family:var(--font-head); font-size:16px; color:var(--fg-bright); letter-spacing:1px;
     text-transform:uppercase; margin-top:1.15em; margin-bottom:.1em; }
-  .doctoc a.tl1::before{ content:"» "; color:var(--fg-dim); }
-  .doctoc a.tl2{ font-size:16px; color:var(--fg); font-weight:600; padding-left:calc(var(--sp-2) + 15px); margin-top:.5em; }
-  .doctoc a.tl3{ font-size:15px; color:var(--fg-dim); padding-left:calc(var(--sp-2) + 31px); }
-  .doctoc a.tl4{ font-size:15px; color:var(--fg-faint); font-style:italic; padding-left:calc(var(--sp-2) + 46px); }
+  .doctoc a.tl1::before{ content:none; }
+  .doctoc a.tl2{ font-size:16px; color:var(--fg); font-weight:600; padding-left:39px; margin-top:.5em; }
+  .doctoc a.tl3{ font-size:15px; color:var(--fg-dim); padding-left:55px; }
+  .doctoc a.tl4{ font-size:15px; color:var(--fg-faint); font-style:italic; padding-left:70px; }
   .doctoc .sectionhdr + a{ margin-top:0; }   /* the first entry sits snug under the header */
 
   /* the re-rendered document — long-form reading: characterful display headings, a

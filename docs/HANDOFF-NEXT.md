@@ -71,7 +71,12 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 - **Masthead:** 3-zone grid ≥1024px — nav left, faction centred, settings right; row-2 section tabs centre
   under the faction. `resetConnector()` clears old geometry before replacement; `positionConnector()` draws
   one SVG from the actual faction/tab rectangles and exact selection state; `watchConnector()` rebinds state
-  and geometry observation. T118 may extract a renderer only while implementing a proven second use.
+  and geometry observation. `renderMeasuredConnector()`/`resetMeasuredConnector()` are the shared atomic
+  paint contract; surface-specific measurement remains local so route logic never enters the renderer.
+- **Document/wiki contents:** Google Docs and MediaWiki both build `#doctoc`. Its decorative SVG derives
+  parentage from H1–H4 levels while native anchors, `trackDocSection()`, and the bounded `#docscroll`/
+  contents-rail coordinators remain authoritative. `clearDocSidebar()` invalidates replacement loads before
+  they can expose the old page. Never measure the sticky header's changing offset as connector geometry.
 - **Map:** 3 scales (US atlas / Wendover Region / Local) sharing `#map[/<scope>]` with `_mapScope`. US pins
   progressively enhance with the lazy self-hosted `map-terrain.js` adapter and MapLibre 5.24.0. It reads
   reviewed/provisional location state from `data/world.json` and the legacy migration inventory, while the
@@ -110,10 +115,10 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
    modal focus/close/restore defects. Take the next bounded pass through settings persistence/reset and the
    Paperwork form/copy lifecycle, then the remaining cross-surface states. Keep UX-001's VoiceOver,
    axe/Lighthouse, and physical iOS Safari checks external rather than claiming them locally.
-3. **Prove connector reuse in the shared contents rail (T118).** T117 made the masthead tree reliable; do not
-   copy its selectors. Extract a small owner/targets/selection renderer while implementing the second use,
-   first across the shared Google-Doc/MediaWiki `#doctoc`. Preserve native links, scroll ownership, and active
-   tracking; only then evaluate roster groups or other genuinely hierarchical flows.
+3. **Evaluate one further connector adopter only if hierarchy benefits.** T118 proved the visual grammar in
+   the shared Google-Doc/MediaWiki contents rail. The next plausible candidate is roster section → active
+   character, but keep the existing list interaction authoritative and reject the extension if the extra
+   lines add density without clarifying parentage. Flat lists, cards, and controls are not adopters.
 4. **Audit the map editor, then prove the Local export (T116).** The ignored 40 MB YAML is source material,
    never a browser payload. Once the separate editor repository is available, inspect its parser, renderer,
    licences, coordinate conventions, and export seams before duplicating anything here. Generate original
@@ -156,4 +161,8 @@ and replaced the shared dossier-modal target with a chronological stack that unw
 at a time on desktop and phone.
 T117 then removed the connector's stale faction-replacement frame and ghost parent glow. The entire tree is
 dim without a selected faction section; exactly one CSS/ARIA/route-consistent branch lights when selected;
-state and geometry are observed, invalidated, and selfcheck-guarded. T118 owns careful contents-rail reuse.
+state and geometry are observed, invalidated, and selfcheck-guarded.
+T118 then extracted the atomic paint contract during its first proven reuse. The shared Google-Doc/MediaWiki
+contents rail now draws measured H1–H4 parentage and lights exactly one current branch without taking over
+links or either scroll container. Loading, focus, and collapsed states synchronously clear old geometry; a
+32-heading deep-scroll proof closed the sticky-header drift case.
