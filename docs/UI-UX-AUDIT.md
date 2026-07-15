@@ -501,6 +501,29 @@ pointer input faded the HUD and outline to zero opacity. A selected Chassis fram
 border/21.76px main gutter to 0px in focus, then restored both exact values on exit. At 390×844 the outline
 stayed within x=20–374px, the canvas remained 390px wide with zero overflow, and the bottom mask remained active.
 
+### UX-011 · P1 · persistence and reset · settings drawer
+
+**Observation:** `Reset all` owned a hand-written subset of preference keys. It cleared only the active
+faction's font overrides, left every saved faction colour/background and the other factions' fonts intact,
+then forced green/phosphor instead of restoring the active faction's configured signature. Initialisation,
+faction switching, and contrast recalculation also wrote resolved defaults back as explicit overrides, so a
+browser accumulated preference state even when the user had made no choice.
+
+**Impact:** reset looked successful only until another faction was selected. Silent default writes made future
+theme-default changes ineffective and obscured the distinction between product defaults and user choices.
+The collapsed Colour summary also retained the previous faction even while the live swatches and theme changed.
+
+**Resolution:** one global settings-key registry plus one faction-appearance pattern now defines reset
+ownership. Reset clears all appearance overrides but preserves faction/view choice and authored local stories,
+photos, icons, logs, and screenshots. It restores the active faction signature, system contrast, and global
+defaults without immediately persisting them. Load, faction switch, and contrast re-derivation are read/apply
+paths; only explicit control actions write preferences. Unknown appearance values are coerced safely.
+Faction switching refreshes the collapsed summaries in the same state transition.
+
+**Status:** implemented 2026-07-15. Selfcheck guards reset ownership, the content-data exclusion, faction
+signature restoration, and write-free initialisation. Browser regression covers two faction signatures,
+cross-faction overrides, Reset all, reload persistence, and retained non-settings data.
+
 ## Audit runs
 
 Add one row per representative pass. Link finding IDs in Notes rather than duplicating their contents.
@@ -529,3 +552,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | A/B/C | 2026-07-15 | 1280×720 + 390×844; idle/focus/high contrast; WebKit + Firefox CSS paths | Contents rail, document reader, settings state, narrow document containment | Pass | T119: owning rail alone rose from 16% to 62%; high contrast 55–60%; scan-banded square track; 390px remained overflow-safe; zero console errors |
 | A/B/C/E | 2026-07-15 | 1280×720 + 390×844; idle/focus; document + roster routes | Document find dock, outline/reader split, status metadata, roster toolbar rule | Pass | T120: 39px in-rail dock; reader +78px desktop/~67px phone; solid hairline-to-hairline rule; zero horizontal overflow and console errors |
 | A/B/C/E | 2026-07-15 | 1280×720 + 390×844; Screen + Chassis/fullscreen; open/collapsed/quiet; pointer + keyboard semantics | Borderless reader, floating contents, connector state, lower fade | Pass | UX-010/T121 + T123: 0px frame and overflow; one reused borderless upper-left TOC; controls use equal 16px opposite insets; collapse 0 arrows/non-interactive; expand 8 arrows; one active route at 14.2px |
+| A/C/E | 2026-07-15 | 1280×720; Tribe + NCR; cross-faction overrides, reset, reload | Settings persistence, summaries, local story boundary | Pass | UX-011: Reset restored Rust/Warm and Gold/Warm signatures, faction summaries followed selected swatches, reload retained defaults, Smoke Test story remained, zero horizontal overflow |

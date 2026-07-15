@@ -123,8 +123,8 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
    - promote defensible direct identities, then change `data_status` only when every published marker passes;
    - migrate one game-sized set at a time behind the existing `renderMap()`/`showMapDetail()` UI.
 2. **Continue the product audit alongside map data work.** UX-007 closed the settings, palette, and nested
-   modal focus/close/restore defects, and UX-010/T121 closed the fullscreen reader pass. Take the next bounded
-   pass through settings persistence/reset and then the remaining non-Paperwork cross-surface states;
+   modal focus/close/restore defects, UX-010/T121 closed fullscreen reading, and UX-011 closed settings
+   persistence/reset. Take the next bounded pass through the remaining non-Paperwork cross-surface states;
    Paperwork expansion and form/copy work are explicitly parked. Keep UX-001's VoiceOver, axe/Lighthouse,
    and physical iOS Safari checks external rather than claiming them locally.
 3. **Evaluate one further connector adopter only if hierarchy benefits.** T118 proved the visual grammar in
@@ -191,3 +191,6 @@ and bounded desktop/phone layouts complete the fullscreen reader without adding 
 T122 then added Events, Stories, and Proposals as one shared community archive rather than three page systems.
 Events and Proposals share the document registry and reader; Stories are explicitly browser-local Markdown
 records grouped by Event. The wide masthead now distributes global destinations evenly around Faction.
+UX-011 then made settings persistence truthful: resolved defaults no longer become silent overrides, Reset all
+clears every faction appearance preference, faction signatures return correctly, and authored local data is
+outside the reset boundary.

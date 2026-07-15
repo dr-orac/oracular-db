@@ -417,7 +417,23 @@ if 'data-focus-ui="quiet"' not in css or 'function updateDocFocusPointer()' not 
         or 'e.pointerType==="touch"' not in js or '$("#docview").addEventListener("focusin"' not in js:
     err("fullscreen pointer quieting must preserve explicit touch and keyboard recovery tiers")
 
-# ---------------------------------------------------------------- 8k. documentation links
+# ---------------------------------------------------------------- 8k. settings persistence/reset contract
+settings_reset = re.search(r'const SETTINGS_GLOBAL_KEYS = \[(.*?)\];.*?\$\("#reset-settings"\).*?\n\}\);', js, flags=re.S)
+if not settings_reset or 'SETTINGS_FACTION_KEY' not in settings_reset.group(0) \
+        or 'clearSettingPreferences();' not in settings_reset.group(0):
+    err("Reset all must clear the explicit global registry and every faction appearance override")
+if settings_reset and any(key in settings_reset.group(1) for key in
+        ('mdb-event-stories-v1', 'mdb-photos', 'mdb-icons', 'mdb-logs', 'mdb-shots', 'mdb-faction', 'mdb-view')):
+    err("appearance reset must not own authored content, faction selection, or view state")
+if 'applyColor(_defaultAppearance.color,false); applyBg(_defaultAppearance.bg,false);' not in js:
+    err("settings reset must restore the active faction signature without persisting an override")
+if 'applyColor(_ap.color,false)' not in js or 'applyFrame(localStorage.getItem("mdb-frame") || "screen",false)' not in js:
+    err("application startup must not manufacture appearance preferences")
+apply_faction_block = re.search(r'function applyFaction\(id\)\{(.*?)\n\}', js, flags=re.S)
+if not apply_faction_block or 'refreshCur();' not in apply_faction_block.group(1):
+    err("faction switching must refresh collapsed settings summaries")
+
+# ---------------------------------------------------------------- 8l. documentation links
 # Documentation is part of the handoff contract. Validate repository-local Markdown links so a rename or
 # move cannot silently strand the next contributor. External URLs and same-page anchors are out of scope.
 DOC_REQUIRED = [

@@ -180,7 +180,8 @@ function applyFaction(id){
   currentFaction = id;
   try{ localStorage.setItem("mdb-faction", id); }catch(e){}
   const f = FACTIONS[id], ap = factionAppearance(id);   // this faction's look: its overrides, else its signature
-  applyColor(ap.color); applyBg(ap.bg); applyFontHead(ap.head); applyFontBody(ap.body);
+  applyColor(ap.color,false); applyBg(ap.bg,false); applyFontHead(ap.head,false); applyFontBody(ap.body,false);
+  refreshCur();                                         // collapsed Settings summaries follow the new faction too
   renderBrand();
   renderNav();                                       // this faction's doc tabs (may be none)
   // Preserve every umbrella/base section. A faction document survives only when the new faction offers
@@ -448,8 +449,9 @@ function hslOf(hex){
   return {h:hu, s};
 }
 let _curColor = "green";   // remembered so a contrast-mode change can re-derive the palette
-function applyColor(key){
-  const t=THEMES[key]||THEMES.green, r=document.documentElement.style;
+function applyColor(key, persist){
+  if(!THEMES[key]) key="green";
+  const t=THEMES[key], r=document.documentElement.style;
   _curColor = key;
   const hc = document.body.dataset.contrast==="high";   // High-Contrast: lift the dim/faint tiers
   /* --fg = the theme's FOREGROUND / phosphor colour (pairs with --bg). It's whatever hue the
@@ -472,42 +474,45 @@ function applyColor(key){
   const {h:_hu, s:_sat}=hslOf(t.primary);
   r.setProperty("--img-hue", Math.round(_hu-40)+"deg");
   r.setProperty("--img-sat", _sat<0.2 ? "0" : "2.1");   // near-grey themes (white) desaturate rather than mis-tint
-  localStorage.setItem(fkey("color"), key);   // colour override is remembered PER FACTION
+  if(persist!==false) localStorage.setItem(fkey("color"), key);   // explicit choices are remembered per faction
   document.querySelectorAll("#color-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
-function applyBg(key){
-  const b=BGS[key]||BGS.phosphor, r=document.documentElement.style;
+function applyBg(key, persist){
+  if(!BGS[key]) key="phosphor";
+  const b=BGS[key], r=document.documentElement.style;
   r.setProperty("--bg",b.bg); r.setProperty("--bg-panel",b.panel); r.setProperty("--bg-panel-2",b.panel2);
-  localStorage.setItem(fkey("bg"), key);   // bg override is remembered PER FACTION
+  if(persist!==false) localStorage.setItem(fkey("bg"), key);   // explicit choices are remembered per faction
   document.querySelectorAll("#bg-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
   /* keep the browser chrome (mobile tab bar, PWA splash) in sync with the picked background */
   const tc = document.querySelector('meta[name="theme-color"]'); if(tc) tc.setAttribute("content", b.bg);
 }
-function applyFontHead(key){
-  const f=FACES[key]||FACES.fallout;
+function applyFontHead(key, persist){
+  if(!FACES[key]) key="fallout";
+  const f=FACES[key];
   document.documentElement.style.setProperty("--font-head", f.css);
   document.body.dataset.fontHead=key;      // CSS hook: body[data-font-head="workbench"] name plates
-  localStorage.setItem(fkey("font-head"), key);   // font override remembered PER FACTION
+  if(persist!==false) localStorage.setItem(fkey("font-head"), key);   // explicit choices are remembered per faction
   document.querySelectorAll("#fonthead-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
-function applyFontBody(key){
-  const f=FACES[key]||FACES.fallout;
+function applyFontBody(key, persist){
+  if(!FACES[key]) key="fallout";
+  const f=FACES[key];
   document.documentElement.style.setProperty("--font-body", f.css);
   document.body.dataset.fontBody=key;      // CSS hook: body[data-font-body="fallout"] line-height tuning
-  localStorage.setItem(fkey("font-body"), key);   // font override remembered PER FACTION
+  if(persist!==false) localStorage.setItem(fkey("font-body"), key);   // explicit choices are remembered per faction
   document.querySelectorAll("#fontbody-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
   // re-derive the size if it's on Auto (pixel faces size up so they stay legible); a manual px stays put
   renderTextSize();
 }
 /* doc-reader fonts: kind ∈ {title, head, body} → sets --doc-font-<kind>, which the
    .docreader CSS reads (title = masthead + h1; head = subtitle + h2; body = prose + h3/h4). */
-function applyDocFont(kind, key){
+function applyDocFont(kind, key, persist){
   /* coerce any unknown/retired key (e.g. a persisted "gothic" from when it was a title
      option — it's metalwork-only now) back to the default, so screen faces stay screen. */
   if(!DOC_FONT_ORDERS[kind].includes(key)) key=DOC_FONT_DEFAULT[kind];
   const f=FACES[key]||FACES[DOC_FONT_DEFAULT[kind]];
   document.documentElement.style.setProperty("--doc-font-"+kind, f.css);
-  localStorage.setItem("mdb-docfont-"+kind, key);
+  if(persist!==false) localStorage.setItem("mdb-docfont-"+kind, key);
   const wrap=document.getElementById(DOC_FONT_WRAP[kind]);
   if(wrap) wrap.querySelectorAll(".swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
@@ -523,54 +528,54 @@ function wireFontPreview(wrap, cssVar, dataAttr){
   wrap.addEventListener("mouseover", e=>{ const b=e.target.closest(".swatch"); if(b) show(b.dataset.key); });
   wrap.addEventListener("mouseleave", ()=>{ const a=wrap.querySelector(".swatch.active"); if(a) show(a.dataset.key); });
 }
-function applyFrame(key){
+function applyFrame(key, persist){
   if(key!=="border") key="screen";                 // only two modes; default clean screen
   document.body.dataset.frame = key;
-  localStorage.setItem("mdb-frame", key);
+  if(persist!==false) localStorage.setItem("mdb-frame", key);
   document.querySelectorAll("#frame-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
   if(typeof scheduleConnector==="function") scheduleConnector();
 }
-function applyFrameTint(key){
+function applyFrameTint(key, persist){
   if(key!=="theme") key="olive";                    // olive = authentic fixed palette
   document.body.dataset.frametint = key;
-  localStorage.setItem("mdb-frametint", key);
+  if(persist!==false) localStorage.setItem("mdb-frametint", key);
   document.querySelectorAll("#frametint-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
-function applyGlass(key){
+function applyGlass(key, persist){
   if(key!=="on") key="off";                         // off by default (legibility)
   document.body.dataset.sheen = key;
-  localStorage.setItem("mdb-sheen", key);
+  if(persist!==false) localStorage.setItem("mdb-sheen", key);
   document.querySelectorAll("#glass-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 /* dossier "focus panel" — the soft pool of light behind the dossier header. On by default;
    off gives a pure flat screen (body[data-dosspanel="off"] hides the .doss-head::before). */
-function applyDossPanel(key){
+function applyDossPanel(key, persist){
   if(key!=="off") key="on";
   document.body.dataset.dosspanel = key;
-  localStorage.setItem("mdb-dosspanel", key);
+  if(persist!==false) localStorage.setItem("mdb-dosspanel", key);
   document.querySelectorAll("#dosspanel-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 /* Cards view — how many cards per row. "auto" = responsive fill; 2/3/4 = fixed (wide screens
    only, see the @media guard in styles.css so phones never get tiny cards). */
-function applyCards(key){
+function applyCards(key, persist){
   if(!["auto","2","3","4"].includes(key)) key="auto";
   document.body.dataset.cards = key;
-  localStorage.setItem("mdb-cards", key);
+  if(persist!==false) localStorage.setItem("mdb-cards", key);
   document.querySelectorAll("#cards-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 /* Image colour — "screen" (default: phosphor monochrome, matching the terminal) or
    "original" (true colour). Applies to doc images + character portraits. */
-function applyImgColor(key){
+function applyImgColor(key, persist){
   if(key!=="original") key="screen";
   document.body.dataset.imgcolor = key;
-  localStorage.setItem("mdb-imgcolor", key);
+  if(persist!==false) localStorage.setItem("mdb-imgcolor", key);
   document.querySelectorAll("#imgcolor-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 /* the always-on jet-black monitor bezel (screen mode) — toggleable off for a flush, borderless screen. */
-function applyBezel(key){
+function applyBezel(key, persist){
   if(key!=="off") key="on";
   document.body.dataset.bezel = key;
-  localStorage.setItem("mdb-bezel", key);
+  if(persist!==false) localStorage.setItem("mdb-bezel", key);
   document.querySelectorAll("#bezel-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
 /* Reading Width (T71) — the reading measure of the doc + wiki readers. Each preset sets both
@@ -582,13 +587,13 @@ const DOC_WIDTHS = {
   wide:   { doc:"92ch",  wiki:"102ch" },
   full:   { doc:"100%",  wiki:"100%"  },
 };
-function applyDocWidth(key){
+function applyDocWidth(key, persist){
   if(!DOC_WIDTHS[key]) key="medium";
   const w=DOC_WIDTHS[key], r=document.documentElement.style;
   r.setProperty("--doc-measure", w.doc);
   r.setProperty("--doc-measure-wiki", w.wiki);
   document.body.dataset.docwidth = key;
-  localStorage.setItem("mdb-docwidth", key);
+  if(persist!==false) localStorage.setItem("mdb-docwidth", key);
   document.querySelectorAll("#docwidth-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
   if(typeof evalTableStacking==="function") requestAnimationFrame(()=>evalTableStacking(document));  // width changed → re-check table reflow
 }
@@ -629,8 +634,8 @@ function stepTextSize(delta){
   localStorage.setItem("mdb-textsize", String(px)); renderTextSize();
 }
 /* kept for init/reset: pass "auto" or an absolute px */
-function applyTextSize(choice){
-  localStorage.setItem("mdb-textsize", (choice==null ? "auto" : String(choice)));
+function applyTextSize(choice, persist){
+  if(persist!==false) localStorage.setItem("mdb-textsize", (choice==null ? "auto" : String(choice)));
   renderTextSize();
 }
 function buildSettings(){
@@ -4334,41 +4339,49 @@ function applyContrast(on, persist){
   document.body.dataset.contrast = on ? "high" : "normal";
   if(persist!==false){ try{ localStorage.setItem("mdb-contrast", on?"1":"0"); }catch(e){} }
   const b=$("#contrast-toggle"); if(b){ b.textContent="High Contrast: "+(on?"ON":"OFF"); b.classList.toggle("active", on); }
-  applyColor(_curColor);   // re-derive --fg-dim / --fg-faint for the new mode
+  applyColor(_curColor,false);   // re-derive palette without manufacturing a colour override
 }
 $("#contrast-toggle").addEventListener("click", ()=>{ applyContrast(document.body.dataset.contrast!=="high"); });
 /* Reduce Motion (app pref, default OFF = motion on). Authoritative over the SYSTEM reduced-motion pref, so
    the CRT re-tune + flicker play by default; ON calms all animation/transition (CSS keys off
    body[data-reducemotion="on"]). */
-function applyReduceMotion(on){
+function applyReduceMotion(on, persist){
   document.body.dataset.reducemotion = on ? "on" : "off";
-  localStorage.setItem("mdb-reducemotion", on?"on":"off");
+  if(persist!==false) localStorage.setItem("mdb-reducemotion", on?"on":"off");
   const b=$("#reducemotion-toggle"); if(b){ b.textContent="Reduce Motion: "+(on?"ON":"OFF"); b.classList.toggle("active", on); }
 }
 $("#reducemotion-toggle").addEventListener("click", ()=>{ applyReduceMotion(document.body.dataset.reducemotion!=="on"); });
 
 $("#refresh").addEventListener("click", ()=>load(true));
 
-/* Reset all Theme-popover settings to defaults (font, colour, bg, text size,
-   frame, frame tint, screen glass, CRT). Doesn't touch character data / icons / photos. */
+/* One explicit ownership list prevents Reset all from missing a new global preference or deleting content.
+   Faction appearance keys are pattern-owned because every faction may have its own four overrides. */
+const SETTINGS_GLOBAL_KEYS = [
+  "mdb-font","mdb-font-head","mdb-font-body","mdb-docfont-title","mdb-docfont-head","mdb-docfont-body",
+  "mdb-color","mdb-bg","mdb-textsize","mdb-frame","mdb-frametint","mdb-sheen","mdb-crt",
+  "mdb-dosspanel","mdb-cards","mdb-imgcolor","mdb-bezel","mdb-docwidth","mdb-contrast","mdb-reducemotion",
+];
+const SETTINGS_FACTION_KEY = /^mdb-(?:color|bg|font-head|font-body)-/;
+function clearSettingPreferences(){
+  SETTINGS_GLOBAL_KEYS.forEach(k=>localStorage.removeItem(k));
+  Object.keys(localStorage).filter(k=>SETTINGS_FACTION_KEY.test(k)).forEach(k=>localStorage.removeItem(k));
+}
+/* Reset every appearance preference, but never faction/view selection or authored local content such as
+   stories, photos, icons, logs and screenshots. Faction signatures and system contrast remain defaults. */
 $("#reset-settings").addEventListener("click", ()=>{
-  ["mdb-font","mdb-font-head","mdb-font-body","mdb-docfont-title","mdb-docfont-head",
-   "mdb-docfont-body","mdb-color","mdb-bg",
-   "mdb-textsize","mdb-frame","mdb-frametint","mdb-sheen","mdb-crt","mdb-dosspanel","mdb-cards","mdb-imgcolor","mdb-bezel","mdb-docwidth","mdb-contrast","mdb-reducemotion",
-   fkey("font-head"),fkey("font-body")   // clear THIS faction's font override → its signature reloads
-  ].forEach(k=>localStorage.removeItem(k));
-  applyContrast(false);   // back to normal contrast (before applyColor so the palette is right)
-  applyReduceMotion(false);   // motion back on (default)
-  const _rf = factionFont(activeFaction());
-  applyFontHead(_rf.head); applyFontBody(_rf.body);   // reset to the active faction's signature typeface
-  applyTextSize("auto");                                 // size follows the font again
-  ["title","head","body"].forEach(kind=>applyDocFont(kind, DOC_FONT_DEFAULT[kind]));
-  applyColor("green"); applyBg("phosphor");
-  applyFrame("screen"); applyFrameTint("olive"); applyGlass("off"); applyDossPanel("on");
-  applyCards("auto"); applyImgColor("screen"); applyBezel("on"); applyDocWidth("medium");
+  clearSettingPreferences();
+  const systemContrast=!!(window.matchMedia && window.matchMedia("(prefers-contrast: more)").matches);
+  applyContrast(systemContrast,false);   // default follows the accessibility environment
+  applyReduceMotion(false,false);        // app default: motion on
+  const _defaultAppearance={...activeFaction().theme, ...factionFont(activeFaction())};
+  applyFontHead(_defaultAppearance.head,false); applyFontBody(_defaultAppearance.body,false);
+  applyTextSize("auto",false);                           // size follows the font again
+  ["title","head","body"].forEach(kind=>applyDocFont(kind, DOC_FONT_DEFAULT[kind],false));
+  applyColor(_defaultAppearance.color,false); applyBg(_defaultAppearance.bg,false);
+  applyFrame("screen",false); applyFrameTint("olive",false); applyGlass("off",false); applyDossPanel("on",false);
+  applyCards("auto",false); applyImgColor("screen",false); applyBezel("on",false); applyDocWidth("medium",false);
   document.body.classList.add("crt");
   $("#crt-toggle").textContent="Scanlines: ON"; $("#crt-toggle").classList.add("active");
-  localStorage.setItem("mdb-crt","1");
   refreshCur();
   toast("Settings reset to defaults.");
 });
@@ -4694,28 +4707,28 @@ function runBoot(){
   }
   /* each faction loads in the classic Fallout font + its signature colour, unless a font is overridden for it */
   const _ap = factionAppearance(currentFaction);
-  applyFontHead(_ap.head);
-  applyFontBody(_ap.body);  /* sets a font-derived size if none stored */
+  applyFontHead(_ap.head,false);
+  applyFontBody(_ap.body,false);  /* loading a resolved default must not manufacture an override */
   ["title","head","body"].forEach(kind=>
-    applyDocFont(kind, localStorage.getItem("mdb-docfont-"+kind) || DOC_FONT_DEFAULT[kind]));
-  applyTextSize(localStorage.getItem("mdb-textsize") || "auto");  /* "auto" follows the body font; a stored manual size wins */
+    applyDocFont(kind, localStorage.getItem("mdb-docfont-"+kind) || DOC_FONT_DEFAULT[kind],false));
+  applyTextSize(localStorage.getItem("mdb-textsize") || "auto",false);  /* loading must not manufacture a preference */
   /* High-Contrast: a stored choice wins, else honour the OS prefers-contrast:more. Set BEFORE
      applyColor so the palette derives its dim/faint tiers correctly on first paint. */
   { const _hc=localStorage.getItem("mdb-contrast");
     const _hcOn = _hc!=null ? _hc==="1" : !!(window.matchMedia && window.matchMedia("(prefers-contrast: more)").matches);
     document.body.dataset.contrast = _hcOn ? "high" : "normal";
     const _cb=$("#contrast-toggle"); if(_cb){ _cb.textContent="High Contrast: "+(_hcOn?"ON":"OFF"); _cb.classList.toggle("active", _hcOn); } }
-  applyColor(_ap.color);
-  applyBg(_ap.bg);
-  applyFrame(localStorage.getItem("mdb-frame") || "screen");
-  applyFrameTint(localStorage.getItem("mdb-frametint") || "olive");
-  applyGlass(localStorage.getItem("mdb-sheen") || "off");
-  applyDossPanel(localStorage.getItem("mdb-dosspanel") || "on");
-  applyCards(localStorage.getItem("mdb-cards") || "auto");
-  applyImgColor(localStorage.getItem("mdb-imgcolor") || "screen");
-  applyBezel(localStorage.getItem("mdb-bezel") || "on");
-  applyDocWidth(localStorage.getItem("mdb-docwidth") || "medium");
-  applyReduceMotion(localStorage.getItem("mdb-reducemotion") === "on");   // default OFF = motion on
+  applyColor(_ap.color,false);
+  applyBg(_ap.bg,false);
+  applyFrame(localStorage.getItem("mdb-frame") || "screen",false);
+  applyFrameTint(localStorage.getItem("mdb-frametint") || "olive",false);
+  applyGlass(localStorage.getItem("mdb-sheen") || "off",false);
+  applyDossPanel(localStorage.getItem("mdb-dosspanel") || "on",false);
+  applyCards(localStorage.getItem("mdb-cards") || "auto",false);
+  applyImgColor(localStorage.getItem("mdb-imgcolor") || "screen",false);
+  applyBezel(localStorage.getItem("mdb-bezel") || "on",false);
+  applyDocWidth(localStorage.getItem("mdb-docwidth") || "medium",false);
+  applyReduceMotion(localStorage.getItem("mdb-reducemotion") === "on",false);   // loading is not a preference write
   const crtOn = localStorage.getItem("mdb-crt") !== "0";
   document.body.classList.toggle("crt", crtOn);
   $("#crt-toggle").textContent = "Scanlines: " + (crtOn ? "ON" : "OFF");
