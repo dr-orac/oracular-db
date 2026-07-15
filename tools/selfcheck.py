@@ -410,6 +410,9 @@ if '#000 calc(100% - 68px), transparent 100%' not in css or 'padding-bottom:clam
 if 'function setDocFocusToc(open)' not in js or 'data-focus-toc' not in css \
         or 'focusTocOpen=docFocusOn()' not in js:
     err("fullscreen outline collapse and connector visibility must share one explicit state")
+if not re.search(r'\.docfocus-tools\{[^}]*left:16px; right:16px', css) \
+        or not re.search(r'body\[data-focus="doc"\] \.docrail\{[^}]*left:16px;[^}]*border:0;', css):
+    err("fullscreen contents must remain a borderless upper-left rail opposite the exit control")
 if 'data-focus-ui="quiet"' not in css or 'function updateDocFocusPointer()' not in js \
         or 'e.pointerType==="touch"' not in js or '$("#docview").addEventListener("focusin"' not in js:
     err("fullscreen pointer quieting must preserve explicit touch and keyboard recovery tiers")

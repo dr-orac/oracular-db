@@ -405,8 +405,8 @@ behaviour by reusing the outline as a floating panel while still hiding its find
 
 Make focus mode a true borderless reading canvas in both Screen and Chassis preferences: remove the exterior
 bezel/frame, app edge, status strip, and application gutters without changing the saved settings. Reuse the
-existing live contents outline as a bounded panel in the upper-right; pair its collapse/expand control
-symmetrically with the exit-focus control and keep the in-rail find dock out of fullscreen. Do not create a
+  existing live contents outline as a bounded panel in the upper-left; place its collapse/expand control
+  opposite the upper-right exit-focus control and keep the in-rail find dock out of fullscreen. Do not create a
 second TOC, connector, scroll owner, or active-section state.
 
 Fade document content transparently at the bottom of the viewport, with enough trailing scroll padding that
@@ -415,12 +415,16 @@ back-to-top affordance while the cursor is over the central reading lane; restor
 gutters. Touch keeps controls visible, and keyboard focus always restores them.
 
 Acceptance: at 1280×720 the app fills the full viewport with a 0px frame and no horizontal overflow; the
-354px outline panel and paired 46px controls remain bounded; collapsing makes the panel hidden/non-interactive
+rail-width outline panel and opposite 46px controls remain bounded; collapsing makes the panel hidden/non-interactive
 and clears connector geometry; expanding restores all eight wiki branches, and an active jump retains exactly
 one CSS/ARIA/arrow location at the 14px heading offset. Content hover reaches the quiet 0-opacity state while
 keyboard/touch remain recoverable. At 390×844 the overlay remains inside 20–374px with zero overflow, the
 reader keeps full width, and the lower mask plus trailing padding preserve a readable end state. Esc, route
 changes, and the exit button restore the saved frame layout.
+
+T123 refinement (2026-07-15): moved the focus outline to the conventional upper-left and split its control
+from the upper-right exit control. The floating container is now borderless and translucent while retaining
+the normal contents hierarchy, active state, connector, scrolling, and collapse ownership.
 
 ### T122 · Add shared Events, Stories, and Proposals archives — P1 [information architecture] — IMPLEMENTED 2026-07-15
 

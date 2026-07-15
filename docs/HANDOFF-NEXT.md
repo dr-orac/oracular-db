@@ -185,7 +185,7 @@ T120 then removed the empty right side of the document command row. Find is now 
 dock inside `.docrail`; the desktop reader gained 78px and mobile gained about 67px. Current heading/source
 moved to the status bar, while the remaining global roster toolbar uses a solid hairline-to-hairline rule.
 T121 then made focus mode a genuinely borderless canvas in both frame styles. The existing live contents rail
-floats at the upper right beneath paired collapse/exit controls, preserves its single connector/navigation
+floats borderlessly at the upper left beneath its control, opposite the upper-right exit control, and preserves its single connector/navigation
 state, and collapses atomically. A two-ended content mask, recoverable pointer-quiet HUD, touch/keyboard tiers,
 and bounded desktop/phone layouts complete the fullscreen reader without adding another scroll owner.
 T122 then added Events, Stories, and Proposals as one shared community archive rather than three page systems.

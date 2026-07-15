@@ -932,20 +932,21 @@
   /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */
   .docview{ position:relative; display:flex; flex-direction:column; height:100%; min-height:0; padding:0; gap:0; }
 
-  /* ---- Focus (fullscreen) reader ---- The normal view exposes one clear enter button. Focus mode
-     turns this into a symmetric two-control HUD: contents collapse/expand plus exit. The existing live
-     outline becomes the floating panel below it; no second TOC or active-section state is introduced. */
-  .docfocus-tools{ position:absolute; top:14px; right:16px; z-index:20; display:flex; align-items:center; gap:8px;
-    transition:opacity .22s ease, transform .22s ease; }
+  /* ---- Focus (fullscreen) reader ---- The normal view exposes one clear enter button. In focus, the
+     contents control occupies the upper-left while exit stays upper-right: a calm, symmetric HUD whose
+     existing live outline opens beneath its own control. No second TOC or active state is introduced. */
+  .docfocus-tools{ position:absolute; top:14px; left:16px; right:16px; z-index:20; display:flex; align-items:center;
+    pointer-events:none; transition:opacity .22s ease, transform .22s ease; }
   .docfs, .docfocus-toc{ width:46px; height:46px; display:grid; place-items:center; padding:0;
     background:var(--bg-panel-2); border:1px solid var(--fg-dim); color:var(--fg);
     cursor:pointer; opacity:.82; box-shadow:0 0 14px -6px rgba(var(--fg-rgb),.6);
     transition:opacity .16s, color .16s, border-color .16s, background .16s, transform .12s, box-shadow .16s; }
+  .docfs{ margin-left:auto; pointer-events:auto; }
   .docfs:hover, .docfs:focus-visible, .docfocus-toc:hover, .docfocus-toc:focus-visible{
     opacity:1; color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
     transform:translateY(-1px); box-shadow:0 0 18px -3px rgba(var(--fg-rgb),.7); outline:none; }
   .docfs-ico{ display:inline-flex; filter:drop-shadow(0 0 5px rgba(var(--fg-rgb),.45)); } .docfs-ico svg{ width:23px; height:23px; display:block; }
-  .docfocus-toc{ display:none; }
+  .docfocus-toc{ display:none; pointer-events:auto; }
   .docfocus-ico{ display:inline-flex; filter:drop-shadow(0 0 5px rgba(var(--fg-rgb),.45)); }
   .docfocus-ico svg{ width:23px; height:23px; display:block; }
   .docfocus-expand{ display:none; }
@@ -976,26 +977,26 @@
     -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 42px, #000 calc(100% - 68px), transparent 100%);
     mask-image:linear-gradient(to bottom, transparent 0, #000 42px, #000 calc(100% - 68px), transparent 100%);
   }
-  /* In focus the same outline rail floats beneath the paired controls. Find stays a normal-mode dock; the
-     panel itself is bounded, independently scrollable, and available at every viewport width. */
+  /* In focus the same outline rail floats below the left control. Its links, hierarchy and active marker are
+     exactly the normal rail; only the container becomes a borderless, translucent layer with less visual
+     weight. Find stays a normal-mode dock and the outline remains independently scrollable. */
   body[data-focus="doc"] .docrail{
-    display:flex; position:absolute; z-index:19; top:68px; right:16px; width:min(354px, calc(100% - 32px));
-    height:min(62vh, 540px); min-height:0; border:1px solid var(--fg-dim); background:var(--bg);
-    background:color-mix(in srgb, var(--bg) 94%, transparent);
-    box-shadow:inset 0 0 0 2px var(--bg), inset 0 0 0 3px rgba(var(--fg-rgb),.22),
-      0 0 26px -12px rgba(var(--fg-rgb),.65); opacity:.96; overflow:hidden;
+    display:flex; position:absolute; z-index:19; top:68px; left:16px; width:min(var(--rail), calc(100% - 32px));
+    height:min(62vh, 540px); min-height:0; border:0; background:linear-gradient(90deg,
+      color-mix(in srgb, var(--bg) 90%, transparent), color-mix(in srgb, var(--bg) 72%, transparent) 82%, transparent);
+    box-shadow:none; opacity:.9; overflow:hidden;
     transition:opacity .22s ease, transform .22s ease, visibility 0s linear; }
-  body[data-focus="doc"] .docrail .doctoc{ display:block; flex:1 1 auto; min-height:0; padding-right:14px; }
+  body[data-focus="doc"] .docrail .doctoc{ display:block; flex:1 1 auto; min-height:0; padding:0 16px 28px 0; }
   body[data-focus="doc"] .docrail .docbar{ display:none; }
   body[data-focus="doc"][data-focus-toc="collapsed"] .docrail{
-    opacity:0; transform:translateX(12px); visibility:hidden; pointer-events:none;
+    opacity:0; transform:translateX(-12px); visibility:hidden; pointer-events:none;
     transition:opacity .18s ease, transform .18s ease, visibility 0s linear .18s; }
   /* Pointer calm: hovering the reading lane clears every floating reader affordance. Moving into either
      side gutter restores them. Keyboard focus and touch never inherit this pointer-only quiet state. */
   body[data-focus="doc"][data-focus-ui="quiet"] .docfocus-tools,
   body[data-focus="doc"][data-focus-ui="quiet"] .docrail,
   body[data-focus="doc"][data-focus-ui="quiet"] .doctop{
-    opacity:0; transform:translateX(10px); pointer-events:none; }
+    opacity:0; pointer-events:none; }
   /* CRT power-on: the picture snaps open from a bright horizontal scan-line, blooms, then settles — the
      classic tube warm-up. Gated on the app's Reduce-Motion toggle (matches the rest of the CRT motion,
      which is on by default and only the toggle disables it — not the system pref). */

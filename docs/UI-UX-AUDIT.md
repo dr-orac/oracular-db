@@ -492,8 +492,9 @@ one TOC remains authoritative; collapse synchronously removes geometry and point
 restore exact active state; side gutters recover the HUD; bottom content remains readable above its fade; no
 desktop or phone overflow.
 
-**Status:** implemented 2026-07-15 as T121. At 1280×720 the app and reader measured 1280×720 with no border,
-shadow, or overflow; the outline measured 354×446.4px and the paired controls 100×46px. Collapse exposed
+**Status:** implemented 2026-07-15 as T121 and refined by T123. At 1280×720 the app and reader measured
+1280×720 with no frame or overflow. The borderless 333px outline now sits at x=16 beneath its upper-left
+control, exactly opposite the exit control at a 16px right inset. Collapse exposed
 `aria-expanded=false`, hidden/non-interactive rail state, and zero connector arrows; expansion restored eight
 arrows, and a contents jump produced one active link/location/arrow at a 14.2px heading offset. Reading-lane
 pointer input faded the HUD and outline to zero opacity. A selected Chassis frame moved from a 26.5px app
@@ -527,4 +528,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | A/C/E/F | 2026-07-15 | 1280×720; idle/active; focus; high contrast; reduced motion; replacement/error load | Shared wiki and Google-Doc contents rail; 8/32 headings; deep H3 | Pass | UX-009/T118: one shared renderer; exact CSS/ARIA/arrow state; 675.5px rail scroll retained 32 arrows; 0px vertical residual and horizontal overflow; replacement exposed no stale outline |
 | A/B/C | 2026-07-15 | 1280×720 + 390×844; idle/focus/high contrast; WebKit + Firefox CSS paths | Contents rail, document reader, settings state, narrow document containment | Pass | T119: owning rail alone rose from 16% to 62%; high contrast 55–60%; scan-banded square track; 390px remained overflow-safe; zero console errors |
 | A/B/C/E | 2026-07-15 | 1280×720 + 390×844; idle/focus; document + roster routes | Document find dock, outline/reader split, status metadata, roster toolbar rule | Pass | T120: 39px in-rail dock; reader +78px desktop/~67px phone; solid hairline-to-hairline rule; zero horizontal overflow and console errors |
-| A/B/C/E | 2026-07-15 | 1280×720 + 390×844; Screen + Chassis/fullscreen; open/collapsed/quiet; pointer + keyboard semantics | Borderless reader, floating contents, connector state, lower fade | Pass | UX-010/T121: 0px frame and overflow; one reused TOC; collapse 0 arrows/non-interactive; expand 8 arrows; one active route at 14.2px; phone panel bounded x=20–374px |
+| A/B/C/E | 2026-07-15 | 1280×720 + 390×844; Screen + Chassis/fullscreen; open/collapsed/quiet; pointer + keyboard semantics | Borderless reader, floating contents, connector state, lower fade | Pass | UX-010/T121 + T123: 0px frame and overflow; one reused borderless upper-left TOC; controls use equal 16px opposite insets; collapse 0 arrows/non-interactive; expand 8 arrows; one active route at 14.2px |
