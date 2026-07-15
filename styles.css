@@ -166,8 +166,8 @@
   body[data-reducemotion="on"].crt-retune #crtwipe::before,
   body[data-reducemotion="on"].crt-retune .app{ animation:none; opacity:0; filter:none; }
   /* ---------- bottom STATUS BAR (macOS-window-bottom style) — its own segment under a glowing rule ----------
-     three zones: breadcrumb (left) · emblem (centre) · developer signature (right). A thin, persistent,
-     informational bar; the search stays up top per convention. */
+     three zones: breadcrumb (left) · emblem (centre) · contextual source/signature (right). A thin,
+     persistent informational bar; document heading/source metadata moves here to free the reader. */
   .statusbar{ flex:0 0 auto; position:relative; display:flex; align-items:center;
     height:clamp(31px,3.7vh,41px); z-index:20;                                  /* ~15% shorter than before */
     padding:5px var(--sb-pad, 38px) 3px; margin-bottom:var(--sb-lift, 20px);    /* extra side padding on crumb/signature; clears the bezel */
@@ -187,6 +187,14 @@
   .sb-left{ justify-content:flex-start; }
   .sb-center{ flex:0 0 auto; justify-content:center; padding:0 16px; }
   .sb-right{ justify-content:flex-end; }
+  .sb-docmeta{ display:none; align-items:center; justify-content:flex-end; gap:10px; min-width:0; max-width:100%; }
+  main:has(#docview:not(.hidden)) + .statusbar .sb-docmeta{ display:flex; }
+  main:has(#docview:not(.hidden)) + .statusbar .devsig{ display:none; }
+  .sb-docmeta .docnow{ min-width:0; max-width:min(34vw, 430px); overflow:hidden; text-overflow:ellipsis;
+    white-space:nowrap; color:var(--fg-dim); font-size:11px; letter-spacing:.5px; }
+  .sb-docmeta .doclink{ flex:0 0 auto; color:var(--fg); font-size:11px; letter-spacing:1px;
+    text-transform:uppercase; text-decoration:none; white-space:nowrap; text-shadow:none; }
+  .sb-docmeta .doclink:hover, .sb-docmeta .doclink:focus-visible{ color:var(--fg-bright); text-shadow:var(--glow); }
   .sb-crumb{ text-transform:uppercase; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     text-shadow:0 0 7px rgba(var(--fg-rgb),.28); }
   .sb-emblem{ color:var(--fg-dim); width:clamp(18px,2vw,22px); height:clamp(18px,2vw,22px); display:inline-flex;
@@ -745,15 +753,12 @@
       filter:drop-shadow(0 0 4px rgba(var(--fg-rgb),.72)); }
   }
   /* on a doc section, hide the roster-only chrome (search / view toggle / refresh / status) */
-  /* command-bar slot in the header: the roster toolbar shows on the roster, the doc find bar
-     shows on a document — one at a time, same position. The statusline keeps its HEIGHT on docs
-     (visibility, not display) so the command bar + index rail below never jump between views. */
-  .docbar{ display:none; }
-  body[data-section]:not([data-section="roster"]):not([data-section="home"]) .docbar{ display:flex; }
+  /* The global command bar now belongs only to the roster. Document find lives inside .docrail so
+     it subtracts height from the contents column alone; every other surface keeps the full main area. */
+  .docbar{ display:flex; }
   body[data-section]:not([data-section="roster"]) .toolbar{ display:none; }
-  /* the home landing page has no command bar at all — it is its own full-bleed navigation */
-  body[data-section="home"] .toolbar,
-  body[data-section="home"] .docbar{ display:none; }
+  .commandbar{ display:none; }
+  body[data-section="roster"] .commandbar{ display:block; }
 
   /* ---------- home landing page (full-height section tiles) ----------
      The top nav's sections, blown up: one tall tile per section (icon + title + explainer).
@@ -914,7 +919,7 @@
   }
 
   /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */
-  .docview{ position:relative; display:flex; flex-direction:column; height:100%; min-height:0; padding:0; gap:10px; }   /* command bar now lives in the header; the TOC/content sit right under it, like the roster rail */
+  .docview{ position:relative; display:flex; flex-direction:column; height:100%; min-height:0; padding:0; gap:0; }
 
   /* ---- Focus (fullscreen) mode (T72) ---- a minimalist "zen" reader: the toggle sits subtly in the
      top-right of the reading pane; clicking it (or Esc) hides ALL app chrome so only the document
@@ -931,11 +936,11 @@
   body[data-focus="doc"] .docfs-enter{ display:none; }
   body[data-focus="doc"] .docfs-exit{ display:inline-flex; }
   body[data-focus="doc"] .docfs{ opacity:.9; }   /* clearly present in focus so the way out is obvious */
-  /* hide every chrome surface — the masthead (header), the doc command bar (find + Docs link), and
-     the contents rail — leaving only the document + the focus toggle. */
+  /* hide every chrome surface — the masthead and the complete document rail (contents + find dock) —
+     leaving only the document + the focus toggle. */
   body[data-focus="doc"] .app > header,
   body[data-focus="doc"] .commandbar{ display:none; }
-  body[data-focus="doc"] .doctoc{ display:none; }
+  body[data-focus="doc"] .docrail{ display:none; }
   /* GENEROUS top breathing room: with the masthead gone, the document would otherwise jam against the top
      bezel. Give it a big, viewport-relative top inset so the reader feels like a calm full page. The focus
      toggle stays pinned near the top-right (absolute) so it's unaffected. */
@@ -966,24 +971,16 @@
     color:var(--fg); text-shadow:none; }
   .doctop:hover{ box-shadow:0 0 16px -3px rgba(var(--fg-rgb),.55); }
   .doctop:hover .doctop-ico{ color:var(--fg-bright); }
-  /* one command-bar shape shared with the roster toolbar: primary control grows on the left,
-     quiet actions on the right. */
-  /* display is toggled per-view above; here just the command-bar box — same top spacing AND
-     height as the roster .toolbar, left edge from the header padding, so the find box lines up
-     with the search and the index rail below doesn't move between roster and document. */
-  .docbar{ align-items:center; gap:8px 16px; margin-top:10px; min-height:52px; flex-wrap:wrap; }
-  /* find = the primary control: sits over the TOC rail exactly like the roster search sits over
-     the list (same left edge + width), so the two views share one command-bar shape. */
-  .docfind-wrap{ display:flex; align-items:center; gap:6px; flex:0 1 calc(var(--rail) - var(--sp-2)); min-width:170px;
-    background:var(--bg-panel); border:1px solid var(--fg-faint); padding:6px 10px; }   /* same chrome + height as the roster .search box */
-  /* sticky "current section" breadcrumb — updates as you scroll; secondary, pushed right */
-  .docnow{ color:var(--fg-dim); font-size:15px; letter-spacing:.3px; flex:0 1 auto; margin-left:auto;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
-  /* "open in Google Docs" — a quiet de-emphasised link, not a loud button */
-  .doclink{ flex:0 0 auto; font-size:15px; color:var(--fg-dim); text-decoration:none; letter-spacing:.5px;
-    white-space:nowrap; padding:4px 6px; text-shadow:none; }
-  .doclink:hover{ color:var(--fg-bright); }
-  .docfind-wrap:focus-within{ border-color:var(--fg); }
+  /* Document find is a shallow dock at the foot of its own rail. It is flush to both rail edges and
+     uses a separated inner phosphor keyline: a compact CRT double-rule without turning into a heavy box. */
+  .docbar{ flex:0 0 auto; align-items:center; min-width:0; }
+  .docfind-wrap{ position:relative; display:flex; align-items:center; gap:6px; width:100%; min-width:0;
+    min-height:39px; background:var(--bg-panel); border:1px solid var(--fg-dim); padding:5px 10px;
+    box-shadow:inset 0 0 0 2px var(--bg), inset 0 0 0 3px rgba(var(--fg-rgb),.28);
+    transition:border-color .16s, box-shadow .16s, background .16s; }
+  .docfind-wrap:focus-within{ border-color:var(--fg-bright); background:var(--bg-panel-2);
+    box-shadow:inset 0 0 0 2px var(--bg), inset 0 0 0 3px rgba(var(--fg-rgb),.72),
+      0 0 12px -5px rgba(var(--fg-rgb),.6); }
   .docfind-wrap.no-match{ border-color:var(--amber); }
   /* crisp vector magnifier, sized to the input's cap-height so it reads as large as the text beside it;
      phosphor drop-shadow instead of a text glow (SVG, not a glyph) so it sits on-theme in any font. */
@@ -1002,7 +999,11 @@
   /* the count + step buttons only mean anything once something's typed */
   .docfind-wrap:not(.has-value) .docfind-count,
   .docfind-wrap:not(.has-value) .docfind-btn{ display:none; }
-  .docbody{ flex:1 1 auto; min-height:0; display:flex; }
+  /* Narrow screens stack the dock below the reader. Wide screens turn .docrail into the left column,
+     so find costs only that column's height and the reading pane reaches the status line uninterrupted. */
+  .docbody{ flex:1 1 auto; min-height:0; display:grid; grid-template-rows:minmax(0,1fr) auto; }
+  .docrail{ grid-row:2; min-width:0; min-height:0; display:flex; flex-direction:column; }
+  .docscroll{ grid-row:1; }
   .docscroll{ flex:1 1 auto; min-height:0; min-width:0; overflow:auto; padding:20px 50px 80px;
     -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 18px); mask-image:linear-gradient(to bottom, transparent 0, #000 18px); }
   .docstatus{ color:var(--fg-dim); padding:30px 0; font-size:17px; }
@@ -1017,13 +1018,14 @@
   /* in-page outline sidebar — wide screens only; the in-doc TOC + section nav serve narrow ones */
   .doctoc{ display:none; }
   @media (min-width:1180px){
-    /* the TOC IS the roster rail for the doc view: SAME width (--rail), same left edge (--edge),
-       same border + bottom-fade mask (bottom-only so the sticky "» CONTENTS" header stays crisp). */
-    .doctoc{ display:block; position:relative; flex:0 0 var(--rail); min-height:0; overflow:auto; padding:0 16px 60px 0;
-      border-right:1px solid var(--fg-faint);
+    .docbody{ display:flex; }
+    /* The rail is one column with two vertical owners: the outline grows; the shallow find dock stays flush
+       at its foot. The border belongs to the column, so search and outline meet the reader on one edge. */
+    .docrail{ grid-row:auto; flex:0 0 var(--rail); border-right:1px solid var(--fg-faint); }
+    .doctoc{ display:block; position:relative; flex:1 1 auto; min-height:0; overflow:auto; padding:0 16px 28px 0;
       -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 22px), transparent 100%);
       mask-image:linear-gradient(to bottom, #000 calc(100% - 22px), transparent 100%); }
-    .docscroll{ padding-left:34px; }
+    .docscroll{ grid-row:auto; padding-left:34px; }
   }
   /* the doc's index, formatted as a twin of the roster list rail — it reuses the roster's own
      .sectionhdr element (rendered by buildDocSidebar) for the "» CONTENTS" header, then flush
@@ -1422,13 +1424,16 @@
   /* COMMAND LINE — relocated to the BOTTOM (order:2), sitting above the status line (order:3): a terminal
      "prompt" zone. The status bar (order:3) is source-after main; giving both an order pins the sequence
      content → command line → status line regardless of source order. */
-  .commandbar{ flex:0 0 auto; order:2; position:relative; padding:9px 16px 7px; }
+  .commandbar{ flex:0 0 auto; order:2; position:relative; padding:5px 16px 4px; }
   .statusbar{ order:3; }
   body:not([data-frame="border"]) .commandbar{ padding-left:calc(var(--edge) + var(--sp-2)); padding-right:calc(var(--edge) + var(--sp-2)); margin-top:0; }
-  /* a glowing, edge-faded rule above the command line (matches the status-bar + hr motif) */
-  .commandbar::before{ content:""; position:absolute; left:var(--edge, 30px); right:var(--edge, 30px); top:0; height:1px;
-    background:linear-gradient(to right, transparent, rgba(var(--fg-rgb),.34) 10%, rgba(var(--fg-rgb),.34) 90%, transparent);
-    box-shadow:0 0 9px rgba(var(--fg-rgb),.26); }
+  /* Full screen-width rule: solid from hairline to hairline, matching the status bar rather than fading
+     before the edges. Document mode no longer needs this row; its content runs straight to status. */
+  .commandbar::before{ content:""; position:absolute; left:var(--bezel-in); right:var(--bezel-in); top:0; height:0;
+    border-bottom:1px solid var(--fg-dim);
+    box-shadow:0 0 10px rgba(var(--fg-rgb),.42), 0 3px 0 -2px rgba(var(--fg-rgb),.3); }
+  body[data-frame="border"] .commandbar::before{ left:var(--frame); right:var(--frame); }
+  body[data-bezel="off"] .commandbar::before{ left:14px; right:14px; }
   /* home is the landing (tiles ARE the nav); Relations has its own rail picker — neither
      needs the command bar (roster search / doc-find), so drop it in both. */
   body[data-section="home"] .commandbar,
@@ -1646,7 +1651,7 @@
   .search input::placeholder{ color:var(--fg); opacity:.9; }
   /* command-line CRT feel: the prompt glyph glows, and the input box blooms softly on focus */
   .search .prompt{ color:var(--fg-bright); font-size:17px; font-weight:700; text-shadow:0 0 9px rgba(var(--fg-rgb),.65); }
-  .search:focus-within, .docfind-wrap:focus-within{ box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.5), 0 0 16px -4px rgba(var(--fg-rgb),.6); }
+  .search:focus-within{ box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.5), 0 0 16px -4px rgba(var(--fg-rgb),.6); }
   body.coming-soon .toolbar{ display:none; }   /* an unlinked faction has no roster to search or refresh */
   /* coming-soon → offer the faction's wiki page meanwhile */
   .coming-wiki{ margin-top:18px; }
@@ -2341,8 +2346,8 @@
     .toolbar .seg button{ min-width:0; padding:7px 12px; }
     .toolbar #refresh{ flex:0 0 auto; min-height:44px; padding-inline:10px; }
     .docview{ padding:0; }
-    .docbar{ padding:0; }   /* docbar lives in the header now — it inherits the header's mobile inset, like .search */
-    .docfind-wrap{ flex:1 1 auto; }   /* no TOC on mobile → let find fill, like the roster search */
+    .docbar{ padding:0; }
+    .docfind-wrap{ flex:1 1 auto; min-height:37px; }   /* no TOC on mobile → a shallow full-width dock */
     .docnow{ display:none; }          /* breadcrumb hidden on narrow screens (bar too tight) */
     .docscroll{ padding:18px 16px 60px; }
     .docreader{ font-size:16px; }

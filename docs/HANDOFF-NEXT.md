@@ -76,7 +76,9 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 - **Document/wiki contents:** Google Docs and MediaWiki both build `#doctoc`. Its decorative SVG derives
   parentage from H1–H4 levels while native anchors, `trackDocSection()`, and the bounded `#docscroll`/
   contents-rail coordinators remain authoritative. `clearDocSidebar()` invalidates replacement loads before
-  they can expose the old page. Never measure the sticky header's changing offset as connector geometry.
+  they can expose the old page. `.docrail` owns the outline plus its shallow find dock, so search costs no
+  reader height; current-heading/source metadata lives in `.sb-docmeta`. Never move find back into the global
+  `.commandbar`, or measure the sticky header's changing offset as connector geometry.
 - **Map:** 3 scales (US atlas / Wendover Region / Local) sharing `#map[/<scope>]` with `_mapScope`. US pins
   progressively enhance with the lazy self-hosted `map-terrain.js` adapter and MapLibre 5.24.0. It reads
   reviewed/provisional location state from `data/world.json` and the legacy migration inventory, while the
@@ -169,3 +171,6 @@ links or either scroll container. Loading, focus, and collapsed states synchrono
 T119 then replaced the globally opaque browser scrollbars with contextual CRT controls. Scroll owners share
 one CSS registry and square scan-banded track; idle, owner hover/focus, touch, direct thumb hover, and high-
 contrast tiers remain explicit. The treatment is CSS-only and never becomes another scroll-state owner.
+T120 then removed the empty right side of the document command row. Find is now a flush 39px double-keyline
+dock inside `.docrail`; the desktop reader gained 78px and mobile gained about 67px. Current heading/source
+moved to the status bar, while the remaining global roster toolbar uses a solid hairline-to-hairline rule.

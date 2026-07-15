@@ -384,6 +384,22 @@ equivalent colour states; the app has no console errors. Verified at 1280×720 a
 WebKit thumb tiers measured 16%/62% opacity, Firefox received matching contextual `scrollbar-color`, and the
 high-contrast tier measured 55–60%.
 
+### T120 · Make document find an in-rail CRT dock — P1 [layout + reading space] — IMPLEMENTED 2026-07-15
+
+Retire the full-width document command row. Put find at the foot of the contents column so its 39px dock
+subtracts height only from that rail and the reader reaches the status line. Make the control flush to the
+rail edges with a separated double phosphor keyline and a stronger focus tier. Keep the current-heading and
+source-link information by moving it into the existing status bar; hide the decorative signature while that
+context is present. On narrow screens, stack the shallow find dock under the reader. Keep the roster's global
+toolbar, but make its rule solid from screen hairline to hairline rather than edge-faded.
+
+Acceptance: at 1280×720 the document command bar is absent, the 39px dock and outline exactly share the
+332px rail, the reader gains 78px of height and reaches the rail's bottom, status metadata remains operable,
+and the bottom rule has no gradient. At 390×844, contents collapse, find spans the 348px reader width beneath
+it, reader height gains about 67px, and page/reader/rail horizontal overflow remain zero. Focus lights both
+keylines without moving ownership; roster retains its toolbar and receives the solid full-width rule; focus
+mode hides the complete rail. No console errors.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →

@@ -160,8 +160,8 @@
       <nav id="topnav" class="topnav" role="tablist" aria-label="Faction sections"></nav>
       </div><!-- /masthead -->
     </header>
-    <!-- command bar: sits BELOW the header divider line, its search width-aligned to the list
-         column (rail) so it reads as the head of that column, not a floating toolbar. -->
+    <!-- roster command bar: its search width-aligns to the list rail. Document find belongs to the
+         document rail itself, so it costs height only in that column rather than shrinking the reader. -->
     <div class="commandbar">
       <div class="toolbar">
         <label class="search">
@@ -175,20 +175,6 @@
           <button id="view-cards" role="tab" aria-selected="false">Cards</button>
         </div>
         <button class="btn" id="refresh">⟳ Refresh</button>
-      </div>
-      <!-- doc command bar: shares the header's command-bar slot with the roster toolbar, so the
-           search/find box and the index rail below it stay put when switching roster ↔ document. -->
-      <div class="docbar">
-        <label class="docfind-wrap" id="docfind-wrap">
-          <span class="docfind-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="10" cy="10" r="6.2"/><line x1="14.7" y1="14.7" x2="20.5" y2="20.5"/></svg></span>
-          <input id="docfind" type="text" placeholder="find in document…" autocomplete="off" aria-label="Find in this document" />
-          <span class="docfind-count" id="docfind-count" aria-live="polite"></span>
-          <button class="docfind-btn" id="docfind-prev" type="button" title="Previous match (Shift+Enter)" aria-label="Previous match">▲</button>
-          <button class="docfind-btn" id="docfind-next" type="button" title="Next match (Enter)" aria-label="Next match">▼</button>
-        </label>
-        <span class="doctitle" id="doctitle" hidden></span><!-- redundant with the active nav tab; kept for JS -->
-        <span class="docnow" id="docnow" aria-live="polite"></span>
-        <a class="doclink" id="doclink" href="#" target="_blank" rel="noopener noreferrer" title="Open this document in Google Docs" aria-label="Open in Google Docs">↗ Docs</a>
       </div>
     </div><!-- /commandbar -->
 
@@ -221,7 +207,19 @@
           <span class="docfs-ico docfs-exit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></span>
         </button>
         <div class="docbody">
-          <nav class="doctoc" id="doctoc" aria-label="Document contents"></nav>
+          <div class="docrail">
+            <nav class="doctoc" id="doctoc" aria-label="Document contents"></nav>
+            <div class="docbar">
+              <label class="docfind-wrap" id="docfind-wrap">
+                <span class="docfind-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="10" cy="10" r="6.2"/><line x1="14.7" y1="14.7" x2="20.5" y2="20.5"/></svg></span>
+                <input id="docfind" type="text" placeholder="find in document…" autocomplete="off" aria-label="Find in this document" />
+                <span class="docfind-count" id="docfind-count" aria-live="polite"></span>
+                <button class="docfind-btn" id="docfind-prev" type="button" title="Previous match (Shift+Enter)" aria-label="Previous match">▲</button>
+                <button class="docfind-btn" id="docfind-next" type="button" title="Next match (Enter)" aria-label="Next match">▼</button>
+              </label>
+              <span class="doctitle" id="doctitle" hidden></span><!-- redundant with the active nav tab; kept for JS -->
+            </div>
+          </div>
           <div class="docscroll" id="docscroll">
             <article class="docreader" id="docreader"></article>
             <div class="docstatus" id="docstatus"></div>
@@ -381,11 +379,17 @@
         </div>
       </section>
     </main>
-    <!-- bottom STATUS BAR: breadcrumb (left) · emblem (centre) · developer signature (right) -->
+    <!-- bottom STATUS BAR: breadcrumb (left) · emblem (centre) · document context or signature (right) -->
     <footer class="statusbar">
       <div class="sb-zone sb-left"><span class="sb-crumb" id="sb-crumb">Misfits Database</span></div>
       <div class="sb-zone sb-center"><span class="sb-emblem" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.1"/><g fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="12" cy="12" rx="10" ry="4.1"/><ellipse cx="12" cy="12" rx="10" ry="4.1" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.1" transform="rotate(120 12 12)"/></g></svg></span></div>
-      <div class="sb-zone sb-right"><span class="devsig" aria-hidden="true"><span class="devsig-dec">▚▞</span>&nbsp;SHWIWWI&#8209;TEC<span class="devsig-dec">&nbsp;//</span></span></div>
+      <div class="sb-zone sb-right">
+        <span class="sb-docmeta">
+          <span class="docnow" id="docnow" aria-live="polite"></span>
+          <a class="doclink" id="doclink" href="#" target="_blank" rel="noopener noreferrer" title="Open this document in Google Docs" aria-label="Open in Google Docs">↗ Docs</a>
+        </span>
+        <span class="devsig" aria-hidden="true"><span class="devsig-dec">▚▞</span>&nbsp;SHWIWWI&#8209;TEC<span class="devsig-dec">&nbsp;//</span></span>
+      </div>
     </footer>
   </div>
 

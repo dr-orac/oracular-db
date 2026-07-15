@@ -367,7 +367,32 @@ if '@media (hover:none)' not in css or 'background-color:rgba(var(--fg-rgb),.5)'
 if 'body[data-contrast="high"] ::-webkit-scrollbar-thumb' not in css:
     err("high contrast must strengthen the CRT scrollbar thumb")
 
-# ---------------------------------------------------------------- 8i. documentation links
+# ---------------------------------------------------------------- 8i. document find-dock ownership
+# Find belongs to the outline rail, never a full-width app row. Current heading/source metadata moves to the
+# existing status bar and the surviving roster command rule stays solid edge-to-edge.
+command_start = html.find('<div class="commandbar">')
+main_start = html.find('<main>', command_start)
+command_block = html[command_start:main_start] if command_start >= 0 and main_start >= 0 else ""
+rail_start = html.find('<div class="docrail">')
+scroll_start = html.find('<div class="docscroll"', rail_start)
+rail_block = html[rail_start:scroll_start] if rail_start >= 0 and scroll_start >= 0 else ""
+if 'class="docbar"' in command_block or 'id="docfind-wrap"' in command_block:
+    err("document find must not return to the full-width command bar")
+if 'id="doctoc"' not in rail_block or 'id="docfind-wrap"' not in rail_block:
+    err("the document rail must own both contents and the find dock")
+if not re.search(r'class="statusbar".*?class="sb-docmeta".*?id="docnow".*?id="doclink"', html, flags=re.S):
+    err("current document heading and source link must live in the status bar")
+if 'grid-template-rows:minmax(0,1fr) auto' not in css or 'flex:0 0 var(--rail)' not in css:
+    err("document find must subtract height only from its responsive rail")
+if 'inset 0 0 0 2px var(--bg), inset 0 0 0 3px' not in css:
+    err("document find must retain its separated CRT double keyline")
+command_css_start = css.find('.commandbar::before')
+command_css_end = css.find('/* home is the landing', command_css_start)
+command_css = css[command_css_start:command_css_end] if command_css_start >= 0 and command_css_end >= 0 else ""
+if 'linear-gradient' in command_css or 'border-bottom:1px solid var(--fg-dim)' not in command_css:
+    err("the bottom command rule must be solid rather than edge-faded")
+
+# ---------------------------------------------------------------- 8j. documentation links
 # Documentation is part of the handoff contract. Validate repository-local Markdown links so a rename or
 # move cannot silently strand the next contributor. External URLs and same-page anchors are out of scope.
 DOC_REQUIRED = [
