@@ -422,6 +422,15 @@ keyboard/touch remain recoverable. At 390×844 the overlay remains inside 20–3
 reader keeps full width, and the lower mask plus trailing padding preserve a readable end state. Esc, route
 changes, and the exit button restore the saved frame layout.
 
+### T122 · Add shared Events, Stories, and Proposals archives — P1 [information architecture] — IMPLEMENTED 2026-07-15
+
+Added three faction-independent routes without creating three parallel page systems. Events and Proposals use
+one document registry, card list, Google-Doc loader, reader, and deep-link path. Stories reuse the Event registry
+as their organising index and add a small Markdown editor with preview, copy, edit, and delete controls. Stories
+are deliberately browser-local until a shared publishing service is chosen; the interface says so and asks
+writers to draft elsewhere and paste finished work. The masthead distributes all seven global destinations
+evenly around a centred Faction control, with responsive arrangements that retain visible labels.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →
@@ -436,7 +445,7 @@ the bus (was dangling for few-tab factions); the profile + reveals on hover only
 (Roster=dog tag, Lore=tome, Roleplay=masks, Legion=game-icons bull [CC BY, attributed], Followers=rod+atom);
 and the developer signature (bottom-right corner). **Partial:** T88 (icon vocabulary — the Legion bull is
 the first library-sourced icon; more to come, now unblocked by T89). **Still open:** T86 (Map — now
-UNBLOCKED), T94 (Events tab), T93 (Discord pipeline — needs the user's setup + samples).
+UNBLOCKED), T93 (Discord pipeline — needs the user's setup + samples). T94 was superseded by T122.
 **⚠ From T89, needs the user's decision:** two bundled fonts (Monofonto, Gothic 821 Cn) are a licensing
 risk with OFL fallbacks already in-repo — swap or licence; see `docs/LEGAL-SWEEP.md`.
 
@@ -545,7 +554,7 @@ bios into the roster instead of (or alongside) hand-entry in the sheet.
 - Acceptance: a documented, repeatable pipeline (`tools/discord_to_roster.py` + a short README) that turns a
   channel export into roster-ready data for ≥1 faction, verified against a sample export.
 
-### T94 · "Events" tab — showcase upcoming events — MED [new tab, feature]
+### T94 · "Events" tab — showcase upcoming events — SUPERSEDED BY T122
 A new top-level **Events** tab (row 1, alongside Home / Wiki / Map; route `#events`) showing UPCOMING events
 (sessions, raids, faction meets, lore beats) in the terminal theme.
 - **Data source (decide):** simplest = a Google Sheet like the roster (date · title · faction · blurb ·
@@ -554,8 +563,8 @@ A new top-level **Events** tab (row 1, alongside Home / Wiki / Map; route `#even
 - **UI:** a chronological list/cards — next-up highlighted, past events dimmed/collapsed, faction colour
   accents, optional countdown. Reuse the card/box components + `--box-glow`; responsive; empty state.
 - **Integration:** a new section like wiki/map (route + nav box + `renderEvents`), theme-aware, no backend.
-- Acceptance: an Events tab listing upcoming events from the chosen source, sorted by date, themed +
-  responsive, with a graceful empty/loading state; verify with sample data.
+- Historical scope only: T122 adopted the supplied Google Doc as the first event and built the shared
+  Events/Stories/Proposals archive. Date-aware scheduling can be reconsidered when structured event data exists.
 
 ### Delegation — where to offload heavy read/research work to save tokens (user question)
 GOOD candidates (research / read-heavy / parallelisable, little live-browser verification):

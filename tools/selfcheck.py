@@ -976,6 +976,20 @@ if os.path.exists(p("map-terrain.js")):
                 err("terrain coast mask differs from its recorded SHA-256")
         info(f"terrain cache: {total_tile_count} tiles / {total_tile_bytes:,} bytes verified")
 
+# ---------------------------------------------------------------- 12. shared community archive
+for nav_id in ("nav-events", "nav-stories", "nav-proposals"):
+    if f'id="{nav_id}"' not in html:
+        err(f"community navigation is missing #{nav_id}")
+if 'id="community"' not in html or "const COMMUNITY_COLLECTIONS" not in js:
+    err("shared community archive shell or registry is missing")
+if "mdb-event-stories-v1" not in js or "renderCommunitySection" not in js:
+    err("community stories lost their explicit local store or shared renderer")
+story_textarea = re.search(r'<textarea id="story-markdown"[^>]*>', js)
+if not story_textarea or "maxlength" in story_textarea.group(0):
+    err("story Markdown editor must exist without a built-in word limit")
+if "grid-template-columns:repeat(10,minmax(0,1fr))" not in css:
+    err("wide masthead must retain its ten-unit centred-faction grid")
+
 # ---------------------------------------------------------------- report
 print("── Misfits Database self-check ──")
 print(f"   ids: {len(ref_ids)} refs / {len(defined_ids)} defined   "

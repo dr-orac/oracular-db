@@ -579,37 +579,48 @@
   /* one header row: section tabs on the LEFT, the FACTION selector + the Settings cog pushed to the
      top-RIGHT. The cog is the far-right element. */
   .titlebar{ display:flex; align-items:center; gap:10px 16px; flex-wrap:wrap; }
-  /* ROW 1 as a balanced 3-zone tree: LEFT = umbrella nav, CENTRE = the FACTION selector
-     (optically centred by the grid regardless of the side widths), RIGHT = the settings cog. The equal 1fr
-     side columns keep FACTION on the true screen centre; the connector stem drops from that centre. */
-  /* CENTRED TREE — only where there's room (≥1024px): equal minmax(0,1fr) side columns force FACTION to the
-     true centre, and row-2 centres the same way, so the stem drops dead-centre onto the bus. Below 1024 the
-     masthead falls back to the base flex row (nav left, faction + cog right) so the wide nav can't crowd the
-     faction / clip Map. */
-  @media (min-width:1024px){
-    body:not([data-frame="border"]):not([data-section="home"]) .titlebar{
-      display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:10px 16px; }
-    body:not([data-frame="border"]):not([data-section="home"]) .primary-nav{ margin:0; justify-self:start; flex-wrap:nowrap; }
-    body:not([data-frame="border"]):not([data-section="home"]) .brand{ justify-self:center; }
-    body:not([data-frame="border"]):not([data-section="home"]) .titlebar-right{ margin:0; justify-self:end; flex-wrap:nowrap; }
-    body:not([data-frame="border"]):not([data-section="home"]) #topnav{ margin-inline:auto; }   /* row-2 centred under the faction */
-  }
-  /* The four labelled umbrella boxes cannot share one half-row with long faction names at intermediate
-     desktop widths. Keep the true-centred three-zone tree and compact only this group to clear icon buttons;
-     aria-label + title retain each name. At ≥1751px the full labels have measured room again. */
-  @media (min-width:1024px) and (max-width:1750px){
-    body:not([data-frame="border"]):not([data-section="home"]) .primary-nav{ gap:6px; }
-    body:not([data-frame="border"]):not([data-section="home"]) .primary-nav .navbox{
-      width:46px; height:46px; padding:0; justify-content:center; gap:0; }
-    body:not([data-frame="border"]):not([data-section="home"]) .primary-nav .navico{ width:28px; height:28px; }
-    body:not([data-frame="border"]):not([data-section="home"]) .primary-nav .navlabel{
-      position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
-      clip:rect(0 0 0 0); white-space:nowrap; border:0; }
-  }
-  /* ROW 1 umbrella nav, left-grouped. Its .navbox controls SHARE the FACTION box's
-     look at this hierarchy level (rules folded into .faction-box below) — they just carry no legend/arrow. */
+  /* ROW 1 global navigation is split around Faction in source order: four controls before it, then three
+     controls plus Settings after it. Responsive grids below expose that as one balanced system. */
   .primary-nav{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-right:auto; }
+  .primary-nav--secondary{ margin-right:0; }
   .titlebar-right{ display:flex; align-items:center; gap:14px; margin-left:auto; }
+  /* Wide: ten equal units across the full masthead. Faction owns the central pair; four equal controls sit
+     on either side. Compact icon-over-label boxes keep all seven destinations legible at laptop widths. */
+  @media (min-width:1180px){
+    body:not([data-section="home"]) .titlebar{
+      display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); align-items:stretch; gap:8px; }
+    body:not([data-section="home"]) .primary-nav,
+    body:not([data-section="home"]) .titlebar-right{ display:contents; }
+    body:not([data-section="home"]) .brand{ grid-column:5 / span 2; min-width:0; }
+    body:not([data-section="home"]) .navbox,
+    body:not([data-section="home"]) .faction-box,
+    body:not([data-section="home"]) .cogbtn{ width:100%; min-width:0; min-height:54px; }
+    body:not([data-section="home"]) .navbox{ flex-direction:column; justify-content:center; gap:3px; padding:5px 4px; text-align:center; }
+    body:not([data-section="home"]) .navbox .navico{ width:22px; height:22px; }
+    body:not([data-section="home"]) .navbox .navlabel,
+    body:not([data-section="home"]) .cog-label{ display:block; font-size:14px; letter-spacing:.6px; }
+    body:not([data-section="home"]) .faction-box{ justify-content:center; }
+    body:not([data-section="home"]) .faction-name{ min-width:0; overflow:hidden; text-overflow:ellipsis; font-size:18px; }
+    body:not([data-section="home"]) .cogbtn{ flex-direction:column; gap:2px; height:auto; padding:5px 4px; }
+    body:not([data-section="home"]) .cogbtn .cog-ico{ width:22px; height:22px; }
+    body:not([data-section="home"]) #topnav{ margin-inline:auto; }   /* row 2 remains centred under Faction */
+  }
+  /* Mid-width: Faction + Settings get their own calm row; all seven destinations remain equally labelled
+     beneath them rather than collapsing into ambiguous icon-only controls. */
+  @media (min-width:761px) and (max-width:1179px){
+    body:not([data-section="home"]) .titlebar{
+      display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); align-items:stretch; gap:8px; }
+    body:not([data-section="home"]) .primary-nav,
+    body:not([data-section="home"]) .titlebar-right{ display:contents; }
+    body:not([data-section="home"]) .brand{ grid-column:3 / span 3; grid-row:1; min-width:0; }
+    body:not([data-section="home"]) .cogbtn{ grid-column:7; grid-row:1; justify-self:end; }
+    body:not([data-section="home"]) .navbox{ grid-row:2; min-width:0; min-height:48px; padding:5px 3px;
+      flex-direction:column; justify-content:center; gap:2px; text-align:center; }
+    body:not([data-section="home"]) .navbox .navico{ width:21px; height:21px; }
+    body:not([data-section="home"]) .navbox .navlabel{ display:block; font-size:13px; letter-spacing:.4px; }
+    body:not([data-section="home"]) .faction-box{ width:100%; justify-content:center; }
+    body:not([data-section="home"]) #topnav{ margin-inline:auto; }
+  }
   body[data-section="home"] .brand{ display:none; }   /* brand is now a titlebar sibling → hide it on the home landing */
 
   /* Settings — a large standalone cog glyph on the far right (it turns as you hover / while open) */
@@ -2413,14 +2424,21 @@
     .card .card-top{ gap:14px; }
     .card .portrait.sm{ width:88px; height:88px; }
     .card .cname{ font-size:22px; }
-    /* compact the ROW-1 boxes (faction + home/wiki) together on narrow screens */
-    .faction-name, .navbox .navlabel{ font-size:18px; }
-    .faction-box, .navbox{ gap:10px; }
-    .faction-box{ padding:8px 10px 7px 13px; } .navbox{ padding:8px 13px; }
-    .faction-ico, .navbox .navico{ width:27px; height:27px; }
-    /* promote the row-1 boxes into the titlebar flex so the cog flows WITH them (not on its own line) */
-    .primary-nav{ display:contents; }
-    .titlebar-right{ margin-left:0; }
+    /* Phone: Faction + Settings stay on row one; the seven labelled global controls form two equal rows.
+       Labels remain visible—three new destinations must not turn the masthead into an icon guessing game. */
+    body:not([data-section="home"]) .titlebar{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; align-items:stretch; }
+    body:not([data-section="home"]) .primary-nav,
+    body:not([data-section="home"]) .titlebar-right{ display:contents; }
+    body:not([data-section="home"]) .brand{ grid-column:1 / span 3; grid-row:1; min-width:0; }
+    body:not([data-section="home"]) .cogbtn{ grid-column:4; grid-row:1; justify-self:end; }
+    body:not([data-section="home"]) .faction-box{ width:100%; min-width:0; min-height:42px; justify-content:center; gap:8px; padding:7px 8px; }
+    body:not([data-section="home"]) .faction-name{ min-width:0; overflow:hidden; text-overflow:ellipsis; font-size:16px; }
+    body:not([data-section="home"]) .faction-ico{ width:24px; height:24px; }
+    body:not([data-section="home"]) .faction-arrow{ width:20px; height:20px; }
+    body:not([data-section="home"]) .navbox{ min-width:0; min-height:46px; padding:4px 2px; gap:1px;
+      flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+    body:not([data-section="home"]) .navbox .navico{ width:19px; height:19px; }
+    body:not([data-section="home"]) .navbox .navlabel{ display:block; font-size:11px; letter-spacing:.2px; }
     body:not([data-frame="border"]) header{ padding-top:calc(var(--bezel-in) + var(--sp-3)); padding-bottom:var(--sp-3); }
     /* tame the big dossier headline so it doesn't wrap to 3 lines on a 375px column */
     .doss-name{ font-size:34px; line-height:1.05; }
@@ -2488,6 +2506,106 @@
   .pw-outhead{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 12px; border-bottom:1px solid var(--fg-faint); font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--fg-dim); }
   .pw-preview{ margin:0; padding:14px; white-space:pre-wrap; font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:12.5px; line-height:1.55; color:var(--fg); overflow-x:auto; }
   @media (max-width:760px){ .pw-work{ grid-template-columns:1fr; } .pw-out{ position:static; } }
+
+  /* COMMUNITY CONTENT — Events, Stories, and Proposals share this shell and card vocabulary. */
+  body[data-section="events"] .commandbar,
+  body[data-section="stories"] .commandbar,
+  body[data-section="proposals"] .commandbar{ display:none; }
+  .community-view{ height:100%; min-height:0; overflow:auto; padding:clamp(10px,2vh,24px) var(--sp-2) 80px; }
+  .community-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin:0 0 clamp(18px,3vh,30px);
+    padding-bottom:14px; border-bottom:1px solid var(--fg-faint); }
+  .community-head h2{ margin:2px 0 4px; font-family:var(--font-head); font-size:clamp(26px,4vw,42px); line-height:1;
+    text-transform:uppercase; letter-spacing:2px; color:var(--fg-bright); text-shadow:var(--glow); }
+  .community-head p{ max-width:72ch; margin:0; color:var(--fg-dim); font-size:14px; line-height:1.45; }
+  .community-kicker{ display:block; color:var(--fg-dim); font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+  .community-add{ flex:0 0 auto; min-height:44px; font-family:var(--font-head); text-transform:uppercase; letter-spacing:1px; }
+  .community-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr)); gap:12px; }
+  .community-card{ min-width:0; position:relative; display:flex; align-items:stretch; background:var(--bg-panel); border:1px solid var(--fg-faint);
+    box-shadow:var(--box-glow); animation:hometile .35s cubic-bezier(.2,.8,.3,1) backwards; animation-delay:calc(var(--i,0) * 55ms);
+    transition:border-color .16s,background .16s,box-shadow .16s,transform .14s; }
+  button.community-card{ width:100%; color:var(--fg); cursor:pointer; text-align:left; }
+  .community-card:hover, .community-card:focus-visible, .community-card:focus-within, .community-card.active{
+    outline:none; border-color:var(--fg); background:var(--bg-panel-2); box-shadow:0 0 24px -11px rgba(var(--fg-rgb),.65); }
+  .community-card-main{ flex:1 1 auto; min-width:0; display:flex; align-items:center; gap:14px; padding:18px;
+    border:0; background:transparent; color:inherit; text-align:left; cursor:pointer; }
+  .community-card-main:focus-visible{ outline:1px solid var(--fg); outline-offset:-4px; }
+  .community-card-ico{ flex:0 0 auto; width:42px; height:42px; display:grid; place-items:center; color:var(--fg-bright);
+    border:1px solid var(--fg-faint); background:rgba(var(--fg-rgb),.05); }
+  .community-card-ico svg{ width:25px; height:25px; fill:currentColor; filter:drop-shadow(0 0 6px rgba(var(--fg-rgb),.45)); }
+  .community-card-copy{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:5px; }
+  .community-card-title{ font-family:var(--font-head); font-size:clamp(17px,2vw,23px); line-height:1.12; color:var(--fg-bright); }
+  .community-card-sub{ color:var(--fg-dim); font-size:12px; line-height:1.4; }
+  .community-card-arrow{ flex:0 0 auto; color:var(--fg); font-family:var(--font-head); font-size:26px; }
+  .community-source{ flex:0 0 auto; display:flex; align-items:center; justify-content:center; align-self:stretch; padding:0 14px;
+    border-left:1px solid var(--fg-faint); color:var(--fg-dim); text-decoration:none; font-size:11px; letter-spacing:1px; text-transform:uppercase; }
+  .community-source:hover, .community-source:focus-visible{ color:var(--fg-bright); background:rgba(var(--fg-rgb),.06); outline:none; }
+  .community-subhead{ margin:0 0 10px; font-family:var(--font-head); font-size:18px; letter-spacing:1.5px; text-transform:uppercase; color:var(--fg-bright); }
+  .community-story-picker{ margin-bottom:18px; }
+  .community-event-grid{ grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); }
+  .community-event-pick{ padding:13px; gap:12px; }
+  .community-event-pick.active{ box-shadow:inset 3px 0 0 var(--fg),0 0 24px -11px rgba(var(--fg-rgb),.65); }
+  .community-event-pick .community-card-ico{ width:34px; height:34px; }
+  .community-event-pick .community-card-ico svg{ width:21px; height:21px; }
+  .community-event-pick .community-card-title{ font-size:16px; }
+  .community-writing-note{ margin:0 0 18px; padding:12px 15px; color:var(--fg-dim); background:rgba(var(--fg-rgb),.045);
+    border:1px solid var(--fg-faint); border-left:3px solid var(--fg); font-size:13px; line-height:1.5; }
+  .community-writing-note strong{ color:var(--fg-bright); }
+  .story-library{ display:grid; grid-template-columns:minmax(230px,310px) minmax(0,1fr); min-height:260px;
+    border:1px solid var(--fg-faint); background:var(--bg-panel); }
+  .story-list{ min-width:0; padding:14px 10px 18px; border-right:1px solid var(--fg-faint); }
+  .story-row{ width:100%; min-width:0; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 11px;
+    color:var(--fg-dim); background:transparent; border:0; border-bottom:1px solid rgba(var(--fg-rgb),.12); text-align:left; cursor:pointer; }
+  .story-row:hover, .story-row:focus-visible, .story-row.active{ outline:none; color:var(--fg-bright); background:var(--bg-panel-2); box-shadow:inset 3px 0 0 var(--fg); }
+  .story-row span:first-child{ min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .story-row strong{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:var(--font-head); font-size:15px; }
+  .story-row small{ color:var(--fg-dim); font-size:10px; letter-spacing:.5px; text-transform:uppercase; }
+  .story-reading{ min-width:0; min-height:0; max-height:62vh; overflow:auto; padding:clamp(18px,3vw,34px); }
+  .story-detail > header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:22px; padding-bottom:12px; border-bottom:1px solid var(--fg-faint); }
+  .story-detail h3{ margin:3px 0; font-family:var(--font-head); font-size:clamp(22px,3vw,34px); color:var(--fg-bright); }
+  .story-detail header p{ margin:0; color:var(--fg-dim); font-size:11px; }
+  .story-detail-actions{ display:flex; flex-wrap:wrap; justify-content:flex-end; gap:7px; }
+  .story-detail-actions .btn{ padding:7px 10px; font-size:11px; }
+  .story-delete{ color:var(--amber); }
+  .community-empty{ min-height:150px; display:grid; place-items:center; align-content:center; gap:5px; padding:20px; text-align:center; color:var(--fg-dim); }
+  .community-empty h3, .community-empty p{ margin:0; }
+  .community-empty h3{ font-family:var(--font-head); color:var(--fg); }
+  .community-empty-mark{ font-family:var(--font-head); font-size:30px; color:var(--fg); }
+  .story-composer{ margin:0 0 18px; padding:clamp(14px,2vw,22px); border:1px solid var(--fg); background:var(--bg-panel); box-shadow:var(--box-glow); }
+  .story-composer-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:12px; }
+  .story-composer-head h3{ margin:3px 0 0; font-family:var(--font-head); font-size:24px; color:var(--fg-bright); }
+  .story-fields{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; margin-bottom:12px; }
+  .story-fields label, .story-editor-label{ display:flex; flex-direction:column; gap:5px; color:var(--fg-dim); font-size:11px; letter-spacing:1px; text-transform:uppercase; }
+  .story-fields input, .story-fields select, #story-markdown{ width:100%; min-width:0; color:var(--fg-bright); background:var(--bg-panel-2);
+    border:1px solid var(--fg-faint); outline:none; font:inherit; text-transform:none; letter-spacing:0; padding:9px 10px; }
+  .story-fields input:focus, .story-fields select:focus, #story-markdown:focus{ border-color:var(--fg); box-shadow:0 0 12px -5px rgba(var(--fg-rgb),.6); }
+  .story-workspace{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; min-height:360px; }
+  #story-markdown{ flex:1 1 auto; min-height:330px; resize:vertical; font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:14px; line-height:1.55; }
+  .story-preview{ min-width:0; min-height:0; max-height:520px; overflow:auto; padding:12px 16px 24px; border:1px solid var(--fg-faint); background:var(--bg); }
+  .story-preview-label{ margin:0 -4px 14px; color:var(--fg-dim); font-size:11px; letter-spacing:1px; text-transform:uppercase; }
+  .story-form-actions{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; }
+  .story-format-hint{ color:var(--fg-dim); font-size:11px; }
+  .story-markdown{ max-width:78ch; color:var(--fg); font-family:var(--doc-font-body,"IBM Plex Mono",monospace); font-size:16px; line-height:1.72; }
+  .story-markdown h1, .story-markdown h2, .story-markdown h3, .story-markdown h4{ margin:1.5em 0 .5em; color:var(--fg-bright); font-family:var(--doc-font-head,var(--font-head)); line-height:1.15; }
+  .story-markdown h1:first-child, .story-markdown h2:first-child, .story-markdown h3:first-child{ margin-top:0; }
+  .story-markdown p{ margin:0 0 1em; }
+  .story-markdown ul, .story-markdown ol{ margin:0 0 1em; padding-left:1.6em; }
+  .story-markdown li{ margin:.35em 0; }
+  .story-markdown blockquote{ margin:1em 0; padding:.45em 0 .45em 1em; border-left:2px solid var(--fg); color:var(--fg-dim); font-style:italic; }
+  .story-markdown code{ padding:.1em .3em; color:var(--fg-bright); background:rgba(var(--fg-rgb),.08); font-family:"IBM Plex Mono",monospace; }
+  .story-markdown a{ color:var(--fg-bright); text-underline-offset:3px; }
+  .story-markdown hr{ margin:1.7em 0; border:0; border-top:1px solid var(--fg-faint); }
+  @media (max-width:760px){
+    .community-view{ padding-inline:0; }
+    .community-head{ align-items:flex-start; padding-inline:4px; }
+    .community-head p{ font-size:12px; }
+    .community-card-main{ padding:14px 11px; gap:10px; }
+    .community-source{ padding-inline:9px; }
+    .story-library, .story-workspace, .story-fields{ grid-template-columns:1fr; }
+    .story-list{ border-right:0; border-bottom:1px solid var(--fg-faint); }
+    .story-reading{ max-height:none; }
+    .story-detail > header, .story-form-actions{ flex-direction:column; align-items:flex-start; }
+    .story-detail-actions{ justify-content:flex-start; }
+  }
 
   /* ---------- print / export a single dossier (PDF) ---------- */
   @media print{

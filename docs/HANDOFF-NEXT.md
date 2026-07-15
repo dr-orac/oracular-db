@@ -62,14 +62,20 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 
 ## Architecture map (where things live in app.js)
 - **Routing:** hash router — `#home` · `#<faction>/<section>[/<target>]` · `#wiki/<Page>` · `#map[/<scope>]`
-  · `#paperwork`. `parseRoute`/`applyRoute`/`writeRoute`/`setSection`. `UMBRELLA_SECTIONS` owns shared
+  · `#paperwork` · `#events[/<document>[/<heading>]]` · `#stories[/<event>]` ·
+  `#proposals[/<document>[/<heading>]]`. `parseRoute`/`applyRoute`/`writeRoute`/`setSection`.
+  `UMBRELLA_SECTIONS` owns shared
   faction-agnostic metadata; `factionSections()` combines universal Roster/Relations with the active
   faction's configured documents. Routing validation, faction continuity, Home cards, tabs, headings, and
   command discovery consume those sources. Rendering stays explicit in `setSection()`. To add an umbrella
   surface, add its metadata once, then add its explicit renderer/visibility branch, `NAV_ICONS` entry if
   needed, `<section>` markup, and `#primary-nav` button. Do not add another section-validity or label list.
-- **Masthead:** 3-zone grid ≥1024px — nav left, faction centred, settings right; row-2 section tabs centre
-  under the faction. `resetConnector()` clears old geometry before replacement; `positionConnector()` draws
+- **Community archive:** `COMMUNITY_COLLECTIONS` is the single registry for Events, Proposals, and the Event
+  index used by Stories. Events/Proposals reuse the Google-Doc reader. Stories are Markdown records in
+  browser-local storage (`mdb-event-stories-v1`), not shared or published data; do not imply server persistence.
+- **Masthead:** at wide widths a 10-unit grid keeps Faction in the central two units and distributes the seven
+  global destinations plus Settings evenly around it; smaller layouts wrap without hiding labels.
+  `resetConnector()` clears old geometry before replacement; `positionConnector()` draws
   one SVG from the actual faction/tab rectangles and exact selection state; `watchConnector()` rebinds state
   and geometry observation. `renderMeasuredConnector()`/`resetMeasuredConnector()` are the shared atomic
   paint contract; surface-specific measurement remains local so route logic never enters the renderer.
@@ -182,3 +188,6 @@ T121 then made focus mode a genuinely borderless canvas in both frame styles. Th
 floats at the upper right beneath paired collapse/exit controls, preserves its single connector/navigation
 state, and collapses atomically. A two-ended content mask, recoverable pointer-quiet HUD, touch/keyboard tiers,
 and bounded desktop/phone layouts complete the fullscreen reader without adding another scroll owner.
+T122 then added Events, Stories, and Proposals as one shared community archive rather than three page systems.
+Events and Proposals share the document registry and reader; Stories are explicitly browser-local Markdown
+records grouped by Event. The wide masthead now distributes global destinations evenly around Faction.

@@ -48,6 +48,11 @@
           <button class="navbox" type="button" data-section="paperwork" id="nav-paperwork" aria-label="Paperwork"></button>
         </div>
         <div class="brand"><!-- FACTION selector box (centre zone) — filled by renderBrand() --></div>
+        <nav class="primary-nav primary-nav--secondary" id="primary-nav-secondary" aria-label="Community sections">
+          <button class="navbox" type="button" data-section="events" id="nav-events" aria-label="Events"></button>
+          <button class="navbox" type="button" data-section="stories" id="nav-stories" aria-label="Stories"></button>
+          <button class="navbox" type="button" data-section="proposals" id="nav-proposals" aria-label="Proposals"></button>
+        </nav>
         <div class="titlebar-right">
           <button class="cogbtn" id="settings-btn" title="Settings" aria-label="Settings" aria-expanded="false" aria-haspopup="dialog">
             <svg class="cog-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 3.4a8.6 8.6 0 1 0 0 17.2 8.6 8.6 0 0 0 0-17.2Zm0 4.9a3.7 3.7 0 1 1 0 7.4 3.7 3.7 0 0 1 0-7.4Z"/><g><rect x="10.5" y=".9" width="3" height="3.7"/><rect x="10.5" y="19.4" width="3" height="3.7"/><rect x=".9" y="10.5" width="3.7" height="3"/><rect x="19.4" y="10.5" width="3.7" height="3"/></g><g transform="rotate(45 12 12)"><rect x="10.5" y=".9" width="3" height="3.7"/><rect x="10.5" y="19.4" width="3" height="3.7"/><rect x=".9" y="10.5" width="3.7" height="3"/><rect x="19.4" y="10.5" width="3.7" height="3"/></g></svg>
@@ -372,6 +377,9 @@
         </div>
         <div class="pw-list" id="paperwork-list"></div>
       </section>
+
+      <!-- COMMUNITY CONTENT — one shared list/composer shell for Events, Stories, and Proposals -->
+      <section id="community" class="community-view hidden" aria-label="Community content"></section>
 
       <!-- LOADING / ERROR -->
       <section id="state" class="state" aria-live="polite" aria-atomic="true">

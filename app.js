@@ -108,7 +108,46 @@ const UMBRELLA_SECTIONS = [
   { id:"wiki",      label:"Wiki",      keywords:"wiki encyclopedia" },
   { id:"map",       label:"Map",       paletteLabel:"Wasteland Atlas", keywords:"map atlas wendover locations wasteland" },
   { id:"paperwork", label:"Paperwork", keywords:"paperwork forms records documents" },
+  { id:"events",    label:"Events",    keywords:"events sessions planning briefs stories" },
+  { id:"stories",   label:"Stories",   keywords:"stories fiction markdown events writing" },
+  { id:"proposals", label:"Proposals", keywords:"proposals plans documents discussion" },
 ];
+/* Events and Proposals are the same content shape: a small registry of Google Docs opened through the one
+   existing reader. Stories references event ids from this registry, so adding an event never requires a
+   second picker list. The app stores no source document HTML or duplicated content metadata. */
+const COMMUNITY_COLLECTIONS = {
+  events:{
+    label:"Events",
+    intro:"Event briefs and planning documents. Open one in the terminal reader or at its source.",
+    documents:[{
+      id:"tree-of-life", label:"The Tree of Life: Event Planning Brief",
+      summary:"Shared planning brief for The Tree of Life event.",
+      docId:"1LkEm526hP2bOiJmHRt_HFi-vuyDcZIdbdZpAdqWENlE",
+      tab:"t.0",
+    }],
+  },
+  proposals:{
+    label:"Proposals",
+    intro:"Long-form proposals and discussion documents awaiting review.",
+    documents:[{
+      id:"unity-lore", label:"The Unity Lore Document",
+      summary:"A shared lore proposal for review and discussion.",
+      docId:"1SIDSWWOp75fbQK2CFwz6clYcFvVa9dbvDdRUcwPDbU8",
+      tab:"t.gzl1alpe78i",
+    }],
+  },
+  stories:{
+    label:"Stories",
+    intro:"Short Markdown stories attached to an event. Local drafts stay in this browser until you copy them elsewhere.",
+  },
+};
+function communityCollection(id){ return COMMUNITY_COLLECTIONS[id] || null; }
+function communityDocument(section, id){
+  const c=communityCollection(section);
+  return c && (c.documents||[]).find(d=>d.id===id);
+}
+function eventDocuments(){ return COMMUNITY_COLLECTIONS.events.documents; }
+let _communityDoc=null, _storyEventId=eventDocuments()[0]?.id||"", _storySelectedId=null, _storyDraftId=null;
 const FACTION_BASE_SECTIONS = [
   { id:"roster",    label:"Roster",    kind:"roster" },
   { id:"relations", label:"Relations", kind:"relations" },
@@ -2109,10 +2148,13 @@ function slugify(s){ return (s||"").toString().toLowerCase().trim()
 function writeRoute(target){
   if(_routing) return;
   // the wiki is umbrella content (not faction-scoped) → a top-level #wiki/<Page> route
+  const community=communityCollection(currentSection);
   const h = currentSection==="home" ? "home"
           : currentSection==="paperwork" ? "paperwork"
           : currentSection==="map" ? "map" + (_mapScope!=="us" ? "/"+_mapScope : "")
           : currentSection==="wiki" ? "wiki" + (_wikiPage && _wikiPage!==WIKI.home ? "/"+encodeURIComponent(_wikiPage) : "")
+          : currentSection==="stories" ? "stories" + (_storyEventId ? "/"+encodeURIComponent(_storyEventId) : "")
+          : community ? currentSection + (_communityDoc ? "/"+encodeURIComponent(_communityDoc.id)+(target ? "/"+target : "") : "")
           : currentFaction + "/" + currentSection + (target ? "/"+target : "");
   const full = "#" + h;
   if(location.hash !== full){ try{ history.replaceState(null,"",full); }catch(e){} }
@@ -2124,8 +2166,9 @@ function parseRoute(){
   const raw = (location.hash||"").replace(/^#\/?/, "");
   if(!raw || raw==="home") return { section:"home" };
   const p = raw.split("/").filter(Boolean).map(x=>{ try{ return decodeURIComponent(x); }catch(e){ return x; } });
-  return FACTIONS[p[0]] ? { faction:p[0], section:p[1], target:p[2] }
-                        : { section:p[0], target:p[1] };
+  if(FACTIONS[p[0]]) return { faction:p[0], section:p[1], target:p[2] };
+  return communityCollection(p[0]) ? { section:p[0], item:p[1], target:p[2] }
+                                   : { section:p[0], target:p[1] };
 }
 /* apply the URL to the app: faction → section → target */
 function applyRoute(){
@@ -2138,6 +2181,20 @@ function applyRoute(){
     let sec = r.section || "home";
     if(sec==="paperwork"){ if(sec!==currentSection) setSection("paperwork"); _pendingTarget=null; return; }
     if(!sectionAvailable(sec)){ sec="roster"; repairRoute=true; }
+    if(communityCollection(sec)){
+      setSection(sec);                                           // base/list state is authoritative, even on browser Back
+      if(sec==="stories"){
+        if(r.item && eventDocuments().some(d=>d.id===r.item)) _storyEventId=r.item;
+        else if(r.item) repairRoute=true;
+        renderCommunitySection("stories");
+      }else if(r.item){
+        const doc=communityDocument(sec,r.item);
+        if(doc){ _pendingTarget=r.target||null; showCommunityDocument(sec,doc); }
+        else repairRoute=true;
+      }
+      _pendingTarget = r.target || null;
+      return;
+    }
     if(sec==="map"){ if(r.target && !MAP_SCOPES[r.target]) repairRoute=true;
       setMapScope(r.target, { route:false }); if(sec!==currentSection) setSection("map"); _pendingTarget=null; return; }
     if(sec==="wiki"){                        // #wiki/<Page> — the target IS the wiki page to open
@@ -2320,6 +2377,9 @@ const NAV_ICONS = {
   map:     '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2Zm-.5 1.8 5 1.67v12.7l-5-1.67V4.8Z"/><path d="M15.5 8.5a2.5 2.5 0 0 0-2.5 2.5c0 1.9 2.5 4.5 2.5 4.5s2.5-2.6 2.5-4.5a2.5 2.5 0 0 0-2.5-2.5Zm0 1.7a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8Z"/></svg>',
   /* paperwork = a stamped document */
   paperwork:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M6 2h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm7 1.6V7h3.4L13 3.6ZM8 10h8v1.5H8V10Zm0 3.2h8v1.5H8v-1.5Zm0 3.2h5v1.5H8v-1.5Z"/><circle cx="16.5" cy="17.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M15 17.4l1.1 1.1 1.9-2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  events:  '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5 3h2v2h10V3h2v2h2v16H3V5h2V3Zm0 7v9h14v-9H5Z"/><path d="M7 12h3v2H7zm5 0h5v2h-5zm-5 4h5v2H7z"/></svg>',
+  stories: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M4 3h7a3 3 0 0 1 3 3v14a3 3 0 0 0-3-3H4V3Zm16 0h-4v14h4V3Z"/><path d="m17 13 4-4 1.5 1.5-4 4-2.2.7z"/></svg>',
+  proposals:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M8 2h8v2h3v18H5V4h3V2Zm2 2h4V3h-4v1ZM7 7v13h10V7H7Z"/><path d="M9 10h6v1.5H9zm0 3h6v1.5H9zm0 3h4v1.5H9z"/></svg>',
   _default:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6V3Zm7 1.5V8h3.5L13 4.5Z"/></svg>',
 };
 /* T75/T76 — per-category icons for the weapon/armor "hub" nav chips (shared across those pages). Flat
@@ -2346,6 +2406,9 @@ const HOME_INFO = {
   wiki:     "The Misfits wiki — factions, gameplay, crafting, survival and more.",
   map:      "Explore the wasteland from the US atlas down to Wendover's local game space.",
   paperwork:"Open practical in-world forms ready to fill, copy, and use in play.",
+  events:   "Event briefs and planning documents, gathered into one shared list.",
+  stories:  "Short Markdown stories attached to events and kept locally while drafting.",
+  proposals:"Long-form proposals and discussion documents ready for review.",
   _default: "An in-world document, rendered on the terminal.",
 };
 /* the home landing page: a full-height tile per section (icon + title + explainer). */
@@ -3272,14 +3335,17 @@ function setDocLink(label, title){
 }
 async function loadDoc(doc){
   $("#doctitle").textContent = doc.label;
-  $("#doclink").href = `https://docs.google.com/document/d/${doc.docId}/edit`;
+  $("#doclink").href = `https://docs.google.com/document/d/${doc.docId}/edit${doc.tab?`?tab=${encodeURIComponent(doc.tab)}`:""}`;
   setDocLink("↗ Docs", "Open this document in Google Docs");
   const reader=$("#docreader"), status=$("#docstatus");
   $("#docscroll").scrollTop=0;
-  if(reader.dataset.docid===doc.docId) return;                // already rendered this exact source
+  if(reader.dataset.docid===doc.docId){                       // already rendered this exact source
+    scrollPendingAnchor(); trackDocSection(); return;          // still honour browser Back/Forward deep links
+  }
   const ownerFaction=currentFaction;
-  const isCurrent=()=>currentSection===doc.id && currentFaction===ownerFaction &&
-    factionDocs().some(d=>d.id===doc.id && d.docId===doc.docId);
+  const isCurrent=()=>doc.collection
+    ? currentSection===doc.collection && _communityDoc?.docId===doc.docId
+    : currentSection===doc.id && currentFaction===ownerFaction && factionDocs().some(d=>d.id===doc.id && d.docId===doc.docId);
   // prepared (prefetched + cleaned) → inject immediately, no loader flash
   if(_docCache.has(doc.docId)){
     try{ renderPreparedDoc(reader, _docCache.get(doc.docId), doc); status.className="docstatus"; status.textContent=""; }
@@ -3919,6 +3985,179 @@ function clearRegionDetail(){
   document.querySelectorAll("#map-region-pins .map-pin.sel").forEach(p=>p.classList.remove("sel"));
   _terrainApi?.select("region",null);
 }
+
+/* ============================ COMMUNITY CONTENT ================================================
+   Events + Proposals use one registry, card renderer, route, and Google-Doc reader. Stories consumes
+   those same event records for its picker and adds only a local Markdown layer. There is deliberately no
+   pretend publishing backend: the interface says when a story exists only in this browser. */
+const STORY_STORAGE_KEY="mdb-event-stories-v1";
+function localStories(){
+  try{
+    const rows=JSON.parse(localStorage.getItem(STORY_STORAGE_KEY)||"[]");
+    return Array.isArray(rows) ? rows.filter(s=>s&&s.id&&s.eventId).map(s=>({
+      id:String(s.id), eventId:String(s.eventId), title:String(s.title||"Untitled story"),
+      body:String(s.body||""), updatedAt:Number(s.updatedAt)||Date.now(),
+    })) : [];
+  }catch(e){ return []; }
+}
+function saveLocalStories(rows){ return lsSetData(STORY_STORAGE_KEY,JSON.stringify(rows)); }
+function storyDate(value){
+  try{ return new Intl.DateTimeFormat(undefined,{day:"numeric",month:"short",year:"numeric"}).format(new Date(value)); }
+  catch(e){ return "Saved locally"; }
+}
+/* Safe, intentionally small Markdown subset. Raw HTML is escaped first; links must be http(s). This keeps
+   the composer useful without adding a parser dependency or a second document-sanitising boundary. */
+function storyInlineMarkdown(raw){
+  const links=[];
+  raw=String(raw||"").replace(/\[([^\]\n]+)\]\((https?:\/\/[^)\s]+)\)/g,(_,label,url)=>{
+    const i=links.push({label,url})-1; return `\u0000STORYLINK${i}\u0000`;
+  });
+  let out=esc(raw);
+  out=out.replace(/`([^`\n]+)`/g,"<code>$1</code>");
+  out=out.replace(/\*\*([^*\n]+)\*\*/g,"<strong>$1</strong>");
+  out=out.replace(/__([^_\n]+)__/g,"<strong>$1</strong>");
+  out=out.replace(/(^|[^*])\*([^*\n]+)\*/g,"$1<em>$2</em>");
+  out=out.replace(/(^|[^_])_([^_\n]+)_/g,"$1<em>$2</em>");
+  return out.replace(/\u0000STORYLINK(\d+)\u0000/g,(_,n)=>{
+    const link=links[+n];
+    return link ? `<a href="${escAttr(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label)}</a>` : "";
+  });
+}
+function renderStoryMarkdown(markdown){
+  const lines=String(markdown||"").replace(/\r\n?/g,"\n").split("\n");
+  let out="", list="";
+  const closeList=()=>{ if(list){ out+=`</${list}>`; list=""; } };
+  lines.forEach(line=>{
+    const item=line.match(/^\s*([-+*]|\d+\.)\s+(.+)$/);
+    if(item){
+      const type=/\d/.test(item[1]) ? "ol" : "ul";
+      if(list!==type){ closeList(); list=type; out+=`<${type}>`; }
+      out+=`<li>${storyInlineMarkdown(item[2])}</li>`; return;
+    }
+    closeList();
+    if(!line.trim()){ out+=""; return; }
+    const heading=line.match(/^(#{1,4})\s+(.+)$/);
+    if(heading){ const level=heading[1].length; out+=`<h${level}>${storyInlineMarkdown(heading[2])}</h${level}>`; return; }
+    if(/^\s*(?:---+|___+)\s*$/.test(line)){ out+="<hr>"; return; }
+    const quote=line.match(/^>\s?(.*)$/);
+    if(quote){ out+=`<blockquote>${storyInlineMarkdown(quote[1])}</blockquote>`; return; }
+    out+=`<p>${storyInlineMarkdown(line)}</p>`;
+  });
+  closeList();
+  return out || `<p class="community-empty-copy">Preview appears here.</p>`;
+}
+function communityCards(section, documents, mode){
+  const stories=mode==="events" ? localStories() : [];
+  return documents.map((doc,i)=>{
+    const href=`https://docs.google.com/document/d/${doc.docId}/edit${doc.tab?`?tab=${encodeURIComponent(doc.tab)}`:""}`;
+    if(mode==="events"){
+      const count=stories.filter(s=>s.eventId===doc.id).length;
+      return `<button class="community-card community-event-pick${doc.id===_storyEventId?' active':''}" type="button" data-event-id="${escAttr(doc.id)}" style="--i:${i}">`+
+        `<span class="community-card-ico">${NAV_ICONS.events}</span><span class="community-card-copy">`+
+        `<span class="community-card-title">${esc(doc.label)}</span><span class="community-card-sub">${count} local ${count===1?'story':'stories'}</span></span>`+
+        `<span class="community-card-arrow" aria-hidden="true">›</span></button>`;
+    }
+    return `<article class="community-card community-doc-card" style="--i:${i}">`+
+      `<button class="community-card-main" type="button" data-community-doc="${escAttr(doc.id)}" data-community-section="${escAttr(section)}">`+
+        `<span class="community-card-ico">${NAV_ICONS[section]||NAV_ICONS._default}</span><span class="community-card-copy">`+
+        `<span class="community-card-title">${esc(doc.label)}</span><span class="community-card-sub">${esc(doc.summary||"Google document")}</span></span>`+
+        `<span class="community-card-arrow" aria-hidden="true">›</span></button>`+
+      `<a class="community-source" href="${escAttr(href)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escAttr(doc.label)} in Google Docs">↗ Source</a></article>`;
+  }).join("");
+}
+function storyComposerHTML(){
+  const rows=localStories(), existing=_storyDraftId&&_storyDraftId!=="new" ? rows.find(s=>s.id===_storyDraftId) : null;
+  const eventId=existing?.eventId||_storyEventId;
+  const title=existing?.title||"", body=existing?.body||"";
+  return `<form class="story-composer" id="story-form">`+
+    `<div class="story-composer-head"><div><span class="community-kicker">${existing?'Edit local story':'New short story'}</span>`+
+      `<h3>${existing?'Refine the final copy':'Paste finished work'}</h3></div><button class="btn story-cancel" type="button">✕ Cancel</button></div>`+
+    `<p class="community-writing-note"><strong>Write elsewhere first.</strong> Use your preferred editor for drafting and revision, then paste only the finished piece here. There is no built-in word limit. This copy is saved only in this browser.</p>`+
+    `<div class="story-fields"><label>Event<select id="story-event" name="event">${eventDocuments().map(d=>`<option value="${escAttr(d.id)}"${d.id===eventId?' selected':''}>${esc(d.label)}</option>`).join("")}</select></label>`+
+      `<label>Title<input id="story-title" name="title" value="${escAttr(title)}" autocomplete="off" required placeholder="Story title" /></label></div>`+
+    `<div class="story-workspace"><label class="story-editor-label">Markdown<textarea id="story-markdown" name="markdown" required placeholder="# Title\n\nWrite with **bold**, *italics*, lists, quotes, and [links](https://…).">${esc(body)}</textarea></label>`+
+      `<section class="story-preview" aria-label="Markdown preview"><div class="story-preview-label">Preview</div><div class="story-markdown" id="story-preview">${renderStoryMarkdown(body)}</div></section></div>`+
+    `<div class="story-form-actions"><span class="story-format-hint">Markdown: headings · emphasis · lists · quotes · links · code</span>`+
+      `<button class="btn story-save" type="submit">${existing?'Save changes':'＋ Add story'}</button></div></form>`;
+}
+function renderStoriesSection(){
+  if(!eventDocuments().some(d=>d.id===_storyEventId)) _storyEventId=eventDocuments()[0]?.id||"";
+  const rows=localStories().filter(s=>s.eventId===_storyEventId).sort((a,b)=>b.updatedAt-a.updatedAt);
+  const selected=rows.find(s=>s.id===_storySelectedId);
+  const list=rows.length ? rows.map(s=>`<button class="story-row${s.id===_storySelectedId?' active':''}" type="button" data-story-id="${escAttr(s.id)}">`+
+      `<span><strong>${esc(s.title)}</strong><small>${esc(storyDate(s.updatedAt))}</small></span><span aria-hidden="true">›</span></button>`).join("")
+    : `<div class="community-empty"><span class="community-empty-mark">＋</span><h3>No stories for this event yet</h3><p>Add a finished Markdown story when it is ready.</p></div>`;
+  const detail=selected ? `<article class="story-detail"><header><div><span class="community-kicker">Local story</span><h3>${esc(selected.title)}</h3><p>${esc(storyDate(selected.updatedAt))}</p></div>`+
+      `<div class="story-detail-actions"><button class="btn story-copy" type="button" data-story-id="${escAttr(selected.id)}">Copy Markdown</button>`+
+      `<button class="btn story-edit" type="button" data-story-id="${escAttr(selected.id)}">Edit</button><button class="btn story-delete" type="button" data-story-id="${escAttr(selected.id)}">Delete</button></div></header>`+
+      `<div class="story-markdown">${renderStoryMarkdown(selected.body)}</div></article>` : "";
+  return `<div class="community-story-picker"><h2 class="community-subhead">Choose an event</h2><div class="community-grid community-event-grid">${communityCards("events",eventDocuments(),"events")}</div></div>`+
+    (_storyDraftId ? storyComposerHTML() : `<div class="community-writing-note"><strong>Finished work only.</strong> Draft and revise in a dedicated writing tool, then paste the final Markdown here. Stories are local to this browser until copied elsewhere.</div>`)+
+    `<div class="story-library"><div class="story-list"><h2 class="community-subhead">Stories</h2>${list}</div><div class="story-reading">${detail||`<div class="community-empty community-empty--reading"><p>Select a story to read it here.</p></div>`}</div></div>`;
+}
+function renderCommunitySection(section){
+  const el=$("#community"), collection=communityCollection(section); if(!el||!collection) return;
+  el.dataset.community=section; el.setAttribute("aria-label",collection.label);
+  const add=section==="stories" ? `<button class="btn community-add" type="button" aria-label="Add a short story">＋ Add story</button>` : "";
+  const body=section==="stories" ? renderStoriesSection()
+    : `<div class="community-grid">${communityCards(section,collection.documents||[],"documents")}</div>`;
+  el.innerHTML=`<header class="community-head"><div><span class="community-kicker">Community archive</span><h2>${esc(collection.label)}</h2><p>${esc(collection.intro)}</p></div>${add}</header>${body}`;
+}
+function showCommunityDocument(section, doc){
+  const source=Object.assign({collection:section},doc);
+  _communityDoc=source;
+  $("#community").classList.add("hidden");
+  $("#docview").classList.remove("hidden");
+  loadDoc(source);
+  setAppHeading();
+  if(!_routing) writeRoute();
+}
+
+const communityView=$("#community");
+communityView.addEventListener("pointerover",e=>{
+  const card=e.target.closest("[data-community-doc]");
+  if(card){ const doc=communityDocument(card.dataset.communitySection,card.dataset.communityDoc); if(doc) prefetchDoc(doc.docId); }
+});
+communityView.addEventListener("focusin",e=>{
+  const card=e.target.closest("[data-community-doc]");
+  if(card){ const doc=communityDocument(card.dataset.communitySection,card.dataset.communityDoc); if(doc) prefetchDoc(doc.docId); }
+});
+communityView.addEventListener("click",e=>{
+  const docButton=e.target.closest("[data-community-doc]");
+  if(docButton){ const doc=communityDocument(docButton.dataset.communitySection,docButton.dataset.communityDoc); if(doc) showCommunityDocument(docButton.dataset.communitySection,doc); return; }
+  const eventButton=e.target.closest(".community-event-pick");
+  if(eventButton){ _storyEventId=eventButton.dataset.eventId; _storySelectedId=null; _storyDraftId=null; renderCommunitySection("stories"); writeRoute(); return; }
+  if(e.target.closest(".community-add")){ _storyDraftId="new"; renderCommunitySection("stories"); $("#story-title")?.focus(); return; }
+  if(e.target.closest(".story-cancel")){ _storyDraftId=null; renderCommunitySection("stories"); return; }
+  const storyRow=e.target.closest(".story-row");
+  if(storyRow){ _storySelectedId=storyRow.dataset.storyId; _storyDraftId=null; renderCommunitySection("stories"); return; }
+  const edit=e.target.closest(".story-edit");
+  if(edit){ _storyDraftId=edit.dataset.storyId; renderCommunitySection("stories"); $("#story-title")?.focus(); return; }
+  const copy=e.target.closest(".story-copy");
+  if(copy){ const story=localStories().find(s=>s.id===copy.dataset.storyId); if(story){
+      const fallback=()=>{ const t=document.createElement("textarea"); t.value=story.body; document.body.appendChild(t); t.select(); try{document.execCommand("copy");}catch(e){} t.remove(); toast("Markdown copied."); };
+      if(navigator.clipboard?.writeText) navigator.clipboard.writeText(story.body).then(()=>toast("Markdown copied."),fallback); else fallback();
+    } return; }
+  const del=e.target.closest(".story-delete");
+  if(del){ const story=localStories().find(s=>s.id===del.dataset.storyId); if(story&&confirm(`Delete the local copy of “${story.title}”?`)){
+      saveLocalStories(localStories().filter(s=>s.id!==story.id)); _storySelectedId=null; _storyDraftId=null; renderCommunitySection("stories");
+    } }
+});
+communityView.addEventListener("input",e=>{
+  if(e.target.id==="story-markdown"){ const preview=$("#story-preview"); if(preview) preview.innerHTML=renderStoryMarkdown(e.target.value); }
+});
+communityView.addEventListener("submit",e=>{
+  if(e.target.id!=="story-form") return;
+  e.preventDefault();
+  const title=$("#story-title").value.trim(), body=$("#story-markdown").value.trim(), eventId=$("#story-event").value;
+  if(!title||!body){ toast("Add a title and the finished story before saving."); (!title?$("#story-title"):$("#story-markdown")).focus(); return; }
+  const rows=localStories(), existing=_storyDraftId&&_storyDraftId!=="new" ? rows.find(s=>s.id===_storyDraftId) : null;
+  const story={id:existing?.id||`story-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`,eventId,title,body,updatedAt:Date.now()};
+  const next=existing ? rows.map(s=>s.id===existing.id?story:s) : rows.concat(story);
+  if(!saveLocalStories(next)) return;
+  _storyEventId=eventId; _storySelectedId=story.id; _storyDraftId=null; renderCommunitySection("stories"); writeRoute(); toast(existing?"Story updated locally.":"Story added locally.");
+});
+
 function setSection(id){
   if(!sectionAvailable(id)) id="roster";
   if(id!=="roster" && id!=="relations") cancelRosterLoad();
@@ -3933,11 +4172,14 @@ function setSection(id){
   positionConnector();  // move the lit faction→selection channel to the new active tab
   renderPrimaryNav();   // sync the ROW-1 umbrella active state
   const isHome = id==="home", isRoster = id==="roster", isRelations = id==="relations", isMap = id==="map", isPaper = id==="paperwork";
+  const isCommunity=!!communityCollection(id);
+  if(isCommunity) _communityDoc=null;                           // selecting the top-level control returns to its list
   const home=$("#home"); if(home) home.classList.toggle("hidden", !isHome);
-  $("#docview").classList.toggle("hidden", isRoster || isHome || isRelations || isMap || isPaper);
+  $("#docview").classList.toggle("hidden", isRoster || isHome || isRelations || isMap || isPaper || isCommunity);
   $("#relations").classList.toggle("hidden", !isRelations);
   const mapEl=$("#map"); if(mapEl) mapEl.classList.toggle("hidden", !isMap);
   const paperEl=$("#paperwork"); if(paperEl) paperEl.classList.toggle("hidden", !isPaper);
+  const communityEl=$("#community"); if(communityEl) communityEl.classList.toggle("hidden", !isCommunity);
   if(isHome){
     renderHome();
     $("#roster").classList.add("hidden");
@@ -3945,6 +4187,12 @@ function setSection(id){
     $("#state").classList.add("hidden");
   }else if(isPaper){
     renderPaperwork();
+    $("#roster").classList.add("hidden");
+    $("#cards").classList.add("hidden");
+    $("#state").classList.add("hidden");
+  }else if(isCommunity){
+    _storyDraftId=null;
+    renderCommunitySection(id);
     $("#roster").classList.add("hidden");
     $("#cards").classList.add("hidden");
     $("#state").classList.add("hidden");
@@ -3987,6 +4235,7 @@ function updateCrumb(){
   if(currentSection==="home") c="Misfits Database";
   else if(currentSection==="map") c="Map ▸ "+MAP_SCOPES[_mapScope].title;
   else if(currentSection==="wiki") c="Wiki ▸ " + String(_wikiPage||WIKI.home).replace(/_/g," ");
+  else if(communityCollection(currentSection)) c=communityCollection(currentSection).label+(_communityDoc ? " ▸ "+_communityDoc.label : "");
   else{ const section=factionSection(currentSection);
     c = activeFaction().name + " ▸ " + (section ? section.label : currentSection); }
   el.textContent = c;
@@ -3995,7 +4244,7 @@ $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
 });
 /* ROW-1 umbrella boxes navigate; the FACTION box is handled by wireFactionMenu. */
-$("#primary-nav").addEventListener("click", e=>{
+$(".titlebar").addEventListener("click", e=>{
   const b=e.target.closest(".navbox"); if(b) setSection(b.dataset.section);
 });
 /* MAP pins: click / Enter / Space on a marker opens its detail; the Wendover marker opens Region. */
