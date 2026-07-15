@@ -369,6 +369,21 @@ state held at one active link/arrow with 0px vertical tip residual and no rail h
 1180px rail breakpoint the whole optional layer remains absent. Roster reuse remains an evaluation, not a
 commitment.
 
+### T119 · Make scroll controls feel native to the CRT — P2 [visual system + interaction] — IMPLEMENTED 2026-07-15
+
+Replace the opaque browser-like scrollbar treatment with a narrow, square phosphor control whose track carries
+subtle scan bands. Each independent scroll owner stays faint while idle and brightens only when its own panel
+is hovered or contains keyboard focus, so simultaneous contents/reader and roster/dossier scrollbars do not
+compete. Preserve an always-usable touch tier and a stronger high-contrast tier; do not hide the thumb entirely
+or introduce JavaScript scroll state.
+
+Acceptance: at desktop width the document and contents rail can show different idle/active tiers; keyboard
+focus wakes the owning rail without changing either scroll position; high contrast strengthens every thumb;
+390px retains the document scroll owner with no horizontal overflow; native Firefox and WebKit engines receive
+equivalent colour states; the app has no console errors. Verified at 1280×720 and 390×844. The idle/active
+WebKit thumb tiers measured 16%/62% opacity, Firefox received matching contextual `scrollbar-color`, and the
+high-contrast tier measured 55–60%.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →

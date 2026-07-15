@@ -166,3 +166,6 @@ T118 then extracted the atomic paint contract during its first proven reuse. The
 contents rail now draws measured H1–H4 parentage and lights exactly one current branch without taking over
 links or either scroll container. Loading, focus, and collapsed states synchronously clear old geometry; a
 32-heading deep-scroll proof closed the sticky-header drift case.
+T119 then replaced the globally opaque browser scrollbars with contextual CRT controls. Scroll owners share
+one CSS registry and square scan-banded track; idle, owner hover/focus, touch, direct thumb hover, and high-
+contrast tiers remain explicit. The treatment is CSS-only and never becomes another scroll-state owner.

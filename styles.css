@@ -2274,11 +2274,54 @@
     position:sticky; top:0; float:right; margin:-8px -8px 0 0;
   }
 
-  /* scrollbars */
-  ::-webkit-scrollbar{ width:12px; height:12px; }
-  ::-webkit-scrollbar-track{ background:var(--bg); }
-  ::-webkit-scrollbar-thumb{ background:var(--fg-faint); border:3px solid var(--bg); }
-  ::-webkit-scrollbar-thumb:hover{ background:var(--fg-dim); }
+  /* T119 — CRT scroll controls. Each independent scroll surface owns its own phosphor thumb: it recedes
+     when that panel is idle, then wakes on panel hover or keyboard focus. Touch has no hover, so its thumb
+     stays at the usable tier. The dark scan-banded track reads as part of the screen rather than browser UI. */
+  :where(.home, .docscroll, .doctoc, .docreader .doctable, .map-detail, .map-reference, .map-view,
+    .selctl-menu, .list, .dossier, .cards, .rel-rail, .rel-scroll, .modal, .cmdk-list, .pw-preview, .sd-body){
+    scrollbar-width:thin;
+    scrollbar-color:rgba(var(--fg-rgb),.16) transparent;
+  }
+  ::-webkit-scrollbar{ width:11px; height:11px; }
+  ::-webkit-scrollbar-track{
+    background:
+      repeating-linear-gradient(to bottom, rgba(var(--fg-rgb),.045) 0 1px, transparent 1px 4px),
+      var(--bg);
+    box-shadow:inset 1px 0 rgba(var(--fg-rgb),.055);
+  }
+  ::-webkit-scrollbar-thumb{
+    min-height:28px;
+    background-color:rgba(var(--fg-rgb),.16);
+    border:3px solid transparent;
+    background-clip:padding-box;
+    box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.12);
+    transition:background-color .2s ease, box-shadow .2s ease;
+  }
+  ::-webkit-scrollbar-corner{ background:var(--bg); }
+  :where(.home, .docscroll, .doctoc, .docreader .doctable, .map-detail, .map-reference, .map-view,
+    .selctl-menu, .list, .dossier, .cards, .rel-rail, .rel-scroll, .modal, .cmdk-list, .pw-preview, .sd-body):is(:hover, :focus-within){
+    scrollbar-color:rgba(var(--fg-rgb),.68) var(--bg);
+  }
+  :where(.home, .docscroll, .doctoc, .docreader .doctable, .map-detail, .map-reference, .map-view,
+    .selctl-menu, .list, .dossier, .cards, .rel-rail, .rel-scroll, .modal, .cmdk-list, .pw-preview, .sd-body):is(:hover, :focus-within)::-webkit-scrollbar-thumb{
+      background-color:rgba(var(--fg-rgb),.62);
+      box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.55), 0 0 7px rgba(var(--fg-rgb),.34);
+  }
+  ::-webkit-scrollbar-thumb:hover{
+    background-color:var(--fg);
+    box-shadow:inset 0 0 0 1px var(--fg-bright), 0 0 8px rgba(var(--fg-rgb),.55);
+  }
+  @media (hover:none){
+    :where(.home, .docscroll, .doctoc, .docreader .doctable, .map-detail, .map-reference, .map-view,
+      .selctl-menu, .list, .dossier, .cards, .rel-rail, .rel-scroll, .modal, .cmdk-list, .pw-preview, .sd-body){
+      scrollbar-color:rgba(var(--fg-rgb),.5) var(--bg);
+    }
+    ::-webkit-scrollbar-thumb{ background-color:rgba(var(--fg-rgb),.5); }
+  }
+  body[data-contrast="high"] ::-webkit-scrollbar-thumb{ background-color:rgba(var(--fg-rgb),.55); }
+  body[data-contrast="high"] :where(.home, .docscroll, .doctoc, .docreader .doctable, .map-detail,
+    .map-reference, .map-view, .selctl-menu, .list, .dossier, .cards, .rel-rail, .rel-scroll, .modal,
+    .cmdk-list, .pw-preview, .sd-body){ scrollbar-color:rgba(var(--fg-rgb),.6) var(--bg); }
 
   /* responsive */
   @media (max-width:760px){

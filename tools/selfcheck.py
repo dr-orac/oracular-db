@@ -354,7 +354,20 @@ reveal_block = js[reveal_start:reveal_end] if reveal_start >= 0 and reveal_end >
 if "toc.scrollTop" not in reveal_block or "scrollIntoView" in reveal_block:
     err("active contents entries must reveal by scrolling only the contents rail")
 
-# ---------------------------------------------------------------- 8h. documentation links
+# ---------------------------------------------------------------- 8h. contextual CRT scrollbar contract
+# Every independent panel uses the same CSS-only idle/owner-active grammar. Touch and high contrast must not
+# inherit the deliberately faint desktop idle tier.
+if 'scrollbar-color:rgba(var(--fg-rgb),.16) transparent' not in css:
+    err("scroll owners must share the faint idle CRT scrollbar tier")
+if ':is(:hover, :focus-within)::-webkit-scrollbar-thumb' not in css \
+        or 'background-color:rgba(var(--fg-rgb),.62)' not in css:
+    err("the owning scroll panel must wake its thumb on hover or keyboard focus")
+if '@media (hover:none)' not in css or 'background-color:rgba(var(--fg-rgb),.5)' not in css:
+    err("touch scrollbars must retain a visible non-hover tier")
+if 'body[data-contrast="high"] ::-webkit-scrollbar-thumb' not in css:
+    err("high contrast must strengthen the CRT scrollbar thumb")
+
+# ---------------------------------------------------------------- 8i. documentation links
 # Documentation is part of the handoff contract. Validate repository-local Markdown links so a rename or
 # move cannot silently strand the next contributor. External URLs and same-page anchors are out of scope.
 DOC_REQUIRED = [
