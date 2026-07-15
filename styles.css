@@ -799,7 +799,7 @@
   body[data-section="home"]:not([data-frame="border"]) main{ padding:var(--edge); }
   /* Laid out by HIERARCHY: a TOP row (brand + the umbrella destinations), then a two-column LOWER split —
      faction picker (left) · the picked faction's own sections (right). See renderHome(). */
-  /* ── TOP: the brand, then one equal registry-generated row for Wiki · Map · Paperwork. ── */
+  /* ── TOP: the brand, then the equal registry-generated global destination grid. ── */
   .home-brand{ flex:0 0 auto; display:flex; flex-direction:column; gap:clamp(1px,.5vh,3px);
     margin-bottom:clamp(8px,1.3vh,15px); }
   .home-brand-name{ font-family:var(--font-head); font-size:clamp(24px,3.2vw,44px); letter-spacing:1.5px;

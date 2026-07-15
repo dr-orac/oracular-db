@@ -2414,7 +2414,7 @@ const HOME_INFO = {
 /* the home landing page: a full-height tile per section (icon + title + explainer). */
 const HOME_ARROW = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 9h9.2l-3.7-3.7L11 4l6 6-6 6-1.5-1.3L13.2 11H4z"/></svg>`;
 /* The landing, laid out by HIERARCHY (not a flat list):
-   · TOP — the umbrella brand + every global section (Wiki · Map · Paperwork).
+   · TOP — the umbrella brand + every registered global section.
    · LOWER-LEFT — the faction picker.
    · LOWER-RIGHT — the SELECTED faction's own sections (Roster · Relations · its docs), updating live as
      you pick a faction on the left. A two-column master–detail: choose a faction, see what it offers. */
@@ -2591,8 +2591,8 @@ window.addEventListener("resize", ()=>{
   scheduleDocTocConnector();
   clearTimeout(_docTocResizeT); _docTocResizeT=setTimeout(scheduleDocTocConnector, 120);
 });
-/* ROW 1 (umbrella): fill every registered global box and mark the active one. (The FACTION box between
-   the nav and settings is built by renderBrand(); the cog sits at the far right.) */
+/* Global masthead: fill every registered destination and mark the active one. The two primary-nav groups
+   distribute those controls around the centred Faction box; Settings occupies the final grid unit. */
 function renderPrimaryNav(){
   UMBRELLA_SECTIONS.forEach(({id,label})=>{
     const b=$("#nav-"+id); if(!b) return;
