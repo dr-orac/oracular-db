@@ -113,6 +113,9 @@ retry, error, and recovery controls never drift from the actual request state.
 - `data/world.json` and `data/atlas-migration.json` remain location truth. The enhanced US renderer includes
   only placements allowed by their current review state; the SVG fallback deliberately retains the complete
   legacy atlas. Region markers come from the authored Misfits records in `world.json` and expose confidence.
+- `data/territory-claims.json` owns scenario-bound faction assertions. It is not location truth and currently
+  publishes no geometry. Keep its scenario/evidence/review gate and reciprocal contest links; do not restore
+  `faction_zones`, numeric control strengths, or `controlled_location_ids` to `world.json`.
 - Natural Earth overview geometry is pinned under `data/geography/`. Generated USGS 3DEP relief lives under
   `media/map-terrain/`; its manifest owns source snapshot, bounds, palette, tile counts, and output hashes.
   Rebuild with `python3 tools/build-map-terrain.py --force` when the input snapshot or presentation changes.
@@ -342,6 +345,7 @@ is committed; nothing sensitive lives in the repo.
 | Documentation links silently rot after a rename | local-link validation in `tools/selfcheck.py` |
 | Generated terrain silently drifts from its source or palette | `tools/build-map-terrain.py` + hashed `media/map-terrain/manifest.json` |
 | Geographic and game-grid coordinates get conflated | `docs/MAP-ARCHITECTURE.md` renderer boundary; Local stays outside MapLibre |
+| Location anchors silently become territorial borders | separate `data/territory-claims.json` contract + selfcheck geometry/review gate |
 
 ---
 

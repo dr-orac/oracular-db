@@ -189,16 +189,24 @@ identities; the Fort, Jacobstown, and Black Mountain use broad same-area counter
 fictional Highway 95 corridor hypothesis. The Strip now uses the same evidence shape. Every placement remains
 provisional, `docs/MAP-NEW-VEGAS-REVIEW.md` owns the promotion gate, and no public marker changed.
 
-### T112 · Add a source-aware faction territory seam — P2 [map architecture] — ROADMAP
+### T112 · Add a source-aware faction territory seam — P2 [map architecture] — IMPLEMENTED 2026-07-15
 
-Treat fan-made maps as discovery indexes for location research: follow concrete location, relationship, or
-source leads rather than transcribing coordinates. For territory art direction, the user-approved 2290 map
-may guide broad project-authored areas, but its pixels and exact edges must not be copied and its selected
-endings and mixed continuities must remain explicit. After the geographic renderer proof, inventory a small
-set of faction control claims before drawing polygons. Keep territory in an independently toggleable dataset
-with scenario, canon scope, time, evidence, review status, and uncertainty; support overlap and contestation
-rather than assigning every area to one owner. The data and styling boundary is owned by
-`docs/MAP-ARCHITECTURE.md`.
+`data/territory-claims.json` now separates faction assertions from `data/world.json` location truth. The five
+retired `faction_zones` were audited one-for-one: vague decimal `control_strength` values and the misleading
+`controlled_location_ids` field were removed. Each migrated claim now records a scenario, reference time,
+canon scope, assertion type, map regions, basis, review status, uncertainty, representation, location anchors,
+reciprocal contestation, evidence or limitation, and an explicitly null geometry.
+
+The two broad legacy NCR records are withheld because they mixed eras or outcomes and location membership did
+not establish a boundary. The three Wendover records survive only as provisional project-authored influence
+or site points for the 2296–2300 scenario; all overlap, and none implies continuous sovereignty. The approved
+2290 fan map is recorded as `art_direction_only`, and the self-check rejects any claim that cites it as
+evidence. It also rejects unknown references, non-reciprocal contest links, visible withheld claims, polygon
+geometry before review, or drift from the five-record migration count.
+
+No territory overlay is published by this task. A later rendering increment may consume only reviewed claims,
+must keep the layer optional, and should begin with influence points or broad uncertain regions rather than
+manufacturing borders. Fan-map pixels and exact edges remain outside the project.
 
 ### T113 · Complete Home discovery and map viewport containment — P1 [navigation + responsive] — IMPLEMENTED 2026-07-14
 
@@ -254,8 +262,9 @@ renderer left the SVG visible and focusable until handoff; missing/failed WebGL 
 controls. Cold local first-open measurement was 1.618 seconds and 13 requests; the measured raw response
 total was 1,233,618 bytes, while the estimated compressed production cold payload is about 401 KB. The lazy
 code itself is about 291 KB gzip, lazy data about 93 KB gzip, and initial US relief about 17 KB. MapLibre is
-therefore accepted under these bounded, lazy, fallback-preserving constraints. Faction claims remain T112;
-native DEM or broader tile coverage requires a new measured need rather than becoming the default.
+therefore accepted under these bounded, lazy, fallback-preserving constraints. Faction claims were then
+separated and audited under T112. Native DEM or broader tile coverage requires a new measured need rather
+than becoming the default.
 
 ### T115 · Replace the masthead connector with measured geometry — P1 [responsive + visual system] — IMPLEMENTED 2026-07-14
 

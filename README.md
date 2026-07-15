@@ -63,7 +63,7 @@ tools/            dev scripts — selfcheck.py (integrity linter), preview.py (r
                   git-hooks/ (pre-commit guard)
 docs/             current plans, evidence, references, and historical snapshots. START with
                   docs/README.md, then use HANDOFF-NEXT.md as the canonical handoff
-data/             structured world data, atlas migration inventory, and pinned geography inputs
+data/             world/location truth, separate territory-claims inventory, atlas migration, geography inputs
 vendor/           reviewed, locally hosted runtime code with provenance notes
 
 CONTRIBUTING.md   house rules — self-review, anti-entropy, run selfcheck, conventions

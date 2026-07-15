@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "data_status": "claims_inventory",
+  "published_geometry": false,
+  "legacy_zone_count": 5,
+  "_note": "Faction claims are scenario-bound assertions, not location truth. This inventory deliberately contains no polygon geometry; a claim must pass evidence and review before it can graduate beyond points or broad regions.",
+  "scenarios": [
+    {
+      "id": "legacy_western_claims_audit",
+      "title": "Legacy western claims audit",
+      "reference_year": null,
+      "time": { "start_year": null, "end_year": null },
+      "canon_scope": ["fallout_1", "fallout_new_vegas"],
+      "review_status": "withheld",
+      "assumptions": [
+        "The retired records mixed places and periods without a shared date or ending state.",
+        "Location membership alone does not establish a controlled boundary."
+      ]
+    },
+    {
+      "id": "misfits_wendover_2298",
+      "title": "Misfits Wendover working situation",
+      "reference_year": 2298,
+      "time": { "start_year": 2296, "end_year": 2300 },
+      "canon_scope": ["misfits_nuclear_wasteland"],
+      "review_status": "provisional",
+      "assumptions": [
+        "2298 is the working midpoint of the existing 2296–2300 project records, not a claim about wider Fallout canon.",
+        "Presence, activity and site control do not imply continuous sovereign territory.",
+        "All three claims may overlap and remain subject to campaign review."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "project_world_1_7",
+      "title": "Misfits world dataset 1.7",
+      "kind": "project_record",
+      "path": "data/world.json",
+      "role": "claim_evidence",
+      "note": "Project-authored location and event records; suitable for the Wendover scenario only, not independent Fallout canon evidence."
+    },
+    {
+      "id": "imaginary_fallout_2290_shape_guide",
+      "title": "Fallout world faction map (2290 scenario)",
+      "kind": "discovery_reference",
+      "url": "https://www.reddit.com/r/ImaginaryFallout/comments/pnyati/a_map_of_the_fallout_world_for_anything_that/",
+      "role": "art_direction_only",
+      "note": "User-approved guide to broad visual relationships. Its selected endings, mixed continuities, pixels and exact edges are not evidence and must not be copied or cited by a claim."
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim_ncr_core_legacy",
+      "legacy_zone_id": "zone_ncr_core",
+      "scenario_id": "legacy_western_claims_audit",
+      "faction_id": "ncr",
+      "faction_label": "New California Republic",
+      "scope": "us",
+      "region_ids": ["region_new_california_republic"],
+      "assertion_type": "territorial_control",
+      "canon_scope": "mixed_unresolved",
+      "time": { "start_year": null, "end_year": null },
+      "basis": "unknown",
+      "review_status": "withheld",
+      "uncertainty": { "level": "unbounded", "radius_km": null, "note": "No shared date, ending state or defensible extent was recorded." },
+      "representation": "none",
+      "anchor_location_ids": ["f1_shady_sands", "f1_boneyard"],
+      "contested_by_claim_ids": [],
+      "evidence": [
+        { "source_id": "project_world_1_7", "supports": "limitation", "locator": "locations f1_shady_sands and f1_boneyard", "note": "The location records establish two places, not a contemporaneous NCR control boundary." }
+      ],
+      "geometry": null
+    },
+    {
+      "id": "claim_ncr_mojave_legacy",
+      "legacy_zone_id": "zone_ncr_mojave",
+      "scenario_id": "legacy_western_claims_audit",
+      "faction_id": "ncr",
+      "faction_label": "New California Republic",
+      "scope": "us",
+      "region_ids": ["region_mojave_wasteland"],
+      "assertion_type": "territorial_control",
+      "canon_scope": "fallout_new_vegas_unresolved_ending",
+      "time": { "start_year": null, "end_year": null },
+      "basis": "unknown",
+      "review_status": "withheld",
+      "uncertainty": { "level": "unbounded", "radius_km": null, "note": "A Strip anchor cannot establish NCR control of the Mojave or select an ending." },
+      "representation": "none",
+      "anchor_location_ids": ["fnv_new_vegas_strip"],
+      "contested_by_claim_ids": [],
+      "evidence": [
+        { "source_id": "project_world_1_7", "supports": "limitation", "locator": "location fnv_new_vegas_strip", "note": "The place identity provides no territorial extent and does not resolve competing Mojave outcomes." }
+      ],
+      "geometry": null
+    },
+    {
+      "id": "claim_ncr_wendover_presence",
+      "legacy_zone_id": "zone_ncr_wendover",
+      "scenario_id": "misfits_wendover_2298",
+      "faction_id": "ncr",
+      "faction_label": "New California Republic",
+      "scope": "region",
+      "region_ids": ["region_wendover_misfits"],
+      "assertion_type": "operational_presence",
+      "canon_scope": "misfits_nuclear_wasteland",
+      "time": { "start_year": 2296, "end_year": 2300 },
+      "basis": "project_authored",
+      "review_status": "provisional",
+      "uncertainty": { "level": "broad", "radius_km": 8, "note": "The records support activity around two anchors, not a closed perimeter." },
+      "representation": "influence_points",
+      "anchor_location_ids": ["misfits_wendover_town", "misfits_toana_range_overlook"],
+      "contested_by_claim_ids": ["claim_raider_flats_activity", "claim_vault_dwellers_facility"],
+      "evidence": [
+        { "source_id": "project_world_1_7", "supports": "presence", "locator": "locations misfits_wendover_town and misfits_toana_range_overlook; event event_ncr_caravan_attack_wendover", "note": "Project records describe NCR patrol, outpost and response activity near the anchors." }
+      ],
+      "geometry": null
+    },
+    {
+      "id": "claim_raider_flats_activity",
+      "legacy_zone_id": "zone_raiders_flats",
+      "scenario_id": "misfits_wendover_2298",
+      "faction_id": "raiders",
+      "faction_label": "Raider bands",
+      "scope": "region",
+      "region_ids": ["region_wendover_misfits"],
+      "assertion_type": "area_of_activity",
+      "canon_scope": "misfits_nuclear_wasteland",
+      "time": { "start_year": 2296, "end_year": 2300 },
+      "basis": "project_authored",
+      "review_status": "provisional",
+      "uncertainty": { "level": "broad", "radius_km": 10, "note": "Mobile bands and ambush activity cannot support a stable ownership edge." },
+      "representation": "influence_points",
+      "anchor_location_ids": ["misfits_great_salt_flats"],
+      "contested_by_claim_ids": ["claim_ncr_wendover_presence", "claim_vault_dwellers_facility"],
+      "evidence": [
+        { "source_id": "project_world_1_7", "supports": "activity", "locator": "location misfits_great_salt_flats; events event_ncr_caravan_attack_wendover and event_vault_breach_wendover", "note": "Project records describe recurring ambushes and raids across the flats without stable government." }
+      ],
+      "geometry": null
+    },
+    {
+      "id": "claim_vault_dwellers_facility",
+      "legacy_zone_id": "zone_vault_dwellers_wendover",
+      "scenario_id": "misfits_wendover_2298",
+      "faction_id": "vault_dwellers",
+      "faction_label": "Vault dwellers",
+      "scope": "region",
+      "region_ids": ["region_wendover_misfits"],
+      "assertion_type": "site_control",
+      "canon_scope": "misfits_nuclear_wasteland",
+      "time": { "start_year": 2296, "end_year": 2300 },
+      "basis": "project_authored",
+      "review_status": "provisional",
+      "uncertainty": { "level": "site", "radius_km": 3, "note": "The claim concerns a concealed facility and access area, not the surrounding flats." },
+      "representation": "influence_points",
+      "anchor_location_ids": ["misfits_vault_facility"],
+      "contested_by_claim_ids": ["claim_ncr_wendover_presence", "claim_raider_flats_activity"],
+      "evidence": [
+        { "source_id": "project_world_1_7", "supports": "site_control", "locator": "location misfits_vault_facility; event event_vault_breach_wendover", "note": "Project records make the facility a vault-dweller origin and describe active contest over its interior." }
+      ],
+      "geometry": null
+    }
+  ]
+}

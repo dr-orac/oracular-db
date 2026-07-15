@@ -19,6 +19,9 @@ ahead of GitHub Pages (`dr-orac.github.io/oracular-db`).
 - **Licensing / credit / donate (T100)** — no `LICENSE` yet; the SHWIWWI-TEC credit + any donate link wait on the user's licence choice. See the licensing discussion in `TASKS.md`.
 - **Font licensing risk** — Monofonto + Gothic 821 Cn are commercial with no web licence (`docs/LEGAL-SWEEP.md`); OFL fallbacks are in-repo — user to swap or licence.
 - **Wiki migration go-ahead** — moving Tribe Lore/Roleplay onto the MediaWiki (steps in `docs/WIKI-INTEGRATION.md`).
+- **Wendover territory scenario** — T112 uses 2298 as the working midpoint of existing 2296–2300 records
+  and retains NCR presence, raider activity, and vault-dweller site control as overlapping provisional point
+  claims. Confirm or revise that campaign state before any claim is reviewed or rendered as an overlay.
 
 ## Sharp edges (don't re-break these)
 - **Connector:** `#masthead-connectors` is one measured SVG overlay. `positionConnector()` owns the stem,
@@ -76,6 +79,9 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
   user's map editor rather than loading `Wendover.yml` in the browser. `renderMap()`/`showMapDetail()`/
   `setMapScope()` remain application integration points; `map-terrain.js` owns renderer/layer/marker state.
   Full renderer and coordinate contracts are in `docs/MAP-ARCHITECTURE.md`.
+- **Territory claims:** `data/territory-claims.json` is the separate, non-rendered inventory. It owns scenario,
+  time, evidence, uncertainty, contestation, and review state; `world.json` must stay free of faction zones.
+  No claim currently has geometry, and art-direction-only fan-map references cannot be used as evidence.
 - **Command palette:** ⌘K/Ctrl-K, fuzzy-ranked, deep-links via hash. Self-contained IIFE at end of app.js.
 - **Roster search:** `filtered()` + `scoreMatch()`/`fuzzySubseq()` — fuzzy + ranked; flat "Results" list
   while searching, section-grouped when browsing.
@@ -102,20 +108,15 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 2. **Continue the product audit alongside map data work.** Take the next bounded pass through settings and
    modal focus/close/restore behavior, then the remaining cross-surface states. Keep UX-001's VoiceOver,
    axe/Lighthouse, and physical iOS Safari checks external rather than claiming them locally.
-3. **Inventory faction claims before drawing territory (T112).** The geographic renderer now provides the
-   technical seam, but it does not make the user-approved 2290 fan map authoritative. Start with a small,
-   versioned claims dataset recording scenario, canon scope, time, evidence, review state, uncertainty,
-   overlap, and contestation. Use the reference only for broad discovery/art direction; do not trace pixels
-   or exact edges. Publish influence points or broad regions when evidence cannot support a polygon.
-4. **Audit the map editor, then prove the Local export (T116).** The ignored 40 MB YAML is source material,
+3. **Audit the map editor, then prove the Local export (T116).** The ignored 40 MB YAML is source material,
    never a browser payload. Once the separate editor repository is available, inspect its parser, renderer,
    licences, coordinate conventions, and export seams before duplicating anything here. Generate original
    cartography plus a compact native-grid manifest; start with a labelled raster baseline and adopt tiles or
    canvas only after measurements justify them. Geographic Region and game-grid Local remain separate
    renderer decisions.
-5. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
+4. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
    Sheet/wiki like the rest of the roster (forks the data model — pick one and note it).
-6. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
+5. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
    full step-by-step (pandoc / VisualEditor paste, hub + two-card page shape) is in `docs/WIKI-INTEGRATION.md`.
    When those pages exist, flip the tribe's Lore/Roleplay tabs from the Google-Doc source to the wiki pages.
 
@@ -140,4 +141,7 @@ T114 accepted lazy self-hosted MapLibre 5.24.0 for US + Region: public-domain Na
 bounded USGS 3DEP relief cache now form an original flat terrain base, accessible HTML clusters/markers own
 interaction, and the original SVG remains available through slow/failing WebGL. The full desktop/phone matrix,
 high contrast, reduced motion, label collision, scope transition, and cold-load budgets passed; Local remains
-separate for T116, and faction territory remains an evidence task under T112.
+separate for T116, and faction territory stayed outside the renderer pending T112.
+T112 then removed five ambiguous faction zones from location truth and migrated them into a guarded claims
+inventory. Two unsupported broad NCR claims are withheld; three overlapping Wendover claims remain
+provisional influence/site points; exact geometry and the art-direction fan map are excluded from evidence.

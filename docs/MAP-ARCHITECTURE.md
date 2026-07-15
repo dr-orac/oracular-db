@@ -103,10 +103,9 @@ or retain exhaustive fan-map transcriptions.
 ## Faction territory overlay
 
 A faction overlay is viable after the geographic renderer proof, but it is a separate optional layer from
-location truth. Point records remain in `world.json`; territory claims will use their own versioned dataset
-and review gate. The first territory work is a claims inventory, not polygon drawing. A scenario derived from
-the approved shape guide must record its reference year and ending or continuity assumptions so it cannot be
-mistaken for an all-period canon layer.
+location truth. Point records remain in `world.json`; `data/territory-claims.json` owns scenario-bound faction
+assertions and their review gate. `world.json` must not regain a `faction_zones` collection. The approved fan
+map is recorded only as `art_direction_only`: the self-check prevents claims from citing it as evidence.
 
 The eventual layer must:
 
@@ -121,6 +120,23 @@ The eventual layer must:
 
 If the claims audit cannot support a meaningful boundary, publish named influence points or broad regions
 instead of fabricating a precise polygon.
+
+T112 completed the first inventory without publishing a layer. Its contract is:
+
+- a scenario owns `reference_year`, time span, canon scope, assumptions, and review status;
+- a claim owns faction identity, map scope/regions, assertion type, its own time/canon scope, evidence basis,
+  review status, uncertainty, representation, anchor locations, contest links, evidence, and geometry;
+- `controlled_location_ids` and decimal `control_strength` are forbidden because points do not prove an edge
+  and a precise-looking score did not have a defined evidence model;
+- contest links are reciprocal and may overlap; no claim wins a region by data structure;
+- `withheld` claims have representation `none`; the current provisional claims use `influence_points`;
+- geometry remains null and top-level `published_geometry` remains false until a separate review passes;
+- an art-direction-only source cannot appear in a claim's evidence array.
+
+All five retired zones are accounted for. The NCR core and Mojave assertions are withheld pending a coherent
+date, ending state, and source-backed extent. NCR presence, raider activity, and vault-dweller site control in
+Wendover remain provisional project records for the 2296–2300 scenario. This is deliberately enough structure
+to audit claims without pretending that the overlay already has defensible borders.
 
 ## Terrain underlay
 
@@ -268,8 +284,9 @@ must be confirmed against the supplied in-game reference or user direction befor
 4. **Terrain and renderer proof** — complete. T114 accepted bounded, lazy, self-hosted MapLibre for a flat
    US + Region physical base with measured loading cost and the existing SVG fallback. Local remains in
    game-space coordinates; speculative post-war geography remains withheld.
-5. **Faction claims proof** — now that the geographic renderer has passed, inventory a small source-backed set and
-   test overlapping, uncertain, independently toggleable territories without changing location records.
+5. **Faction claims proof** — complete at the inventory gate. T112 migrated five legacy records into the
+   separate claims dataset, withheld two, retained three provisional point representations, and published no
+   geometry. Promote and render only after the working scenario and evidence are reviewed.
 6. **Local export proof** — run T116 against the map editor: preserve native coordinates, generate original
    cartography and a compact manifest, prove a labelled raster baseline, then earn tiles or canvas by
    measurement. Confirm landmark names and categories before publishing them.

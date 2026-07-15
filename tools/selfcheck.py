@@ -371,7 +371,7 @@ if os.path.isdir(stub_dir):
 
 # ---------------------------------------------------------------- 9. world/map data integrity
 # The map dataset is edited independently from the rendering code. Validate its internal graph here so a
-# renamed or omitted location cannot silently break routes, faction zones, or event markers.
+# renamed or omitted location cannot silently break routes, territory claims, or event markers.
 world_path = p("data", "world.json")
 if os.path.exists(world_path):
     try:
@@ -382,10 +382,12 @@ if os.path.exists(world_path):
         world = None
 
     if world is not None:
-        collections = ("terrain_types", "regions", "sources", "locations", "connections", "faction_zones", "event_hooks")
+        collections = ("terrain_types", "regions", "sources", "locations", "connections", "event_hooks")
         for key in collections:
             if not isinstance(world.get(key), list):
                 err(f'data/world.json field "{key}" must be an array')
+        if "faction_zones" in world:
+            err("data/world.json must not contain faction_zones; use data/territory-claims.json")
 
         def collect_ids(key):
             rows = world.get(key, []) if isinstance(world.get(key), list) else []
@@ -407,7 +409,6 @@ if os.path.exists(world_path):
         region_ids = collect_ids("regions")
         source_ids = collect_ids("sources")
         location_ids = collect_ids("locations")
-        collect_ids("faction_zones")
         collect_ids("event_hooks")
 
         confidence_values = {"low", "medium", "high"}
@@ -488,17 +489,6 @@ if os.path.exists(world_path):
             for terrain_id in connection.get("terrain_profile", []):
                 if terrain_id not in terrain_ids:
                     err(f'data/world.json connections[{index}] references unknown terrain "{terrain_id}"')
-
-        zones = world.get("faction_zones", []) if isinstance(world.get("faction_zones"), list) else []
-        for zone in zones:
-            if not isinstance(zone, dict):
-                continue
-            zone_id = zone.get("id", "(missing id)")
-            if zone.get("region_id") not in region_ids:
-                err(f'data/world.json faction zone "{zone_id}" references unknown region "{zone.get("region_id")}"')
-            for location_id in zone.get("controlled_location_ids", []):
-                if location_id not in location_ids:
-                    err(f'data/world.json faction zone "{zone_id}" references unknown location "{location_id}"')
 
         events = world.get("event_hooks", []) if isinstance(world.get("event_hooks"), list) else []
         for event in events:
@@ -598,6 +588,216 @@ if os.path.exists(world_path):
             for legacy_id in sorted(set(legacy) - migration_ids):
                 err(f'data/atlas-migration.json omits legacy marker "{legacy_id}"')
             info(f"US atlas migration inventory: {matched}/{len(markers)} markers matched to world records")
+
+        territory_path = p("data", "territory-claims.json")
+        try:
+            with open(territory_path, encoding="utf-8") as f:
+                territory = json.load(f)
+        except (OSError, json.JSONDecodeError) as exc:
+            err(f"data/territory-claims.json cannot be read as JSON: {exc}")
+            territory = None
+
+        if territory is not None:
+            if territory.get("version") != 1:
+                err("data/territory-claims.json version must be 1")
+            if territory.get("data_status") != "claims_inventory":
+                err('data/territory-claims.json data_status must be "claims_inventory"')
+            if territory.get("published_geometry") is not False:
+                err("territory claims inventory must keep published_geometry false until geometry review")
+
+            scenarios = territory.get("scenarios")
+            territory_sources = territory.get("sources")
+            claims = territory.get("claims")
+            if not isinstance(scenarios, list):
+                err('data/territory-claims.json field "scenarios" must be an array')
+                scenarios = []
+            if not isinstance(territory_sources, list):
+                err('data/territory-claims.json field "sources" must be an array')
+                territory_sources = []
+            if not isinstance(claims, list):
+                err('data/territory-claims.json field "claims" must be an array')
+                claims = []
+
+            def territory_ids(rows, label):
+                found = set()
+                for index, row in enumerate(rows):
+                    if not isinstance(row, dict):
+                        err(f"territory {label}[{index}] must be an object")
+                        continue
+                    row_id = row.get("id")
+                    if not isinstance(row_id, str) or not row_id:
+                        err(f"territory {label}[{index}] has no non-empty id")
+                    elif row_id in found:
+                        err(f'territory {label} has duplicate id "{row_id}"')
+                    else:
+                        found.add(row_id)
+                return found
+
+            scenario_ids = territory_ids(scenarios, "scenarios")
+            territory_source_ids = territory_ids(territory_sources, "sources")
+            claim_ids = territory_ids(claims, "claims")
+            scenario_statuses = {"withheld", "provisional", "reviewed"}
+            for scenario in scenarios:
+                if not isinstance(scenario, dict):
+                    continue
+                scenario_id = scenario.get("id", "(missing id)")
+                reference_year = scenario.get("reference_year")
+                if reference_year is not None and not isinstance(reference_year, int):
+                    err(f'territory scenario "{scenario_id}" has invalid reference_year')
+                if scenario.get("review_status") != "withheld" and not isinstance(reference_year, int):
+                    err(f'territory scenario "{scenario_id}" needs a reference_year before review')
+                span = scenario.get("time")
+                if not isinstance(span, dict):
+                    err(f'territory scenario "{scenario_id}" has no time object')
+                else:
+                    start, end = span.get("start_year"), span.get("end_year")
+                    if (start is None) != (end is None) or (start is not None and (not isinstance(start, int) or not isinstance(end, int) or start > end)):
+                        err(f'territory scenario "{scenario_id}" has an invalid time range')
+                    if isinstance(reference_year, int) and isinstance(start, int) and not start <= reference_year <= end:
+                        err(f'territory scenario "{scenario_id}" reference_year is outside its time range')
+                if (not isinstance(scenario.get("canon_scope"), list) or not scenario.get("canon_scope")
+                        or not all(isinstance(item, str) and item for item in scenario.get("canon_scope", []))):
+                    err(f'territory scenario "{scenario_id}" has no canon_scope')
+                if scenario.get("review_status") not in scenario_statuses:
+                    err(f'territory scenario "{scenario_id}" has invalid review_status')
+                if (not isinstance(scenario.get("assumptions"), list) or not scenario.get("assumptions")
+                        or not all(isinstance(item, str) and item for item in scenario.get("assumptions", []))):
+                    err(f'territory scenario "{scenario_id}" must record assumptions')
+
+            territory_source_roles = {}
+            for source in territory_sources:
+                if not isinstance(source, dict):
+                    continue
+                source_id = source.get("id", "(missing id)")
+                role = source.get("role")
+                territory_source_roles[source_id] = role
+                if source.get("kind") not in {"project_record", "official_material", "reference_work", "discovery_reference"}:
+                    err(f'territory source "{source_id}" has invalid kind')
+                if role not in {"claim_evidence", "art_direction_only"}:
+                    err(f'territory source "{source_id}" has invalid role')
+                if source.get("kind") == "project_record":
+                    source_path = source.get("path")
+                    if not isinstance(source_path, str) or not os.path.exists(p(source_path)):
+                        err(f'territory source "{source_id}" has a missing project path')
+                else:
+                    source_url = source.get("url")
+                    if not isinstance(source_url, str) or not source_url.startswith("https://"):
+                        err(f'territory source "{source_id}" must have an https URL')
+
+            claim_bases = {"source_backed", "broad_inference", "project_authored", "unknown"}
+            claim_statuses = {"withheld", "provisional", "reviewed"}
+            representations = {"none", "influence_points", "broad_region", "polygon"}
+            assertion_types = {"territorial_control", "operational_presence", "area_of_activity", "site_control"}
+            uncertainty_levels = {"site", "broad", "unbounded"}
+            evidence_supports = {"control", "presence", "activity", "site_control", "limitation"}
+            legacy_zone_ids = set()
+            contested_links = {}
+            for claim in claims:
+                if not isinstance(claim, dict):
+                    continue
+                claim_id = claim.get("id", "(missing id)")
+                legacy_id = claim.get("legacy_zone_id")
+                if not isinstance(legacy_id, str) or not legacy_id:
+                    err(f'territory claim "{claim_id}" has no legacy_zone_id')
+                elif legacy_id in legacy_zone_ids:
+                    err(f'territory claims duplicate legacy zone "{legacy_id}"')
+                else:
+                    legacy_zone_ids.add(legacy_id)
+                if claim.get("scenario_id") not in scenario_ids:
+                    err(f'territory claim "{claim_id}" references unknown scenario')
+                if not isinstance(claim.get("faction_id"), str) or not claim.get("faction_id"):
+                    err(f'territory claim "{claim_id}" has no faction_id')
+                if not isinstance(claim.get("faction_label"), str) or not claim.get("faction_label"):
+                    err(f'territory claim "{claim_id}" has no faction_label')
+                if claim.get("scope") not in {"us", "region"}:
+                    err(f'territory claim "{claim_id}" has invalid scope')
+                claim_regions = claim.get("region_ids")
+                if not isinstance(claim_regions, list) or not claim_regions:
+                    err(f'territory claim "{claim_id}" has no region_ids')
+                else:
+                    for region_id in claim_regions:
+                        if region_id not in region_ids:
+                            err(f'territory claim "{claim_id}" references unknown region "{region_id}"')
+                if claim.get("assertion_type") not in assertion_types:
+                    err(f'territory claim "{claim_id}" has invalid assertion_type')
+                if not isinstance(claim.get("canon_scope"), str) or not claim.get("canon_scope"):
+                    err(f'territory claim "{claim_id}" has no canon_scope')
+                span = claim.get("time")
+                if not isinstance(span, dict):
+                    err(f'territory claim "{claim_id}" has no time object')
+                else:
+                    start, end = span.get("start_year"), span.get("end_year")
+                    if (start is None) != (end is None) or (start is not None and (not isinstance(start, int) or not isinstance(end, int) or start > end)):
+                        err(f'territory claim "{claim_id}" has an invalid time range')
+                basis = claim.get("basis")
+                status_value = claim.get("review_status")
+                representation = claim.get("representation")
+                if basis not in claim_bases:
+                    err(f'territory claim "{claim_id}" has invalid basis')
+                if status_value not in claim_statuses:
+                    err(f'territory claim "{claim_id}" has invalid review_status')
+                if status_value == "reviewed" and basis == "unknown":
+                    err(f'territory claim "{claim_id}" cannot review an unknown basis')
+                if basis == "unknown" and status_value != "withheld":
+                    err(f'territory claim "{claim_id}" has unknown basis but is not withheld')
+                if representation not in representations:
+                    err(f'territory claim "{claim_id}" has invalid representation')
+                if status_value == "withheld" and representation != "none":
+                    err(f'territory claim "{claim_id}" is withheld but has a visible representation')
+                if representation == "polygon" or "geometry" not in claim or claim.get("geometry") is not None:
+                    err(f'territory claim "{claim_id}" must retain explicit null geometry before the review gate')
+                uncertainty = claim.get("uncertainty")
+                if not isinstance(uncertainty, dict) or uncertainty.get("level") not in uncertainty_levels:
+                    err(f'territory claim "{claim_id}" has invalid uncertainty')
+                elif uncertainty.get("level") == "unbounded" and uncertainty.get("radius_km") is not None:
+                    err(f'territory claim "{claim_id}" must not quantify unbounded uncertainty')
+                elif uncertainty.get("level") != "unbounded" and (not isinstance(uncertainty.get("radius_km"), (int, float)) or uncertainty.get("radius_km") <= 0):
+                    err(f'territory claim "{claim_id}" needs a positive uncertainty radius')
+                anchors = claim.get("anchor_location_ids")
+                if not isinstance(anchors, list) or not anchors:
+                    err(f'territory claim "{claim_id}" has no anchor locations')
+                else:
+                    for location_id in anchors:
+                        if location_id not in location_ids:
+                            err(f'territory claim "{claim_id}" references unknown location "{location_id}"')
+                contested = claim.get("contested_by_claim_ids")
+                if not isinstance(contested, list):
+                    err(f'territory claim "{claim_id}" contested_by_claim_ids must be an array')
+                    contested = []
+                if len(contested) != len(set(contested)):
+                    err(f'territory claim "{claim_id}" duplicates a contest link')
+                if claim_id in contested:
+                    err(f'territory claim "{claim_id}" cannot contest itself')
+                contested_links[claim_id] = set(contested)
+                evidence = claim.get("evidence")
+                if not isinstance(evidence, list) or not evidence:
+                    err(f'territory claim "{claim_id}" has no evidence or limitation record')
+                else:
+                    for index, item in enumerate(evidence):
+                        if not isinstance(item, dict):
+                            err(f'territory claim "{claim_id}" evidence[{index}] must be an object')
+                            continue
+                        evidence_source = item.get("source_id")
+                        if evidence_source not in territory_source_ids:
+                            err(f'territory claim "{claim_id}" references unknown source "{evidence_source}"')
+                        elif territory_source_roles.get(evidence_source) == "art_direction_only":
+                            err(f'territory claim "{claim_id}" cites an art-direction-only source as evidence')
+                        if item.get("supports") not in evidence_supports:
+                            err(f'territory claim "{claim_id}" evidence[{index}] has invalid supports')
+                        for field in ("locator", "note"):
+                            if not isinstance(item.get(field), str) or not item.get(field):
+                                err(f'territory claim "{claim_id}" evidence[{index}] has no {field}')
+
+            if territory.get("legacy_zone_count") != len(claims) or len(legacy_zone_ids) != len(claims):
+                err("territory legacy_zone_count does not match the migrated claim inventory")
+            for claim_id, linked_ids in contested_links.items():
+                for linked_id in linked_ids:
+                    if linked_id not in claim_ids:
+                        err(f'territory claim "{claim_id}" contests unknown claim "{linked_id}"')
+                    elif claim_id not in contested_links.get(linked_id, set()):
+                        err(f'territory contest link "{claim_id}" → "{linked_id}" is not reciprocal')
+            visible_claims = sum(1 for claim in claims if isinstance(claim, dict) and claim.get("representation") != "none")
+            info(f"territory claims inventory: {len(claims)} migrated / {visible_claims} provisional representations / 0 polygons")
 
 # ---------------------------------------------------------------- 11. generated terrain cache
 terrain_manifest_path = p("media", "map-terrain", "manifest.json")
