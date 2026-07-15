@@ -2826,8 +2826,9 @@ function positionDocTocConnector(){
   const toc=$("#doctoc"), svg=toc&&toc.querySelector(".doctoc-connectors");
   if(!toc || !svg) return;
   const links=[...toc.querySelectorAll("a[data-i]")];
+  const focusTocOpen=docFocusOn() && document.body.dataset.focusToc!=="collapsed";
   const canDraw=links.length>=3 && !$("#docview").classList.contains("hidden")
-    && document.body.dataset.focus!=="doc" && matchMedia("(min-width:1180px)").matches
+    && (focusTocOpen || (!docFocusOn() && matchMedia("(min-width:1180px)").matches))
     && toc.clientWidth>0 && toc.clientHeight>0;
   if(!canDraw){ resetMeasuredConnector(svg); return; }
 
@@ -2892,7 +2893,7 @@ function watchDocTocConnector(){
       .forEach(el=>_docTocRO.observe(el));
   }
   _docTocMO=new MutationObserver(scheduleDocTocConnector);
-  _docTocMO.observe(document.body,{attributes:true,attributeFilter:["data-section","data-focus","data-font-head","data-font-body"]});
+  _docTocMO.observe(document.body,{attributes:true,attributeFilter:["data-section","data-focus","data-focus-toc","data-font-head","data-font-body"]});
   positionDocTocConnector();
   scheduleDocTocConnector();
   requestAnimationFrame(()=>requestAnimationFrame(scheduleDocTocConnector));
@@ -3003,23 +3004,72 @@ $("#doctoc").addEventListener("click", e=>{
   scrollDocTarget(docHeads[+a.dataset.i]);                          // scroll to the element, not an id lookup
 });
 
-/* Focus (fullscreen) mode for the reader (T72) — a minimalist "zen" state that hides all app chrome
-   (masthead, section tabs, docbar, the contents rail) so only the document is left, toggled from the
-   button in the top-right. In-app body[data-focus="doc"] (NOT the OS Fullscreen API), so it composites
-   with the CRT frame; not persisted — it's a momentary per-view mode. Exit: the button, Esc, or any
-   navigation (setSection calls exitDocFocus). */
+/* Focus (fullscreen) reader — a borderless in-app state (NOT the OS Fullscreen API). The existing contents
+   outline becomes a collapsible floating panel, so active-section tracking and its connector keep one owner.
+   Pointer movement over the reading lane quiets the floating HUD; moving into the side gutters restores it.
+   Touch and keyboard never inherit that hover-only hiding state. Nothing is persisted. */
 function docFocusOn(){ return document.body.dataset.focus==="doc"; }
+function setDocFocusToc(open){
+  document.body.dataset.focusToc=open ? "open" : "collapsed";
+  const btn=$("#docfocus-toc");
+  if(btn){
+    btn.setAttribute("aria-expanded",open ? "true" : "false");
+    btn.setAttribute("aria-label",open ? "Collapse contents" : "Expand contents");
+    btn.title=open ? "Collapse contents" : "Expand contents";
+  }
+  if(!open) resetDocTocConnector();                                // collapsed geometry disappears in this frame
+  else requestAnimationFrame(()=>requestAnimationFrame(scheduleDocTocConnector));
+}
+function setDocFocusUiQuiet(quiet){
+  if(!docFocusOn()) quiet=false;
+  if(quiet) document.body.dataset.focusUi="quiet";
+  else delete document.body.dataset.focusUi;
+}
 function setDocFocus(on){
   if(on && $("#docview").classList.contains("hidden")) return;     // only meaningful while the reader shows
   document.body.dataset.focus = on ? "doc" : "";
-  const btn=$("#docfs"); if(btn) btn.setAttribute("aria-pressed", on ? "true" : "false");
+  const btn=$("#docfs");
+  if(btn){
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    btn.setAttribute("aria-label", on ? "Exit focus mode" : "Enter focus mode");
+    btn.title=on ? "Exit focus mode (Esc)" : "Focus mode — hide application chrome";
+  }
+  setDocFocusUiQuiet(false);
+  if(on) setDocFocusToc(true);
+  else{
+    delete document.body.dataset.focusToc;
+    const tocBtn=$("#docfocus-toc");
+    if(tocBtn){ tocBtn.setAttribute("aria-expanded","true"); tocBtn.setAttribute("aria-label","Collapse contents"); tocBtn.title="Collapse contents"; }
+  }
   positionDocTocConnector();                                      // clear/restore in the same focus-state change
+  requestAnimationFrame(scheduleDocTocConnector);                 // then measure the focus panel's final box
 }
 function exitDocFocus(){ if(docFocusOn()) setDocFocus(false); }
 $("#docfs").addEventListener("click", ()=> setDocFocus(!docFocusOn()));
+$("#docfocus-toc").addEventListener("click", ()=>{
+  if(docFocusOn()) setDocFocusToc(document.body.dataset.focusToc==="collapsed");
+});
 document.addEventListener("keydown", e=>{                          // Esc leaves focus (only when it's on, so other Esc handlers still work)
   if(e.key==="Escape" && docFocusOn()){ e.preventDefault(); setDocFocus(false); }
 });
+let _docFocusPointerRAF=0, _docFocusPointer={x:0,y:0};
+function updateDocFocusPointer(){
+  _docFocusPointerRAF=0;
+  if(!docFocusOn()) return setDocFocusUiQuiet(false);
+  const reader=$("#docreader"), hit=document.elementFromPoint(_docFocusPointer.x,_docFocusPointer.y);
+  const figure=hit&&hit.closest&&hit.closest(".docfig");
+  if(figure && reader.contains(figure)) return setDocFocusUiQuiet(true);
+  const lane=[...reader.children].find(el=>!el.classList.contains("docfig") && el.getClientRects().length);
+  const rect=(lane||reader).getBoundingClientRect();
+  setDocFocusUiQuiet(_docFocusPointer.x>=rect.left && _docFocusPointer.x<=rect.right);
+}
+$("#docscroll").addEventListener("pointermove", e=>{
+  if(e.pointerType==="touch") return setDocFocusUiQuiet(false);
+  _docFocusPointer={x:e.clientX,y:e.clientY};
+  if(!_docFocusPointerRAF) _docFocusPointerRAF=requestAnimationFrame(updateDocFocusPointer);
+});
+$("#docscroll").addEventListener("pointerleave", ()=>setDocFocusUiQuiet(false));
+$("#docview").addEventListener("focusin", ()=>setDocFocusUiQuiet(false));
 /* ---- doc cache (memory + IndexedDB) + lazy image hydration ----
    Google's export inlines every image as base64 — measured: ~99% of the payload is
    images, the actual text is under 100KB. Two-part strategy:

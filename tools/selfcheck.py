@@ -392,7 +392,29 @@ command_css = css[command_css_start:command_css_end] if command_css_start >= 0 a
 if 'linear-gradient' in command_css or 'border-bottom:1px solid var(--fg-dim)' not in command_css:
     err("the bottom command rule must be solid rather than edge-faded")
 
-# ---------------------------------------------------------------- 8j. documentation links
+# ---------------------------------------------------------------- 8j. fullscreen reader contract
+# Focus is a presentation state over the one document model: the existing rail floats, a paired control
+# collapses it, and pointer quieting never creates a second TOC or persists user state.
+if not re.search(r'class="docfocus-tools".*?id="docfocus-toc".*?id="docfs"', html, flags=re.S):
+    err("fullscreen contents and exit controls must remain one symmetric control cluster")
+if html.count('id="doctoc"') != 1:
+    err("fullscreen must reuse the one document contents outline rather than clone it")
+if 'body[data-focus="doc"]::before, body[data-focus="doc"]::after{ display:none; }' not in css \
+        or 'body[data-focus="doc"] .app{ border:0 !important; box-shadow:none !important; }' not in css:
+    err("fullscreen must remove both exterior bezel layers and the app/frame edge")
+if 'body[data-focus="doc"] .statusbar{ display:none; }' not in css \
+        or 'body[data-focus="doc"] main{ padding:0 !important; }' not in css:
+    err("fullscreen must remove status chrome and frame-derived main gutters")
+if '#000 calc(100% - 68px), transparent 100%' not in css or 'padding-bottom:clamp(126px, 16vh, 190px)' not in css:
+    err("fullscreen must retain its lower content fade plus enough trailing reading space")
+if 'function setDocFocusToc(open)' not in js or 'data-focus-toc' not in css \
+        or 'focusTocOpen=docFocusOn()' not in js:
+    err("fullscreen outline collapse and connector visibility must share one explicit state")
+if 'data-focus-ui="quiet"' not in css or 'function updateDocFocusPointer()' not in js \
+        or 'e.pointerType==="touch"' not in js or '$("#docview").addEventListener("focusin"' not in js:
+    err("fullscreen pointer quieting must preserve explicit touch and keyboard recovery tiers")
+
+# ---------------------------------------------------------------- 8k. documentation links
 # Documentation is part of the handoff contract. Validate repository-local Markdown links so a rename or
 # move cannot silently strand the next contributor. External URLs and same-page anchors are out of scope.
 DOC_REQUIRED = [

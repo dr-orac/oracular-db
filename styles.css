@@ -921,30 +921,70 @@
   /* ---------- document reader (Google Doc re-rendered in-theme) ---------- */
   .docview{ position:relative; display:flex; flex-direction:column; height:100%; min-height:0; padding:0; gap:0; }
 
-  /* ---- Focus (fullscreen) mode (T72) ---- a minimalist "zen" reader: the toggle sits subtly in the
-     top-right of the reading pane; clicking it (or Esc) hides ALL app chrome so only the document
-     remains. In-app state (body[data-focus="doc"]), NOT the OS Fullscreen API, so it composites with
-     the CRT frame. The button lives inside #docview, so it only exists in the doc/wiki reader. */
-  .docfs{ position:absolute; top:14px; right:16px; z-index:20; width:46px; height:46px; display:grid; place-items:center;
+  /* ---- Focus (fullscreen) reader ---- The normal view exposes one clear enter button. Focus mode
+     turns this into a symmetric two-control HUD: contents collapse/expand plus exit. The existing live
+     outline becomes the floating panel below it; no second TOC or active-section state is introduced. */
+  .docfocus-tools{ position:absolute; top:14px; right:16px; z-index:20; display:flex; align-items:center; gap:8px;
+    transition:opacity .22s ease, transform .22s ease; }
+  .docfs, .docfocus-toc{ width:46px; height:46px; display:grid; place-items:center; padding:0;
     background:var(--bg-panel-2); border:1px solid var(--fg-dim); color:var(--fg);
     cursor:pointer; opacity:.82; box-shadow:0 0 14px -6px rgba(var(--fg-rgb),.6);
     transition:opacity .16s, color .16s, border-color .16s, background .16s, transform .12s, box-shadow .16s; }
-  .docfs:hover, .docfs:focus-visible{ opacity:1; color:var(--fg-bright); border-color:var(--fg);
-    background:var(--bg-panel-2); transform:translateY(-1px); box-shadow:0 0 18px -3px rgba(var(--fg-rgb),.7); outline:none; }
+  .docfs:hover, .docfs:focus-visible, .docfocus-toc:hover, .docfocus-toc:focus-visible{
+    opacity:1; color:var(--fg-bright); border-color:var(--fg); background:var(--bg-panel-2);
+    transform:translateY(-1px); box-shadow:0 0 18px -3px rgba(var(--fg-rgb),.7); outline:none; }
   .docfs-ico{ display:inline-flex; filter:drop-shadow(0 0 5px rgba(var(--fg-rgb),.45)); } .docfs-ico svg{ width:23px; height:23px; display:block; }
+  .docfocus-toc{ display:none; }
+  .docfocus-ico{ display:inline-flex; filter:drop-shadow(0 0 5px rgba(var(--fg-rgb),.45)); }
+  .docfocus-ico svg{ width:23px; height:23px; display:block; }
+  .docfocus-expand{ display:none; }
   .docfs-exit{ display:none; }
   body[data-focus="doc"] .docfs-enter{ display:none; }
   body[data-focus="doc"] .docfs-exit{ display:inline-flex; }
-  body[data-focus="doc"] .docfs{ opacity:.9; }   /* clearly present in focus so the way out is obvious */
-  /* hide every chrome surface — the masthead and the complete document rail (contents + find dock) —
-     leaving only the document + the focus toggle. */
+  body[data-focus="doc"] .docfocus-toc{ display:grid; }
+  body[data-focus="doc"][data-focus-toc="collapsed"] .docfocus-collapse{ display:none; }
+  body[data-focus="doc"][data-focus-toc="collapsed"] .docfocus-expand{ display:inline-flex; }
+  body[data-focus="doc"] .docfs, body[data-focus="doc"] .docfocus-toc{ opacity:.9; }
+
+  /* Fullscreen means borderless: remove Screen glass/bezel, the optional Chassis, app edge, status strip,
+     and main gutters regardless of the saved frame settings. Those preferences return untouched on exit. */
+  body[data-focus="doc"]{ border-radius:0; }
+  body[data-focus="doc"]::before, body[data-focus="doc"]::after{ display:none; }
+  body[data-focus="doc"] .app{ border:0 !important; box-shadow:none !important; }
+  body[data-focus="doc"] .app::before, body[data-focus="doc"] .app::after{ display:none !important; }
   body[data-focus="doc"] .app > header,
-  body[data-focus="doc"] .commandbar{ display:none; }
-  body[data-focus="doc"] .docrail{ display:none; }
-  /* GENEROUS top breathing room: with the masthead gone, the document would otherwise jam against the top
-     bezel. Give it a big, viewport-relative top inset so the reader feels like a calm full page. The focus
-     toggle stays pinned near the top-right (absolute) so it's unaffected. */
-  body[data-focus="doc"] #docview{ padding-top:clamp(52px, 8.5vh, 104px); }
+  body[data-focus="doc"] .commandbar,
+  body[data-focus="doc"] .statusbar{ display:none; }
+  body[data-focus="doc"] main{ padding:0 !important; }
+  body[data-focus="doc"] #docview{ height:100vh; padding:0; }
+  body[data-focus="doc"] .docbody{ height:100%; }
+  /* The scroll canvas owns the generous breathing space. Its mask softly dissolves content at both screen
+     edges; extra bottom padding lets the final paragraph move fully above the lower fade before reading. */
+  body[data-focus="doc"] .docscroll{
+    padding-top:clamp(78px, 11vh, 126px); padding-bottom:clamp(126px, 16vh, 190px);
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 42px, #000 calc(100% - 68px), transparent 100%);
+    mask-image:linear-gradient(to bottom, transparent 0, #000 42px, #000 calc(100% - 68px), transparent 100%);
+  }
+  /* In focus the same outline rail floats beneath the paired controls. Find stays a normal-mode dock; the
+     panel itself is bounded, independently scrollable, and available at every viewport width. */
+  body[data-focus="doc"] .docrail{
+    display:flex; position:absolute; z-index:19; top:68px; right:16px; width:min(354px, calc(100% - 32px));
+    height:min(62vh, 540px); min-height:0; border:1px solid var(--fg-dim); background:var(--bg);
+    background:color-mix(in srgb, var(--bg) 94%, transparent);
+    box-shadow:inset 0 0 0 2px var(--bg), inset 0 0 0 3px rgba(var(--fg-rgb),.22),
+      0 0 26px -12px rgba(var(--fg-rgb),.65); opacity:.96; overflow:hidden;
+    transition:opacity .22s ease, transform .22s ease, visibility 0s linear; }
+  body[data-focus="doc"] .docrail .doctoc{ display:block; flex:1 1 auto; min-height:0; padding-right:14px; }
+  body[data-focus="doc"] .docrail .docbar{ display:none; }
+  body[data-focus="doc"][data-focus-toc="collapsed"] .docrail{
+    opacity:0; transform:translateX(12px); visibility:hidden; pointer-events:none;
+    transition:opacity .18s ease, transform .18s ease, visibility 0s linear .18s; }
+  /* Pointer calm: hovering the reading lane clears every floating reader affordance. Moving into either
+     side gutter restores them. Keyboard focus and touch never inherit this pointer-only quiet state. */
+  body[data-focus="doc"][data-focus-ui="quiet"] .docfocus-tools,
+  body[data-focus="doc"][data-focus-ui="quiet"] .docrail,
+  body[data-focus="doc"][data-focus-ui="quiet"] .doctop{
+    opacity:0; transform:translateX(10px); pointer-events:none; }
   /* CRT power-on: the picture snaps open from a bright horizontal scan-line, blooms, then settles — the
      classic tube warm-up. Gated on the app's Reduce-Motion toggle (matches the rest of the CRT motion,
      which is on by default and only the toggle disables it — not the system pref). */

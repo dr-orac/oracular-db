@@ -78,7 +78,10 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
   contents-rail coordinators remain authoritative. `clearDocSidebar()` invalidates replacement loads before
   they can expose the old page. `.docrail` owns the outline plus its shallow find dock, so search costs no
   reader height; current-heading/source metadata lives in `.sb-docmeta`. Never move find back into the global
-  `.commandbar`, or measure the sticky header's changing offset as connector geometry.
+  `.commandbar`, or measure the sticky header's changing offset as connector geometry. In focus mode the same
+  `.docrail` becomes a collapsible floating outline while `.docbar` stays hidden; `data-focus-toc` owns only
+  that presentation state. `data-focus-ui="quiet"` is a transient fine-pointer state derived from the live
+  reading-lane bounds—never persist it or fork the TOC/active-section model.
 - **Map:** 3 scales (US atlas / Wendover Region / Local) sharing `#map[/<scope>]` with `_mapScope`. US pins
   progressively enhance with the lazy self-hosted `map-terrain.js` adapter and MapLibre 5.24.0. It reads
   reviewed/provisional location state from `data/world.json` and the legacy migration inventory, while the
@@ -114,9 +117,10 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
    - promote defensible direct identities, then change `data_status` only when every published marker passes;
    - migrate one game-sized set at a time behind the existing `renderMap()`/`showMapDetail()` UI.
 2. **Continue the product audit alongside map data work.** UX-007 closed the settings, palette, and nested
-   modal focus/close/restore defects. Take the next bounded pass through settings persistence/reset and the
-   Paperwork form/copy lifecycle, then the remaining cross-surface states. Keep UX-001's VoiceOver,
-   axe/Lighthouse, and physical iOS Safari checks external rather than claiming them locally.
+   modal focus/close/restore defects, and UX-010/T121 closed the fullscreen reader pass. Take the next bounded
+   pass through settings persistence/reset and then the remaining non-Paperwork cross-surface states;
+   Paperwork expansion and form/copy work are explicitly parked. Keep UX-001's VoiceOver, axe/Lighthouse,
+   and physical iOS Safari checks external rather than claiming them locally.
 3. **Evaluate one further connector adopter only if hierarchy benefits.** T118 proved the visual grammar in
    the shared Google-Doc/MediaWiki contents rail. The next plausible candidate is roster section → active
    character, but keep the existing list interaction authoritative and reject the extension if the extra
@@ -174,3 +178,7 @@ contrast tiers remain explicit. The treatment is CSS-only and never becomes anot
 T120 then removed the empty right side of the document command row. Find is now a flush 39px double-keyline
 dock inside `.docrail`; the desktop reader gained 78px and mobile gained about 67px. Current heading/source
 moved to the status bar, while the remaining global roster toolbar uses a solid hairline-to-hairline rule.
+T121 then made focus mode a genuinely borderless canvas in both frame styles. The existing live contents rail
+floats at the upper right beneath paired collapse/exit controls, preserves its single connector/navigation
+state, and collapses atomically. A two-ended content mask, recoverable pointer-quiet HUD, touch/keyboard tiers,
+and bounded desktop/phone layouts complete the fullscreen reader without adding another scroll owner.
