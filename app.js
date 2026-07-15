@@ -2407,6 +2407,7 @@ function renderHome(){
 function renderNav(){
   const nav=$("#topnav"); if(!nav) return;
   const tabs=factionSections();
+  resetConnector();                    // never show the previous faction's arrows over replacement tabs
   nav.innerHTML = tabs.map(t=>
     `<button class="navtab${t.id===currentSection?' active':''}" role="tab" aria-selected="${t.id===currentSection}" data-section="${escAttr(t.id)}"><span class="navico">${NAV_ICONS[t.id]||NAV_ICONS._default}</span><span class="navlabel">${esc(t.label)}</span></button>`).join("");
   nav.classList.remove("hidden");
@@ -2416,6 +2417,15 @@ function renderNav(){
 /* One measured SVG owns the full faction → section flow chart. Mixing a CSS-derived stem with a
    separately measured bus caused recurring gaps whenever the title row changed height. Every point below
    is expressed in the same masthead coordinate system, directly from the current rendered rectangles. */
+function resetConnector(){
+  const svg=$("#masthead-connectors"); if(!svg) return;
+  svg.classList.remove("is-visible");
+  svg.dataset.state="hidden";
+  delete svg.dataset.activeSection;
+  svg.querySelector(".masthead-connector-dim")?.setAttribute("d","");
+  svg.querySelector(".masthead-connector-lit")?.setAttribute("d","");
+  const arrows=svg.querySelector(".masthead-connector-arrows"); if(arrows) arrows.innerHTML="";
+}
 function positionConnector(){
   const mast=document.querySelector(".masthead"), nav=$("#topnav"), svg=$("#masthead-connectors");
   if(!mast || !nav || !svg) return;
@@ -2423,14 +2433,14 @@ function positionConnector(){
   const fbox=document.querySelector(".faction-box");
   const canDraw=fbox && tabs.length>=2 && matchMedia("(min-width:860px)").matches
     && document.body.dataset.frame!=="border" && document.body.dataset.section!=="home";
-  if(!canDraw){ svg.classList.remove("is-visible"); return; }
+  if(!canDraw){ resetConnector(); return; }
 
   const mr=mast.getBoundingClientRect(), fr=fbox.getBoundingClientRect();
   const rects=tabs.map(t=>t.getBoundingClientRect());
   // A wrapped tab row has no unambiguous single bus. Hide it instead of drawing across controls.
   if(!mr.width || !mr.height || !fr.width || rects.some(r=>!r.width)
       || rects.some(r=>Math.abs(r.top-rects[0].top)>2)){
-    svg.classList.remove("is-visible"); return;
+    resetConnector(); return;
   }
   const snap=n=>Math.round(n*2)/2;
   const fx=snap(fr.left+fr.width/2-mr.left), fy=snap(fr.bottom-mr.top);
@@ -2438,28 +2448,37 @@ function positionConnector(){
   const xs=rects.map(r=>snap(r.left+r.width/2-mr.left));
   const busY=snap(tabTop-18), arrowTall=7, arrowHalf=5.5, arrowBase=tabTop-arrowTall;
   // If responsive layout removes the clear channel, suppress the diagram until the next observation.
-  if(busY<=fy+2){ svg.classList.remove("is-visible"); return; }
+  if(busY<=fy+2 || arrowBase<=busY+2){ resetConnector(); return; }
   const busL=snap(Math.min(fx,...xs)-1), busR=snap(Math.max(fx,...xs)+1);
   const dim=svg.querySelector(".masthead-connector-dim");
   const lit=svg.querySelector(".masthead-connector-lit");
   const arrows=svg.querySelector(".masthead-connector-arrows");
-  const activeIndex=tabs.findIndex(t=>t.classList.contains("active"));
+  // Illumination is stricter than appearance: exactly one tab must agree in CSS, ARIA, and route state.
+  // An umbrella section therefore keeps the complete tree visible but entirely dim.
+  const selected=tabs.filter(t=>t.classList.contains("active")
+    && t.getAttribute("aria-selected")==="true"
+    && t.dataset.section===document.body.dataset.section);
+  const activeIndex=selected.length===1 ? tabs.indexOf(selected[0]) : -1;
 
   svg.setAttribute("viewBox",`0 0 ${snap(mr.width)} ${snap(mr.height)}`);
-  dim.setAttribute("d",`M ${busL} ${busY} H ${busR} `+
+  dim.setAttribute("d",`M ${fx} ${fy} V ${busY} M ${busL} ${busY} H ${busR} `+
     xs.map(x=>`M ${x} ${busY} V ${arrowBase+1}`).join(" "));
-  let litD=`M ${fx} ${fy} V ${busY}`;
+  let litD="";
   if(activeIndex>=0){ const ax=xs[activeIndex];
-    litD+=` M ${fx} ${busY} H ${ax} M ${ax} ${busY} V ${arrowBase+1}`; }
+    litD=`M ${fx} ${fy} V ${busY} M ${fx} ${busY} H ${ax} M ${ax} ${busY} V ${arrowBase+1}`; }
   lit.setAttribute("d",litD);
   arrows.innerHTML=xs.map((x,i)=>
     `<polygon class="masthead-connector-arrow${i===activeIndex?' is-active':''}" points="${x-arrowHalf},${arrowBase} ${x+arrowHalf},${arrowBase} ${x},${tabTop}" />`
   ).join("");
+  svg.dataset.state=activeIndex>=0 ? "active" : "idle";
+  if(activeIndex>=0) svg.dataset.activeSection=tabs[activeIndex].dataset.section;
+  else delete svg.dataset.activeSection;
   svg.classList.add("is-visible");
 }
 /* Observe every geometry owner. renderBrand() replaces the faction control, so renderNav() calls this again
-   and the observer is rebound to the new nodes. Animation frames and fonts.ready cover initial settlement. */
-let _connRO=null, _connRAF=0, _connResizeT=null;
+   and the observers are rebound to the new nodes. State mutation, font settlement, and both leading/trailing
+   resize measurements prevent a stale-but-valid diagram from surviving a rapid UI change. */
+let _connRO=null, _connMO=null, _connRAF=0, _connResizeT=null;
 function scheduleConnector(){
   if(_connRAF) cancelAnimationFrame(_connRAF);
   _connRAF=requestAnimationFrame(()=>{ _connRAF=0; positionConnector(); });
@@ -2468,15 +2487,24 @@ function watchConnector(){
   const mast=document.querySelector(".masthead"), nav=$("#topnav"), fbox=document.querySelector(".faction-box");
   if(!mast || !nav) return;
   if(_connRO) _connRO.disconnect();
+  if(_connMO) _connMO.disconnect();
   if(window.ResizeObserver){
     _connRO=new ResizeObserver(scheduleConnector);
     [mast,nav,fbox,...nav.querySelectorAll(".navtab")].filter(Boolean).forEach(el=>_connRO.observe(el));
   }
+  _connMO=new MutationObserver(scheduleConnector);
+  _connMO.observe(nav,{subtree:true,attributes:true,attributeFilter:["class","aria-selected"]});
+  _connMO.observe(document.body,{attributes:true,attributeFilter:["data-section","data-frame","data-font-head","data-font-body"]});
+  positionConnector();
   scheduleConnector();
   requestAnimationFrame(()=>requestAnimationFrame(scheduleConnector));
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleConnector).catch(()=>{});
 }
-window.addEventListener("resize", ()=>{ clearTimeout(_connResizeT); _connResizeT=setTimeout(scheduleConnector, 120); });
+if(document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone",scheduleConnector);
+window.addEventListener("resize", ()=>{
+  scheduleConnector();
+  clearTimeout(_connResizeT); _connResizeT=setTimeout(scheduleConnector, 120);
+});
 /* ROW 1 (umbrella): fill every registered global box and mark the active one. (The FACTION box between
    the nav and settings is built by renderBrand(); the cog sits at the far right.) */
 function renderPrimaryNav(){

@@ -24,10 +24,10 @@ ahead of GitHub Pages (`dr-orac.github.io/oracular-db`).
   claims. Confirm or revise that campaign state before any claim is reviewed or rendered as an overlay.
 
 ## Sharp edges (don't re-break these)
-- **Connector:** `#masthead-connectors` is one measured SVG overlay. `positionConnector()` owns the stem,
-  bus, risers, and arrowheads in one masthead coordinate system; `watchConnector()` observes every geometry
-  owner. Do not restore separately positioned pseudo-elements. Wrapped or collapsed layouts intentionally
-  hide the diagram.
+- **Connector:** `#masthead-connectors` is one measured SVG overlay. `resetConnector()` invalidates before
+  faction tabs are replaced; `positionConnector()` owns the dim stem/tree and draws a lit route only for one
+  matching CSS + ARIA + route selection; `watchConnector()` observes state and geometry. Do not restore
+  separately positioned pseudo-elements or an always-lit parent stem. Wrapped/collapsed layouts hide it.
 - **Preview width quirk:** the dev preview evaluates media queries at a wider CSS width than `window.innerWidth`
   reports (downscaling) — width-gated CSS can't be tested by resizing; verify at the target width by measurement.
 - **CRT motion** is gated on the app's **Reduce-Motion toggle** (`body[data-reducemotion]`), NOT the system pref.
@@ -69,8 +69,9 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
   surface, add its metadata once, then add its explicit renderer/visibility branch, `NAV_ICONS` entry if
   needed, `<section>` markup, and `#primary-nav` button. Do not add another section-validity or label list.
 - **Masthead:** 3-zone grid ≥1024px — nav left, faction centred, settings right; row-2 section tabs centre
-  under the faction. `positionConnector()` draws one SVG from the actual faction/tab rectangles;
-  `watchConnector()` rebinds observation after the faction control is replaced.
+  under the faction. `resetConnector()` clears old geometry before replacement; `positionConnector()` draws
+  one SVG from the actual faction/tab rectangles and exact selection state; `watchConnector()` rebinds state
+  and geometry observation. T118 may extract a renderer only while implementing a proven second use.
 - **Map:** 3 scales (US atlas / Wendover Region / Local) sharing `#map[/<scope>]` with `_mapScope`. US pins
   progressively enhance with the lazy self-hosted `map-terrain.js` adapter and MapLibre 5.24.0. It reads
   reviewed/provisional location state from `data/world.json` and the legacy migration inventory, while the
@@ -109,15 +110,19 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
    modal focus/close/restore defects. Take the next bounded pass through settings persistence/reset and the
    Paperwork form/copy lifecycle, then the remaining cross-surface states. Keep UX-001's VoiceOver,
    axe/Lighthouse, and physical iOS Safari checks external rather than claiming them locally.
-3. **Audit the map editor, then prove the Local export (T116).** The ignored 40 MB YAML is source material,
+3. **Prove connector reuse in the shared contents rail (T118).** T117 made the masthead tree reliable; do not
+   copy its selectors. Extract a small owner/targets/selection renderer while implementing the second use,
+   first across the shared Google-Doc/MediaWiki `#doctoc`. Preserve native links, scroll ownership, and active
+   tracking; only then evaluate roster groups or other genuinely hierarchical flows.
+4. **Audit the map editor, then prove the Local export (T116).** The ignored 40 MB YAML is source material,
    never a browser payload. Once the separate editor repository is available, inspect its parser, renderer,
    licences, coordinate conventions, and export seams before duplicating anything here. Generate original
    cartography plus a compact native-grid manifest; start with a labelled raster baseline and adopt tiles or
    canvas only after measurements justify them. Geographic Region and game-grid Local remain separate
    renderer decisions.
-4. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
+5. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
    Sheet/wiki like the rest of the roster (forks the data model — pick one and note it).
-5. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
+6. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
    full step-by-step (pandoc / VisualEditor paste, hub + two-card page shape) is in `docs/WIKI-INTEGRATION.md`.
    When those pages exist, flip the tribe's Lore/Roleplay tabs from the Google-Doc source to the wiki pages.
 
@@ -149,3 +154,6 @@ provisional influence/site points; exact geometry and the art-direction fan map 
 UX-007 then made every closed overlay inert, gave settings and the command palette bounded focus restoration,
 and replaced the shared dossier-modal target with a chronological stack that unwinds nested tools one layer
 at a time on desktop and phone.
+T117 then removed the connector's stale faction-replacement frame and ghost parent glow. The entire tree is
+dim without a selected faction section; exactly one CSS/ARIA/route-consistent branch lights when selected;
+state and geometry are observed, invalidated, and selfcheck-guarded. T118 owns careful contents-rail reuse.

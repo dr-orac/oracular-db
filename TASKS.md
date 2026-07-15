@@ -323,6 +323,41 @@ labels and controls remain accessible outside the raster; pan/zoom works with po
 delay, tile requests, memory, and failure fallback determine whether the static proof graduates to tiles or
 canvas. Phase 0 may start as soon as the map-editor repository is available; it does not block T113 or T114.
 
+### T117 · Eliminate stale and ghost masthead connector states — P1 [visual state + resilience] — IMPLEMENTED 2026-07-15
+
+T115 made settled geometry accurate, but replacement tabs could briefly inherit the previous faction's SVG
+until the next animation frame. The lit path also always included the parent stem, so umbrella sections glowed
+despite having no selected faction section. Invalidate the connector before replacing tabs; keep the complete
+tree, including its parent stem, in the dim path; and draw illumination only when exactly one tab agrees in
+CSS active state, `aria-selected`, and the current route. Observe state mutations as well as geometry and use
+leading plus trailing resize measurements.
+
+Acceptance: an umbrella surface has a visible but wholly dim tree; a faction section has exactly one lit route
+and arrow; changing between two- and four-tab factions never exposes old arrows, even immediately after the
+click; Screen/Chassis and 860/859px transitions clear and restore geometry synchronously; rapid section changes
+settle on the final semantic selection; arrow tips remain within 0.5px of their tab centres; selfcheck guards
+the invalidation and illumination contract.
+
+### T118 · Reuse measured connectors for meaningful hierarchy — P2 [TOC + visual system] — ROADMAP
+
+Treat the connector as a small visual grammar, not a masthead-specific decoration to copy. Begin only from
+T117's reliable state contract. Extract a renderer only when the second real use is implemented; it should
+accept an owner, measured source/targets, and one explicit semantic selection, then own invalidation,
+observation, collision suppression, dim/active paths, and theme tokens without knowing application routes.
+
+Use the shared document contents rail as the first proof: Google Docs and MediaWiki both feed `#doctoc`, so a
+single implementation can connect heading levels and illuminate the current reading branch across both. Keep
+the native links and active tracking authoritative; the SVG stays `aria-hidden`, non-interactive, and must not
+move either scroll container. Hide or simplify it when the rail is collapsed, entries wrap incompatibly, or
+the available channel is ambiguous. Test deep H2/H3/H4 documents, rapid scrolling, TOC clicks, direct anchors,
+find results, focus mode, late image hydration, and reduced motion.
+
+After that proof, evaluate—not assume—two extensions: roster section groups → active character, and other
+master/detail or step flows where the relationship clarifies navigation. Do not add connector lines to flat
+lists, cards, or controls merely for decoration. Acceptance for each adopter: one shared renderer/state
+contract, exact active semantics, no stale frame after rerender, no hit-area or scroll change, no overlap or
+horizontal overflow at 1440/1024/390/320px, and a clear visual benefit retained in high contrast.
+
 ## 🆕 Queued 2026-07-13 (batch 6 — user, roadmapped, NOT built)
 
 Build order (recommended): **T89 legality sweep FIRST** (gates T86/T88) → T90 + T91 + T87 (quick wins) →

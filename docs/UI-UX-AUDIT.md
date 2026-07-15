@@ -417,6 +417,31 @@ path returned first to the dossier sigil control and then to the exact roster ca
 closed over the dossier. Settings and palette paths passed at desktop size, and settings focus wrapping plus
 the 358×784 dossier bounds passed at 390×844. The browser console reported no errors.
 
+### UX-008 · P1 · visual state and resilience · masthead connector
+
+**Observation:** settled connector geometry is accurate, but `renderNav()` replaces faction tabs before the
+old SVG is remeasured on the next animation frame. That exposes a short stale-arrow state when switching
+between factions with different tab counts. The lit path also always draws the parent stem, so Map, Wiki, and
+Paperwork show a glow even though none of the faction-section tabs is selected.
+
+**User/maintenance impact:** the flow chart can point at an old or nonexistent target during ordinary
+navigation, and illumination no longer communicates selection truthfully. Adding the same pattern elsewhere
+would multiply a state defect that geometry tests alone cannot detect.
+
+**Recommended direction:** synchronously invalidate before tab replacement; include the parent stem in the
+dim tree; require exactly one matching CSS + ARIA + route selection before drawing any lit path. Observe
+semantic state changes as well as geometry and expose active/idle/hidden state for regression checks.
+
+**Acceptance check:** two- and four-target trees replace without a stale frame; umbrella sections are fully
+dim; a faction section has exactly one active path and arrow; rapid changes retain the final selection;
+Screen/Chassis and 860/859px transitions clear/restore immediately; tip residual remains under 0.5px.
+
+**Status:** implemented 2026-07-15 as T117. Immediate two→four-tab replacement produced four current arrows
+and no lit path on Map. Active and idle matrices passed at 1751/1440/1280/1024/900/860px; 859px cleared all
+geometry. Active state contained exactly one lit arrow, idle state none, rapid Relations→Roleplay→Lore changes
+settled on Lore immediately and after observation, and Screen↔Chassis cleared/restored synchronously. Maximum
+measured arrow-tip residual was 0.31px. T118 owns any reuse beyond the masthead.
+
 ## Audit runs
 
 Add one row per representative pass. Link finding IDs in Notes rather than duplicating their contents.
@@ -440,3 +465,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | A/B/C | 2026-07-14 | 1440×900, 1366×768, 1280×800, 1024×768, 390×844, 375×667, 320×700; Screen/Chassis; default/reduced motion | Home discovery; US, Region, Local map panels | Pass | T113: three registry-derived equal Home cards route correctly; desktop panels remain bounded with zero overflow/status overlap; phone panels use reachable stacked flow with zero horizontal overflow; visible focus order is coherent |
 | A/B/C/E/F | 2026-07-15 | 1440×900, 1366×768, 1280×800, 1024×768, 390×844, 375×667, 320×700; default/high contrast/reduced motion; slow/missing renderer | US and Region terrain, clusters, location details, SVG handoff, Region transition | Pass | T114: lazy self-hosted MapLibre passed containment and keyboard paths; clusters progressively exposed Hoover; Region labels did not collide; slow load retained the focusable SVG and failure restored it; cold local first open 1.618s/13 requests, ~401 KB estimated compressed production payload |
 | A/B/C | 2026-07-15 | desktop + 390×844, pointer + keyboard | Settings, command palette, dossier and nested icon modal | Pass | UX-007 fixed: closed layers are inert; Tab wraps; Escape unwinds one layer; focus restores icon trigger → exact card; palette/modal collision blocked; phone drawer/modal bounded; zero console errors |
+| A/C | 2026-07-15 | 1751/1440/1280/1024/900/860/859px; two/four tabs; active/idle; rapid section/faction/frame changes | Masthead connector geometry and illumination | Pass | UX-008/T117: no stale replacement frame; idle wholly dim; exactly one active route; Chassis and 859px clear geometry; maximum arrow-tip residual 0.31px |

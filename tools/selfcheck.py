@@ -11,6 +11,7 @@ that creep in as the project evolves:
   • app.js looks truncated or has unbalanced braces/brackets/parens/backticks
   • index.html stops loading styles.css or app.js
   • a closed dialog loses its inert / hidden initial state
+  • the masthead connector loses its idle/active invalidation contract
 
 Run it before every deploy or commit:   python3 tools/selfcheck.py
 Exit code 0 = clean, 1 = errors found.  Warnings never fail the build.
@@ -314,7 +315,23 @@ if not re.search(r'cmdk hidden[^\n]+aria-hidden["\'],["\']true', js):
 if not re.search(r'\bconst\s+modalLayer\s*=.*?restoreTargets\s*=\s*new WeakMap', js, flags=re.S):
     err('nested dossier overlays must retain the chronological modalLayer focus stack')
 
-# ---------------------------------------------------------------- 8f. documentation links
+# ---------------------------------------------------------------- 8f. masthead connector state contract
+# Replacement tabs must never inherit the previous faction's arrows. The parent stem belongs to the dim
+# tree; the lit path exists only for one exact CSS + ARIA + route selection.
+render_nav_start = js.find("function renderNav()")
+connector_start = js.find("function positionConnector()", render_nav_start)
+render_nav_block = js[render_nav_start:connector_start] if render_nav_start >= 0 and connector_start >= 0 else ""
+if not render_nav_block or render_nav_block.find("resetConnector();") > render_nav_block.find("nav.innerHTML"):
+    err("renderNav() must invalidate connector geometry before replacing faction tabs")
+if 'dim.setAttribute("d",`M ${fx} ${fy} V ${busY}' not in js:
+    err("the connector's parent stem must remain part of the dim tree")
+if 'let litD=""' not in js or 't.getAttribute("aria-selected")==="true"' not in js \
+        or 't.dataset.section===document.body.dataset.section' not in js:
+    err("connector illumination must start empty and require matching CSS, ARIA, and route state")
+if 'svg.dataset.state=activeIndex>=0 ? "active" : "idle"' not in js:
+    err("connector must expose its active/idle state for regression checks")
+
+# ---------------------------------------------------------------- 8g. documentation links
 # Documentation is part of the handoff contract. Validate repository-local Markdown links so a rename or
 # move cannot silently strand the next contributor. External URLs and same-page anchors are out of scope.
 DOC_REQUIRED = [
