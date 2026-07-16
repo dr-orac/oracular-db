@@ -1106,7 +1106,7 @@
   .doctoc-connector-arrow.is-active{ fill:var(--fg-bright);
     filter:drop-shadow(0 0 3px rgba(var(--fg-rgb),.75)); }
   .doctoc a{ display:block; position:relative; z-index:1; text-decoration:none; color:var(--fg-dim); font-family:var(--font-body);
-    font-size:16px; line-height:1.32; padding:6px 12px 6px 24px; }
+    font-size:16px; line-height:1.32; padding:6px 12px 6px 16px; }
   .doctoc a:hover{ color:var(--fg-bright); background:var(--bg-panel-2); }
   .doctoc a.active{ color:var(--fg-bright); }   /* bar + rightward glow come from the shared T82 rule */
   .doctoc a.tl1{ font-family:var(--font-head); font-size:16px; color:var(--fg-bright); letter-spacing:1px;

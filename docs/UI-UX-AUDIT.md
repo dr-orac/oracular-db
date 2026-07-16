@@ -471,6 +471,11 @@ contrast and reduced motion retained exact state. T121 later reused that same re
 panel, where collapse now performs the synchronous clear. Replacement wiki loading exposed zero old
 links/SVG, including the error path.
 
+**T125 refinement (2026-07-16):** removed the decorative source/root tier. The eight-entry Wiki outline now
+draws only its two genuine child arrows and one shared parent branch; its former full-height outer trunk and
+root arrows are absent. Selecting `New Player?` produced one active link/location, one lit child arrow, a
+two-segment parent→child path, and zero rail overflow. Flat outlines now suppress connector geometry entirely.
+
 ### UX-010 · P1 · focus-mode reading and responsive chrome
 
 **Observation:** the reader's in-app fullscreen state still retained the selected exterior Screen/Chassis
@@ -570,3 +575,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | A/B/C/E | 2026-07-15 | 1280×720 + 390×844; Screen + Chassis/fullscreen; open/collapsed/quiet; pointer + keyboard semantics | Borderless reader, floating contents, connector state, lower fade | Pass | UX-010/T121 + T123: 0px frame and overflow; one reused borderless upper-left TOC; controls use equal 16px opposite insets; collapse 0 arrows/non-interactive; expand 8 arrows; one active route at 14.2px |
 | A/C/E | 2026-07-15 | 1280×720; Tribe + NCR; cross-faction overrides, reset, reload | Settings persistence, summaries, local story boundary | Pass | UX-011: Reset restored Rust/Warm and Gold/Warm signatures, faction summaries followed selected swatches, reload retained defaults, Smoke Test story remained, zero horizontal overflow |
 | B/C | 2026-07-16 | 390×667 + 320×568; Screen; short portrait viewport | T124 viewport foundation, Home scroll ownership, safe-area-ready canvas | Pass | App matched both dynamic viewport heights; Home retained reachable internal flow; zero horizontal overflow; safe insets resolved to 0 on rectangular simulation; focus now consumes the app owner by contract |
+| A/E | 2026-07-16 | 1280×720; Wiki root + nested selection | Contents connector hierarchy and active route | Pass | T125: 8 links → 2 genuine child arrows; no outer root trunk; nested selection lit one exact branch/arrow; rail overflow 0px |

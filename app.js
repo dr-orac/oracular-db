@@ -2908,6 +2908,9 @@ function positionDocTocConnector(){
     parents[i]=stack.length ? stack[stack.length-1] : -1;
     stack.push(i);
   });
+  const children=parents.map(()=>[]);
+  parents.forEach((parent,i)=>{ if(parent>=0) children[parent].push(i); });
+  if(!parents.some(parent=>parent>=0)){ resetMeasuredConnector(svg); return; } // a flat outline needs no tree
   const points=links.map(a=>{
     const style=getComputedStyle(a), textX=parseFloat(style.paddingLeft)||0;
     const y=snap(a.offsetTop+a.offsetHeight/2), tipX=snap(Math.max(13,textX-6));
@@ -2917,37 +2920,38 @@ function positionDocTocConnector(){
   if(points.some(p=>p.tipX+2>=p.textX) || points.some((p,i)=>i && p.y<=points[i-1].y)){
     resetMeasuredConnector(svg); return;
   }
-  const rootX=7;
-  const roots=parents.map((p,i)=>p<0?i:-1).filter(i=>i>=0);
-  // Derive the source from the first real target, not the sticky header's offsetTop: browsers adjust a
-  // sticky element's reported offset as its own rail scrolls, which would make valid geometry self-hide.
-  const sourceY=roots.length ? snap(points[roots[0]].y-14.5) : 0;
-  if(!roots.length || sourceY>=points[roots[0]].y){ resetMeasuredConnector(svg); return; }
-  const dimParts=[`M ${rootX} ${sourceY} V ${points[roots[roots.length-1]].y}`];
-  roots.forEach(i=>dimParts.push(`M ${rootX} ${points[i].y} H ${points[i].lineX}`));
-  parents.forEach((parent,i)=>{ if(parent>=0)
-    dimParts.push(`M ${points[parent].lineX} ${points[parent].y} V ${points[i].y} H ${points[i].lineX}`); });
+  // Top-level headings already read as sections through type, spacing, and indentation. Connecting every
+  // root to CONTENTS produced one long outer trunk that described no useful relationship. Draw only real
+  // parent→child groups: one vertical branch per parent plus short child arms. Roots receive no arrow.
+  const dimParts=[];
+  children.forEach((kids,parent)=>{
+    if(!kids.length) return;
+    const branchX=points[parent].lineX, last=kids[kids.length-1];
+    dimParts.push(`M ${branchX} ${points[parent].y} V ${points[last].y}`);
+    kids.forEach(child=>dimParts.push(`M ${branchX} ${points[child].y} H ${points[child].lineX}`));
+  });
 
   // Exact illumination: one link must agree in visual and ARIA state and still address its heading index.
   const selected=links.filter(a=>a.classList.contains("active") && a.getAttribute("aria-current")==="location"
     && docHeads[+a.dataset.i]);
   const activeIndex=selected.length===1 ? links.indexOf(selected[0]) : -1;
   let litPath="";
-  if(activeIndex>=0){
+  if(activeIndex>=0 && parents[activeIndex]>=0){
     const chain=[]; for(let i=activeIndex;i>=0;i=parents[i]) chain.unshift(i);
-    const root=chain[0], lit=[`M ${rootX} ${sourceY} V ${points[root].y} H ${points[root].lineX}`];
+    const lit=[];
     for(let c=1;c<chain.length;c++){ const parent=chain[c-1], child=chain[c];
-      lit.push(`M ${points[parent].lineX} ${points[parent].y} V ${points[child].y} H ${points[child].lineX}`); }
+      lit.push(`M ${points[parent].lineX} ${points[parent].y} V ${points[child].y}`,
+        `M ${points[parent].lineX} ${points[child].y} H ${points[child].lineX}`); }
     litPath=lit.join(" ");
   }
   const height=snap(Math.max(toc.scrollHeight,points[points.length-1].y+14));
   svg.style.height=height+"px";
   renderMeasuredConnector(svg,{
     width:snap(toc.clientWidth), height, dimPath:dimParts.join(" "), litPath,
-    arrows:points.map((p,i)=>
+    arrows:points.map((p,i)=>parents[i]>=0 ?
       `<polygon class="doctoc-connector-arrow${i===activeIndex?' is-active':''}" points="${p.lineX},${p.y-3.5} ${p.lineX},${p.y+3.5} ${p.tipX+1},${p.y}" />`
-    ).join(""),
-    activeKey:activeIndex>=0 ? links[activeIndex].dataset.i : null,
+      : "").join(""),
+    activeKey:activeIndex>=0 && parents[activeIndex]>=0 ? links[activeIndex].dataset.i : null,
   });
 }
 function watchDocTocConnector(){

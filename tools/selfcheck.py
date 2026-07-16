@@ -344,8 +344,13 @@ if 'function clearDocSidebar()' not in js or js.count('clearDocSidebar();') < 2:
 if 'a.getAttribute("aria-current")==="location"' not in js \
         or 'a.setAttribute("aria-current","location")' not in js:
     err("contents-rail illumination must agree with the active link's ARIA location state")
-if 'const sourceY=roots.length ? snap(points[roots[0]].y-14.5)' not in js:
-    err("contents connector source must not depend on the sticky header's moving offset")
+if 'const children=parents.map(()=>[])' not in js or 'if(!parents.some(parent=>parent>=0))' not in js:
+    err("contents connector must derive only real parent-child groups and hide on flat outlines")
+if 'arrows:points.map((p,i)=>parents[i]>=0 ?' not in js \
+        or 'activeKey:activeIndex>=0 && parents[activeIndex]>=0' not in js:
+    err("contents connector must omit root arrows and root illumination")
+if 'const rootX=' in js[js.find('function positionDocTocConnector()'):js.find('function watchDocTocConnector()')]:
+    err("contents connector must not restore the decorative outer root trunk")
 if not re.search(r'\.doctoc-connectors\s*\{[^}]*pointer-events\s*:\s*none', css, flags=re.S):
     err("the contents connector must not intercept native link hit areas")
 reveal_start = js.find("function revealDocTocEntry(entry)")

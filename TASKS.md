@@ -60,6 +60,19 @@ Build in dependency order:
 Entropy rule: extend shared registries and existing surface owners. Mobile presentation must never create a
 second route, content model, TOC, document reader, map dataset, or settings state.
 
+### T125 · Remove decorative root wiring from document contents — P2 [visual hierarchy] — IMPLEMENTED 2026-07-16
+
+Refine T118's measured contents connector so it draws only relationships that clarify parentage. Top-level
+headings already communicate their role through face, spacing, indentation, and active styling; do not join
+them to `CONTENTS` with a full-height outer trunk or give them arrows. Group each real parent's direct children
+under one vertical branch with short child arms, and illuminate only a selected child's ancestral edges. A flat
+outline has no connector at all. Keep the SVG decorative, shared across Wiki/Google Docs, collision guarded,
+and subordinate to native links and active tracking.
+
+Acceptance: the eight-entry Wiki outline renders two child arrows and no root trunk; selecting a nested entry
+lights one exact parent→child route and arrow; a selected root uses its normal active row with no lit wiring;
+deep H2–H4 outlines retain nested branches; no hit-area, scroll-width, routing, or collapse behaviour changes.
+
 ### T102 · Reader scrolling and TOC navigation quality — P1 [bug + interaction] — IMPLEMENTED 2026-07-13
 
 Start with `docs/UI-UX-AUDIT.md` finding UX-001. The earlier T73 fix improved sidebar targeting but did not
