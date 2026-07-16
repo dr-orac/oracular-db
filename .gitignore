@@ -5,6 +5,11 @@ Thumbs.db
 
 *.log
 
+# reproducible browser-test output (generated locally / in CI)
+node_modules/
+playwright-report/
+test-results/
+
 # dev/local tooling — not needed at the deployed site
 tools/__pycache__/
 .vscode/

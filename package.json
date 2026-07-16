@@ -1,0 +1,17 @@
+{
+  "name": "misfits-database",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Development and browser-test tooling for the Misfits Database static application.",
+  "scripts": {
+    "check": "python3 tools/selfcheck.py",
+    "test:browser": "playwright test",
+    "test:browser:headed": "playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -106,12 +106,17 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
 - **`EXTRA_CHARACTERS`** (top of app.js): hardcoded bios merged into the roster (incl. Wendover chars).
 
 ## Open tasks (priority order, with concrete pointers)
-1. **Execute the small-screen programme (T124).** Increment 1 is complete: dynamic/small viewport units,
+1. **Build the compact navigation shell (T124).** Increment 1 is complete: dynamic/small viewport units,
    safe-area clearance, and one border-box canvas. Next build the compact navigation shell: one labelled
    horizontal global rail plus bounded faction tabs, both driven by the existing registries and selection
    state. Then proceed surface-by-surface and finish with the physical-device matrix in `TASKS.md`. Do not
-   accumulate more isolated phone overrides before navigation and scroll ownership are settled.
-2. **Make the world dataset display-ready.** The roster/dossier phase now includes UX-003–UX-006 / T104–T107:
+   accumulate more isolated phone overrides before navigation and scroll ownership are settled. Treat compact
+   navigation as the first feature built under T126.1's browser safety net and a later extraction case.
+2. **Introduce the build foundation (T126.2) after compact navigation.** Add Vite without changing the rendered
+   product, hash URLs, self-hosted runtime, or GitHub Pages behaviour. A successful production build must be
+   locally previewable and pass the existing selfcheck plus browser journeys before deployment changes over.
+   Do not combine this with TypeScript conversion, Lit components, Storybook, or visual redesign.
+3. **Make the world dataset display-ready.** The roster/dossier phase now includes UX-003–UX-006 / T104–T107:
    representations, routes, visual hierarchy, short-phone containment, and load/error/refresh ownership have
    passed at 1440px, 390px, 375px, and 320px. Begin the next map work at the data boundary, not the renderer.
    `data/world.json` is deliberately `provisional`: its 32 current locations and valid internal references
@@ -127,24 +132,24 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
    - classify placement basis, review status, and uncertainty separately from location identity;
    - promote defensible direct identities, then change `data_status` only when every published marker passes;
    - migrate one game-sized set at a time behind the existing `renderMap()`/`showMapDetail()` UI.
-3. **Continue the product audit alongside map data work.** UX-007 closed the settings, palette, and nested
+4. **Continue the product audit alongside map data work.** UX-007 closed the settings, palette, and nested
    modal focus/close/restore defects, UX-010/T121 closed fullscreen reading, and UX-011 closed settings
    persistence/reset. Take the next bounded pass through the remaining non-Paperwork cross-surface states;
    Paperwork expansion and form/copy work are explicitly parked. Keep UX-001's VoiceOver, axe/Lighthouse,
    and physical iOS Safari checks external rather than claiming them locally.
-4. **Evaluate one further connector adopter only if hierarchy benefits.** T118 proved the visual grammar in
+5. **Evaluate one further connector adopter only if hierarchy benefits.** T118 proved the visual grammar in
    the shared Google-Doc/MediaWiki contents rail. The next plausible candidate is roster section → active
    character, but keep the existing list interaction authoritative and reject the extension if the extra
    lines add density without clarifying parentage. Flat lists, cards, and controls are not adopters.
-5. **Audit the map editor, then prove the Local export (T116).** The ignored 40 MB YAML is source material,
+6. **Audit the map editor, then prove the Local export (T116).** The ignored 40 MB YAML is source material,
    never a browser payload. Once the separate editor repository is available, inspect its parser, renderer,
    licences, coordinate conventions, and export seams before duplicating anything here. Generate original
    cartography plus a compact native-grid manifest; start with a labelled raster baseline and adopt tiles or
    canvas only after measurements justify them. Geographic Region and game-grid Local remain separate
    renderer decisions.
-6. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
+7. **Decide `EXTRA_CHARACTERS`.** Bios are hardcoded in app.js today. Decide: keep in code, or move to the
    Sheet/wiki like the rest of the roster (forks the data model — pick one and note it).
-7. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
+8. **Wiki migration (blocked on the user).** Move the Tribe Lore + Roleplay Guide onto the MediaWiki;
    full step-by-step (pandoc / VisualEditor paste, hub + two-card page shape) is in `docs/WIKI-INTEGRATION.md`.
    When those pages exist, flip the tribe's Lore/Roleplay tabs from the Google-Doc source to the wiki pages.
 
@@ -154,6 +159,10 @@ Google Docs (lore/roleplay), the Misfits MediaWiki. Only **tribe** + **brotherho
   coverage, but do not grow a second template library independently.
 
 ## Recently shipped (so you don't redo it)
+T126.1 established the first reusable architecture-learning increment without changing the deployed app: a
+locked, development-only Playwright harness runs six deterministic single-worker journeys for routes/history,
+focus restoration, command navigation, fixture-backed roster and document behaviour, and compact containment.
+The independent Python selfcheck remains the fast first gate; GitHub runs browser smoke tests only after it.
 Masthead centred-tree and measured SVG connectors, Townsfolk lore routing, the scoped Wendover Local export
 pipeline, fullscreen focus polish + CRT power-on, box-glow, find-bar vector magnifier, dossier folder-tab,
 fuzzy+ranked roster search, ⌘K palette, the 3-scale map + Wendover schematic, `data/world.json`, the Paperwork

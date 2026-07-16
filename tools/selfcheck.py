@@ -464,7 +464,9 @@ for rel in DOC_REQUIRED:
 
 markdown_files = []
 for base, dirs, files in os.walk(ROOT):
-    dirs[:] = [d for d in dirs if d not in {".git", "added files by user"}]
+    # Only project-owned Markdown participates in the handoff contract. Installed dependencies and generated
+    # test reports can contain valid links relative to their source packages, but are not repository docs.
+    dirs[:] = [d for d in dirs if d not in {".git", "added files by user", "node_modules", "playwright-report", "test-results"}]
     for filename in files:
         if filename.endswith(".md"):
             markdown_files.append(os.path.join(base, filename))

@@ -17,6 +17,8 @@ the final evidence of whether a change shipped.
 
 ## Active plans and evidence
 
+- [`APP-FOUNDATION-GUIDE.md`](APP-FOUNDATION-GUIDE.md) — plain-language guide to the reusable app
+  architecture, tools, quality gates, and staged learning programme introduced by T126.
 - [`UI-UX-AUDIT.md`](UI-UX-AUDIT.md) — continuous product audit, findings, test matrix, and evidence log.
 - [`ACCESSIBILITY-PLAN.md`](ACCESSIBILITY-PLAN.md) — completed accessibility baseline and retained checks.
 - [`MAP-ARCHITECTURE.md`](MAP-ARCHITECTURE.md) — map data, renderer, territory, terrain, and Local-map contracts.

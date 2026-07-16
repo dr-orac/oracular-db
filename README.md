@@ -129,6 +129,9 @@ overwrite a same-slug stub owned by another faction.
 python3 tools/selfcheck.py      # integrity linter: dangling element ids, undefined CSS
                                 # vars, missing fonts/media, truncated JS, dead CSS classes
 python3 tools/preview.py        # rebuild the local preview in /tmp (then open ?sheet=…)
+npm ci                          # once: install exactly the locked development/test tools
+npx playwright install chromium # once: install the first browser-test engine
+npm run test:browser            # deterministic shell/route/focus/mobile journeys
 ```
 
 `setup-git.sh` makes `selfcheck.py` a local git **pre-commit hook** (it blocks a broken

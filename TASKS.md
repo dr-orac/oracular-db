@@ -30,6 +30,53 @@ with a chronological nested-layer contract. T101 remains open for the remaining 
 continue with the remaining non-Paperwork cross-surface state. Paperwork remains parked until its source
 application is available.
 
+### T126 · Establish a reusable interface foundation through safe increments — P1 [architecture + learning]
+
+Use this application as the proving ground for a dependable foundation that can later seed similar projects.
+The plain-language contract and learning sequence live in
+[`docs/APP-FOUNDATION-GUIDE.md`](docs/APP-FOUNDATION-GUIDE.md). This is not permission for a rewrite or for
+installing a fashionable stack wholesale. Each increment must replace a concrete risk or duplication, retain
+the static deployment, and leave the live application releasable.
+
+Build in dependency order:
+
+1. **Characterisation safety — implemented 2026-07-16.** Add a minimal package manifest/lockfile and Playwright browser harness. Cover
+   critical shell routes, history/selection continuity, overlays/focus, document scrolling/focus mode, and
+   mobile containment with stable local fixtures instead of depending on Google/wiki availability. Keep
+   `tools/selfcheck.py` as an independent fast guard.
+2. **Build foundation.** Introduce Vite without a visual or behavioural rewrite. Preserve self-hosted assets,
+   hash URLs, GitHub Pages deployment, and a locally previewable production build. Add build plus bounded smoke
+   tests to CI only after they are deterministic.
+3. **Module boundaries.** Extract pure routing/section registry, preferences, parsing/validation, and external
+   integrations before feature renderers. Move one responsibility per change; measure reduced global state and
+   duplicated ownership rather than counting files as success.
+4. **Typed boundaries.** Enable checked JavaScript/JSDoc first, then define route, faction, character,
+   document, story, location, and claim contracts. Add runtime validation for outside data; convert stable
+   extracted modules to TypeScript gradually.
+5. **Reusable UI.** Inventory proven repeated behaviours, then introduce Lit/Web Components for a small set of
+   generic primitives. Add Storybook when those real components exist. Themes consume shared tokens; generic
+   components must not import faction, Fallout, Google, or Wendover feature data.
+6. **Automatic quality.** Add Vitest for pure logic and migrations, expand Playwright across the representative
+   browser/device matrix, integrate bounded axe checks, and retain manual screen-reader/physical-device work.
+7. **Starter extraction.** Only after the foundation is proven here, create a separate template containing the
+   generic structure, tokens, primitives, tests, CI, documentation ownership, and example journey. Do not copy
+   Misfits data, Fallout presentation, credentials, or accumulated project history into it.
+
+Acceptance for every increment: no parallel route/state/data/component registry; no source behaviour silently
+lost; selfcheck and affected journeys pass; dependency licences and versions are recorded; current architecture
+docs describe only what is actually implemented; the learning guide is updated when evidence changes the
+recommended pattern.
+
+Sequencing with T124: T126.1 is the immediate safety layer before broad small-screen surface reflow. Do not
+freeze the already-specified compact-navigation design behind a migration; use that bounded feature as an early
+characterisation journey and later module/component proving case.
+
+T126.1 result: a locked development-only Playwright dependency and single-worker Chromium harness now protect
+six deterministic journeys: route/selection/history, Settings focus restore, command-registry navigation,
+fixture-backed roster selection, fixture-backed document scrolling/focus mode, and 390px Home/Local-map
+containment. The local suite passes in about three seconds; CI runs it only after the independent Python
+selfcheck. No deployed runtime or source loading path changed.
+
 ### T124 · Make small-screen layout a coherent application system — P1 [responsive architecture] — IN PROGRESS
 
 Treat phone and compact-window layout as a whole-app product surface, not a sequence of isolated media-query

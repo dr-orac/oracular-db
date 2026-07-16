@@ -2,7 +2,7 @@
 
 The durable, in-repo source of truth for implemented architecture and invariants. Start with
 [`docs/HANDOFF-NEXT.md`](docs/HANDOFF-NEXT.md) for current priorities and [`docs/README.md`](docs/README.md)
-for document ownership. Last reconciled with the application: 2026-07-15.
+for document ownership. Last reconciled with the application: 2026-07-16.
 
 ---
 
@@ -14,9 +14,10 @@ each faction keeps its own brand (e.g. **"The Tribe Database"**) and a masthead 
 between them. It combines live roster dossiers, faction documents, a themed MediaWiki reader,
 Paperwork, and a three-scale Map. It is a static site:
 
-- **No build step, package manager, framework, or CDN.** Browser code and assets are self-hosted;
+- **No deployed build step, runtime package manager, framework, or CDN.** Browser code and assets are self-hosted;
   the CRT and MapLibre modules in `vendor/` carry their own provenance records. Open `index.html` and the
-  app runs.
+  app runs. A development-only npm manifest now pins the Playwright browser-test harness introduced by
+  T126.1; npm does not yet build or supply any deployed runtime asset.
 - Reads the sheet **read-only** via the gviz CSV endpoint. It never writes to the sheet
   unless an (optional, undeployed) Apps Script `webAppUrl` is configured.
 - **LIVE at https://dr-orac.github.io/oracular-db/** — GitHub Pages, repo
@@ -29,10 +30,26 @@ write-back spike is stale and unused; it matters only if write-back is deliberat
 "Settled decisions").
 
 Design language is documented in **STYLE-GUIDE.md**. Deploy steps in **DEPLOY.md**.
+The reusable architecture learning programme is documented in **docs/APP-FOUNDATION-GUIDE.md**.
 Security posture: **docs/AUDIT-2026-07-02.md** — full audit of every innerHTML sink and
 remote-data path, what was fixed, what was deferred and why. Read it before touching
 `docClean`, `effectiveSheetId`, or the local-storage save paths, and re-audit
 `apps-script.gs` before ever setting `CONFIG.webAppUrl` on the deployed site.
+
+### Browser characterisation tests
+
+T126.1 adds a deliberately small Playwright safety layer under `tests/browser/`. It runs one Chromium worker
+sequentially; this project does not trade deterministic three-second feedback for unnecessary concurrency.
+The suite owns user-visible contracts around global routes/history, Settings and command-palette focus,
+fixture-backed roster selection, fixture-backed document contents/focus mode, and compact Home/Local-map
+containment. `tests/fixtures/` supplies small outside-data responses so Google or wiki availability cannot
+make the core suite fail. GitHub Actions runs selfcheck first, then the browser journeys.
+
+The npm manifest is development-only: `node_modules/`, Playwright reports, and browser binaries are never
+deployed. `package-lock.json` records the exact dependency graph and licences. Install with `npm ci`, install
+the local Chromium test engine once with `npx playwright install chromium`, then run `npm run test:browser`.
+Keep selectors user-facing where possible, assert outcomes rather than wrapper structure, and add a journey
+only when it protects a durable cross-surface contract.
 
 ---
 
