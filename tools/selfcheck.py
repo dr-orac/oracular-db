@@ -433,7 +433,19 @@ apply_faction_block = re.search(r'function applyFaction\(id\)\{(.*?)\n\}', js, f
 if not apply_faction_block or 'refreshCur();' not in apply_faction_block.group(1):
     err("faction switching must refresh collapsed settings summaries")
 
-# ---------------------------------------------------------------- 8l. documentation links
+# ---------------------------------------------------------------- 8l. mobile viewport foundation
+if 'viewport-fit=cover' not in html:
+    err("mobile viewport must expose safe-area geometry")
+for safe_var in ("--safe-top", "--safe-right", "--safe-bottom", "--safe-left"):
+    if safe_var not in css:
+        err(f"mobile viewport is missing {safe_var}")
+if 'height:100vh; height:100dvh; min-height:100svh' not in css \
+        or 'padding:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left)' not in css:
+    err("the app must remain one safe-area-aware dynamic viewport canvas")
+if 'body[data-focus="doc"] #docview{ height:100%; padding:0; }' not in css:
+    err("fullscreen reader must consume the app canvas rather than open another viewport box")
+
+# ---------------------------------------------------------------- 8m. documentation links
 # Documentation is part of the handoff contract. Validate repository-local Markdown links so a rename or
 # move cannot silently strand the next contributor. External URLs and same-page anchors are out of scope.
 DOC_REQUIRED = [

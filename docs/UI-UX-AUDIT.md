@@ -524,6 +524,22 @@ Faction switching refreshes the collapsed summaries in the same state transition
 signature restoration, and write-free initialisation. Browser regression covers two faction signatures,
 cross-faction overrides, Reset all, reload persistence, and retained non-settings data.
 
+### UX-012 · P1 · responsive architecture · whole application
+
+**Observation:** small-screen behaviour is distributed across surface-specific patches rather than one
+application contract. The phone masthead presents Faction/Settings plus seven global destinations across
+three bands before faction tabs; the app and focus reader used fixed `100vh`; and surfaces alternate between
+bounded internal scroll and natural flow without a documented ownership rule. Individual regressions prevent
+many overflows, but the combined application remains vertically expensive and fragile under browser-bar,
+keyboard, large-text, landscape, and safe-area changes.
+
+**Direction:** execute T124 in dependency order: viewport/safe-area foundation; compact registry-driven
+navigation; surface reflow; touch/overlay/input; physical-device release matrix. Keep one route and state
+model at every width. Prefer a single labelled horizontal rail over hidden labels or a parallel mobile menu.
+
+**Status:** in progress 2026-07-16. Increment 1 replaces the fixed viewport assumption with a dynamic/small
+viewport border-box canvas, enables safe-area geometry, and makes fullscreen consume its existing owner.
+
 ## Audit runs
 
 Add one row per representative pass. Link finding IDs in Notes rather than duplicating their contents.
@@ -553,3 +569,4 @@ Add one row per representative pass. Link finding IDs in Notes rather than dupli
 | A/B/C/E | 2026-07-15 | 1280×720 + 390×844; idle/focus; document + roster routes | Document find dock, outline/reader split, status metadata, roster toolbar rule | Pass | T120: 39px in-rail dock; reader +78px desktop/~67px phone; solid hairline-to-hairline rule; zero horizontal overflow and console errors |
 | A/B/C/E | 2026-07-15 | 1280×720 + 390×844; Screen + Chassis/fullscreen; open/collapsed/quiet; pointer + keyboard semantics | Borderless reader, floating contents, connector state, lower fade | Pass | UX-010/T121 + T123: 0px frame and overflow; one reused borderless upper-left TOC; controls use equal 16px opposite insets; collapse 0 arrows/non-interactive; expand 8 arrows; one active route at 14.2px |
 | A/C/E | 2026-07-15 | 1280×720; Tribe + NCR; cross-faction overrides, reset, reload | Settings persistence, summaries, local story boundary | Pass | UX-011: Reset restored Rust/Warm and Gold/Warm signatures, faction summaries followed selected swatches, reload retained defaults, Smoke Test story remained, zero horizontal overflow |
+| B/C | 2026-07-16 | 390×667 + 320×568; Screen; short portrait viewport | T124 viewport foundation, Home scroll ownership, safe-area-ready canvas | Pass | App matched both dynamic viewport heights; Home retained reachable internal flow; zero horizontal overflow; safe insets resolved to 0 on rectangular simulation; focus now consumes the app owner by contract |

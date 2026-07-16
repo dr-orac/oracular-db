@@ -72,6 +72,11 @@
        these on :root; the wiki runs a touch wider than Google Docs. min(…,100%) keeps them overflow-safe. */
     --doc-measure:      78ch;
     --doc-measure-wiki: 92ch;
+    /* Physical-screen clearance; zero on ordinary rectangles, non-zero around notches and home indicators. */
+    --safe-top:env(safe-area-inset-top, 0px);
+    --safe-right:env(safe-area-inset-right, 0px);
+    --safe-bottom:env(safe-area-inset-bottom, 0px);
+    --safe-left:env(safe-area-inset-left, 0px);
   }
 
   *{ box-sizing:border-box; }
@@ -306,7 +311,8 @@
       radial-gradient(120% 120% at 50% 0%, #1b1a10 0%, #100f08 60%, #070602 100%);
   }
   .app{
-    height:100vh; display:flex; flex-direction:column;
+    height:100vh; height:100dvh; min-height:100svh; display:flex; flex-direction:column;
+    box-sizing:border-box; padding:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
     max-width:none; margin:0 auto; position:relative;   /* full-width (was 1400px cap); inner panels keep their own ch-measures */
     background:var(--bg);
     image-rendering:pixelated;
@@ -968,7 +974,7 @@
   body[data-focus="doc"] .commandbar,
   body[data-focus="doc"] .statusbar{ display:none; }
   body[data-focus="doc"] main{ padding:0 !important; }
-  body[data-focus="doc"] #docview{ height:100vh; padding:0; }
+  body[data-focus="doc"] #docview{ height:100%; padding:0; }
   body[data-focus="doc"] .docbody{ height:100%; }
   /* The scroll canvas owns the generous breathing space. Its mask softly dissolves content at both screen
      edges; extra bottom padding lets the final paragraph move fully above the lower fade before reading. */

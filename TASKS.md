@@ -30,6 +30,36 @@ with a chronological nested-layer contract. T101 remains open for the remaining 
 continue with the remaining non-Paperwork cross-surface state. Paperwork remains parked until its source
 application is available.
 
+### T124 · Make small-screen layout a coherent application system — P1 [responsive architecture] — IN PROGRESS
+
+Treat phone and compact-window layout as a whole-app product surface, not a sequence of isolated media-query
+patches. Preserve the information architecture and visual identity while reducing vertical chrome, making
+every scroll owner explicit, keeping controls touchable, and allowing content to reflow naturally.
+
+Build in dependency order:
+
+1. **Viewport foundation — implemented 2026-07-16.** Adopt dynamic/small viewport units,
+   `viewport-fit=cover`, safe-area clearance, and one border-box app canvas. Focus mode consumes that owner
+   rather than opening a second viewport-sized box. Browser-bar/keyboard height changes must not strand content.
+2. **Compact navigation shell.** Keep Faction + Settings calm at the top. Replace the seven-destination two-row
+   phone grid with one labelled, horizontally scrollable/snap-aligned global rail with visible overflow cues;
+   reveal the active destination automatically. Give faction tabs the same bounded single-row behaviour. Do
+   not hide labels, duplicate route state, or create a second mobile-menu registry.
+3. **Surface reflow pass.** Test Home; List/Cards/dossier; Relations; Docs/Wiki/focus;
+   Events/Stories/Proposals; and US/Region/Local maps. Give each surface one intentional model: bounded split
+   pane or natural page flow. Remove nested scroll traps, clipped endings, oversized fixed gaps, and desktop
+   minimums. Paperwork receives containment regression only while its functionality remains parked.
+4. **Touch, overlays, and input.** Verify Settings, command palette, faction chooser, document find, modals,
+   story editor, map controls, virtual keyboard, orientation change, touch cancellation, and focus restoration.
+   Primary controls target 44px comfort without inflating the masthead; no outcome may depend on hover.
+5. **Release matrix.** Cover 320/360/390/430px widths; 568/667/844px heights; portrait and landscape; Auto,
+   24px and 30px text; Screen/Chassis; high contrast/reduced motion; safe-area simulation; and physical iOS
+   Safari plus Android Chrome. Require zero document-level horizontal overflow, no unreachable action/content,
+   stable route/selection state, and no console errors. Record exceptions instead of hiding them in CSS.
+
+Entropy rule: extend shared registries and existing surface owners. Mobile presentation must never create a
+second route, content model, TOC, document reader, map dataset, or settings state.
+
 ### T102 · Reader scrolling and TOC navigation quality — P1 [bug + interaction] — IMPLEMENTED 2026-07-13
 
 Start with `docs/UI-UX-AUDIT.md` finding UX-001. The earlier T73 fix improved sidebar targeting but did not
