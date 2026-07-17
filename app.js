@@ -555,6 +555,13 @@ function applyDossPanel(key, persist){
   if(persist!==false) localStorage.setItem("mdb-dosspanel", key);
   document.querySelectorAll("#dosspanel-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
+/* Roster filter/sort boxes: off by default (they clutter the list top), opt-in via Settings → Layout. */
+function applyRosterFilters(key, persist){
+  if(key!=="on") key="off";
+  document.body.dataset.rosterfilters = key;
+  if(persist!==false) localStorage.setItem("mdb-rosterfilters", key);
+  document.querySelectorAll("#rosterfilters-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
+}
 /* Cards view — how many cards per row. "auto" = responsive fill; 2/3/4 = fixed (wide screens
    only, see the @media guard in styles.css so phones never get tiny cards). */
 function applyCards(key, persist){
@@ -686,6 +693,9 @@ function buildSettings(){
   document.querySelector("#dosspanel-swatches").innerHTML =
     [["on","On"],["off","Off"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#dosspanel-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDossPanel(b.dataset.key); });
+  document.querySelector("#rosterfilters-swatches").innerHTML =
+    [["off","Off"],["on","On"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
+  document.querySelector("#rosterfilters-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyRosterFilters(b.dataset.key); });
   document.querySelector("#cards-swatches").innerHTML =
     [["auto","Auto"],["2","2"],["3","3"],["4","4"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#cards-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyCards(b.dataset.key); });
@@ -1248,11 +1258,19 @@ function portraitHTML(ch, cls){
          onload="this.classList.add('imgok')"
          onerror="this.closest('.portrait').classList.add('noimg')">`
     : "";
+  // Photo-edit controls live only on the large dossier portrait. On the small
+  // card portrait they were nested inside the card's own role="button" (an
+  // a11y nested-interactive violation) and are browse-clutter — you edit a
+  // photo from the open dossier, not the roster grid.
+  const editBtns =
+    cls === 'lg'
+      ? `<button class="upbtn" data-slug="${esc(ch.slug)}" title="Add / change photo" aria-label="Add or change photo">${IC_PLUS}</button>
+      <button class="iconbtn" data-slug="${esc(ch.slug)}" title="Choose a sigil icon" aria-label="Choose a sigil icon">${IC_EMBLEM}</button>`
+      : '';
   return `<div class="portrait ${cls||''} ${src?'':'noimg'}">
       ${img}<span class="tint"></span>
       <span class="sigil">${portraitSigil(ch)}</span>
-      <button class="upbtn" data-slug="${esc(ch.slug)}" title="Add / change photo" aria-label="Add or change photo">${IC_PLUS}</button>
-      <button class="iconbtn" data-slug="${esc(ch.slug)}" title="Choose a sigil icon" aria-label="Choose a sigil icon">${IC_EMBLEM}</button>
+      ${editBtns}
     </div>`;
 }
 
@@ -4363,7 +4381,7 @@ $("#refresh").addEventListener("click", ()=>load(true));
 const SETTINGS_GLOBAL_KEYS = [
   "mdb-font","mdb-font-head","mdb-font-body","mdb-docfont-title","mdb-docfont-head","mdb-docfont-body",
   "mdb-color","mdb-bg","mdb-textsize","mdb-frame","mdb-frametint","mdb-sheen","mdb-crt",
-  "mdb-dosspanel","mdb-cards","mdb-imgcolor","mdb-bezel","mdb-docwidth","mdb-contrast","mdb-reducemotion",
+  "mdb-dosspanel","mdb-rosterfilters","mdb-cards","mdb-imgcolor","mdb-bezel","mdb-docwidth","mdb-contrast","mdb-reducemotion",
 ];
 const SETTINGS_FACTION_KEY = /^mdb-(?:color|bg|font-head|font-body)-/;
 function clearSettingPreferences(){
@@ -4383,6 +4401,7 @@ $("#reset-settings").addEventListener("click", ()=>{
   ["title","head","body"].forEach(kind=>applyDocFont(kind, DOC_FONT_DEFAULT[kind],false));
   applyColor(_defaultAppearance.color,false); applyBg(_defaultAppearance.bg,false);
   applyFrame("screen",false); applyFrameTint("olive",false); applyGlass("off",false); applyDossPanel("on",false);
+  applyRosterFilters("off",false);
   applyCards("auto",false); applyImgColor("screen",false); applyBezel("on",false); applyDocWidth("medium",false);
   document.body.classList.add("crt");
   $("#crt-toggle").textContent="Scanlines: ON"; $("#crt-toggle").classList.add("active");
@@ -4728,6 +4747,7 @@ function runBoot(){
   applyFrameTint(localStorage.getItem("mdb-frametint") || "olive",false);
   applyGlass(localStorage.getItem("mdb-sheen") || "off",false);
   applyDossPanel(localStorage.getItem("mdb-dosspanel") || "on",false);
+  applyRosterFilters(localStorage.getItem("mdb-rosterfilters") || "off",false);
   applyCards(localStorage.getItem("mdb-cards") || "auto",false);
   applyImgColor(localStorage.getItem("mdb-imgcolor") || "screen",false);
   applyBezel(localStorage.getItem("mdb-bezel") || "on",false);

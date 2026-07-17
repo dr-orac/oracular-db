@@ -1,0 +1,6 @@
+Substrate UI bundle — internal origin.
+
+Generated from this repository's packages/ui and packages/tokens. Not third-
+party code; no external licence applies. All rights reserved by the
+repository owner. Lit (BSD-3-Clause) is bundled within substrate-ui.js; see
+https://github.com/lit/lit/blob/main/LICENSE.

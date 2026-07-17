@@ -1630,7 +1630,8 @@
   .map-home:hover .map-home-dot, .map-home:focus-visible .map-home-dot{ r:6; }
   .map-home:focus{ outline:none; }
   /* sidebar: legend + detail */
-  .map-side{ min-height:0; overflow:hidden; display:flex; flex-direction:column; gap:14px; }
+  /* column flow comes from <sub-stack>; the app keeps its exact 14px gap. */
+  .map-side{ min-height:0; overflow:hidden; gap:14px; }
   .map-legend, .map-detail{ border:1px solid var(--fg-faint); background:var(--bg-panel);
     box-shadow:var(--box-glow); padding:12px 15px; }
   .map-legend{ flex:0 0 auto; display:flex; flex-direction:column; gap:9px; }
@@ -1683,7 +1684,8 @@
   body[data-reducemotion="on"] .terrain-marker-label{ transition:none; }
 
   .toolbar{
-    margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; min-height:52px;
+    /* flex/wrap/align come from <sub-cluster>; the app keeps its exact 10px gap. */
+    margin-top:10px; gap:10px; min-height:52px;
   }
   /* Search and layout controls cannot act until a roster exists. Keep first-load chrome quiet;
      after a link error, retain only the recovery action instead of presenting inert controls. */
@@ -1692,7 +1694,7 @@
   body.load-error .toolbar .search,
   body.load-error .toolbar .seg{ display:none; }
   .search{
-    flex:0 0 calc(var(--rail) - var(--sp-2)); min-width:160px; display:flex; align-items:center; gap:8px;   /* sits over the rail: right edge meets the divider */
+    flex:1 1 auto; min-width:160px; display:flex; align-items:center; gap:8px;   /* fills the command bar; the seg + refresh stay right-aligned */
     background:var(--bg-panel); border:1px solid var(--fg-faint);
     padding:6px 10px;
   }
@@ -1782,7 +1784,11 @@
   /* filter + sort: two boxes running end-to-end across the column, their outer edges matching the
      search box above (left inset by --sp-2, right meeting the column divider), with a small gap
      between them; no divider rule beneath. */
-  .listctl{ flex:0 0 auto; display:flex; gap:6px; padding:8px 0 8px var(--sp-2); }
+  /* flex row comes from <sub-cluster>; stretch restores the pre-swap default so
+     the two filter boxes stay equal height. Exact 6px gap kept. */
+  .listctl{ flex:0 0 auto; align-items:stretch; gap:6px; padding:8px 0 8px var(--sp-2); }
+  /* Roster filter/sort boxes are opt-in (Settings → Layout → Roster Filters); off by default. */
+  body[data-rosterfilters="off"] #listctl{ display:none; }
   /* in-theme custom dropdown (replaces native <select> — the popup is themed, not OS chrome).
      Reused wherever a select is needed; the two roster filters ABUT (shared border, no gap). */
   .selctl{ position:relative; flex:1 1 0; min-width:0; }
@@ -1861,9 +1867,8 @@
   /* cards view */
   .cards{
     height:100%; overflow:auto; min-height:0;
-    /* fewer, roomier cards by default; min(100%,…) clamps the track to the container on narrow
-       screens so a card never overflows (a raw 440px min would exceed a phone's width). */
-    display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 440px), 1fr));
+    /* Grid mechanics come from <sub-grid min-item-width="440px"> (vendored
+       substrate-ui); the app keeps its exact 18px rhythm and scroll ownership. */
     gap:18px; padding:18px; align-content:start;
   }
   /* Cards-per-row (Settings). "Auto" = the responsive fill above. Fixed counts apply only on

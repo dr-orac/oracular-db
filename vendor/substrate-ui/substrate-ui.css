@@ -1,0 +1,63 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --sub-color-gray-50: #f8fafc;
+  --sub-color-gray-100: #f1f5f9;
+  --sub-color-gray-200: #e2e8f0;
+  --sub-color-gray-300: #cbd5e1;
+  --sub-color-gray-400: #94a3b8;
+  --sub-color-gray-500: #64748b;
+  --sub-color-gray-600: #475569;
+  --sub-color-gray-700: #334155;
+  --sub-color-gray-800: #1e293b;
+  --sub-color-gray-900: #0f172a;
+  --sub-color-brand-500: #3b82f6;
+  --sub-color-brand-600: #2563eb;
+  --sub-color-brand-700: #1d4ed8;
+  --sub-color-surface: #f8fafc;
+  --sub-color-surface-raised: #f1f5f9;
+  --sub-color-text: #0f172a;
+  --sub-color-text-muted: #64748b;
+  --sub-color-border: #e2e8f0;
+  --sub-color-accent: #2563eb;
+  --sub-color-on-accent: #f8fafc;
+  --sub-space-0: 0rem;
+  --sub-space-1: 0.25rem;
+  --sub-space-2: 0.5rem;
+  --sub-space-3: 0.75rem;
+  --sub-space-4: 1rem;
+  --sub-space-5: 1.25rem;
+  --sub-space-6: 1.5rem;
+  --sub-space-8: 2rem;
+  --sub-radius-sm: 0.25rem;
+  --sub-radius-md: 0.5rem;
+  --sub-radius-lg: 0.75rem;
+  --sub-radius-full: 9999px;
+  --sub-font-family-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --sub-font-family-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sub-font-size-1: 0.75rem;
+  --sub-font-size-2: 0.875rem;
+  --sub-font-size-3: 1rem;
+  --sub-font-size-4: 1.125rem;
+  --sub-font-size-5: 1.25rem;
+  --sub-font-size-6: 1.5rem;
+  --sub-font-weight-regular: 400;
+  --sub-font-weight-medium: 500;
+  --sub-font-weight-bold: 700;
+}
+
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root[data-theme="dark"] {
+  --sub-color-surface: #0f172a;
+  --sub-color-surface-raised: #1e293b;
+  --sub-color-text: #f8fafc;
+  --sub-color-text-muted: #94a3b8;
+  --sub-color-border: #334155;
+  --sub-color-accent: #3b82f6;
+  --sub-color-on-accent: #0f172a;
+}

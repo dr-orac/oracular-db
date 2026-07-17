@@ -1,0 +1,15 @@
+Vendored package: substrate-ui (generated bundle — do not edit by hand)
+
+Source: this repository (packages/ui door + packages/tokens compiled CSS)
+Contents: ESM bundle registering the sub-* custom elements (Lit bundled in)
+and the --sub-* custom-property stylesheet.
+
+Rebuild procedure: from the workspace root run
+  pnpm -F @substrate/tokens build && node tools/build-misfits-vendor.mjs
+then review the diff and commit. CI rebuilds and fails on any drift, and
+tools/selfcheck.py verifies these hashes.
+
+Files:
+    substrate-ui.js sha256 b6e98dd4162a7d27f71996c96e7d4ae4f047960db2c36366dd6da81539d4fa34
+    substrate-ui.css sha256 ad01dc45ae670f545ec3544477589e6872bb1dbee57775a988511d5f1986461d
+    LICENSE sha256 90b3938aa020eeee83a1f206c223e298825c229098273f9d078500b782736ea4

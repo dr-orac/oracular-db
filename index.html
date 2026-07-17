@@ -19,6 +19,7 @@
 <meta name="twitter:image" content="https://dr-orac.github.io/oracular-db/og-card.png?v=2" />
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="apple-touch-icon" href="og-card.png" />
+<link rel="stylesheet" href="vendor/substrate-ui/substrate-ui.css" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="crt">
@@ -133,6 +134,9 @@
                 <h4>Cards Per Row</h4>
                 <p class="popnote">columns in the Cards view — Auto fits to the window</p>
                 <div class="swatches" id="cards-swatches"></div>
+                <h4>Roster Filters</h4>
+                <p class="popnote">the section + sort boxes above the roster list (off by default)</p>
+                <div class="swatches" id="rosterfilters-swatches"></div>
                 <h4>Frame</h4>
                 <div class="swatches" id="frame-swatches"></div>
                 <h4>Frame Tint</h4>
@@ -168,7 +172,7 @@
     <!-- roster command bar: its search width-aligns to the list rail. Document find belongs to the
          document rail itself, so it costs height only in that column rather than shrinking the reader. -->
     <div class="commandbar">
-      <div class="toolbar">
+      <sub-cluster class="toolbar">
         <label class="search">
           <span class="prompt">&gt;</span>
           <input id="search" type="text" placeholder="search names, roles…" autocomplete="off" aria-label="Search the roster by name, role, or notes" />
@@ -180,7 +184,7 @@
           <button id="view-cards" role="tab" aria-selected="false">Cards</button>
         </div>
         <button class="btn" id="refresh">⟳ Refresh</button>
-      </div>
+      </sub-cluster>
     </div><!-- /commandbar -->
 
     <main>
@@ -193,7 +197,7 @@
       <!-- ROSTER VIEW -->
       <section id="roster" class="roster hidden">
         <div class="listcol">
-          <div class="listctl" id="listctl"></div>
+          <sub-cluster class="listctl" id="listctl"></sub-cluster>
           <div class="list" id="list" role="listbox" tabindex="0" aria-label="Character roster"></div>
         </div>
         <div class="dossier" id="dossier">
@@ -202,7 +206,7 @@
       </section>
 
       <!-- CARDS VIEW -->
-      <section id="cards" class="cards hidden"></section>
+      <sub-grid id="cards" class="cards hidden" min-item-width="440px" role="region"></sub-grid>
 
       <!-- DOC VIEW (Google Doc fetched + re-rendered in the terminal theme) -->
       <section id="docview" class="docview hidden" aria-label="Document">
@@ -272,7 +276,7 @@
         <div class="map-body map-panel" id="map-panel-us" role="tabpanel" aria-labelledby="mapmode-us">
           <div class="map-stage">
             <div id="map-terrain-us" class="map-terrain" aria-hidden="true"></div>
-            <svg id="map-svg" class="map-svg" viewBox="0 0 650 500" role="img" aria-label="Map of the western wasteland" xmlns="http://www.w3.org/2000/svg">
+            <svg id="map-svg" class="map-svg" viewBox="0 0 650 500" role="group" aria-label="Map of the western wasteland" xmlns="http://www.w3.org/2000/svg">
               <g class="map-states">
               <path d="m581,120.000183l3,-6l-1,-9l0,-8l3,-8l3,0l2,1l5,-4l4,1l3,6l2,9l2,3l4,1l2,4l4,1l2,3l-6,6l-8,7l-1,4l-4,5l-5,5l-2,8l-6,-9l-3,-8l-3,-12z"/>
               <path d="m577,124.000183l4,-4l3,12l3,8l6,9l-1,4l-6,2l-9,4l-2,-9l1,-13l2,-4l-1,-3l0,-6z"/>
@@ -328,15 +332,15 @@
               <g class="map-pins" id="map-pins"></g>
             </svg>
           </div>
-          <aside class="map-side">
+          <sub-stack class="map-side" role="complementary">
             <div class="map-legend" id="map-legend" aria-label="Legend"></div>
             <div class="map-detail" id="map-detail" aria-live="polite"></div>
-          </aside>
+          </sub-stack>
         </div>
         <div class="map-body map-panel hidden" id="map-panel-region" role="tabpanel" aria-labelledby="mapmode-region">
           <div class="map-stage">
             <div id="map-terrain-region" class="map-terrain" aria-hidden="true"></div>
-            <svg id="map-region-svg" class="map-svg map-region-svg" viewBox="0 0 1000 700" role="img" aria-label="Schematic overview of the Wendover region" xmlns="http://www.w3.org/2000/svg">
+            <svg id="map-region-svg" class="map-svg map-region-svg" viewBox="0 0 1000 700" role="group" aria-label="Schematic overview of the Wendover region" xmlns="http://www.w3.org/2000/svg">
               <rect class="region-field" x="0" y="0" width="1000" height="700"/>
               <path class="region-flats" d="M262 166 C380 93 667 104 856 199 L814 487 C619 542 371 523 188 425 Z"/>
               <path class="region-ponds" d="M318 505 C429 468 704 476 825 534 L786 642 C620 673 401 649 276 590 Z"/>
@@ -349,7 +353,7 @@
               <g id="map-region-pins"></g>
             </svg>
           </div>
-          <aside class="map-side" id="map-region-side">
+          <sub-stack class="map-side" role="complementary" id="map-region-side">
             <div class="map-legend" aria-label="Regional map legend">
               <div class="map-legend-title">Regional orientation</div>
               <span class="map-legend-item"><span class="map-legend-swatch pin-other"></span>Reviewed landmark</span>
@@ -358,7 +362,7 @@
               <span class="map-legend-note terrain-fallback-note">Enhanced terrain unavailable — using the schematic.</span>
             </div>
             <div class="map-detail" id="map-region-detail" aria-live="polite"></div>
-          </aside>
+          </sub-stack>
         </div>
         <div class="map-reference map-panel hidden" id="map-panel-local" role="tabpanel" aria-labelledby="mapmode-local" tabindex="0">
           <div class="map-reference-inner">
@@ -454,6 +458,7 @@
   <!-- transient status toast (announced to screen readers) -->
   <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
+<script type="module" src="vendor/substrate-ui/substrate-ui.js"></script>
 <script src="app.js"></script>
 <!-- optional crt-screen "Enhanced CRT" engine (adds a toggle in Theme settings; default off) -->
 <script src="crt-screen-integration.js" defer></script>
