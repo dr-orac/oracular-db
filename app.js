@@ -2966,8 +2966,14 @@ function positionDocTocConnector(){
   svg.style.height=height+"px";
   renderMeasuredConnector(svg,{
     width:snap(toc.clientWidth), height, dimPath:dimParts.join(" "), litPath,
+    // Roots receive no marker. The arrowhead is reserved for a branch TERMINAL — a leaf that is the
+    // last child of its group, where the connector line ends. Every node the line passes on its way
+    // lower (an intermediate sibling, or any node with its own children) becomes a small glowing dot.
+    // Fewer arrowheads, and the tree reads as "passes through here" (dot) vs "ends here" (arrow).
     arrows:points.map((p,i)=>parents[i]>=0 ?
-      `<polygon class="doctoc-connector-arrow${i===activeIndex?' is-active':''}" points="${p.lineX},${p.y-3.5} ${p.lineX},${p.y+3.5} ${p.tipX+1},${p.y}" />`
+      ((children[i].length || children[parents[i]][children[parents[i]].length-1]!==i)
+        ? `<circle class="doctoc-connector-node${i===activeIndex?' is-active':''}" cx="${p.lineX}" cy="${p.y}" r="2.4" />`
+        : `<polygon class="doctoc-connector-arrow${i===activeIndex?' is-active':''}" points="${p.lineX},${p.y-3.5} ${p.lineX},${p.y+3.5} ${p.tipX+1},${p.y}" />`)
       : "").join(""),
     activeKey:activeIndex>=0 && parents[activeIndex]>=0 ? links[activeIndex].dataset.i : null,
   });
@@ -4402,7 +4408,7 @@ $("#reset-settings").addEventListener("click", ()=>{
   applyColor(_defaultAppearance.color,false); applyBg(_defaultAppearance.bg,false);
   applyFrame("screen",false); applyFrameTint("olive",false); applyGlass("off",false); applyDossPanel("on",false);
   applyRosterFilters("off",false);
-  applyCards("auto",false); applyImgColor("screen",false); applyBezel("on",false); applyDocWidth("medium",false);
+  applyCards("auto",false); applyImgColor("screen",false); applyBezel("off",false); applyDocWidth("medium",false);
   document.body.classList.add("crt");
   $("#crt-toggle").textContent="Scanlines: ON"; $("#crt-toggle").classList.add("active");
   refreshCur();
@@ -4750,7 +4756,7 @@ function runBoot(){
   applyRosterFilters(localStorage.getItem("mdb-rosterfilters") || "off",false);
   applyCards(localStorage.getItem("mdb-cards") || "auto",false);
   applyImgColor(localStorage.getItem("mdb-imgcolor") || "screen",false);
-  applyBezel(localStorage.getItem("mdb-bezel") || "on",false);
+  applyBezel(localStorage.getItem("mdb-bezel") || "off",false);   // off by default — the frame glow adds clutter; opt in via Settings → Layout → Screen Bezel
   applyDocWidth(localStorage.getItem("mdb-docwidth") || "medium",false);
   applyReduceMotion(localStorage.getItem("mdb-reducemotion") === "on",false);   // loading is not a preference write
   const crtOn = localStorage.getItem("mdb-crt") !== "0";

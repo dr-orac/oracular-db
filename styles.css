@@ -52,9 +52,9 @@
        Modelled as vars so the whole border scales in one place, not by hand-tuning each ring. */
     --bezel-black: 16px;    /* jet-black outer band — ~1mm thicker than the old 12px */
     --bezel-gap:   5px;     /* screen-bg breathing gap between the band and the hairline */
-    --bezel-line:  1.5px;   /* the theme-coloured hairline */
+    --bezel-line:  1.25px;  /* the theme-coloured hairline (thinned from 1.5px) */
     --bezel-in:    calc(var(--bezel-black) + var(--bezel-gap) + var(--bezel-line));  /* edge → inner side of hairline (~22.5px) */
-    --bezel-radius:28px;    /* rounded screen corner (large enough that the hairline itself stays rounded) */
+    --bezel-radius:0;       /* square screen corners — the very edge is just the dark band, no rounding */
     /* responsive negative space — the breathing margin from the bezel HAIRLINE to the content.
        Always clears --bezel-in so content never crowds the border; grows on large displays. */
     --edge: clamp(38px, 4.6vw, 90px);
@@ -280,7 +280,7 @@
       inset 0 0 0 var(--bezel-black) #000,                                     /* jet-black border — OUTERMOST, always solid (defines the rounded bezel edge) */
       inset 0 0 0 calc(var(--bezel-black) + var(--bezel-gap)) var(--bg),       /* screen-bg gap (trims the hairline) */
       inset 0 0 0 var(--bezel-in) var(--fg-bright),                            /* bright theme-coloured hairline */
-      inset 0 0 6px var(--bezel-in) rgba(var(--fg-rgb),.6),                    /* tight crisp glow hugging the hairline (inboard only) */
+      inset 0 0 4px var(--bezel-in) rgba(var(--fg-rgb),.6),                    /* tight crisp glow hugging the hairline (inboard only) */
       inset 0 0 clamp(20px,2.6vmax,44px) var(--bezel-in) rgba(var(--fg-rgb),.34),/* phosphor bloom inward — the interior glow (restored after T66 over-damped it) */
       inset 0 0 clamp(96px,12vmax,168px) 46px rgba(0,0,0,.20);                 /* soft corner shade → hint of curvature */
   }
@@ -1105,13 +1105,16 @@
   .doctoc-connector-arrow{ fill:rgba(var(--fg-rgb),.55); }
   .doctoc-connector-arrow.is-active{ fill:var(--fg-bright);
     filter:drop-shadow(0 0 3px rgba(var(--fg-rgb),.75)); }
+  /* junction node: the vertical branch passes through this entry to its own children, so it
+     reads as a small glowing dot rather than a leaf arrowhead (see positionDocTocConnector). */
+  .doctoc-connector-node{ fill:var(--fg); filter:drop-shadow(0 0 3px rgba(var(--fg-rgb),.85)); }
+  .doctoc-connector-node.is-active{ fill:var(--fg-bright); filter:drop-shadow(0 0 4px rgba(var(--fg-rgb),1)); }
   .doctoc a{ display:block; position:relative; z-index:1; text-decoration:none; color:var(--fg-dim); font-family:var(--font-body);
-    font-size:16px; line-height:1.32; padding:6px 12px 6px 16px; }
+    font-size:16px; line-height:1.32; padding:6px 12px 6px var(--sp-4); }
   .doctoc a:hover{ color:var(--fg-bright); background:var(--bg-panel-2); }
   .doctoc a.active{ color:var(--fg-bright); }   /* bar + rightward glow come from the shared T82 rule */
   .doctoc a.tl1{ font-family:var(--font-head); font-size:16px; color:var(--fg-bright); letter-spacing:1px;
     text-transform:uppercase; margin-top:1.15em; margin-bottom:.1em; }
-  .doctoc a.tl1::before{ content:none; }
   .doctoc a.tl2{ font-size:16px; color:var(--fg); font-weight:600; padding-left:39px; margin-top:.5em; }
   .doctoc a.tl3{ font-size:15px; color:var(--fg-dim); padding-left:55px; }
   .doctoc a.tl4{ font-size:15px; color:var(--fg-faint); font-style:italic; padding-left:70px; }
@@ -1202,14 +1205,16 @@
   /* a nested list hugs its parent item (no big gap above/below) so the run reads as one block */
   .docreader li > ul, .docreader li > ol{ margin:.35em 0 .15em; }
   /* T91 — themed divider: a theme-coloured rule that FADES at both ends + glows, with a centred
-     Vault-Tec-style flourish sitting on the line. */
+     minimalist nuclear trefoil sitting on the line. The \FE0E text-presentation selector keeps the
+     radiation symbol a monochrome glyph (inherits the amber phosphor colour + glow), not a colour
+     emoji. */
   .docreader hr{ border:0; height:auto; margin:2.6em 0; background:none; position:relative;
     text-align:center; line-height:1; overflow:visible; }
   .docreader hr::before{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; transform:translateY(-50%);
     background:linear-gradient(to right, transparent, rgba(var(--fg-rgb),.7) 24%, rgba(var(--fg-rgb),.7) 76%, transparent);
     box-shadow:0 0 10px rgba(var(--fg-rgb),.4); }
-  .docreader hr::after{ content:"◈"; position:relative; display:inline-block; background:var(--bg);
-    padding:0 16px; color:var(--fg-bright); font-size:.9em; letter-spacing:2px;
+  .docreader hr::after{ content:"\2622\FE0E"; position:relative; display:inline-block; background:var(--bg);
+    padding:0 16px; color:var(--fg-bright); font-size:1.05em; letter-spacing:2px;
     text-shadow:0 0 9px rgba(var(--fg-rgb),.55); }
   .docreader blockquote{ margin:0 0 1.05em; padding:.3em 0 .3em 1.1em; border-left:2px solid var(--fg-faint);
     color:var(--fg-dim); font-style:italic; }
@@ -1754,7 +1759,7 @@
   .seg{ position:relative; margin-left:auto; display:inline-flex; padding:3px; gap:0;
     background:var(--bg-panel); border:1px solid var(--fg-faint); border-radius:999px; }
   .seg::before{ content:""; position:absolute; top:3px; bottom:3px; left:3px; width:calc(50% - 3px);
-    border-radius:999px; background:var(--fg); box-shadow:0 0 9px -1px rgba(var(--fg-rgb),.6);
+    border-radius:999px; background:var(--fg); box-shadow:0 0 5px -1px rgba(var(--fg-rgb),.4);
     transition:transform .22s cubic-bezier(.4,0,.2,1); z-index:0; }
   .seg:has(#view-cards.active)::before{ transform:translateX(100%); }
   .btn, .seg button{
@@ -1766,8 +1771,8 @@
   .btn:hover{ background:var(--bg-panel-2); color:var(--fg-bright); }
   .btn:active{ transform:translateY(1px); }
   /* seg pill-button overrides — AFTER the shared base so they win (transparent, thumb shows through) */
-  .seg button{ position:relative; z-index:1; flex:1 1 0; min-width:72px; text-align:center;
-    border:0; border-radius:999px; background:transparent; color:var(--fg-dim); padding:9px 24px; }
+  .seg button{ position:relative; z-index:1; flex:1 1 0; min-width:60px; text-align:center;
+    border:0; border-radius:999px; background:transparent; color:var(--fg-dim); padding:8px 18px; }
   .seg button.active{ color:var(--bg); font-weight:bold; text-shadow:none; }
   .seg button:hover{ color:var(--fg-bright); background:transparent; }
   .seg button.active:hover{ color:var(--bg); }
