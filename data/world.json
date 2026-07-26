@@ -3,101 +3,1917 @@
   "universe_id": "fallout_core_plus_misfits",
   "data_status": "provisional",
   "_note": "Working world dataset for map research. Coordinates are hypotheses until their placement basis, evidence, and uncertainty have been reviewed under docs/MAP-ARCHITECTURE.md; the application must not treat this file as display-ready yet.",
-
   "terrain_types": [
-    { "id": "terrain_salt_flats", "name": "Salt Flats", "movement_penalty": 1.2, "cover_rating": 0.2, "visibility_rating": 0.9, "encounter_bias": ["snipers", "vehicle_ambushes", "weather_hazards"], "description": "Extremely flat, reflective salt crust with minimal cover and long sight lines." },
-    { "id": "terrain_urban_ruins", "name": "Urban Ruins", "movement_penalty": 0.9, "cover_rating": 0.8, "visibility_rating": 0.5, "encounter_bias": ["raiders", "scavengers", "feral_ghouls"], "description": "Collapsed buildings, alleys and debris fields providing dense cover and complex sight lines." },
-    { "id": "terrain_mountain_ridge", "name": "Mountain Ridge", "movement_penalty": 1.5, "cover_rating": 0.7, "visibility_rating": 0.9, "encounter_bias": ["sniper_nests", "outposts", "rockfalls"], "description": "Steep, rocky high ground with excellent observation but difficult movement." },
-    { "id": "terrain_desert_scrub", "name": "Desert Scrub", "movement_penalty": 1.1, "cover_rating": 0.4, "visibility_rating": 0.8, "encounter_bias": ["caravans", "small_bandits", "wildlife"], "description": "Sparse bushes, rocks and dry soil offering limited cover and moderate sight lines." },
-    { "id": "terrain_forest_hills", "name": "Forest Hills", "movement_penalty": 1.2, "cover_rating": 0.8, "visibility_rating": 0.4, "encounter_bias": ["creatures", "hidden_camps", "random_encounters"], "description": "Wooded hills and valleys with heavy vegetation and broken sight lines." }
+    {
+      "id": "terrain_salt_flats",
+      "name": "Salt Flats",
+      "movement_penalty": 1.2,
+      "cover_rating": 0.2,
+      "visibility_rating": 0.9,
+      "encounter_bias": [
+        "snipers",
+        "vehicle_ambushes",
+        "weather_hazards"
+      ],
+      "description": "Extremely flat, reflective salt crust with minimal cover and long sight lines."
+    },
+    {
+      "id": "terrain_urban_ruins",
+      "name": "Urban Ruins",
+      "movement_penalty": 0.9,
+      "cover_rating": 0.8,
+      "visibility_rating": 0.5,
+      "encounter_bias": [
+        "raiders",
+        "scavengers",
+        "feral_ghouls"
+      ],
+      "description": "Collapsed buildings, alleys and debris fields providing dense cover and complex sight lines."
+    },
+    {
+      "id": "terrain_mountain_ridge",
+      "name": "Mountain Ridge",
+      "movement_penalty": 1.5,
+      "cover_rating": 0.7,
+      "visibility_rating": 0.9,
+      "encounter_bias": [
+        "sniper_nests",
+        "outposts",
+        "rockfalls"
+      ],
+      "description": "Steep, rocky high ground with excellent observation but difficult movement."
+    },
+    {
+      "id": "terrain_desert_scrub",
+      "name": "Desert Scrub",
+      "movement_penalty": 1.1,
+      "cover_rating": 0.4,
+      "visibility_rating": 0.8,
+      "encounter_bias": [
+        "caravans",
+        "small_bandits",
+        "wildlife"
+      ],
+      "description": "Sparse bushes, rocks and dry soil offering limited cover and moderate sight lines."
+    },
+    {
+      "id": "terrain_forest_hills",
+      "name": "Forest Hills",
+      "movement_penalty": 1.2,
+      "cover_rating": 0.8,
+      "visibility_rating": 0.4,
+      "encounter_bias": [
+        "creatures",
+        "hidden_camps",
+        "random_encounters"
+      ],
+      "description": "Wooded hills and valleys with heavy vegetation and broken sight lines."
+    }
   ],
-
   "regions": [
-    { "id": "region_new_california_republic", "name": "New California Republic", "type": "post_war_state", "real_world_extent_hint": "Southern California, parts of Nevada, Baja California, portions of Oregon.", "source_confidence": "medium", "terminal_entry": { "title": "NCR STATE ARCHIVE – NEW CALIFORNIA REPUBLIC", "body": ["Representative republic established from the settlement of Shady Sands, expanding across much of pre-war southern California and adjoining territories.", "At peak it incorporates multiple contiguous states reaching north toward Oregon and south toward Baja, overlaying pre-war borders rather than preserving them.", "The dominant organized power in the western wasteland, projecting law, trade and military presence into former US states without restoring their exact pre-war lines."] } },
-    { "id": "region_mojave_wasteland", "name": "Mojave Wasteland", "type": "wasteland_region", "real_world_extent_hint": "Southern Nevada and northwest Arizona around Las Vegas and Hoover Dam.", "source_confidence": "high", "terminal_entry": { "title": "MOJAVE SURVEY RECORD – MOJAVE WASTELAND", "body": ["Arid desert and canyon lands centred on the pre-war Mojave Desert and Colorado River corridor, including the greater Las Vegas area and Hoover Dam.", "Territorial divisions reflect NCR, Legion and independent holdings.", "Control of Mojave transport routes and Hoover Dam output is crucial for NCR expansion and rival power projection into the interior."] } },
-    { "id": "region_capital_wasteland", "name": "Capital Wasteland", "type": "wasteland_region", "real_world_extent_hint": "District of Columbia, southern Maryland, northern Virginia, adjacent Pennsylvania.", "source_confidence": "high", "terminal_entry": { "title": "FEDERAL EMERGENCY RECORD – CAPITAL WASTELAND", "body": ["Devastated urban and suburban zone centred on the ruins of Washington, D.C., extending into surrounding portions of Virginia, Maryland and Pennsylvania.", "Post-war inhabitants reference the area as a single Capital Wasteland rather than by pre-war state names.", "Contains critical pre-war infrastructure — monuments, water projects and military sites — a focal point for Enclave and Brotherhood operations."] } },
-    { "id": "region_commonwealth", "name": "Commonwealth", "type": "post_war_commonwealth", "real_world_extent_hint": "Boston metropolitan area and central Massachusetts.", "source_confidence": "high", "terminal_entry": { "title": "COMMONWEALTH GOVERNANCE FILE – MASSACHUSETTS COMMONWEALTH", "body": ["Post-war designation for the Boston and central Massachusetts area, where city and town identities persist but formal state structures have collapsed.", "The term Commonwealth is widely used in place of the pre-war state name.", "Contains Diamond City, the Institute and major ruins — central to human habitation and advanced technology in the northeast."] } },
-    { "id": "region_appalachia", "name": "Appalachia", "type": "wasteland_region", "real_world_extent_hint": "State of West Virginia and surrounding Appalachian valleys.", "source_confidence": "high", "terminal_entry": { "title": "US RECLAMATION BRIEF – APPALACHIA", "body": ["Mountainous and forested territory corresponding to pre-war West Virginia, with scattered towns, mines and industrial sites.", "Post-war references use Appalachia as a regional name rather than the former state boundary.", "An early test case for post-war reclamation initiatives and automated aid systems."] } },
-    { "id": "region_midwestern_wasteland", "name": "Midwestern Wasteland", "type": "wasteland_region", "real_world_extent_hint": "Kansas, Illinois and adjacent Midwestern states.", "source_confidence": "medium", "terminal_entry": { "title": "BROTHERHOOD STRATEGIC BRIEF – MIDWESTERN WASTELAND", "body": ["Central U.S. plains and urban centres across Kansas, Illinois and neighbouring states, marked by collapsed agriculture and dispersed communities.", "Lacks cohesive post-war state structures — scattered towns, raider territories and emergent Brotherhood enclaves.", "Offers access to surviving industrial corridors and transport routes; a priority for Brotherhood expansion."] } },
-    { "id": "region_wendover_misfits", "name": "Wendover – Misfits Nuclear Wasteland", "type": "wasteland_region", "real_world_extent_hint": "Wendover, Utah and West Wendover, Nevada, on the Great Salt Flats.", "source_confidence": "medium", "terminal_entry": { "title": "LOCAL SURVEY RECORD – WENDOVER SALT FLATS REGION", "body": ["Post-war wasteland centred on the twin communities of Wendover, Utah and West Wendover, Nevada, on the ancient shores of Lake Bonneville beside the Toana Range.", "Bleached salt flats offer minimal cover and harsh exposure; nearby ranges rise sharply from the desert floor.", "A frontier theatre for NCR, Brotherhood and independent actors in the Misfits: Nuclear Wasteland scenario, with vault installations and outposts embedded in the local geography."] } }
+    {
+      "id": "region_new_california_republic",
+      "name": "New California Republic",
+      "type": "post_war_state",
+      "real_world_extent_hint": "Southern California, parts of Nevada, Baja California, portions of Oregon.",
+      "source_confidence": "medium",
+      "terminal_entry": {
+        "title": "NCR STATE ARCHIVE \u2013 NEW CALIFORNIA REPUBLIC",
+        "body": [
+          "Representative republic established from the settlement of Shady Sands, expanding across much of pre-war southern California and adjoining territories.",
+          "At peak it incorporates multiple contiguous states reaching north toward Oregon and south toward Baja, overlaying pre-war borders rather than preserving them.",
+          "The dominant organized power in the western wasteland, projecting law, trade and military presence into former US states without restoring their exact pre-war lines."
+        ]
+      }
+    },
+    {
+      "id": "region_mojave_wasteland",
+      "name": "Mojave Wasteland",
+      "type": "wasteland_region",
+      "real_world_extent_hint": "Southern Nevada and northwest Arizona around Las Vegas and Hoover Dam.",
+      "source_confidence": "high",
+      "terminal_entry": {
+        "title": "MOJAVE SURVEY RECORD \u2013 MOJAVE WASTELAND",
+        "body": [
+          "Arid desert and canyon lands centred on the pre-war Mojave Desert and Colorado River corridor, including the greater Las Vegas area and Hoover Dam.",
+          "Territorial divisions reflect NCR, Legion and independent holdings.",
+          "Control of Mojave transport routes and Hoover Dam output is crucial for NCR expansion and rival power projection into the interior."
+        ]
+      }
+    },
+    {
+      "id": "region_capital_wasteland",
+      "name": "Capital Wasteland",
+      "type": "wasteland_region",
+      "real_world_extent_hint": "District of Columbia, southern Maryland, northern Virginia, adjacent Pennsylvania.",
+      "source_confidence": "high",
+      "terminal_entry": {
+        "title": "FEDERAL EMERGENCY RECORD \u2013 CAPITAL WASTELAND",
+        "body": [
+          "Devastated urban and suburban zone centred on the ruins of Washington, D.C., extending into surrounding portions of Virginia, Maryland and Pennsylvania.",
+          "Post-war inhabitants reference the area as a single Capital Wasteland rather than by pre-war state names.",
+          "Contains critical pre-war infrastructure \u2014 monuments, water projects and military sites \u2014 a focal point for Enclave and Brotherhood operations."
+        ]
+      }
+    },
+    {
+      "id": "region_commonwealth",
+      "name": "Commonwealth",
+      "type": "post_war_commonwealth",
+      "real_world_extent_hint": "Boston metropolitan area and central Massachusetts.",
+      "source_confidence": "high",
+      "terminal_entry": {
+        "title": "COMMONWEALTH GOVERNANCE FILE \u2013 MASSACHUSETTS COMMONWEALTH",
+        "body": [
+          "Post-war designation for the Boston and central Massachusetts area, where city and town identities persist but formal state structures have collapsed.",
+          "The term Commonwealth is widely used in place of the pre-war state name.",
+          "Contains Diamond City, the Institute and major ruins \u2014 central to human habitation and advanced technology in the northeast."
+        ]
+      }
+    },
+    {
+      "id": "region_appalachia",
+      "name": "Appalachia",
+      "type": "wasteland_region",
+      "real_world_extent_hint": "State of West Virginia and surrounding Appalachian valleys.",
+      "source_confidence": "high",
+      "terminal_entry": {
+        "title": "US RECLAMATION BRIEF \u2013 APPALACHIA",
+        "body": [
+          "Mountainous and forested territory corresponding to pre-war West Virginia, with scattered towns, mines and industrial sites.",
+          "Post-war references use Appalachia as a regional name rather than the former state boundary.",
+          "An early test case for post-war reclamation initiatives and automated aid systems."
+        ]
+      }
+    },
+    {
+      "id": "region_midwestern_wasteland",
+      "name": "Midwestern Wasteland",
+      "type": "wasteland_region",
+      "real_world_extent_hint": "Kansas, Illinois and adjacent Midwestern states.",
+      "source_confidence": "medium",
+      "terminal_entry": {
+        "title": "BROTHERHOOD STRATEGIC BRIEF \u2013 MIDWESTERN WASTELAND",
+        "body": [
+          "Central U.S. plains and urban centres across Kansas, Illinois and neighbouring states, marked by collapsed agriculture and dispersed communities.",
+          "Lacks cohesive post-war state structures \u2014 scattered towns, raider territories and emergent Brotherhood enclaves.",
+          "Offers access to surviving industrial corridors and transport routes; a priority for Brotherhood expansion."
+        ]
+      }
+    },
+    {
+      "id": "region_wendover_misfits",
+      "name": "Wendover \u2013 Misfits Nuclear Wasteland",
+      "type": "wasteland_region",
+      "real_world_extent_hint": "Wendover, Utah and West Wendover, Nevada, on the Great Salt Flats.",
+      "source_confidence": "medium",
+      "terminal_entry": {
+        "title": "LOCAL SURVEY RECORD \u2013 WENDOVER SALT FLATS REGION",
+        "body": [
+          "Post-war wasteland centred on the twin communities of Wendover, Utah and West Wendover, Nevada, on the ancient shores of Lake Bonneville beside the Toana Range.",
+          "Bleached salt flats offer minimal cover and harsh exposure; nearby ranges rise sharply from the desert floor.",
+          "A frontier theatre for NCR, Brotherhood and independent actors in the Misfits: Nuclear Wasteland scenario, with vault installations and outposts embedded in the local geography."
+        ]
+      }
+    }
   ],
-
   "sources": [
-    { "id": "fo1-location-list", "title": "Fallout locations", "url": "https://fallout-archive.fandom.com/wiki/Fallout_locations", "kind": "community_reference", "note": "Marker identity cross-check; individual claims still require the cited game or guide material." },
-    { "id": "fo1-boneyard", "title": "Boneyard", "url": "https://fallout.fandom.com/wiki/Boneyard", "kind": "community_reference", "note": "Secondary index to game and official-guide references identifying the Boneyard with Los Angeles." },
-    { "id": "fo1-necropolis", "title": "Necropolis", "url": "https://fallout.fandom.com/wiki/Necropolis", "kind": "community_reference", "note": "Secondary index to game and official-guide references identifying Necropolis with Bakersfield." },
-    { "id": "fo1-hub", "title": "The Hub", "url": "https://fallout.fandom.com/wiki/The_Hub", "kind": "community_reference", "note": "Identity and setting reference; it does not establish a real-world city." },
-    { "id": "fo1-lost-hills", "title": "Lost Hills", "url": "https://fallout.fandom.com/wiki/Lost_Hills", "kind": "community_reference", "note": "Records the same-name real place without proving that the fictional site is identical to it." },
-    { "id": "fo1-mariposa", "title": "Mariposa Military Base", "url": "https://fallout.fandom.com/wiki/Mariposa_Military_Base", "kind": "community_reference", "note": "Collects conflicting game-map, later reference-work, and developer-inspiration evidence." },
-    { "id": "fo1-glow", "title": "The Glow", "url": "https://fallout.fandom.com/wiki/The_Glow", "kind": "community_reference", "note": "Establishes the West Tek identity and relative game-map position, not a real-world point." },
-    { "id": "fo1-cathedral", "title": "The Cathedral", "url": "https://fallout.fandom.com/wiki/The_Cathedral", "kind": "community_reference", "note": "Links the Cathedral to the Los Angeles and Boneyard location cluster." },
-    { "id": "fo2-city-data", "title": "Fallout 2 CITY.TXT transcript", "url": "https://fallout.fandom.com/ru/wiki/CITY.TXT", "kind": "community_reference", "note": "Transcript of the shipped world-map city data, used for relative pixel positions rather than real-world identity." },
-    { "id": "fo2-arroyo-reference", "title": "Fallout Bible complete", "url": "https://fallout.czech-games.net/downloady/fallout_bible_gog.pdf", "kind": "developer_statement", "note": "Post-release developer reference; useful for design intent but kept distinct from in-game evidence." },
-    { "id": "fo2-new-reno", "title": "New Reno", "url": "https://fallout.fandom.com/wiki/New_Reno", "kind": "community_reference", "note": "Secondary index to game dialogue and reference material identifying New Reno with Reno while noting game-map displacement." },
-    { "id": "fo2-vault-city", "title": "Vault City", "url": "https://fallout.fandom.com/wiki/Vault_City", "kind": "community_reference", "note": "Includes the in-game travel-log wording and the conflicting northern Nevada map interpretation." },
-    { "id": "fnv-strip", "title": "New Vegas Strip", "url": "https://fallout.fandom.com/wiki/New_Vegas_Strip", "kind": "community_reference", "note": "Secondary index to game material identifying the fortified district with the surviving Las Vegas Strip." },
-    { "id": "fnv-goodsprings", "title": "Goodsprings", "url": "https://fallout.fandom.com/wiki/Goodsprings", "kind": "community_reference", "note": "Secondary index to game and design references identifying the settlement with real Goodsprings." },
-    { "id": "fnv-goodsprings-census", "title": "Nevada census-designated places", "url": "https://tigerweb.geo.census.gov/tigerwebmain/Files/bas26/tigerweb_bas26_cdp_nv.html", "kind": "reference_work", "note": "Government geographic reference used for the Goodsprings centre point." },
-    { "id": "fnv-primm", "title": "Primm", "url": "https://fallout.fandom.com/wiki/Primm", "kind": "community_reference", "note": "Secondary index to dialogue and game references identifying the settlement with real Primm beside Interstate 15." },
-    { "id": "fnv-novac", "title": "Novac", "url": "https://fallout.fandom.com/wiki/Novac", "kind": "community_reference", "note": "Establishes Novac as a fictional Highway 95 settlement and keeps its roadside-sign inspirations distinct from town identity." },
-    { "id": "fnv-boulder-city", "title": "Boulder City", "url": "https://fallout.fandom.com/wiki/Boulder_City", "kind": "community_reference", "note": "Secondary index to game references identifying the ruins with real Boulder City." },
-    { "id": "fnv-hoover-dam", "title": "Hoover Dam", "url": "https://fallout.fandom.com/wiki/Hoover_Dam", "kind": "community_reference", "note": "Secondary index to game material identifying the location with the real Colorado River dam." },
-    { "id": "fnv-the-fort", "title": "The Fort", "url": "https://fallout.fandom.com/wiki/The_Fort", "kind": "community_reference", "note": "Places the fictional camp in the same geographical area as Fortification Hill east of Hoover Dam." },
-    { "id": "fnv-fortification-hill", "title": "Fortification Hill", "url": "https://www.nps.gov/lake/learn/nature/fortification-hill.htm", "kind": "reference_work", "note": "National Park Service geographic reference for the real hill and its relationship to Hoover Dam." },
-    { "id": "fnv-camp-mccarran", "title": "Camp McCarran", "url": "https://fallout.fandom.com/wiki/Camp_McCarran", "kind": "community_reference", "note": "Secondary index to game dialogue identifying the base with the former Las Vegas airport." },
-    { "id": "fnv-las-airport", "title": "Harry Reid International Airport", "url": "https://www.airnav.com/airport/LAS", "kind": "reference_work", "note": "Aeronautical geographic reference used for the airport centre point." },
-    { "id": "fnv-cottonwood-cove", "title": "Cottonwood Cove", "url": "https://fallout.fandom.com/wiki/Cottonwood_Cove", "kind": "community_reference", "note": "Secondary index identifying the Legion landing with the real Cottonwood Cove resort area." },
-    { "id": "fnv-cottonwood-usbr", "title": "Cottonwood Cove", "url": "https://data.usbr.gov/location/3535", "kind": "reference_work", "note": "Bureau of Reclamation geographic reference used for the cove point." },
-    { "id": "fnv-nelson", "title": "Nelson", "url": "https://fallout.fandom.com/wiki/Nelson", "kind": "community_reference", "note": "Secondary index to game material identifying the occupied settlement with real Nelson, Nevada." },
-    { "id": "fnv-jacobstown", "title": "Jacobstown", "url": "https://fallout.fandom.com/wiki/Jacobstown", "kind": "community_reference", "note": "Places the fictional refuge in the Mount Charleston area and associates its lodge with the same-area mountain retreat." },
-    { "id": "fnv-black-mountain", "title": "Black Mountain", "url": "https://fallout.fandom.com/wiki/Black_Mountain", "kind": "community_reference", "note": "Places the fictional broadcast site in the same area as the real Black Mountain in Sloan Canyon." }
+    {
+      "id": "fo1-location-list",
+      "title": "Fallout locations",
+      "url": "https://fallout-archive.fandom.com/wiki/Fallout_locations",
+      "kind": "community_reference",
+      "note": "Marker identity cross-check; individual claims still require the cited game or guide material."
+    },
+    {
+      "id": "fo1-boneyard",
+      "title": "Boneyard",
+      "url": "https://fallout.fandom.com/wiki/Boneyard",
+      "kind": "community_reference",
+      "note": "Secondary index to game and official-guide references identifying the Boneyard with Los Angeles."
+    },
+    {
+      "id": "fo1-necropolis",
+      "title": "Necropolis",
+      "url": "https://fallout.fandom.com/wiki/Necropolis",
+      "kind": "community_reference",
+      "note": "Secondary index to game and official-guide references identifying Necropolis with Bakersfield."
+    },
+    {
+      "id": "fo1-hub",
+      "title": "The Hub",
+      "url": "https://fallout.fandom.com/wiki/The_Hub",
+      "kind": "community_reference",
+      "note": "Identity and setting reference; it does not establish a real-world city."
+    },
+    {
+      "id": "fo1-lost-hills",
+      "title": "Lost Hills",
+      "url": "https://fallout.fandom.com/wiki/Lost_Hills",
+      "kind": "community_reference",
+      "note": "Records the same-name real place without proving that the fictional site is identical to it."
+    },
+    {
+      "id": "fo1-mariposa",
+      "title": "Mariposa Military Base",
+      "url": "https://fallout.fandom.com/wiki/Mariposa_Military_Base",
+      "kind": "community_reference",
+      "note": "Collects conflicting game-map, later reference-work, and developer-inspiration evidence."
+    },
+    {
+      "id": "fo1-glow",
+      "title": "The Glow",
+      "url": "https://fallout.fandom.com/wiki/The_Glow",
+      "kind": "community_reference",
+      "note": "Establishes the West Tek identity and relative game-map position, not a real-world point."
+    },
+    {
+      "id": "fo1-cathedral",
+      "title": "The Cathedral",
+      "url": "https://fallout.fandom.com/wiki/The_Cathedral",
+      "kind": "community_reference",
+      "note": "Links the Cathedral to the Los Angeles and Boneyard location cluster."
+    },
+    {
+      "id": "fo2-city-data",
+      "title": "Fallout 2 CITY.TXT transcript",
+      "url": "https://fallout.fandom.com/ru/wiki/CITY.TXT",
+      "kind": "community_reference",
+      "note": "Transcript of the shipped world-map city data, used for relative pixel positions rather than real-world identity."
+    },
+    {
+      "id": "fo2-arroyo-reference",
+      "title": "Fallout Bible complete",
+      "url": "https://fallout.czech-games.net/downloady/fallout_bible_gog.pdf",
+      "kind": "developer_statement",
+      "note": "Post-release developer reference; useful for design intent but kept distinct from in-game evidence."
+    },
+    {
+      "id": "fo2-new-reno",
+      "title": "New Reno",
+      "url": "https://fallout.fandom.com/wiki/New_Reno",
+      "kind": "community_reference",
+      "note": "Secondary index to game dialogue and reference material identifying New Reno with Reno while noting game-map displacement."
+    },
+    {
+      "id": "fo2-vault-city",
+      "title": "Vault City",
+      "url": "https://fallout.fandom.com/wiki/Vault_City",
+      "kind": "community_reference",
+      "note": "Includes the in-game travel-log wording and the conflicting northern Nevada map interpretation."
+    },
+    {
+      "id": "fnv-strip",
+      "title": "New Vegas Strip",
+      "url": "https://fallout.fandom.com/wiki/New_Vegas_Strip",
+      "kind": "community_reference",
+      "note": "Secondary index to game material identifying the fortified district with the surviving Las Vegas Strip."
+    },
+    {
+      "id": "fnv-goodsprings",
+      "title": "Goodsprings",
+      "url": "https://fallout.fandom.com/wiki/Goodsprings",
+      "kind": "community_reference",
+      "note": "Secondary index to game and design references identifying the settlement with real Goodsprings."
+    },
+    {
+      "id": "fnv-goodsprings-census",
+      "title": "Nevada census-designated places",
+      "url": "https://tigerweb.geo.census.gov/tigerwebmain/Files/bas26/tigerweb_bas26_cdp_nv.html",
+      "kind": "reference_work",
+      "note": "Government geographic reference used for the Goodsprings centre point."
+    },
+    {
+      "id": "fnv-primm",
+      "title": "Primm",
+      "url": "https://fallout.fandom.com/wiki/Primm",
+      "kind": "community_reference",
+      "note": "Secondary index to dialogue and game references identifying the settlement with real Primm beside Interstate 15."
+    },
+    {
+      "id": "fnv-novac",
+      "title": "Novac",
+      "url": "https://fallout.fandom.com/wiki/Novac",
+      "kind": "community_reference",
+      "note": "Establishes Novac as a fictional Highway 95 settlement and keeps its roadside-sign inspirations distinct from town identity."
+    },
+    {
+      "id": "fnv-boulder-city",
+      "title": "Boulder City",
+      "url": "https://fallout.fandom.com/wiki/Boulder_City",
+      "kind": "community_reference",
+      "note": "Secondary index to game references identifying the ruins with real Boulder City."
+    },
+    {
+      "id": "fnv-hoover-dam",
+      "title": "Hoover Dam",
+      "url": "https://fallout.fandom.com/wiki/Hoover_Dam",
+      "kind": "community_reference",
+      "note": "Secondary index to game material identifying the location with the real Colorado River dam."
+    },
+    {
+      "id": "fnv-the-fort",
+      "title": "The Fort",
+      "url": "https://fallout.fandom.com/wiki/The_Fort",
+      "kind": "community_reference",
+      "note": "Places the fictional camp in the same geographical area as Fortification Hill east of Hoover Dam."
+    },
+    {
+      "id": "fnv-fortification-hill",
+      "title": "Fortification Hill",
+      "url": "https://www.nps.gov/lake/learn/nature/fortification-hill.htm",
+      "kind": "reference_work",
+      "note": "National Park Service geographic reference for the real hill and its relationship to Hoover Dam."
+    },
+    {
+      "id": "fnv-camp-mccarran",
+      "title": "Camp McCarran",
+      "url": "https://fallout.fandom.com/wiki/Camp_McCarran",
+      "kind": "community_reference",
+      "note": "Secondary index to game dialogue identifying the base with the former Las Vegas airport."
+    },
+    {
+      "id": "fnv-las-airport",
+      "title": "Harry Reid International Airport",
+      "url": "https://www.airnav.com/airport/LAS",
+      "kind": "reference_work",
+      "note": "Aeronautical geographic reference used for the airport centre point."
+    },
+    {
+      "id": "fnv-cottonwood-cove",
+      "title": "Cottonwood Cove",
+      "url": "https://fallout.fandom.com/wiki/Cottonwood_Cove",
+      "kind": "community_reference",
+      "note": "Secondary index identifying the Legion landing with the real Cottonwood Cove resort area."
+    },
+    {
+      "id": "fnv-cottonwood-usbr",
+      "title": "Cottonwood Cove",
+      "url": "https://data.usbr.gov/location/3535",
+      "kind": "reference_work",
+      "note": "Bureau of Reclamation geographic reference used for the cove point."
+    },
+    {
+      "id": "fnv-nelson",
+      "title": "Nelson",
+      "url": "https://fallout.fandom.com/wiki/Nelson",
+      "kind": "community_reference",
+      "note": "Secondary index to game material identifying the occupied settlement with real Nelson, Nevada."
+    },
+    {
+      "id": "fnv-jacobstown",
+      "title": "Jacobstown",
+      "url": "https://fallout.fandom.com/wiki/Jacobstown",
+      "kind": "community_reference",
+      "note": "Places the fictional refuge in the Mount Charleston area and associates its lodge with the same-area mountain retreat."
+    },
+    {
+      "id": "fnv-black-mountain",
+      "title": "Black Mountain",
+      "url": "https://fallout.fandom.com/wiki/Black_Mountain",
+      "kind": "community_reference",
+      "note": "Places the fictional broadcast site in the same area as the real Black Mountain in Sloan Canyon."
+    }
   ],
-
   "locations": [
-    { "id": "f1_vault_13", "game_id": "fallout_1", "name": "Vault 13", "type": "vault", "in_universe_region": "New California – Mountain Sector", "real_world_anchor": "Undetermined mountain location in southern California", "coordinates": { "latitude": 34.3, "longitude": -117.9 }, "canon_scope": "fallout_1", "placement": { "basis": "game_map_inference", "status": "provisional", "precision_km": 120, "method_note": "Legacy candidate retained for research continuity only; its direction from Shady Sands conflicts with the submitted description and requires a same-map anchor fit." }, "evidence": [{ "source_id": "fo1-location-list", "supports": "identity", "locator": "Fallout location list", "note": "Confirms Vault 13 as a Fallout world-map location but does not establish a real-world site." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2161, "primary_events_year_end": 2180 }, "tags": ["vault", "mountain", "fallout_1", "ncr_origin"], "terrain_type_id": "terrain_mountain_ridge", "terminal_entry": { "title": "Vault-Tec Secure Archive – VAULT 13", "body": ["A long-term Vault-Tec habitation facility embedded in mountain rock somewhere in southern California.", "Sealed at the Great War in 2077; population maintained under closed ecosystem protocols dependent on a single integrated water purification chip.", "c.2161 — systemic water processing failure triggers dispatch of a surface surveyor, leading to extensive contact with external settlements."] } },
-    { "id": "f1_shady_sands", "game_id": "fallout_1", "name": "Shady Sands", "type": "settlement", "in_universe_region": "New California – Core NCR Territory", "real_world_anchor": "Undetermined desert location in southern California", "coordinates": { "latitude": 34.6, "longitude": -117.2 }, "canon_scope": "fallout_1", "placement": { "basis": "game_map_inference", "status": "provisional", "precision_km": 120, "method_note": "Legacy candidate retained for research continuity only; the submitted point conflicts with stated relative directions and is not ready for display." }, "evidence": [{ "source_id": "fo1-location-list", "supports": "identity", "locator": "Fallout location list", "note": "Confirms Shady Sands as a Fallout world-map location but not a real-world point." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2161, "primary_events_year_end": 2200 }, "tags": ["settlement", "ncr_capital", "fallout_1"], "terrain_type_id": "terrain_desert_scrub", "terminal_entry": { "title": "NCR CIVIC DATABASE – SHADY SANDS (FOUNDING NODE)", "body": ["Agricultural and civic hub established by former Vault 15 residents at an unresolved location in the southern California interior.", "c.2161 — a small but politically ambitious township experimenting with representative governance and codified law.", "Later formalized as the capital of the New California Republic; origin point for NCR legal codes and expansion policy."] } },
-    { "id": "f1_boneyard", "game_id": "fallout_1", "name": "The Boneyard", "type": "city", "in_universe_region": "New California – Coastal Ruins", "real_world_anchor": "Los Angeles, California", "coordinates": { "latitude": 34.0522, "longitude": -118.2437 }, "canon_scope": "fallout_1", "placement": { "basis": "real_world_identity", "status": "provisional", "precision_km": 15, "method_note": "The city identity is explicit; the marker represents the Los Angeles metropolitan centre rather than an exact site." }, "evidence": [{ "source_id": "fo1-boneyard", "supports": "identity", "locator": "Overview and cited official-guide references", "note": "Identifies the Boneyard as the remains of Los Angeles." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2161, "primary_events_year_end": 2200 }, "tags": ["city", "coastal", "fallout_1"], "terrain_type_id": "terrain_urban_ruins", "terminal_entry": { "title": "COASTAL RUIN SURVEY – THE BONEYARD (LOS ANGELES)", "body": ["A vast cemetery of collapsed skyscrapers and suburban sprawl corresponding to the former Los Angeles metropolitan area.", "Fragmented communities and militias occupy districts such as Adytum.", "A key source of salvage technology and printed knowledge, making control of habitable zones a recurring flashpoint."] } },
-    { "id": "f1_the_hub", "game_id": "fallout_1", "name": "The Hub", "type": "city", "in_universe_region": "New California – Trade Corridor", "real_world_anchor": "Undetermined southern California location", "canon_scope": "fallout_1", "placement": { "basis": "unknown", "status": "withheld", "precision_km": 0, "method_note": "The settlement is well established, but the proposed point contradicts its stated direction from Shady Sands and no real-world city identity was verified." }, "evidence": [{ "source_id": "fo1-hub", "supports": "identity", "locator": "Overview", "note": "Establishes the Hub as a major New California settlement without identifying a real-world city." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2161, "primary_events_year_end": 2200 }, "tags": ["city", "trade", "fallout_1"], "terrain_type_id": "terrain_desert_scrub", "terminal_entry": { "title": "CARAVAN EXCHANGE RECORD – THE HUB", "body": ["A major trading settlement linking the communities of New California.", "Its precise real-world placement remains unresolved pending a consistent fit to reviewed world-map anchors."] } },
-    { "id": "f1_necropolis", "game_id": "fallout_1", "name": "Necropolis", "type": "city", "in_universe_region": "New California – Central Valley Ruins", "real_world_anchor": "Bakersfield, California", "coordinates": { "latitude": 35.3733, "longitude": -119.0187 }, "canon_scope": "fallout_1", "placement": { "basis": "real_world_identity", "status": "provisional", "precision_km": 15, "method_note": "The city identity is explicit; the marker represents central Bakersfield rather than a surviving structure." }, "evidence": [{ "source_id": "fo1-necropolis", "supports": "identity", "locator": "Overview and cited official-guide references", "note": "Identifies Necropolis as the post-war remains of Bakersfield." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2161, "primary_events_year_end": 2200 }, "tags": ["city", "ghouls", "fallout_1"], "terrain_type_id": "terrain_urban_ruins", "terminal_entry": { "title": "CENTRAL VALLEY RUIN SURVEY – NECROPOLIS", "body": ["A post-war settlement occupying the remains of Bakersfield.", "Its urban identity is firm even though an exact district-level marker is not justified."] } },
-    { "id": "f1_lost_hills", "game_id": "fallout_1", "name": "Lost Hills", "type": "bunker", "in_universe_region": "New California – Brotherhood Territory", "real_world_anchor": "Candidate area around Lost Hills, California", "coordinates": { "latitude": 35.6166, "longitude": -119.6943 }, "canon_scope": "fallout_1", "placement": { "basis": "regional_inference", "status": "provisional", "precision_km": 80, "method_note": "A same-name real place is a useful locus, but identity is not explicit enough for a reviewed point; the broad radius preserves that distinction." }, "evidence": [{ "source_id": "fo1-lost-hills", "supports": "placement", "locator": "Location and behind-the-scenes sections", "note": "Notes a same-name California place but does not prove exact fictional identity." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2161, "primary_events_year_end": 2200 }, "tags": ["bunker", "brotherhood", "fallout_1"], "terrain_type_id": "terrain_desert_scrub", "terminal_entry": { "title": "BROTHERHOOD ARCHIVE – LOST HILLS", "body": ["The Brotherhood of Steel headquarters in New California.", "Its relationship to the same-name real-world place remains a provisional geographic hypothesis."] } },
-    { "id": "f1_mariposa_base", "game_id": "fallout_1", "name": "Mariposa Military Base", "type": "military_base", "in_universe_region": "New California – Northern Interior", "real_world_anchor": "Disputed central California location", "canon_scope": "fallout_1", "placement": { "basis": "unknown", "status": "withheld", "precision_km": 0, "method_note": "The game-map position, Fort Ord design inspiration, and later Clouds Rest or Yosemite-area reference cannot be collapsed into one defensible coordinate." }, "evidence": [{ "source_id": "fo1-mariposa", "supports": "identity", "locator": "Overview", "note": "Establishes the military base as a Fallout location in central California." }, { "source_id": "fo1-mariposa", "supports": "contradiction", "locator": "Location and behind-the-scenes sections", "note": "Records distinct game-map, later reference-work, and developer-inspiration loci." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2161, "primary_events_year_end": 2200 }, "tags": ["military_base", "mutants", "fallout_1"], "terrain_type_id": "terrain_mountain_ridge", "terminal_entry": { "title": "MILITARY SITE RECORD – MARIPOSA", "body": ["A pre-war military installation associated with forced evolutionary virus research.", "Its identity is established, but competing geographic evidence prevents a responsible public marker."] } },
-    { "id": "f1_the_glow", "game_id": "fallout_1", "name": "The Glow", "type": "research_facility", "in_universe_region": "New California – Southern Exclusion Zone", "real_world_anchor": "Undetermined West Tek site in southern California", "canon_scope": "fallout_1", "placement": { "basis": "unknown", "status": "withheld", "precision_km": 0, "method_note": "Relative distances on the game map are useful only after Vault 13 and other same-map anchors are reconciled." }, "evidence": [{ "source_id": "fo1-glow", "supports": "identity", "locator": "Overview", "note": "Identifies the Glow as the ruined West Tek research facility." }, { "source_id": "fo1-glow", "supports": "relative_position", "locator": "Location section", "note": "Provides game-map relationships to Vault 13 and the Boneyard without fixing a real-world point." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2161, "primary_events_year_end": 2200 }, "tags": ["research_facility", "radiation", "fallout_1"], "terrain_type_id": "terrain_desert_scrub", "terminal_entry": { "title": "WEST TEK EXCLUSION RECORD – THE GLOW", "body": ["The irradiated remains of a West Tek research facility.", "Its real-world point remains withheld until the Fallout world-map anchor fit is internally consistent."] } },
-    { "id": "f1_cathedral", "game_id": "fallout_1", "name": "The Cathedral", "type": "landmark", "in_universe_region": "New California – Los Angeles Ruins", "real_world_anchor": "Los Angeles metropolitan area, California", "coordinates": { "latitude": 34.06, "longitude": -118.3 }, "canon_scope": "fallout_1", "placement": { "basis": "regional_inference", "status": "provisional", "precision_km": 15, "method_note": "Sources place it in the Los Angeles and Boneyard cluster, but do not justify an exact surviving building." }, "evidence": [{ "source_id": "fo1-cathedral", "supports": "placement", "locator": "Overview and location sections", "note": "Associates the Cathedral and its vault with the Los Angeles ruins." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2161, "primary_events_year_end": 2200 }, "tags": ["landmark", "cult", "fallout_1"], "terrain_type_id": "terrain_urban_ruins", "terminal_entry": { "title": "LOS ANGELES RUIN RECORD – THE CATHEDRAL", "body": ["A prominent structure within the Los Angeles ruins and the wider Boneyard cluster.", "The metropolitan placement is useful, while the exact building remains unresolved."] } },
-    { "id": "f2_arroyo", "game_id": "fallout_2", "name": "Arroyo", "type": "settlement", "in_universe_region": "Northern California–Southern Oregon Frontier", "real_world_anchor": "Fictional locale west of the Klamath Falls locus", "coordinates": { "latitude": 42.0, "longitude": -123.1 }, "canon_scope": "fallout_2", "placement": { "basis": "regional_inference", "status": "provisional", "precision_km": 130, "method_note": "The developer reference says the founders headed north, groups Arroyo with a Northern California drought, and calls the locale fictional. The shipped map places it nearly level with and west of Klamath Falls; the point represents the broad California–Oregon frontier overlap, not a named town." }, "evidence": [{ "source_id": "fo2-arroyo-reference", "supports": "identity", "locator": "Pages 26, 28, and 83", "note": "Records a northward founding journey, associates Arroyo with a Northern California drought, and states that Tim Cain regarded Arroyo as fictional." }, { "source_id": "fo2-city-data", "supports": "relative_position", "locator": "Area 00 Arroyo and Area 02 Klamath", "note": "Places Arroyo at 184,133 and Klamath at 373,122 on the shipped world map." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2241, "primary_events_year_end": 2242 }, "tags": ["settlement", "tribal", "fallout_2"], "terrain_type_id": "terrain_mountain_ridge", "terminal_entry": { "title": "TRIBAL ARCHIVE – ARROYO", "body": ["A secluded fictional settlement founded by the exiled Vault Dweller and companions somewhere along the northern California–southern Oregon frontier.", "The regional hypothesis is useful, but no surviving real-world town is established and the marker must retain broad uncertainty."] } },
-    { "id": "f2_new_reno", "game_id": "fallout_2", "name": "New Reno", "type": "city", "in_universe_region": "Independent City-State", "real_world_anchor": "Reno, Nevada", "coordinates": { "latitude": 39.5296, "longitude": -119.8138 }, "canon_scope": "fallout_2", "placement": { "basis": "real_world_identity", "status": "provisional", "precision_km": 15, "method_note": "The Reno identity is explicit; the point represents the real metropolitan centre because the Fallout 2 world-map marker is displaced into the Sierra Nevada." }, "evidence": [{ "source_id": "fo2-new-reno", "supports": "identity", "locator": "History and behind-the-scenes sections", "note": "Identifies New Reno with the surviving pre-war city of Reno and records the game-map displacement." }, { "source_id": "fo2-city-data", "supports": "relative_position", "locator": "Area 07 New Reno", "note": "Places New Reno at 923,922 on the shipped world map for same-map comparisons." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2241, "primary_events_year_end": 2242 }, "tags": ["city", "vice_hub", "fallout_2"], "terrain_type_id": "terrain_urban_ruins", "terminal_entry": { "title": "ORGANIZED CRIME DOSSIER – NEW RENO", "body": ["Post-war entertainment and vice hub corresponding to pre-war Reno, dominated by competing crime families and casinos.", "A major producer and distributor of chems, arms and illicit services for the western wasteland.", "High opportunity for covert negotiation offset by extreme volatility and violent conflict."] } },
-    { "id": "f2_vault_city", "game_id": "fallout_2", "name": "Vault City", "type": "city", "in_universe_region": "Northern California–Nevada Borderlands", "real_world_anchor": "Broad border region northeast of Reno", "coordinates": { "latitude": 41.6, "longitude": -119.8 }, "canon_scope": "fallout_2", "placement": { "basis": "game_map_inference", "status": "provisional", "precision_km": 130, "method_note": "The shipped map places Vault City north and east of New Reno. A four-anchor affine check points into northwest Nevada but has longitude residuals exceeding one degree; the border-centred candidate and wide radius preserve the in-game travel log's Northern California wording." }, "evidence": [{ "source_id": "fo2-city-data", "supports": "relative_position", "locator": "Area 04 Vault City and Areas 02, 07, 13, and 14", "note": "Places Vault City at 1223,322 relative to Klamath, New Reno, Redding, and San Francisco." }, { "source_id": "fo2-vault-city", "supports": "contradiction", "locator": "Notes and Vault City travel log", "note": "The world-map interpretation indicates northern Nevada, while the in-game travel log describes the city within Northern California." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2241, "primary_events_year_end": 2242 }, "tags": ["city", "vault", "fallout_2"], "terrain_type_id": "terrain_desert_scrub", "terminal_entry": { "title": "VAULT 8 CIVIC RECORD – VAULT CITY", "body": ["An advanced, insular settlement founded by the inhabitants of Vault 8.", "Its broad borderland placement follows the game map while preserving the conflicting Northern California travel-log description."] } },
-    { "id": "ft_canyon", "game_id": "fallout_tactics", "name": "Canyon", "type": "town", "in_universe_region": "Midwestern Wasteland", "real_world_anchor": "Lakin, Kansas", "coordinates": { "latitude": 37.9403, "longitude": -101.2424 }, "source_confidence": "medium", "era": { "pre_war_year": 2077, "primary_events_year_start": 2197, "primary_events_year_end": 2208 }, "tags": ["town", "midwest", "brotherhood"], "terrain_type_id": "terrain_desert_scrub", "terminal_entry": { "title": "BROTHERHOOD FIELD LOG – CANYON", "body": ["A small agricultural town on the former central-U.S. plains, used as a local recruitment and supply point.", "Early Brotherhood Midwest engagements here establish a foothold against raider and mutant threats.", "A staging ground for deeper incursions into the Midwestern Wasteland."] } },
-    { "id": "f3_megaton", "game_id": "fallout_3", "name": "Megaton", "type": "settlement", "in_universe_region": "Capital Wasteland", "real_world_anchor": "Suburban fringe of Washington, D.C.", "coordinates": { "latitude": 39.0, "longitude": -77.0 }, "source_confidence": "medium", "era": { "pre_war_year": 2077, "primary_events_year_start": 2277, "primary_events_year_end": 2280 }, "tags": ["settlement", "bomb_cult", "fallout_3"], "terrain_type_id": "terrain_urban_ruins", "terminal_entry": { "title": "CAPITAL WASTELAND TRAVEL NODE – MEGATON", "body": ["A fortified shanty-town built around an undetonated atomic bomb in a former highway crater on the outskirts of ruined Washington.", "Authority is exercised by a sheriff and council balancing a bomb-centric cult with merchant interests.", "An early resupply and social hub for travellers entering the Capital Wasteland."] } },
-    { "id": "fnv_new_vegas_strip", "game_id": "fallout_new_vegas", "name": "New Vegas Strip", "type": "city", "in_universe_region": "Mojave Wasteland", "real_world_anchor": "Las Vegas Strip, Nevada", "coordinates": { "latitude": 36.1147, "longitude": -115.1728 }, "canon_scope": "fallout_new_vegas", "placement": { "basis": "real_world_identity", "status": "provisional", "precision_km": 8, "method_note": "The district identity is explicit; the marker represents the central Las Vegas Strip rather than one gate or casino." }, "evidence": [{ "source_id": "fnv-strip", "supports": "identity", "locator": "Overview and location sections", "note": "Identifies the fortified New Vegas district with the surviving Las Vegas Strip." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2281, "primary_events_year_end": 2282 }, "tags": ["city", "casino", "ncr", "legion", "fallout_nv"], "terrain_type_id": "terrain_urban_ruins", "terminal_entry": { "title": "MOJAVE SECURITY DOSSIER – NEW VEGAS STRIP", "body": ["A fortified entertainment corridor corresponding to the pre-war Las Vegas Strip, restored under Mr. House and securitron police forces.", "Neutral ground where NCR, Legion and independents compete via diplomacy, gambling and covert action.", "Control of the Strip confers leverage over Hoover Dam negotiations and regional resource flows."] } },
-    { "id": "fnv_goodsprings", "game_id": "fallout_new_vegas", "name": "Goodsprings", "type": "settlement", "in_universe_region": "Mojave Wasteland", "real_world_anchor": "Goodsprings, Nevada", "coordinates": { "latitude": 35.8319, "longitude": -115.4353 }, "canon_scope": "fallout_new_vegas", "placement": { "basis": "real_world_identity", "status": "provisional", "precision_km": 4, "method_note": "The town identity is explicit; the marker uses the government geographic centre rather than an individual building." }, "evidence": [{ "source_id": "fnv-goodsprings", "supports": "identity", "locator": "Overview and behind-the-scenes sections", "note": "Identifies the settlement with real Goodsprings and notes the similar street layout." }, { "source_id": "fnv-goodsprings-census", "supports": "placement", "locator": "Goodsprings CDP row", "note": "Provides the geographic centre used for the candidate point." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2281, "primary_events_year_end": 2282 }, "tags": ["settlement", "mojave", "fallout_nv"], "terrain_type_id": "terrain_desert_scrub", "terminal_entry": { "title": "MOJAVE SETTLEMENT RECORD – GOODSPRINGS", "body": ["A small community occupying the real Goodsprings townsite southwest of Las Vegas.", "Its town identity is firm; the marker does not claim an exact surviving structure."] } },
-    { "id": "fnv_primm", "game_id": "fallout_new_vegas", "name": "Primm", "type": "settlement", "in_universe_region": "Mojave Wasteland", "real_world_anchor": "Primm, Nevada", "coordinates": { "latitude": 35.6127, "longitude": -115.3906 }, "canon_scope": "fallout_new_vegas", "placement": { "basis": "real_world_identity", "status": "provisional", "precision_km": 4, "method_note": "The settlement identity and Interstate 15 setting are explicit; the marker represents the real town centre." }, "evidence": [{ "source_id": "fnv-primm", "supports": "identity", "locator": "Overview, location, and cited dialogue", "note": "Identifies the settlement with real Primm in Clark County beside Interstate 15." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2281, "primary_events_year_end": 2282 }, "tags": ["settlement", "interstate_15", "fallout_nv"], "terrain_type_id": "terrain_urban_ruins", "terminal_entry": { "title": "MOJAVE SETTLEMENT RECORD – PRIMM", "body": ["A transport settlement corresponding to real Primm on Interstate 15.", "Its town-level identity is explicit, while individual surviving structures are not georeferenced here."] } },
-    { "id": "fnv_novac", "game_id": "fallout_new_vegas", "name": "Novac", "type": "settlement", "in_universe_region": "Mojave Wasteland", "real_world_anchor": "Fictional Highway 95 settlement near the Nevada Route 165 corridor", "coordinates": { "latitude": 35.72, "longitude": -114.94 }, "canon_scope": "fallout_new_vegas", "placement": { "basis": "regional_inference", "status": "provisional", "precision_km": 25, "method_note": "Novac is fictional. The point marks a broad Highway 95 corridor near the Nelson junction, not the separate real-world sites that inspired its dinosaur sign." }, "evidence": [{ "source_id": "fnv-novac", "supports": "identity", "locator": "Overview and behind-the-scenes sections", "note": "Establishes Novac as a fictional motel settlement and distinguishes multiple sign inspirations from town identity." }, { "source_id": "fnv-novac", "supports": "relative_position", "locator": "Location section", "note": "Places the settlement on Highway 95 south of the Gibson scrapyard and north of the southern river corridor." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2281, "primary_events_year_end": 2282 }, "tags": ["settlement", "highway_95", "fallout_nv"], "terrain_type_id": "terrain_desert_scrub", "terminal_entry": { "title": "MOJAVE ROADSIDE RECORD – NOVAC", "body": ["A fictional motel settlement on the Highway 95 corridor, recognised by a surviving dinosaur sign.", "The corridor placement is deliberately broad because no real town identity is established."] } },
-    { "id": "fnv_boulder_city", "game_id": "fallout_new_vegas", "name": "Boulder City", "type": "city", "in_universe_region": "Mojave Wasteland", "real_world_anchor": "Boulder City, Nevada", "coordinates": { "latitude": 35.9781, "longitude": -114.8464 }, "canon_scope": "fallout_new_vegas", "placement": { "basis": "real_world_identity", "status": "provisional", "precision_km": 5, "method_note": "The city identity is explicit; the marker represents central Boulder City rather than the game's compressed ruin layout." }, "evidence": [{ "source_id": "fnv-boulder-city", "supports": "identity", "locator": "Overview and location sections", "note": "Identifies the ruins with real Boulder City southeast of Las Vegas." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2281, "primary_events_year_end": 2282 }, "tags": ["city", "ncr", "fallout_nv"], "terrain_type_id": "terrain_urban_ruins", "terminal_entry": { "title": "MOJAVE RUIN RECORD – BOULDER CITY", "body": ["Ruins corresponding to real Boulder City on the western approach to Hoover Dam.", "The marker represents the city rather than a specific battlefield position."] } },
-    { "id": "fnv_hoover_dam", "game_id": "fallout_new_vegas", "name": "Hoover Dam", "type": "infrastructure", "in_universe_region": "Mojave Wasteland", "real_world_anchor": "Hoover Dam, Nevada–Arizona border", "coordinates": { "latitude": 36.0156, "longitude": -114.7378 }, "canon_scope": "fallout_new_vegas", "placement": { "basis": "real_world_identity", "status": "provisional", "precision_km": 2, "method_note": "The structure identity is explicit; the point represents the dam complex at the Colorado River." }, "evidence": [{ "source_id": "fnv-hoover-dam", "supports": "identity", "locator": "Overview and location sections", "note": "Identifies the game location with the real dam on the Nevada–Arizona border." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2281, "primary_events_year_end": 2282 }, "tags": ["dam", "power", "ncr", "legion", "fallout_nv"], "terrain_type_id": "terrain_mountain_ridge", "terminal_entry": { "title": "COLORADO INFRASTRUCTURE RECORD – HOOVER DAM", "body": ["The surviving Colorado River dam and the principal power and water objective of the Mojave campaign.", "Its real-world structure provides the strongest exact anchor in this batch."] } },
-    { "id": "fnv_the_fort", "game_id": "fallout_new_vegas", "name": "The Fort", "type": "military_camp", "in_universe_region": "Mojave Wasteland", "real_world_anchor": "Fortification Hill area, Arizona", "coordinates": { "latitude": 36.0442, "longitude": -114.6814 }, "canon_scope": "fallout_new_vegas", "placement": { "basis": "regional_inference", "status": "provisional", "precision_km": 8, "method_note": "The camp is placed in the Fortification Hill area overlooking Hoover Dam; the summit is a regional locus, not an exact camp coordinate." }, "evidence": [{ "source_id": "fnv-the-fort", "supports": "placement", "locator": "Location section", "note": "Places the camp in the same geographical area as Fortification Hill east of Hoover Dam." }, { "source_id": "fnv-fortification-hill", "supports": "placement", "locator": "Overview", "note": "Confirms the real hill's position and overlook relationship to the dam area." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2281, "primary_events_year_end": 2282 }, "tags": ["military_camp", "legion", "fallout_nv"], "terrain_type_id": "terrain_mountain_ridge", "terminal_entry": { "title": "LEGION FIELD RECORD – THE FORT", "body": ["A fortified camp on the Arizona side of the Colorado River in the Fortification Hill area.", "The hill is a strong regional counterpart, but the camp itself remains a fictional placement."] } },
-    { "id": "fnv_camp_mccarran", "game_id": "fallout_new_vegas", "name": "Camp McCarran", "type": "military_base", "in_universe_region": "Mojave Wasteland", "real_world_anchor": "Harry Reid International Airport, Las Vegas", "coordinates": { "latitude": 36.0803, "longitude": -115.1524 }, "canon_scope": "fallout_new_vegas", "placement": { "basis": "real_world_identity", "status": "provisional", "precision_km": 5, "method_note": "The base explicitly occupies the former Las Vegas airport; the point represents the airfield centre rather than a terminal entrance." }, "evidence": [{ "source_id": "fnv-camp-mccarran", "supports": "identity", "locator": "Overview and cited game dialogue", "note": "Identifies the base as the former airport beside New Vegas." }, { "source_id": "fnv-las-airport", "supports": "placement", "locator": "Airport coordinates", "note": "Provides the published airfield reference point used for the marker." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2281, "primary_events_year_end": 2282 }, "tags": ["military_base", "airport", "ncr", "fallout_nv"], "terrain_type_id": "terrain_urban_ruins", "terminal_entry": { "title": "NCR BASE RECORD – CAMP MCCARRAN", "body": ["An NCR base occupying the former Las Vegas airport immediately south of the Strip.", "The airfield identity is explicit; the marker uses its published centre point."] } },
-    { "id": "fnv_cottonwood_cove", "game_id": "fallout_new_vegas", "name": "Cottonwood Cove", "type": "landing", "in_universe_region": "Mojave Wasteland", "real_world_anchor": "Cottonwood Cove, Lake Mohave, Nevada", "coordinates": { "latitude": 35.4941, "longitude": -114.6803 }, "canon_scope": "fallout_new_vegas", "placement": { "basis": "real_world_identity", "status": "provisional", "precision_km": 3, "method_note": "The landing is identified with the real cove and resort area; the point uses the published geographic location." }, "evidence": [{ "source_id": "fnv-cottonwood-cove", "supports": "identity", "locator": "Overview and location sections", "note": "Identifies the Legion landing with the real Cottonwood Cove resort area." }, { "source_id": "fnv-cottonwood-usbr", "supports": "placement", "locator": "Location record", "note": "Provides the published cove coordinate used for the marker." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2281, "primary_events_year_end": 2282 }, "tags": ["landing", "legion", "colorado_river", "fallout_nv"], "terrain_type_id": "terrain_desert_scrub", "terminal_entry": { "title": "COLORADO LANDING RECORD – COTTONWOOD COVE", "body": ["A river landing corresponding to the real Cottonwood Cove area on Lake Mohave.", "The geographic identity is direct even though the fictional fortifications are not individually mapped."] } },
-    { "id": "fnv_nelson", "game_id": "fallout_new_vegas", "name": "Nelson", "type": "settlement", "in_universe_region": "Mojave Wasteland", "real_world_anchor": "Nelson, Nevada", "coordinates": { "latitude": 35.7086, "longitude": -114.831 }, "canon_scope": "fallout_new_vegas", "placement": { "basis": "real_world_identity", "status": "provisional", "precision_km": 5, "method_note": "The occupied settlement is identified with real Nelson; the marker represents the small town area rather than a specific structure." }, "evidence": [{ "source_id": "fnv-nelson", "supports": "identity", "locator": "Overview and location sections", "note": "Identifies the game settlement with real Nelson southeast of Las Vegas." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2281, "primary_events_year_end": 2282 }, "tags": ["settlement", "legion", "ncr", "fallout_nv"], "terrain_type_id": "terrain_desert_scrub", "terminal_entry": { "title": "MOJAVE SETTLEMENT RECORD – NELSON", "body": ["An occupied settlement corresponding to real Nelson in southern Nevada.", "The town identity is explicit; the marker retains town-level precision."] } },
-    { "id": "fnv_jacobstown", "game_id": "fallout_new_vegas", "name": "Jacobstown", "type": "settlement", "in_universe_region": "Mojave Wasteland", "real_world_anchor": "Mount Charleston lodge area, Nevada", "coordinates": { "latitude": 36.2692, "longitude": -115.5935 }, "canon_scope": "fallout_new_vegas", "placement": { "basis": "regional_inference", "status": "provisional", "precision_km": 8, "method_note": "The refuge occupies the Mount Charleston area and uses a same-area lodge counterpart; the point is a mountain-area locus rather than a literal building match." }, "evidence": [{ "source_id": "fnv-jacobstown", "supports": "placement", "locator": "Location and behind-the-scenes sections", "note": "Places Jacobstown in the Mount Charleston area and associates its lodge with a real mountain retreat." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2281, "primary_events_year_end": 2282 }, "tags": ["settlement", "super_mutants", "mount_charleston", "fallout_nv"], "terrain_type_id": "terrain_forest_hills", "terminal_entry": { "title": "MOUNTAIN REFUGE RECORD – JACOBSTOWN", "body": ["A fictional refuge in the wooded Mount Charleston highlands west of Las Vegas.", "The mountain area is well constrained, while the exact lodge identity remains inferential."] } },
-    { "id": "fnv_black_mountain", "game_id": "fallout_new_vegas", "name": "Black Mountain", "type": "outpost", "in_universe_region": "Mojave Wasteland", "real_world_anchor": "Black Mountain, Sloan Canyon, Nevada", "coordinates": { "latitude": 35.9308, "longitude": -115.0428 }, "canon_scope": "fallout_new_vegas", "placement": { "basis": "regional_inference", "status": "provisional", "precision_km": 8, "method_note": "The broadcast site occupies the same area as the real Black Mountain; the summit point is a regional counterpart rather than a proven tower coordinate." }, "evidence": [{ "source_id": "fnv-black-mountain", "supports": "placement", "locator": "Location and behind-the-scenes sections", "note": "Places the fictional site in the same area as the real Black Mountain in Sloan Canyon." }], "era": { "pre_war_year": 2077, "primary_events_year_start": 2281, "primary_events_year_end": 2282 }, "tags": ["outpost", "broadcast", "super_mutants", "fallout_nv"], "terrain_type_id": "terrain_mountain_ridge", "terminal_entry": { "title": "MOJAVE BROADCAST RECORD – BLACK MOUNTAIN", "body": ["A fictional broadcast position associated with the real Black Mountain southeast of Las Vegas.", "The summit anchors the broad area without asserting an exact surviving tower site."] } },
-    { "id": "f4_diamond_city", "game_id": "fallout_4", "name": "Diamond City", "type": "city", "in_universe_region": "Commonwealth", "real_world_anchor": "Fenway Park, Boston, Massachusetts", "coordinates": { "latitude": 42.3467, "longitude": -71.0972 }, "source_confidence": "high", "era": { "pre_war_year": 2077, "primary_events_year_start": 2287, "primary_events_year_end": 2290 }, "tags": ["city", "commonwealth", "base", "fallout_4"], "terrain_type_id": "terrain_urban_ruins", "terminal_entry": { "title": "COMMONWEALTH CIVIC RECORD – DIAMOND CITY", "body": ["A major walled settlement built into and around the preserved structure of a pre-war baseball stadium.", "Administered by a mayor and civic institutions balancing security with trade.", "The symbolic and practical centre of human habitation in the Commonwealth."] } },
-    { "id": "f76_vault_76", "game_id": "fallout_76", "name": "Vault 76", "type": "vault", "in_universe_region": "Appalachia", "real_world_anchor": "Near Morgantown, West Virginia", "coordinates": { "latitude": 39.65, "longitude": -79.95 }, "source_confidence": "medium", "era": { "pre_war_year": 2077, "primary_events_year_start": 2102, "primary_events_year_end": 2110 }, "tags": ["vault", "control_vault", "fallout_76"], "terrain_type_id": "terrain_forest_hills", "terminal_entry": { "title": "VAULT-TEC OPERATIONAL BRIEF – VAULT 76", "body": ["A Control Vault with baseline social conditions, designated to open shortly after the Great War to spearhead reclamation of Appalachia.", "Overseer directives focus on survey, resettlement and reactivation of surviving infrastructure.", "The origin point for multiple reclamation initiatives and early regional governance experiments."] } },
-
-    { "id": "misfits_wendover_town", "game_id": "misfits_nuclear_wasteland", "name": "Wendover Town Ruins", "type": "settlement", "in_universe_region": "Wendover – Misfits Nuclear Wasteland", "real_world_anchor": "Wendover, Utah, and West Wendover, Nevada", "coordinates": { "latitude": 40.737, "longitude": -114.04 }, "source_confidence": "high", "era": { "pre_war_year": 2077, "primary_events_year_start": 2296, "primary_events_year_end": 2300 }, "tags": ["misfits", "town", "salt_flats", "frontier"], "terrain_type_id": "terrain_urban_ruins", "terminal_entry": { "title": "LOCAL SETTLEMENT LOG – WENDOVER TOWN RUINS", "body": ["Twin border towns straddling the line between former Utah and Nevada, reduced to scattered structures and half-functioning neon remnants along the salt flat edge.", "Built on an ancient beach of Lake Bonneville and pressed against the rising Toana Range, the town offers limited vertical cover and long lines of sight across the flats.", "A staging and trading nexus for wasteland travellers, linking vault installations, NCR patrols and independent scavenger camps."] } },
-    { "id": "misfits_great_salt_flats", "game_id": "misfits_nuclear_wasteland", "name": "Great Salt Flats Expanse", "type": "wilderness", "in_universe_region": "Wendover – Misfits Nuclear Wasteland", "real_world_anchor": "Bonneville Salt Flats east of Wendover, Utah", "coordinates": { "latitude": 40.75, "longitude": -113.9 }, "source_confidence": "high", "era": { "pre_war_year": 2077, "primary_events_year_start": 2296, "primary_events_year_end": 2300 }, "tags": ["misfits", "salt_flats", "wilderness", "high_risk"], "terrain_type_id": "terrain_salt_flats", "terminal_entry": { "title": "ENVIRONMENTAL SURVEY – GREAT SALT FLATS", "body": ["A bleached, featureless expanse of salt crust stretching east of Wendover, offering little cover and extreme visual exposure to any moving parties.", "Sudden dust storms, mirage effects and reflective glare complicate navigation; vehicle travel leaves easy-to-track trails.", "Frequently used as a kill-zone and ambush field; vault dwellers and NCR patrols cross it at considerable risk."] } },
-    { "id": "misfits_toana_range_overlook", "game_id": "misfits_nuclear_wasteland", "name": "Toana Range Overlook", "type": "outpost", "in_universe_region": "Wendover – Misfits Nuclear Wasteland", "real_world_anchor": "Foothills of the Toana Range south of Wendover, Utah", "coordinates": { "latitude": 40.65, "longitude": -114.0 }, "source_confidence": "medium", "era": { "pre_war_year": 2077, "primary_events_year_start": 2296, "primary_events_year_end": 2300 }, "tags": ["misfits", "outpost", "elevation", "sniper_site"], "terrain_type_id": "terrain_mountain_ridge", "terminal_entry": { "title": "TACTICAL SITE LOG – TOANA RANGE OVERLOOK", "body": ["An elevated outpost and observation point carved into the lower slopes of the Toana Range, overlooking the town and salt flats below.", "Provides long-range fields of fire and early warning against movements across the flats; bunkers and makeshift antennae dot the ridgeline.", "Favoured by organized factions such as NCR units and Brotherhood detachments for coordinating operations in the Wendover theatre."] } },
-    { "id": "misfits_vault_facility", "game_id": "misfits_nuclear_wasteland", "name": "Local Vault Installation", "type": "vault", "in_universe_region": "Wendover – Misfits Nuclear Wasteland", "real_world_anchor": "Subsurface facility inferred beneath salt flats near Wendover, Utah", "coordinates": { "latitude": 40.76, "longitude": -113.95 }, "source_confidence": "low", "era": { "pre_war_year": 2077, "primary_events_year_start": 2296, "primary_events_year_end": 2300 }, "tags": ["misfits", "vault", "underground", "lore_anchor"], "terrain_type_id": "terrain_salt_flats", "terminal_entry": { "title": "VAULT-ADJACENT INCIDENT RECORD – WENDOVER INSTALLATION", "body": ["An unofficial Vault-class installation embedded beneath the salt crust east of Wendover, a narrative anchor for vault dwellers in the scenario.", "Access routes are concealed beneath maintenance shafts and collapsed pre-war test facilities; multiple factions contest interior control.", "The primary origin point for vault dwellers entering the Wendover theatre."] } }
+    {
+      "id": "f1_vault_13",
+      "game_id": "fallout_1",
+      "name": "Vault 13",
+      "type": "vault",
+      "in_universe_region": "New California \u2013 Mountain Sector",
+      "real_world_anchor": "Undetermined mountain location in southern California",
+      "coordinates": {
+        "latitude": 34.3,
+        "longitude": -117.9
+      },
+      "canon_scope": "fallout_1",
+      "placement": {
+        "basis": "game_map_inference",
+        "status": "provisional",
+        "precision_km": 120,
+        "method_note": "Legacy candidate retained for research continuity only; its direction from Shady Sands conflicts with the submitted description and requires a same-map anchor fit."
+      },
+      "evidence": [
+        {
+          "source_id": "fo1-location-list",
+          "supports": "identity",
+          "locator": "Fallout location list",
+          "note": "Confirms Vault 13 as a Fallout world-map location but does not establish a real-world site."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2161,
+        "primary_events_year_end": 2180
+      },
+      "tags": [
+        "vault",
+        "mountain",
+        "fallout_1",
+        "ncr_origin"
+      ],
+      "terrain_type_id": "terrain_mountain_ridge",
+      "terminal_entry": {
+        "title": "Vault-Tec Secure Archive \u2013 VAULT 13",
+        "body": [
+          "A long-term Vault-Tec habitation facility embedded in mountain rock somewhere in southern California.",
+          "Sealed at the Great War in 2077; population maintained under closed ecosystem protocols dependent on a single integrated water purification chip.",
+          "c.2161 \u2014 systemic water processing failure triggers dispatch of a surface surveyor, leading to extensive contact with external settlements."
+        ]
+      }
+    },
+    {
+      "id": "f1_shady_sands",
+      "game_id": "fallout_1",
+      "name": "Shady Sands",
+      "type": "settlement",
+      "in_universe_region": "New California \u2013 Core NCR Territory",
+      "real_world_anchor": "Undetermined desert location in southern California",
+      "coordinates": {
+        "latitude": 34.6,
+        "longitude": -117.2
+      },
+      "canon_scope": "fallout_1",
+      "placement": {
+        "basis": "game_map_inference",
+        "status": "provisional",
+        "precision_km": 120,
+        "method_note": "Legacy candidate retained for research continuity only; the submitted point conflicts with stated relative directions and is not ready for display."
+      },
+      "evidence": [
+        {
+          "source_id": "fo1-location-list",
+          "supports": "identity",
+          "locator": "Fallout location list",
+          "note": "Confirms Shady Sands as a Fallout world-map location but not a real-world point."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2161,
+        "primary_events_year_end": 2200
+      },
+      "tags": [
+        "settlement",
+        "ncr_capital",
+        "fallout_1"
+      ],
+      "terrain_type_id": "terrain_desert_scrub",
+      "terminal_entry": {
+        "title": "NCR CIVIC DATABASE \u2013 SHADY SANDS (FOUNDING NODE)",
+        "body": [
+          "Agricultural and civic hub established by former Vault 15 residents at an unresolved location in the southern California interior.",
+          "c.2161 \u2014 a small but politically ambitious township experimenting with representative governance and codified law.",
+          "Later formalized as the capital of the New California Republic; origin point for NCR legal codes and expansion policy."
+        ]
+      }
+    },
+    {
+      "id": "f1_boneyard",
+      "game_id": "fallout_1",
+      "name": "The Boneyard",
+      "type": "city",
+      "in_universe_region": "New California \u2013 Coastal Ruins",
+      "real_world_anchor": "Los Angeles, California",
+      "coordinates": {
+        "latitude": 34.0522,
+        "longitude": -118.2437
+      },
+      "canon_scope": "fallout_1",
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 15,
+        "method_note": "The city identity is explicit; the marker represents the Los Angeles metropolitan centre rather than an exact site."
+      },
+      "evidence": [
+        {
+          "source_id": "fo1-boneyard",
+          "supports": "identity",
+          "locator": "Overview and cited official-guide references",
+          "note": "Identifies the Boneyard as the remains of Los Angeles."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2161,
+        "primary_events_year_end": 2200
+      },
+      "tags": [
+        "city",
+        "coastal",
+        "fallout_1"
+      ],
+      "terrain_type_id": "terrain_urban_ruins",
+      "terminal_entry": {
+        "title": "COASTAL RUIN SURVEY \u2013 THE BONEYARD (LOS ANGELES)",
+        "body": [
+          "A vast cemetery of collapsed skyscrapers and suburban sprawl corresponding to the former Los Angeles metropolitan area.",
+          "Fragmented communities and militias occupy districts such as Adytum.",
+          "A key source of salvage technology and printed knowledge, making control of habitable zones a recurring flashpoint."
+        ]
+      }
+    },
+    {
+      "id": "f1_the_hub",
+      "game_id": "fallout_1",
+      "name": "The Hub",
+      "type": "city",
+      "in_universe_region": "New California \u2013 Trade Corridor",
+      "real_world_anchor": "Undetermined southern California location",
+      "canon_scope": "fallout_1",
+      "placement": {
+        "basis": "unknown",
+        "status": "withheld",
+        "precision_km": 0,
+        "method_note": "The settlement is well established, but the proposed point contradicts its stated direction from Shady Sands and no real-world city identity was verified."
+      },
+      "evidence": [
+        {
+          "source_id": "fo1-hub",
+          "supports": "identity",
+          "locator": "Overview",
+          "note": "Establishes the Hub as a major New California settlement without identifying a real-world city."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2161,
+        "primary_events_year_end": 2200
+      },
+      "tags": [
+        "city",
+        "trade",
+        "fallout_1"
+      ],
+      "terrain_type_id": "terrain_desert_scrub",
+      "terminal_entry": {
+        "title": "CARAVAN EXCHANGE RECORD \u2013 THE HUB",
+        "body": [
+          "A major trading settlement linking the communities of New California.",
+          "Its precise real-world placement remains unresolved pending a consistent fit to reviewed world-map anchors."
+        ]
+      }
+    },
+    {
+      "id": "f1_necropolis",
+      "game_id": "fallout_1",
+      "name": "Necropolis",
+      "type": "city",
+      "in_universe_region": "New California \u2013 Central Valley Ruins",
+      "real_world_anchor": "Bakersfield, California",
+      "coordinates": {
+        "latitude": 35.3733,
+        "longitude": -119.0187
+      },
+      "canon_scope": "fallout_1",
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 15,
+        "method_note": "The city identity is explicit; the marker represents central Bakersfield rather than a surviving structure."
+      },
+      "evidence": [
+        {
+          "source_id": "fo1-necropolis",
+          "supports": "identity",
+          "locator": "Overview and cited official-guide references",
+          "note": "Identifies Necropolis as the post-war remains of Bakersfield."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2161,
+        "primary_events_year_end": 2200
+      },
+      "tags": [
+        "city",
+        "ghouls",
+        "fallout_1"
+      ],
+      "terrain_type_id": "terrain_urban_ruins",
+      "terminal_entry": {
+        "title": "CENTRAL VALLEY RUIN SURVEY \u2013 NECROPOLIS",
+        "body": [
+          "A post-war settlement occupying the remains of Bakersfield.",
+          "Its urban identity is firm even though an exact district-level marker is not justified."
+        ]
+      }
+    },
+    {
+      "id": "f1_lost_hills",
+      "game_id": "fallout_1",
+      "name": "Lost Hills",
+      "type": "bunker",
+      "in_universe_region": "New California \u2013 Brotherhood Territory",
+      "real_world_anchor": "Candidate area around Lost Hills, California",
+      "coordinates": {
+        "latitude": 35.6166,
+        "longitude": -119.6943
+      },
+      "canon_scope": "fallout_1",
+      "placement": {
+        "basis": "regional_inference",
+        "status": "provisional",
+        "precision_km": 80,
+        "method_note": "A same-name real place is a useful locus, but identity is not explicit enough for a reviewed point; the broad radius preserves that distinction."
+      },
+      "evidence": [
+        {
+          "source_id": "fo1-lost-hills",
+          "supports": "placement",
+          "locator": "Location and behind-the-scenes sections",
+          "note": "Notes a same-name California place but does not prove exact fictional identity."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2161,
+        "primary_events_year_end": 2200
+      },
+      "tags": [
+        "bunker",
+        "brotherhood",
+        "fallout_1"
+      ],
+      "terrain_type_id": "terrain_desert_scrub",
+      "terminal_entry": {
+        "title": "BROTHERHOOD ARCHIVE \u2013 LOST HILLS",
+        "body": [
+          "The Brotherhood of Steel headquarters in New California.",
+          "Its relationship to the same-name real-world place remains a provisional geographic hypothesis."
+        ]
+      }
+    },
+    {
+      "id": "f1_mariposa_base",
+      "game_id": "fallout_1",
+      "name": "Mariposa Military Base",
+      "type": "military_base",
+      "in_universe_region": "New California \u2013 Northern Interior",
+      "real_world_anchor": "Disputed central California location",
+      "canon_scope": "fallout_1",
+      "placement": {
+        "basis": "unknown",
+        "status": "withheld",
+        "precision_km": 0,
+        "method_note": "The game-map position, Fort Ord design inspiration, and later Clouds Rest or Yosemite-area reference cannot be collapsed into one defensible coordinate."
+      },
+      "evidence": [
+        {
+          "source_id": "fo1-mariposa",
+          "supports": "identity",
+          "locator": "Overview",
+          "note": "Establishes the military base as a Fallout location in central California."
+        },
+        {
+          "source_id": "fo1-mariposa",
+          "supports": "contradiction",
+          "locator": "Location and behind-the-scenes sections",
+          "note": "Records distinct game-map, later reference-work, and developer-inspiration loci."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2161,
+        "primary_events_year_end": 2200
+      },
+      "tags": [
+        "military_base",
+        "mutants",
+        "fallout_1"
+      ],
+      "terrain_type_id": "terrain_mountain_ridge",
+      "terminal_entry": {
+        "title": "MILITARY SITE RECORD \u2013 MARIPOSA",
+        "body": [
+          "A pre-war military installation associated with forced evolutionary virus research.",
+          "Its identity is established, but competing geographic evidence prevents a responsible public marker."
+        ]
+      }
+    },
+    {
+      "id": "f1_the_glow",
+      "game_id": "fallout_1",
+      "name": "The Glow",
+      "type": "research_facility",
+      "in_universe_region": "New California \u2013 Southern Exclusion Zone",
+      "real_world_anchor": "Undetermined West Tek site in southern California",
+      "canon_scope": "fallout_1",
+      "placement": {
+        "basis": "unknown",
+        "status": "withheld",
+        "precision_km": 0,
+        "method_note": "Relative distances on the game map are useful only after Vault 13 and other same-map anchors are reconciled."
+      },
+      "evidence": [
+        {
+          "source_id": "fo1-glow",
+          "supports": "identity",
+          "locator": "Overview",
+          "note": "Identifies the Glow as the ruined West Tek research facility."
+        },
+        {
+          "source_id": "fo1-glow",
+          "supports": "relative_position",
+          "locator": "Location section",
+          "note": "Provides game-map relationships to Vault 13 and the Boneyard without fixing a real-world point."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2161,
+        "primary_events_year_end": 2200
+      },
+      "tags": [
+        "research_facility",
+        "radiation",
+        "fallout_1"
+      ],
+      "terrain_type_id": "terrain_desert_scrub",
+      "terminal_entry": {
+        "title": "WEST TEK EXCLUSION RECORD \u2013 THE GLOW",
+        "body": [
+          "The irradiated remains of a West Tek research facility.",
+          "Its real-world point remains withheld until the Fallout world-map anchor fit is internally consistent."
+        ]
+      }
+    },
+    {
+      "id": "f1_cathedral",
+      "game_id": "fallout_1",
+      "name": "The Cathedral",
+      "type": "landmark",
+      "in_universe_region": "New California \u2013 Los Angeles Ruins",
+      "real_world_anchor": "Los Angeles metropolitan area, California",
+      "coordinates": {
+        "latitude": 34.06,
+        "longitude": -118.3
+      },
+      "canon_scope": "fallout_1",
+      "placement": {
+        "basis": "regional_inference",
+        "status": "provisional",
+        "precision_km": 15,
+        "method_note": "Sources place it in the Los Angeles and Boneyard cluster, but do not justify an exact surviving building."
+      },
+      "evidence": [
+        {
+          "source_id": "fo1-cathedral",
+          "supports": "placement",
+          "locator": "Overview and location sections",
+          "note": "Associates the Cathedral and its vault with the Los Angeles ruins."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2161,
+        "primary_events_year_end": 2200
+      },
+      "tags": [
+        "landmark",
+        "cult",
+        "fallout_1"
+      ],
+      "terrain_type_id": "terrain_urban_ruins",
+      "terminal_entry": {
+        "title": "LOS ANGELES RUIN RECORD \u2013 THE CATHEDRAL",
+        "body": [
+          "A prominent structure within the Los Angeles ruins and the wider Boneyard cluster.",
+          "The metropolitan placement is useful, while the exact building remains unresolved."
+        ]
+      }
+    },
+    {
+      "id": "f2_arroyo",
+      "game_id": "fallout_2",
+      "name": "Arroyo",
+      "type": "settlement",
+      "in_universe_region": "Northern California\u2013Southern Oregon Frontier",
+      "real_world_anchor": "Fictional locale west of the Klamath Falls locus",
+      "coordinates": {
+        "latitude": 42.0,
+        "longitude": -123.1
+      },
+      "canon_scope": "fallout_2",
+      "placement": {
+        "basis": "regional_inference",
+        "status": "provisional",
+        "precision_km": 130,
+        "method_note": "The developer reference says the founders headed north, groups Arroyo with a Northern California drought, and calls the locale fictional. The shipped map places it nearly level with and west of Klamath Falls; the point represents the broad California\u2013Oregon frontier overlap, not a named town."
+      },
+      "evidence": [
+        {
+          "source_id": "fo2-arroyo-reference",
+          "supports": "identity",
+          "locator": "Pages 26, 28, and 83",
+          "note": "Records a northward founding journey, associates Arroyo with a Northern California drought, and states that Tim Cain regarded Arroyo as fictional."
+        },
+        {
+          "source_id": "fo2-city-data",
+          "supports": "relative_position",
+          "locator": "Area 00 Arroyo and Area 02 Klamath",
+          "note": "Places Arroyo at 184,133 and Klamath at 373,122 on the shipped world map."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2241,
+        "primary_events_year_end": 2242
+      },
+      "tags": [
+        "settlement",
+        "tribal",
+        "fallout_2"
+      ],
+      "terrain_type_id": "terrain_mountain_ridge",
+      "terminal_entry": {
+        "title": "TRIBAL ARCHIVE \u2013 ARROYO",
+        "body": [
+          "A secluded fictional settlement founded by the exiled Vault Dweller and companions somewhere along the northern California\u2013southern Oregon frontier.",
+          "The regional hypothesis is useful, but no surviving real-world town is established and the marker must retain broad uncertainty."
+        ]
+      }
+    },
+    {
+      "id": "f2_new_reno",
+      "game_id": "fallout_2",
+      "name": "New Reno",
+      "type": "city",
+      "in_universe_region": "Independent City-State",
+      "real_world_anchor": "Reno, Nevada",
+      "coordinates": {
+        "latitude": 39.5296,
+        "longitude": -119.8138
+      },
+      "canon_scope": "fallout_2",
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 15,
+        "method_note": "The Reno identity is explicit; the point represents the real metropolitan centre because the Fallout 2 world-map marker is displaced into the Sierra Nevada."
+      },
+      "evidence": [
+        {
+          "source_id": "fo2-new-reno",
+          "supports": "identity",
+          "locator": "History and behind-the-scenes sections",
+          "note": "Identifies New Reno with the surviving pre-war city of Reno and records the game-map displacement."
+        },
+        {
+          "source_id": "fo2-city-data",
+          "supports": "relative_position",
+          "locator": "Area 07 New Reno",
+          "note": "Places New Reno at 923,922 on the shipped world map for same-map comparisons."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2241,
+        "primary_events_year_end": 2242
+      },
+      "tags": [
+        "city",
+        "vice_hub",
+        "fallout_2"
+      ],
+      "terrain_type_id": "terrain_urban_ruins",
+      "terminal_entry": {
+        "title": "ORGANIZED CRIME DOSSIER \u2013 NEW RENO",
+        "body": [
+          "Post-war entertainment and vice hub corresponding to pre-war Reno, dominated by competing crime families and casinos.",
+          "A major producer and distributor of chems, arms and illicit services for the western wasteland.",
+          "High opportunity for covert negotiation offset by extreme volatility and violent conflict."
+        ]
+      }
+    },
+    {
+      "id": "f2_vault_city",
+      "game_id": "fallout_2",
+      "name": "Vault City",
+      "type": "city",
+      "in_universe_region": "Northern California\u2013Nevada Borderlands",
+      "real_world_anchor": "Broad border region northeast of Reno",
+      "coordinates": {
+        "latitude": 41.6,
+        "longitude": -119.8
+      },
+      "canon_scope": "fallout_2",
+      "placement": {
+        "basis": "game_map_inference",
+        "status": "provisional",
+        "precision_km": 130,
+        "method_note": "The shipped map places Vault City north and east of New Reno. A four-anchor affine check points into northwest Nevada but has longitude residuals exceeding one degree; the border-centred candidate and wide radius preserve the in-game travel log's Northern California wording."
+      },
+      "evidence": [
+        {
+          "source_id": "fo2-city-data",
+          "supports": "relative_position",
+          "locator": "Area 04 Vault City and Areas 02, 07, 13, and 14",
+          "note": "Places Vault City at 1223,322 relative to Klamath, New Reno, Redding, and San Francisco."
+        },
+        {
+          "source_id": "fo2-vault-city",
+          "supports": "contradiction",
+          "locator": "Notes and Vault City travel log",
+          "note": "The world-map interpretation indicates northern Nevada, while the in-game travel log describes the city within Northern California."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2241,
+        "primary_events_year_end": 2242
+      },
+      "tags": [
+        "city",
+        "vault",
+        "fallout_2"
+      ],
+      "terrain_type_id": "terrain_desert_scrub",
+      "terminal_entry": {
+        "title": "VAULT 8 CIVIC RECORD \u2013 VAULT CITY",
+        "body": [
+          "An advanced, insular settlement founded by the inhabitants of Vault 8.",
+          "Its broad borderland placement follows the game map while preserving the conflicting Northern California travel-log description."
+        ]
+      }
+    },
+    {
+      "id": "ft_canyon",
+      "game_id": "fallout_tactics",
+      "name": "Canyon",
+      "type": "town",
+      "in_universe_region": "Midwestern Wasteland",
+      "real_world_anchor": "Lakin, Kansas",
+      "coordinates": {
+        "latitude": 37.9403,
+        "longitude": -101.2424
+      },
+      "source_confidence": "medium",
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2197,
+        "primary_events_year_end": 2208
+      },
+      "tags": [
+        "town",
+        "midwest",
+        "brotherhood"
+      ],
+      "terrain_type_id": "terrain_desert_scrub",
+      "terminal_entry": {
+        "title": "BROTHERHOOD FIELD LOG \u2013 CANYON",
+        "body": [
+          "A small agricultural town on the former central-U.S. plains, used as a local recruitment and supply point.",
+          "Early Brotherhood Midwest engagements here establish a foothold against raider and mutant threats.",
+          "A staging ground for deeper incursions into the Midwestern Wasteland."
+        ]
+      },
+      "placement": {
+        "basis": "regional_inference",
+        "status": "provisional",
+        "precision_km": 50,
+        "method_note": "Fallout Tactics places its Midwestern sites loosely; Lakin, Kansas is the closest real anchor for Canyon rather than a stated location. The widest precision here, which is the honest reading of that evidence."
+      }
+    },
+    {
+      "id": "f3_megaton",
+      "game_id": "fallout_3",
+      "name": "Megaton",
+      "type": "settlement",
+      "in_universe_region": "Capital Wasteland",
+      "real_world_anchor": "Suburban fringe of Washington, D.C.",
+      "coordinates": {
+        "latitude": 39.0,
+        "longitude": -77.0
+      },
+      "source_confidence": "medium",
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2277,
+        "primary_events_year_end": 2280
+      },
+      "tags": [
+        "settlement",
+        "bomb_cult",
+        "fallout_3"
+      ],
+      "terrain_type_id": "terrain_urban_ruins",
+      "terminal_entry": {
+        "title": "CAPITAL WASTELAND TRAVEL NODE \u2013 MEGATON",
+        "body": [
+          "A fortified shanty-town built around an undetonated atomic bomb in a former highway crater on the outskirts of ruined Washington.",
+          "Authority is exercised by a sheriff and council balancing a bomb-centric cult with merchant interests.",
+          "An early resupply and social hub for travellers entering the Capital Wasteland."
+        ]
+      },
+      "placement": {
+        "basis": "game_map_inference",
+        "status": "provisional",
+        "precision_km": 40,
+        "method_note": "Megaton's position is known only relative to the Capital Wasteland game map, whose scale is compressed against real geography. The marker takes the suburban fringe west of Washington, D.C.; the wide precision carries that compression honestly."
+      }
+    },
+    {
+      "id": "fnv_new_vegas_strip",
+      "game_id": "fallout_new_vegas",
+      "name": "New Vegas Strip",
+      "type": "city",
+      "in_universe_region": "Mojave Wasteland",
+      "real_world_anchor": "Las Vegas Strip, Nevada",
+      "coordinates": {
+        "latitude": 36.1147,
+        "longitude": -115.1728
+      },
+      "canon_scope": "fallout_new_vegas",
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 8,
+        "method_note": "The district identity is explicit; the marker represents the central Las Vegas Strip rather than one gate or casino."
+      },
+      "evidence": [
+        {
+          "source_id": "fnv-strip",
+          "supports": "identity",
+          "locator": "Overview and location sections",
+          "note": "Identifies the fortified New Vegas district with the surviving Las Vegas Strip."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2281,
+        "primary_events_year_end": 2282
+      },
+      "tags": [
+        "city",
+        "casino",
+        "ncr",
+        "legion",
+        "fallout_nv"
+      ],
+      "terrain_type_id": "terrain_urban_ruins",
+      "terminal_entry": {
+        "title": "MOJAVE SECURITY DOSSIER \u2013 NEW VEGAS STRIP",
+        "body": [
+          "A fortified entertainment corridor corresponding to the pre-war Las Vegas Strip, restored under Mr. House and securitron police forces.",
+          "Neutral ground where NCR, Legion and independents compete via diplomacy, gambling and covert action.",
+          "Control of the Strip confers leverage over Hoover Dam negotiations and regional resource flows."
+        ]
+      }
+    },
+    {
+      "id": "fnv_goodsprings",
+      "game_id": "fallout_new_vegas",
+      "name": "Goodsprings",
+      "type": "settlement",
+      "in_universe_region": "Mojave Wasteland",
+      "real_world_anchor": "Goodsprings, Nevada",
+      "coordinates": {
+        "latitude": 35.8319,
+        "longitude": -115.4353
+      },
+      "canon_scope": "fallout_new_vegas",
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 4,
+        "method_note": "The town identity is explicit; the marker uses the government geographic centre rather than an individual building."
+      },
+      "evidence": [
+        {
+          "source_id": "fnv-goodsprings",
+          "supports": "identity",
+          "locator": "Overview and behind-the-scenes sections",
+          "note": "Identifies the settlement with real Goodsprings and notes the similar street layout."
+        },
+        {
+          "source_id": "fnv-goodsprings-census",
+          "supports": "placement",
+          "locator": "Goodsprings CDP row",
+          "note": "Provides the geographic centre used for the candidate point."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2281,
+        "primary_events_year_end": 2282
+      },
+      "tags": [
+        "settlement",
+        "mojave",
+        "fallout_nv"
+      ],
+      "terrain_type_id": "terrain_desert_scrub",
+      "terminal_entry": {
+        "title": "MOJAVE SETTLEMENT RECORD \u2013 GOODSPRINGS",
+        "body": [
+          "A small community occupying the real Goodsprings townsite southwest of Las Vegas.",
+          "Its town identity is firm; the marker does not claim an exact surviving structure."
+        ]
+      }
+    },
+    {
+      "id": "fnv_primm",
+      "game_id": "fallout_new_vegas",
+      "name": "Primm",
+      "type": "settlement",
+      "in_universe_region": "Mojave Wasteland",
+      "real_world_anchor": "Primm, Nevada",
+      "coordinates": {
+        "latitude": 35.6127,
+        "longitude": -115.3906
+      },
+      "canon_scope": "fallout_new_vegas",
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 4,
+        "method_note": "The settlement identity and Interstate 15 setting are explicit; the marker represents the real town centre."
+      },
+      "evidence": [
+        {
+          "source_id": "fnv-primm",
+          "supports": "identity",
+          "locator": "Overview, location, and cited dialogue",
+          "note": "Identifies the settlement with real Primm in Clark County beside Interstate 15."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2281,
+        "primary_events_year_end": 2282
+      },
+      "tags": [
+        "settlement",
+        "interstate_15",
+        "fallout_nv"
+      ],
+      "terrain_type_id": "terrain_urban_ruins",
+      "terminal_entry": {
+        "title": "MOJAVE SETTLEMENT RECORD \u2013 PRIMM",
+        "body": [
+          "A transport settlement corresponding to real Primm on Interstate 15.",
+          "Its town-level identity is explicit, while individual surviving structures are not georeferenced here."
+        ]
+      }
+    },
+    {
+      "id": "fnv_novac",
+      "game_id": "fallout_new_vegas",
+      "name": "Novac",
+      "type": "settlement",
+      "in_universe_region": "Mojave Wasteland",
+      "real_world_anchor": "Fictional Highway 95 settlement near the Nevada Route 165 corridor",
+      "coordinates": {
+        "latitude": 35.72,
+        "longitude": -114.94
+      },
+      "canon_scope": "fallout_new_vegas",
+      "placement": {
+        "basis": "regional_inference",
+        "status": "provisional",
+        "precision_km": 25,
+        "method_note": "Novac is fictional. The point marks a broad Highway 95 corridor near the Nelson junction, not the separate real-world sites that inspired its dinosaur sign."
+      },
+      "evidence": [
+        {
+          "source_id": "fnv-novac",
+          "supports": "identity",
+          "locator": "Overview and behind-the-scenes sections",
+          "note": "Establishes Novac as a fictional motel settlement and distinguishes multiple sign inspirations from town identity."
+        },
+        {
+          "source_id": "fnv-novac",
+          "supports": "relative_position",
+          "locator": "Location section",
+          "note": "Places the settlement on Highway 95 south of the Gibson scrapyard and north of the southern river corridor."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2281,
+        "primary_events_year_end": 2282
+      },
+      "tags": [
+        "settlement",
+        "highway_95",
+        "fallout_nv"
+      ],
+      "terrain_type_id": "terrain_desert_scrub",
+      "terminal_entry": {
+        "title": "MOJAVE ROADSIDE RECORD \u2013 NOVAC",
+        "body": [
+          "A fictional motel settlement on the Highway 95 corridor, recognised by a surviving dinosaur sign.",
+          "The corridor placement is deliberately broad because no real town identity is established."
+        ]
+      }
+    },
+    {
+      "id": "fnv_boulder_city",
+      "game_id": "fallout_new_vegas",
+      "name": "Boulder City",
+      "type": "city",
+      "in_universe_region": "Mojave Wasteland",
+      "real_world_anchor": "Boulder City, Nevada",
+      "coordinates": {
+        "latitude": 35.9781,
+        "longitude": -114.8464
+      },
+      "canon_scope": "fallout_new_vegas",
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 5,
+        "method_note": "The city identity is explicit; the marker represents central Boulder City rather than the game's compressed ruin layout."
+      },
+      "evidence": [
+        {
+          "source_id": "fnv-boulder-city",
+          "supports": "identity",
+          "locator": "Overview and location sections",
+          "note": "Identifies the ruins with real Boulder City southeast of Las Vegas."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2281,
+        "primary_events_year_end": 2282
+      },
+      "tags": [
+        "city",
+        "ncr",
+        "fallout_nv"
+      ],
+      "terrain_type_id": "terrain_urban_ruins",
+      "terminal_entry": {
+        "title": "MOJAVE RUIN RECORD \u2013 BOULDER CITY",
+        "body": [
+          "Ruins corresponding to real Boulder City on the western approach to Hoover Dam.",
+          "The marker represents the city rather than a specific battlefield position."
+        ]
+      }
+    },
+    {
+      "id": "fnv_hoover_dam",
+      "game_id": "fallout_new_vegas",
+      "name": "Hoover Dam",
+      "type": "infrastructure",
+      "in_universe_region": "Mojave Wasteland",
+      "real_world_anchor": "Hoover Dam, Nevada\u2013Arizona border",
+      "coordinates": {
+        "latitude": 36.0156,
+        "longitude": -114.7378
+      },
+      "canon_scope": "fallout_new_vegas",
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 2,
+        "method_note": "The structure identity is explicit; the point represents the dam complex at the Colorado River."
+      },
+      "evidence": [
+        {
+          "source_id": "fnv-hoover-dam",
+          "supports": "identity",
+          "locator": "Overview and location sections",
+          "note": "Identifies the game location with the real dam on the Nevada\u2013Arizona border."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2281,
+        "primary_events_year_end": 2282
+      },
+      "tags": [
+        "dam",
+        "power",
+        "ncr",
+        "legion",
+        "fallout_nv"
+      ],
+      "terrain_type_id": "terrain_mountain_ridge",
+      "terminal_entry": {
+        "title": "COLORADO INFRASTRUCTURE RECORD \u2013 HOOVER DAM",
+        "body": [
+          "The surviving Colorado River dam and the principal power and water objective of the Mojave campaign.",
+          "Its real-world structure provides the strongest exact anchor in this batch."
+        ]
+      }
+    },
+    {
+      "id": "fnv_the_fort",
+      "game_id": "fallout_new_vegas",
+      "name": "The Fort",
+      "type": "military_camp",
+      "in_universe_region": "Mojave Wasteland",
+      "real_world_anchor": "Fortification Hill area, Arizona",
+      "coordinates": {
+        "latitude": 36.0442,
+        "longitude": -114.6814
+      },
+      "canon_scope": "fallout_new_vegas",
+      "placement": {
+        "basis": "regional_inference",
+        "status": "provisional",
+        "precision_km": 8,
+        "method_note": "The camp is placed in the Fortification Hill area overlooking Hoover Dam; the summit is a regional locus, not an exact camp coordinate."
+      },
+      "evidence": [
+        {
+          "source_id": "fnv-the-fort",
+          "supports": "placement",
+          "locator": "Location section",
+          "note": "Places the camp in the same geographical area as Fortification Hill east of Hoover Dam."
+        },
+        {
+          "source_id": "fnv-fortification-hill",
+          "supports": "placement",
+          "locator": "Overview",
+          "note": "Confirms the real hill's position and overlook relationship to the dam area."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2281,
+        "primary_events_year_end": 2282
+      },
+      "tags": [
+        "military_camp",
+        "legion",
+        "fallout_nv"
+      ],
+      "terrain_type_id": "terrain_mountain_ridge",
+      "terminal_entry": {
+        "title": "LEGION FIELD RECORD \u2013 THE FORT",
+        "body": [
+          "A fortified camp on the Arizona side of the Colorado River in the Fortification Hill area.",
+          "The hill is a strong regional counterpart, but the camp itself remains a fictional placement."
+        ]
+      }
+    },
+    {
+      "id": "fnv_camp_mccarran",
+      "game_id": "fallout_new_vegas",
+      "name": "Camp McCarran",
+      "type": "military_base",
+      "in_universe_region": "Mojave Wasteland",
+      "real_world_anchor": "Harry Reid International Airport, Las Vegas",
+      "coordinates": {
+        "latitude": 36.0803,
+        "longitude": -115.1524
+      },
+      "canon_scope": "fallout_new_vegas",
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 5,
+        "method_note": "The base explicitly occupies the former Las Vegas airport; the point represents the airfield centre rather than a terminal entrance."
+      },
+      "evidence": [
+        {
+          "source_id": "fnv-camp-mccarran",
+          "supports": "identity",
+          "locator": "Overview and cited game dialogue",
+          "note": "Identifies the base as the former airport beside New Vegas."
+        },
+        {
+          "source_id": "fnv-las-airport",
+          "supports": "placement",
+          "locator": "Airport coordinates",
+          "note": "Provides the published airfield reference point used for the marker."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2281,
+        "primary_events_year_end": 2282
+      },
+      "tags": [
+        "military_base",
+        "airport",
+        "ncr",
+        "fallout_nv"
+      ],
+      "terrain_type_id": "terrain_urban_ruins",
+      "terminal_entry": {
+        "title": "NCR BASE RECORD \u2013 CAMP MCCARRAN",
+        "body": [
+          "An NCR base occupying the former Las Vegas airport immediately south of the Strip.",
+          "The airfield identity is explicit; the marker uses its published centre point."
+        ]
+      }
+    },
+    {
+      "id": "fnv_cottonwood_cove",
+      "game_id": "fallout_new_vegas",
+      "name": "Cottonwood Cove",
+      "type": "landing",
+      "in_universe_region": "Mojave Wasteland",
+      "real_world_anchor": "Cottonwood Cove, Lake Mohave, Nevada",
+      "coordinates": {
+        "latitude": 35.4941,
+        "longitude": -114.6803
+      },
+      "canon_scope": "fallout_new_vegas",
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 3,
+        "method_note": "The landing is identified with the real cove and resort area; the point uses the published geographic location."
+      },
+      "evidence": [
+        {
+          "source_id": "fnv-cottonwood-cove",
+          "supports": "identity",
+          "locator": "Overview and location sections",
+          "note": "Identifies the Legion landing with the real Cottonwood Cove resort area."
+        },
+        {
+          "source_id": "fnv-cottonwood-usbr",
+          "supports": "placement",
+          "locator": "Location record",
+          "note": "Provides the published cove coordinate used for the marker."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2281,
+        "primary_events_year_end": 2282
+      },
+      "tags": [
+        "landing",
+        "legion",
+        "colorado_river",
+        "fallout_nv"
+      ],
+      "terrain_type_id": "terrain_desert_scrub",
+      "terminal_entry": {
+        "title": "COLORADO LANDING RECORD \u2013 COTTONWOOD COVE",
+        "body": [
+          "A river landing corresponding to the real Cottonwood Cove area on Lake Mohave.",
+          "The geographic identity is direct even though the fictional fortifications are not individually mapped."
+        ]
+      }
+    },
+    {
+      "id": "fnv_nelson",
+      "game_id": "fallout_new_vegas",
+      "name": "Nelson",
+      "type": "settlement",
+      "in_universe_region": "Mojave Wasteland",
+      "real_world_anchor": "Nelson, Nevada",
+      "coordinates": {
+        "latitude": 35.7086,
+        "longitude": -114.831
+      },
+      "canon_scope": "fallout_new_vegas",
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 5,
+        "method_note": "The occupied settlement is identified with real Nelson; the marker represents the small town area rather than a specific structure."
+      },
+      "evidence": [
+        {
+          "source_id": "fnv-nelson",
+          "supports": "identity",
+          "locator": "Overview and location sections",
+          "note": "Identifies the game settlement with real Nelson southeast of Las Vegas."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2281,
+        "primary_events_year_end": 2282
+      },
+      "tags": [
+        "settlement",
+        "legion",
+        "ncr",
+        "fallout_nv"
+      ],
+      "terrain_type_id": "terrain_desert_scrub",
+      "terminal_entry": {
+        "title": "MOJAVE SETTLEMENT RECORD \u2013 NELSON",
+        "body": [
+          "An occupied settlement corresponding to real Nelson in southern Nevada.",
+          "The town identity is explicit; the marker retains town-level precision."
+        ]
+      }
+    },
+    {
+      "id": "fnv_jacobstown",
+      "game_id": "fallout_new_vegas",
+      "name": "Jacobstown",
+      "type": "settlement",
+      "in_universe_region": "Mojave Wasteland",
+      "real_world_anchor": "Mount Charleston lodge area, Nevada",
+      "coordinates": {
+        "latitude": 36.2692,
+        "longitude": -115.5935
+      },
+      "canon_scope": "fallout_new_vegas",
+      "placement": {
+        "basis": "regional_inference",
+        "status": "provisional",
+        "precision_km": 8,
+        "method_note": "The refuge occupies the Mount Charleston area and uses a same-area lodge counterpart; the point is a mountain-area locus rather than a literal building match."
+      },
+      "evidence": [
+        {
+          "source_id": "fnv-jacobstown",
+          "supports": "placement",
+          "locator": "Location and behind-the-scenes sections",
+          "note": "Places Jacobstown in the Mount Charleston area and associates its lodge with a real mountain retreat."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2281,
+        "primary_events_year_end": 2282
+      },
+      "tags": [
+        "settlement",
+        "super_mutants",
+        "mount_charleston",
+        "fallout_nv"
+      ],
+      "terrain_type_id": "terrain_forest_hills",
+      "terminal_entry": {
+        "title": "MOUNTAIN REFUGE RECORD \u2013 JACOBSTOWN",
+        "body": [
+          "A fictional refuge in the wooded Mount Charleston highlands west of Las Vegas.",
+          "The mountain area is well constrained, while the exact lodge identity remains inferential."
+        ]
+      }
+    },
+    {
+      "id": "fnv_black_mountain",
+      "game_id": "fallout_new_vegas",
+      "name": "Black Mountain",
+      "type": "outpost",
+      "in_universe_region": "Mojave Wasteland",
+      "real_world_anchor": "Black Mountain, Sloan Canyon, Nevada",
+      "coordinates": {
+        "latitude": 35.9308,
+        "longitude": -115.0428
+      },
+      "canon_scope": "fallout_new_vegas",
+      "placement": {
+        "basis": "regional_inference",
+        "status": "provisional",
+        "precision_km": 8,
+        "method_note": "The broadcast site occupies the same area as the real Black Mountain; the summit point is a regional counterpart rather than a proven tower coordinate."
+      },
+      "evidence": [
+        {
+          "source_id": "fnv-black-mountain",
+          "supports": "placement",
+          "locator": "Location and behind-the-scenes sections",
+          "note": "Places the fictional site in the same area as the real Black Mountain in Sloan Canyon."
+        }
+      ],
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2281,
+        "primary_events_year_end": 2282
+      },
+      "tags": [
+        "outpost",
+        "broadcast",
+        "super_mutants",
+        "fallout_nv"
+      ],
+      "terrain_type_id": "terrain_mountain_ridge",
+      "terminal_entry": {
+        "title": "MOJAVE BROADCAST RECORD \u2013 BLACK MOUNTAIN",
+        "body": [
+          "A fictional broadcast position associated with the real Black Mountain southeast of Las Vegas.",
+          "The summit anchors the broad area without asserting an exact surviving tower site."
+        ]
+      }
+    },
+    {
+      "id": "f4_diamond_city",
+      "game_id": "fallout_4",
+      "name": "Diamond City",
+      "type": "city",
+      "in_universe_region": "Commonwealth",
+      "real_world_anchor": "Fenway Park, Boston, Massachusetts",
+      "coordinates": {
+        "latitude": 42.3467,
+        "longitude": -71.0972
+      },
+      "source_confidence": "high",
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2287,
+        "primary_events_year_end": 2290
+      },
+      "tags": [
+        "city",
+        "commonwealth",
+        "base",
+        "fallout_4"
+      ],
+      "terrain_type_id": "terrain_urban_ruins",
+      "terminal_entry": {
+        "title": "COMMONWEALTH CIVIC RECORD \u2013 DIAMOND CITY",
+        "body": [
+          "A major walled settlement built into and around the preserved structure of a pre-war baseball stadium.",
+          "Administered by a mayor and civic institutions balancing security with trade.",
+          "The symbolic and practical centre of human habitation in the Commonwealth."
+        ]
+      },
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 2,
+        "method_note": "Diamond City is Fenway Park in canon, and the marker sits on the ballpark itself. The identity is explicit rather than inferred, so precision is limited only by treating a stadium as a point."
+      }
+    },
+    {
+      "id": "f76_vault_76",
+      "game_id": "fallout_76",
+      "name": "Vault 76",
+      "type": "vault",
+      "in_universe_region": "Appalachia",
+      "real_world_anchor": "Near Morgantown, West Virginia",
+      "coordinates": {
+        "latitude": 39.65,
+        "longitude": -79.95
+      },
+      "source_confidence": "medium",
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2102,
+        "primary_events_year_end": 2110
+      },
+      "tags": [
+        "vault",
+        "control_vault",
+        "fallout_76"
+      ],
+      "terrain_type_id": "terrain_forest_hills",
+      "terminal_entry": {
+        "title": "VAULT-TEC OPERATIONAL BRIEF \u2013 VAULT 76",
+        "body": [
+          "A Control Vault with baseline social conditions, designated to open shortly after the Great War to spearhead reclamation of Appalachia.",
+          "Overseer directives focus on survey, resettlement and reactivation of surviving infrastructure.",
+          "The origin point for multiple reclamation initiatives and early regional governance experiments."
+        ]
+      },
+      "placement": {
+        "basis": "regional_inference",
+        "status": "provisional",
+        "precision_km": 25,
+        "method_note": "Canon places Vault 76 near Morgantown, West Virginia, but 'near' is the strongest claim available \u2014 the marker takes the Morgantown area rather than a surveyed point."
+      }
+    },
+    {
+      "id": "misfits_wendover_town",
+      "game_id": "misfits_nuclear_wasteland",
+      "name": "Wendover Town Ruins",
+      "type": "settlement",
+      "in_universe_region": "Wendover \u2013 Misfits Nuclear Wasteland",
+      "real_world_anchor": "Wendover, Utah, and West Wendover, Nevada",
+      "coordinates": {
+        "latitude": 40.737,
+        "longitude": -114.04
+      },
+      "source_confidence": "high",
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2296,
+        "primary_events_year_end": 2300
+      },
+      "tags": [
+        "misfits",
+        "town",
+        "salt_flats",
+        "frontier"
+      ],
+      "terrain_type_id": "terrain_urban_ruins",
+      "terminal_entry": {
+        "title": "LOCAL SETTLEMENT LOG \u2013 WENDOVER TOWN RUINS",
+        "body": [
+          "Twin border towns straddling the line between former Utah and Nevada, reduced to scattered structures and half-functioning neon remnants along the salt flat edge.",
+          "Built on an ancient beach of Lake Bonneville and pressed against the rising Toana Range, the town offers limited vertical cover and long lines of sight across the flats.",
+          "A staging and trading nexus for wasteland travellers, linking vault installations, NCR patrols and independent scavenger camps."
+        ]
+      },
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 3,
+        "method_note": "Wendover, Utah and West Wendover, Nevada are a real settlement pair straddling the state line; the marker takes their shared centre. The ruined state is the project's fiction, the position is not."
+      }
+    },
+    {
+      "id": "misfits_great_salt_flats",
+      "game_id": "misfits_nuclear_wasteland",
+      "name": "Great Salt Flats Expanse",
+      "type": "wilderness",
+      "in_universe_region": "Wendover \u2013 Misfits Nuclear Wasteland",
+      "real_world_anchor": "Bonneville Salt Flats east of Wendover, Utah",
+      "coordinates": {
+        "latitude": 40.75,
+        "longitude": -113.9
+      },
+      "source_confidence": "high",
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2296,
+        "primary_events_year_end": 2300
+      },
+      "tags": [
+        "misfits",
+        "salt_flats",
+        "wilderness",
+        "high_risk"
+      ],
+      "terrain_type_id": "terrain_salt_flats",
+      "terminal_entry": {
+        "title": "ENVIRONMENTAL SURVEY \u2013 GREAT SALT FLATS",
+        "body": [
+          "A bleached, featureless expanse of salt crust stretching east of Wendover, offering little cover and extreme visual exposure to any moving parties.",
+          "Sudden dust storms, mirage effects and reflective glare complicate navigation; vehicle travel leaves easy-to-track trails.",
+          "Frequently used as a kill-zone and ambush field; vault dwellers and NCR patrols cross it at considerable risk."
+        ]
+      },
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 20,
+        "method_note": "The Bonneville Salt Flats are a real feature east of Wendover. Precision is wide because the marker stands for an expanse of roughly 100 square miles, not a site."
+      }
+    },
+    {
+      "id": "misfits_toana_range_overlook",
+      "game_id": "misfits_nuclear_wasteland",
+      "name": "Toana Range Overlook",
+      "type": "outpost",
+      "in_universe_region": "Wendover \u2013 Misfits Nuclear Wasteland",
+      "real_world_anchor": "Foothills of the Toana Range south of Wendover, Utah",
+      "coordinates": {
+        "latitude": 40.65,
+        "longitude": -114.0
+      },
+      "source_confidence": "medium",
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2296,
+        "primary_events_year_end": 2300
+      },
+      "tags": [
+        "misfits",
+        "outpost",
+        "elevation",
+        "sniper_site"
+      ],
+      "terrain_type_id": "terrain_mountain_ridge",
+      "terminal_entry": {
+        "title": "TACTICAL SITE LOG \u2013 TOANA RANGE OVERLOOK",
+        "body": [
+          "An elevated outpost and observation point carved into the lower slopes of the Toana Range, overlooking the town and salt flats below.",
+          "Provides long-range fields of fire and early warning against movements across the flats; bunkers and makeshift antennae dot the ridgeline.",
+          "Favoured by organized factions such as NCR units and Brotherhood detachments for coordinating operations in the Wendover theatre."
+        ]
+      },
+      "placement": {
+        "basis": "real_world_identity",
+        "status": "provisional",
+        "precision_km": 15,
+        "method_note": "The Toana Range is real and lies south of Wendover; the marker takes its northern foothills. Which overlook within them is project fiction."
+      }
+    },
+    {
+      "id": "misfits_vault_facility",
+      "game_id": "misfits_nuclear_wasteland",
+      "name": "Local Vault Installation",
+      "type": "vault",
+      "in_universe_region": "Wendover \u2013 Misfits Nuclear Wasteland",
+      "real_world_anchor": "Subsurface facility inferred beneath salt flats near Wendover, Utah",
+      "coordinates": {
+        "latitude": 40.76,
+        "longitude": -113.95
+      },
+      "source_confidence": "low",
+      "era": {
+        "pre_war_year": 2077,
+        "primary_events_year_start": 2296,
+        "primary_events_year_end": 2300
+      },
+      "tags": [
+        "misfits",
+        "vault",
+        "underground",
+        "lore_anchor"
+      ],
+      "terrain_type_id": "terrain_salt_flats",
+      "terminal_entry": {
+        "title": "VAULT-ADJACENT INCIDENT RECORD \u2013 WENDOVER INSTALLATION",
+        "body": [
+          "An unofficial Vault-class installation embedded beneath the salt crust east of Wendover, a narrative anchor for vault dwellers in the scenario.",
+          "Access routes are concealed beneath maintenance shafts and collapsed pre-war test facilities; multiple factions contest interior control.",
+          "The primary origin point for vault dwellers entering the Wendover theatre."
+        ]
+      },
+      "placement": {
+        "basis": "project_authored",
+        "status": "provisional",
+        "precision_km": 15,
+        "method_note": "A subsurface installation invented for this setting and inferred to lie beneath the salt flats near Wendover. There is nothing to corroborate \u2014 the basis records that the project authored it rather than derived it."
+      }
+    }
   ],
-
   "connections": [
-    { "from_id": "misfits_wendover_town", "to_id": "misfits_great_salt_flats", "connection_type": "road", "approx_distance_km": 8, "terrain_profile": ["terrain_salt_flats"], "description": "Cracked highway leading east out of Wendover into the open salt flats.", "tags": ["misfits", "hazardous", "ambush_prone"] },
-    { "from_id": "misfits_wendover_town", "to_id": "misfits_toana_range_overlook", "connection_type": "trail", "approx_distance_km": 5, "terrain_profile": ["terrain_mountain_ridge"], "description": "Steep path from town edge up into the Toana Ridge outpost.", "tags": ["misfits", "elevation"] },
-    { "from_id": "misfits_wendover_town", "to_id": "misfits_vault_facility", "connection_type": "hidden_tunnel", "approx_distance_km": 3, "terrain_profile": ["terrain_salt_flats"], "description": "Concealed subsurface access from a maintenance block to the vault installation beneath the flats.", "tags": ["misfits", "vault", "secret"] }
+    {
+      "from_id": "misfits_wendover_town",
+      "to_id": "misfits_great_salt_flats",
+      "connection_type": "road",
+      "approx_distance_km": 8,
+      "terrain_profile": [
+        "terrain_salt_flats"
+      ],
+      "description": "Cracked highway leading east out of Wendover into the open salt flats.",
+      "tags": [
+        "misfits",
+        "hazardous",
+        "ambush_prone"
+      ]
+    },
+    {
+      "from_id": "misfits_wendover_town",
+      "to_id": "misfits_toana_range_overlook",
+      "connection_type": "trail",
+      "approx_distance_km": 5,
+      "terrain_profile": [
+        "terrain_mountain_ridge"
+      ],
+      "description": "Steep path from town edge up into the Toana Ridge outpost.",
+      "tags": [
+        "misfits",
+        "elevation"
+      ]
+    },
+    {
+      "from_id": "misfits_wendover_town",
+      "to_id": "misfits_vault_facility",
+      "connection_type": "hidden_tunnel",
+      "approx_distance_km": 3,
+      "terrain_profile": [
+        "terrain_salt_flats"
+      ],
+      "description": "Concealed subsurface access from a maintenance block to the vault installation beneath the flats.",
+      "tags": [
+        "misfits",
+        "vault",
+        "secret"
+      ]
+    }
   ],
-
   "event_hooks": [
-    { "id": "event_ncr_caravan_attack_wendover", "region_id": "region_wendover_misfits", "primary_location_ids": ["misfits_wendover_town", "misfits_great_salt_flats"], "factions_involved": ["NCR", "Raiders"], "summary": "Recurring ambushes of NCR caravans crossing the salt flats east of Wendover." },
-    { "id": "event_vault_breach_wendover", "region_id": "region_wendover_misfits", "primary_location_ids": ["misfits_vault_facility", "misfits_wendover_town"], "factions_involved": ["Vault Dwellers", "Raiders", "NCR"], "summary": "Attempted breach of the Wendover vault installation by raider forces, with NCR response." },
-    { "id": "event_boneyard_salvage_run", "region_id": "region_new_california_republic", "primary_location_ids": ["f1_boneyard"], "factions_involved": ["NCR", "Scavengers"], "summary": "Large-scale salvage operation into the Boneyard ruins for pre-war data and equipment." }
+    {
+      "id": "event_ncr_caravan_attack_wendover",
+      "region_id": "region_wendover_misfits",
+      "primary_location_ids": [
+        "misfits_wendover_town",
+        "misfits_great_salt_flats"
+      ],
+      "factions_involved": [
+        "NCR",
+        "Raiders"
+      ],
+      "summary": "Recurring ambushes of NCR caravans crossing the salt flats east of Wendover."
+    },
+    {
+      "id": "event_vault_breach_wendover",
+      "region_id": "region_wendover_misfits",
+      "primary_location_ids": [
+        "misfits_vault_facility",
+        "misfits_wendover_town"
+      ],
+      "factions_involved": [
+        "Vault Dwellers",
+        "Raiders",
+        "NCR"
+      ],
+      "summary": "Attempted breach of the Wendover vault installation by raider forces, with NCR response."
+    },
+    {
+      "id": "event_boneyard_salvage_run",
+      "region_id": "region_new_california_republic",
+      "primary_location_ids": [
+        "f1_boneyard"
+      ],
+      "factions_involved": [
+        "NCR",
+        "Scavengers"
+      ],
+      "summary": "Large-scale salvage operation into the Boneyard ruins for pre-war data and equipment."
+    }
   ]
 }

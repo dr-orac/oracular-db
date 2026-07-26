@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="color-scheme" content="dark" />
 <title>Misfits Database</title>
-<meta name="description" content="Misfits Database — a multi-faction Fallout-style terminal viewer for SS14 roleplay factions (the Tribe, the Brotherhood of Steel, and more)." />
+<meta name="description" content="Misfits Database: a multi-faction Fallout-style terminal viewer for SS14 roleplay factions (the Tribe, the Brotherhood of Steel, and more)." />
 <meta name="theme-color" content="#0a1a0f" />
 <!-- link-preview card (Discord / social). The SITE is the umbrella "Misfits Database";
      each faction keeps its own brand once the app loads (JS sets a per-faction document.title). -->
@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Misfits Database" />
 <meta property="og:url" content="https://dr-orac.github.io/oracular-db/" />
 <meta property="og:title" content="Misfits Database" />
-<meta property="og:description" content="A multi-faction Fallout-style terminal viewer for SS14 roleplay factions — Pip-Boy dossiers, lore, and roleplay guides." />
+<meta property="og:description" content="A multi-faction Fallout-style terminal viewer for SS14 roleplay factions, Pip-Boy dossiers, lore, and roleplay guides." />
 <meta property="og:image" content="https://dr-orac.github.io/oracular-db/og-card.png?v=2" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://dr-orac.github.io/oracular-db/og-card.png?v=2" />
@@ -42,18 +42,20 @@
       <div class="titlebar">
         <!-- ROW 1 (umbrella / faction-agnostic): HOME · FACTION▼ · WIKI. Only FACTION is a dropdown
              (its box keeps the legend + arrow); HOME/WIKI are plain boxed .navbox buttons. -->
-        <div class="primary-nav" id="primary-nav">
-          <button class="navbox" type="button" data-section="home" id="nav-home" aria-label="Home"></button>
-          <button class="navbox" type="button" data-section="wiki" id="nav-wiki" aria-label="Wiki"></button>
-          <button class="navbox" type="button" data-section="map" id="nav-map" aria-label="Map"></button>
-          <button class="navbox" type="button" data-section="paperwork" id="nav-paperwork" aria-label="Paperwork"></button>
-        </div>
-        <div class="brand"><!-- FACTION selector box (centre zone) — filled by renderBrand() --></div>
-        <nav class="primary-nav primary-nav--secondary" id="primary-nav-secondary" aria-label="Community sections">
-          <button class="navbox" type="button" data-section="events" id="nav-events" aria-label="Events"></button>
-          <button class="navbox" type="button" data-section="stories" id="nav-stories" aria-label="Stories"></button>
-          <button class="navbox" type="button" data-section="proposals" id="nav-proposals" aria-label="Proposals"></button>
+        <nav class="global-nav-rail" aria-label="Global sections">
+          <div class="primary-nav" id="primary-nav">
+            <button class="navbox" type="button" data-section="home" id="nav-home" aria-label="Home"></button>
+            <button class="navbox" type="button" data-section="wiki" id="nav-wiki" aria-label="Wiki"></button>
+            <button class="navbox" type="button" data-section="map" id="nav-map" aria-label="Map"></button>
+            <button class="navbox" type="button" data-section="paperwork" id="nav-paperwork" aria-label="Paperwork"></button>
+          </div>
+          <div class="primary-nav primary-nav--secondary" id="primary-nav-secondary">
+            <button class="navbox" type="button" data-section="events" id="nav-events" aria-label="Events"></button>
+            <button class="navbox" type="button" data-section="stories" id="nav-stories" aria-label="Stories"></button>
+            <button class="navbox" type="button" data-section="proposals" id="nav-proposals" aria-label="Proposals"></button>
+          </div>
         </nav>
+        <div class="brand"><!-- FACTION selector box (centre zone): filled by renderBrand() --></div>
         <div class="titlebar-right">
           <button class="cogbtn" id="settings-btn" title="Settings" aria-label="Settings" aria-expanded="false" aria-haspopup="dialog">
             <svg class="cog-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 3.4a8.6 8.6 0 1 0 0 17.2 8.6 8.6 0 0 0 0-17.2Zm0 4.9a3.7 3.7 0 1 1 0 7.4 3.7 3.7 0 0 1 0-7.4Z"/><g><rect x="10.5" y=".9" width="3" height="3.7"/><rect x="10.5" y="19.4" width="3" height="3.7"/><rect x=".9" y="10.5" width="3.7" height="3"/><rect x="19.4" y="10.5" width="3.7" height="3"/></g><g transform="rotate(45 12 12)"><rect x="10.5" y=".9" width="3" height="3.7"/><rect x="10.5" y="19.4" width="3" height="3.7"/><rect x=".9" y="10.5" width="3.7" height="3"/><rect x="19.4" y="10.5" width="3.7" height="3"/></g></svg>
@@ -78,9 +80,9 @@
                 <p class="popnote">paragraphs · lists · rows · values</p>
                 <div class="swatches faces" id="fontbody-swatches" role="radiogroup" aria-label="App body font"></div>
                 <h4>Text Size</h4>
-                <p class="popnote">Auto follows the font — pixel faces read small, so they size up</p>
+                <p class="popnote">Auto follows the font, pixel faces read small, so they size up</p>
                 <div class="swatches" id="textsize-swatches"></div>
-                <div class="sd-sub">Documents <span>Lore / Roleplay — not the roster</span></div>
+                <div class="sd-sub">Documents <span>Lore / Roleplay: not the roster</span></div>
                 <h4>Doc · Title</h4>
                 <div class="swatches faces" id="docfont-title-swatches" role="radiogroup" aria-label="Document title font"></div>
                 <h4>Doc · Headings</h4>
@@ -88,7 +90,7 @@
                 <h4>Doc · Body</h4>
                 <div class="swatches faces" id="docfont-body-swatches" role="radiogroup" aria-label="Document body font"></div>
                 <h4>Reading Width</h4>
-                <p class="popnote">line length for docs + the wiki — wider fits more, narrower reads easier</p>
+                <p class="popnote">line length for docs + the wiki: wider fits more, narrower reads easier</p>
                 <div class="swatches" id="docwidth-swatches" role="radiogroup" aria-label="Document reading width"></div>
               </details>
 
@@ -107,7 +109,7 @@
                   <button class="swatch" id="crt-toggle" title="Toggle scanlines + glow flicker">Scanlines: ON</button>
                 </div>
                 <h4>High Contrast</h4>
-                <p class="popnote">brighter secondary text, no scanlines — also follows your system setting</p>
+                <p class="popnote">brighter secondary text, no scanlines; also follows your system setting</p>
                 <div class="swatches">
                   <button class="swatch" id="contrast-toggle" title="Lift dim text to full contrast for legibility">High Contrast: OFF</button>
                 </div>
@@ -132,11 +134,14 @@
               <details class="popgrp">
                 <summary>Layout <span class="popcur" id="cur-layout"></span></summary>
                 <h4>Cards Per Row</h4>
-                <p class="popnote">columns in the Cards view — Auto fits to the window</p>
+                <p class="popnote">columns in the Cards view: Auto fits to the window</p>
                 <div class="swatches" id="cards-swatches"></div>
                 <h4>Roster Filters</h4>
                 <p class="popnote">the section + sort boxes above the roster list (off by default)</p>
                 <div class="swatches" id="rosterfilters-swatches"></div>
+                <h4>Contents Connectors</h4>
+                <p class="popnote">the branching arrows in the document contents rail</p>
+                <div class="swatches" id="docconn-swatches"></div>
                 <h4>Frame</h4>
                 <div class="swatches" id="frame-swatches"></div>
                 <h4>Frame Tint</h4>
@@ -191,12 +196,16 @@
       <!-- the page's single top-level heading (visually hidden; the visual title is the hero/brand).
            Updated per view by setAppHeading() so screen readers get a real document structure. -->
       <h1 id="app-h1" class="sr-only"></h1>
-      <!-- HOME VIEW (section tiles — the landing page) -->
+      <!-- HOME VIEW (section tiles: the landing page) -->
       <section id="home" class="home hidden" aria-label="Home"></section>
 
       <!-- ROSTER VIEW -->
       <section id="roster" class="roster hidden">
         <div class="listcol">
+          <!-- The add action gets its OWN slot, deliberately not inside #listctl: that is hidden by the
+               data-rosterfilters preference, and a preference about FILTERS must not remove the only way
+               to create something. Every collection surface carries this same .addbar. -->
+          <div class="addbar" id="roster-addbar"></div>
           <sub-cluster class="listctl" id="listctl"></sub-cluster>
           <div class="list" id="list" role="listbox" tabindex="0" aria-label="Character roster"></div>
         </div>
@@ -217,7 +226,7 @@
             <span class="docfocus-ico docfocus-expand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18"/><path d="M15 3v18"/><path d="m11 8-4 4 4 4"/></svg></span>
           </button>
           <button id="docfs" class="docfs" type="button" aria-pressed="false"
-                  title="Focus mode — hide everything but the text (Esc to exit)" aria-label="Enter focus mode">
+                  title="Focus mode: hide everything but the text (Esc to exit)" aria-label="Enter focus mode">
             <span class="docfs-ico docfs-enter" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5"/><path d="M16 3h5v5"/><path d="M8 21H3v-5"/><path d="M16 21h5v-5"/></svg></span>
             <span class="docfs-ico docfs-exit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></span>
           </button>
@@ -244,7 +253,7 @@
             <span id="doc-announce" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
           </div>
         </div>
-        <button id="doctop" class="doctop" type="button" title="Reading progress — click to jump to the top" aria-label="Back to top">
+        <button id="doctop" class="doctop" type="button" title="Reading progress: click to jump to the top" aria-label="Back to top">
           <span class="doctop-ring" aria-hidden="true"></span>
           <span class="doctop-ico" aria-hidden="true">↑</span>
         </button>
@@ -260,129 +269,25 @@
         </div>
       </section>
 
-      <!-- MAP VIEW (T86) — three distinct scales: US reference atlas, Wendover region, and local game space. -->
+      <!-- MAP VIEW (T86): the Wasteland Atlas (lib/atlas.mjs), mounted by app.js's mountAtlasV2()
+           into this one container. The old hand-rolled SVG map (map-head/map-panel-us/region/local,
+           MAP_LOCATIONS-driven) shipped here through Phase 4 behind the ATLAS_V2 flag and was removed
+           in Phase 5 once the atlas reached feature parity, see
+           docs/changes/map-timeline/integration-plan.md. -->
       <section id="map" class="map-view hidden" aria-label="Map">
-        <div class="map-head">
-          <div class="map-headtext">
-            <h2 class="map-title">Wasteland Atlas</h2>
-            <p class="map-sub" id="map-sub">Reference map of the old west — the places that shaped the wasteland. Select a marker.</p>
-          </div>
-          <div class="seg map-modes" role="tablist" aria-label="Map scope">
-            <button id="mapmode-us" class="active" type="button" role="tab" aria-controls="map-panel-us" aria-selected="true" data-mapscope="us">US</button>
-            <button id="mapmode-region" type="button" role="tab" aria-controls="map-panel-region" aria-selected="false" data-mapscope="region">Region</button>
-            <button id="mapmode-local" type="button" role="tab" aria-controls="map-panel-local" aria-selected="false" data-mapscope="local">Local</button>
-          </div>
-        </div>
-        <div class="map-body map-panel" id="map-panel-us" role="tabpanel" aria-labelledby="mapmode-us">
-          <div class="map-stage">
-            <div id="map-terrain-us" class="map-terrain" aria-hidden="true"></div>
-            <svg id="map-svg" class="map-svg" viewBox="0 0 650 500" role="group" aria-label="Map of the western wasteland" xmlns="http://www.w3.org/2000/svg">
-              <g class="map-states">
-              <path d="m581,120.000183l3,-6l-1,-9l0,-8l3,-8l3,0l2,1l5,-4l4,1l3,6l2,9l2,3l4,1l2,4l4,1l2,3l-6,6l-8,7l-1,4l-4,5l-5,5l-2,8l-6,-9l-3,-8l-3,-12z"/>
-              <path d="m577,124.000183l4,-4l3,12l3,8l6,9l-1,4l-6,2l-9,4l-2,-9l1,-13l2,-4l-1,-3l0,-6z"/>
-              <path d="m570,160.000183l7,-1l-2,-9l1,-13l2,-4l-1,-3l0,-3l-8,1l-8,3l0,5l2,5l1,8l2,0l2,9l2,2z"/>
-              <path d="m570,170.000183l0,-10l7,-1l15,-6l3,1l-1,4l3,3l4,3l3,0l-2,-3l3,0l2,3l-1,2l-4,3l1,3l-4,0l-1,-3l-3,0l-5,-4l-20,5z"/>
-              <path d="m589,175.000183l-2,-9l3,-1l3,3l0,5l-4,2z"/>
-              <path d="m573,185.000183l12,-8l4,0l0,-2l-2,-9l-17,4l0,4l3,11z"/>
-              <path d="m509,187.000183l0,-5l7,-6l-3,-9l16,-1l9,-7l0,-7l-3,-2l13,-15l13,-4l0,5l2,5l1,8l2,0l2,9l2,2l0,10l0,4l3,11l4,0l9,-5l2,1l-12,9l-4,-1l0,-3l-7,-2l-9,-2l-1,-4l-4,-1l-6,0l-12,5l-4,0l-20,5z"/>
-              <path d="m561,183.000183l-2,6l1,6l4,4l-6,8l2,5l1,-1l6,4l4,-7l1,-5l0,-5l-1,-4l-2,-2l1,-2l2,-1l0,-3l-11,-3z"/>
-              <path d="m568,222.000168l-8,-9l0,-1l-2,-4l1,6c0,0 2,10 2,10l7,0l0,-2z"/>
-              <path d="m519,217.000168c2,0 39,-10 39,-10l0,2l3,15l6,0l0,5.000015l-5,2l-1,-1l-5,-4.000015l-5,-11l1,10l2,4.000015l-5,0l-4,-1.000015l0,-2l1,-2l-1,-3l-5,-1l-3,-2l-2,-3l-4,0l-1,2l-4,1l-5,6l-2,-7z"/>
-              <path d="m509,182.000183l-8,8l3,6l2,14l2,8l11,-1l39,-10l6,-8l-4,-4l-1,-6l2,-6l-5,-1l-1,-4l-4,-1l-6,0l-12,5l-4,0l-20,5l0,-5z"/>
-              <path d="m465,234.000183l-5,-34l3,-1l12,-2l4,2l6,0l6,-2l10,-7l3,6l2,13l-1,11l-2,4l-6,4l0,4l-3,1l-1,4l-1,3l-4,0l-3,-3l-2,2l-6,0l-1,-1l-4,0l-2,-3l-5,-1z"/>
-              <path d="m490,240.000183l0,4l3,4l9,6l6,-1l3,-2l5,-3l0,-6l2,-3l1,-4l5,-3l3,-4l4,-5l-1,-3l4,-1l3,2l2,-2l-2,-1l-2,-3l-4,0l-1,2l-4,1l-5,6l-2,-7l-11,1l-2,-8l-1,10l-2,4l-6,4l0,4l-3,1l-2,7l-2,0z"/>
-              <path d="m482,266.000183c2,1 22,-3 22,-3l49,-9l12,-4l-2,-4l-5,0l-3,-3l2,-3l-3,-4l3,-1l-4,-3l-5,-2l-3,-2l0,-2l1,-2l-1,-3l-5,-1l-1,-1l-2,2l-3,-2l-4,1l1,3l-7,9l-5,3l-1,4l-2,3l0,6l-8,5l-6,1l-4,-3l-10,11l-6,4z"/>
-              <path d="m563,232.000183l-1,5l0,5l3,-4l0,-5l-2,-1z"/>
-              <path d="m504,263.000183l49,-9l12,-4l1,3l-2,3l-4,2l0,1l6,0l3,1l1,3l-2,2l-8,2l1,2l3,3l0,3l-5,2l-2,2l-6,6l0,4l-3,1l-5,2l-2,0l-9,-8l-4,-1l-7,1l-2,2l-3,0l0,-3l-2,-2l-3,1l-10,0l-5,2l-6,4l-13,0l0,-3l4,-4l5,-2l7,-6l3,-1l6,-4l2,-2l0,-3z"/>
-              <path d="m490,288.000183l0,4l2,2l3,0l5,6l12,10l3,3l1,3l3,3l2,3l2,0l1,-5l1,-2l4,0l3,-3l0,-3l3,-3l3,-2l0,-4l3,-4l3,-4l-3,0l-9,-8l-4,-1l-7,1l-2,2l-3,0l0,-3l-2,-2l-3,1l-10,0l-5,2l-6,4z"/>
-              <path d="m463,291.000183l3,-1l11,-2l13,0l0,4l2,2l3,0l5,6l15,13l1,3l3,3l2,3l-1,3l-2,3l0,13l-6,0l-1,5l-9,0l-23,1l-3,-3l-2,-11l2,-6l-8,-19l-5,-17z"/>
-              <path d="m449,356.000183l-3,-8l13,-2l17,-2l3,3l23,-1l9,0l1,-5l6,0l4,13l9,12l1,6l10,14l2,3l1,20l-2,4l-6,1l-3,-1l-5,-6l-5,-1l-2,-7l-2,-1l-1,-4l-3,0l-3,-5l0,-6l-1,-2l-3,0l-2,1l-1,-3l2,-3l0,-8l-8,-5l-7,-6l-6,-1l-8,8l-4,-1l-4,-7l-7,-1l-3,-1l-12,2z"/>
-              <path d="m435,295.000183c2,0 16,-2 16,-2l12,-2l5,17l8,19l-2,6l2,11l-30,4l3,8l-5,3l-6,0l-2,-25l-1,-39z"/>
-              <path d="m428,364.000183l1,-2l7,0l2,-3l-2,-25l-1,-39l-22,1l-4,3l0,6l-6,9l1,15l3,4l-1,3l-4,4l-2,8l0,4l15,-1l5,-1l1,6l2,1l2,5l3,2z"/>
-              <path d="m374,370.000183c1,-1 2,-7 2,-7l-1,-5l3,-5l-4,-7l-3,-7l0,-13l21,0l12,-1l0,4l3,4l-1,3l-4,4l-2,8l0,4l15,-1l5,-1l1,6l2,1l2,5l3,2l-2,4l-1,1l0,2l7,2l0,3l-2,2l-4,-2l-5,-4l0,3l-3,1l-5,-1l-4,2l-4,-1l-4,-5l-2,-2l-3,2l-6,1l-5,-2l-11,0z"/>
-              <path d="m371,319.000183l0,7l21,0l12,-1l-1,-11l6,-9l0,-6l4,-3l0,-7l2,-3l-1,-3l-2,-2l1,-4l-8,0l-2,1l-14,0l-26,1l0,2l1,9l1,5l1,23l5,0l0,1z"/>
-              <path d="m413,296.000183l0,-7l2,-3l2,-5l1,-4l2,-2l13,0l7,-2l14,-2l16,-2l9,-1l3,-2l1,0l21,-3l0,3l-8,6l-3,1l-7,6l-5,2l-4,4l0,3l-11,2l-3,1l-28,4l-22,1z"/>
-              <path d="m420,275.000183l2,-3l0,-5l1,-2l5,0l5,-8l1,-2l9,-1l6,-1l0,-3l2,0l2,2l2,-1l1,-4l3,-4l0,-2l4,0l2,-2l0,-5l5,1l2,3l4,0l1,1l6,0l2,-2l3,3l2,0l0,4l3,4l5,3l-10,11l-9,6l-39,5l-7,2l-13,0z"/>
-              <path d="m433,257.000183l0,-7l3,-5l1,-4l-1,-2l0,-4l1,-3l-1,-1l0,-7l-1,-3l-1,-6l0,-11l5,0l2,-2l9,-2l10,0l5,34l0,5l-2,2l-4,0l0,2l-3,4l-1,4l-2,1l-2,-2l-2,0l0,3l-6,1l-9,1l-1,2z"/>
-              <path d="m441.232758,202.060516l8.767242,-2.060349l10,0l3,-1l12,-2l0,-6l6,-7l0,-6l-2,-4l-2,-8l-2,-2l-2,2l-6,7l-2,-1l-1,-3l4,-6l1,-1l0,-6l-2,-2l0,-3.999985l-3,-1l-4,-1l-5,-3l-2,0l-3,2l0,4l-1,0.999985l-1,4l-1,3l-4,0l-1,2l0,5l-2,4l0,7l2,4l2,3l0,3l0,7l-2,4l-0.767242,4.060349z"/>
-              <path d="m426,157.000183l-1,-4l-1,-3l-5,-4l-6,0l-1,-1l-8,-1l-4,-5l9,-4l9,-8l2,1l-3,4l0,3l6,-1l5,4l7,0l3,-3l9,-3l1,3l3,0l6,-1l1,4l-1,3l-8,1l-3,-1l-5,3l-4,0l-2,3l-3,1l-6,9z"/>
-              <path d="m428.194,193.116608c-0.194,-0.116409 -27.194,1.883591 -27.194,1.883591l-5,-3l-2,-2l0,-7l-1,-6l-9,-8l-6,-2l-1,-11l-1,-1l1,-4l4,-2l0,-8l3,-2l6,-2.000015l3,1l7,1.000015l4,5l8,1l1,1l6,0l5,4l2,10l-2,2l0,4l4,-4l3,-4l-1,5l-1,7l-2,4l1.194,19.116409l0,0z"/>
-              <path d="m428,193.000168l6,11l0,11l1,6l1,3l0,7.000015l1,1l-1,3l0,4l1,2l-1,4l-3,5l0,6l-5,9l-5,0l-1,2l-1,1l-2,0l-3,-9l-2,-3l-5,-1l-2,-3l1,-2l0,-6l-4,-1l-1,-3l-8,-7l-1,-9.000015l1,-3l3,-4l1,-3l-2,-1l1,-2l5,-3l3,-5l0,-2l-5,-6l27,-2z"/>
-              <path d="m363,279.000183l25,-1l15,0l2,-1l8,0l-1,4l2,2l1,3l3,-7l0,-2l2,-2l2,-3l0,-5l-1,1l-2,0l-3,-9l-2,-3l-5,-1l-2,-3l1,-2l0,-6l-4,-1l-1,-3l-8,-7l-1,-9l-3,-1l-17,0l-25,0l1,4l7,6l2,1l-1,2l-1,2l1,3l4,3c0,0 0,27 0,28c0,1 1.215515,7.107758 1,7z"/>
-              <path d="m342,184.000183l0,13l4,11l3,15l42,0l3,1l1,-3l3,-4l1,-3c0,0 -2,-1 -2,-1l1,-2l5,-3l3,-5l0,-2l-5,-6l-5,-3l-2,-2l0,-7l0,-1l-23,1l-29,1z"/>
-              <path d="m342,184.000183l0,-25l-3,-3l-1,-2l3,-3l0,-6l-2,-9l-3,-14c0,0 0,-13 0,-13l21,0l9,6l3,0l2,-1l6,1l2,3l3,-1l3,2l5,0l2,-1l3,0l2,2l8,0l-9,5l-7,7l-8,9l0,8l-4,2l-1,4l1,1l1,11l6,2l9,8l1,5l-21,1l-31,1z"/>
-              <path d="m336,109.000183l-32,-1l-30,-2l-1,22l-2,20l33,2l37,1l0,-6l-5,-23l0,-13z"/>
-              <path d="m271,148.000183l-1,12l-3,28l54,3l5,3l9,-1l5,3l2,0l0,-12l0,-25l-3,-3l-1,-2l3,-3l-37,-1l-33,-2z"/>
-              <path d="m267,188.000183l-2,26l20,2l0,13l34,2l36,1l-5,-5l-1,-4l-3,-15l-4,-11l0,-1l-2,0l-5,-3l-9,1l-5,-3l-24,-1l-30,-2z"/>
-              <path d="m285,229.000183l-2,41l37,2l42,0l0,-28l-4,-3l-1,-3l2,-4l-3,-2l-38,-1l-33,-2z"/>
-              <path d="m272,270.000183l0,6l31,2l1,3l-1,24l3,2l5,0l3,3l6,2l4,-1l3,3l7,1l8,-1l2,2l3,-1l6,-1l6,0l7,4l-1,-23l-1,-5l-1,-9l0,-2l-1,-7l-42,0l-37,-2l-11,0z"/>
-              <path d="m272,276.000183l-1,0l-4,61l-42,-3l0,3l19,19l3,12l16,10l3,-2l5,-8l3,-1l5,1l5,1l7,6c0,0 3,8 3,8l5,9l7,8l1,6l6,10l8,4l7,0l2,3l3,0l0,-6l-2,-13l3,-8l3,-6l6,-5l6,-1l6,0l2,-3l4,-4l-1,-5l3,-2l2,4l3,-1l6,-3l1,-2l1,-5l-1,-5l3,-5l-4,-7l-3,-7l0,-21l-5,0l-7,-4l-6,0l-5,1l-4,1l-2,-2l-8,1l-7,-1l-3,-3l-4,1l-6,-2l-3,-3l-5,0l-3,-2l1,-24l-1,-3l-31,-2z"/>
-              <path d="m206,263.000183l-9,76l9,1l2,-5l3,-1l14,3l0,-3l42,3l4,-61l1,-6l-30,-3l-36,-4z"/>
-              <path d="m214,209.000198l-8,53.999802l66,7l11,0l2,-41l0,-12.999802l-20,-2l-23,-2l-28,-3l0,0z"/>
-              <path d="m193,205.000168l21,4l51,5l2,-26l3,-27l-30,-3l-37,-6.999985l-10,53.999985z"/>
-              <path d="m274,106.000183l-1,23l-2,19l-1,13l-30,-3l-37,-7l-1,5l-3,-1l-3,1l-12,0l-2,-5l-2,-1l-2,-13l-3,0l-1,2l-2,-3l1,-5l4,-8l-6,-4l0,-6l-4,-2l-1,-8l0,-7l2,-2l1,-6l17,4l36,7l28,4l24,3z"/>
-              <path d="m169,88.000183l-8,-2l-10,39l3,4l-1,5l-11,12l2,3l1,4l-2,3l-1,5l-4,18l29,7l28,6l7,-36l-3,-1l-3,1l-12,0l-2,-5l-2,-1l-2,-13l-3,0l-1,2l-2,-3l1,-5l4,-8l-6,-4l0,-6l-4,-2l-1,-8l0,-7l2,-2l1,-6z"/>
-              <path d="m167,186.000198l-14,66.999802l53,10l8,-53.999802l-21,-4l2,-13l-28,-6l0,0z"/>
-              <path d="m206,263.000183l-9,76l-24,-4l-40,-24l1,-2l4,-1l0,-3l-2,-1l0,-4l4,-4l0,-4l5,-4l-2,-5l-2,-5l2,-3l-1,-12l4,0l2,3l4,-1l0,-5l1,-7l53,10z"/>
-              <path d="m134,309.000183l-27,-4l-1,-9l-6,-10l-3,-2l0,-3l-2,-1l-6,0l-1,-4l-4,-3l-5,-2l-4,-4l0,-3l2,-2l-2,-5l-8,-19l1,-2l2,0l1,-3l-5,-4l0,-7l1,-2l3,2l1,-3l-1,-3l-3,1l-3,-2l0,-7l-4,-5l0,-10l2,-2l0,-6l-2,-2l0,-6l3,-2l4,-7l1,-11l40,15l-11,37l44,69l4,10l-5,4l0,4l-4,4l0,4l2,1l0,3l-4,1z"/>
-              <path d="m97,209.000168l44,69.000015l2,-3l-1,-12l4,0l2,3l4,-1l0,-5l1,-7.000015l14,-67l-29,-7l-30,-7l-11,37z"/>
-              <path d="m70,157.000183l40,15l30,7l5,-23l2,-3l-1,-4l-2,-3l11,-12l1,-5l-3,-4l-6,-1l-11,-4l-12,0l-10,-1l-4,-2l-8,0c0,0 -3,-2 -3,-2l1,-2l1,-3l-3,-3l-1,-2l-6,-1l-3,10l-10,21l-8,12l0,4l0,3l0,3z"/>
-              <path d="m88.969849,104.000183l2.030151,-6l0,-8l1,-10l0,-5c0,0 2,-2 3,-2c1,0 10,9 10,9l2,4l-3,4l-1,5l4,1l2,-6l3,-3l-1,-7l2,-4c0,0 -1,-6 -1,-6l15,6l34,10l-10,39l-6,-1l-11,-4l-12,0l-10,-1l-4,-2l-8,0l-3,-2l2,-5l-3,-3l-1,-2l-6.030151,-1z"/>
-              </g>
-              <g class="map-pins" id="map-pins"></g>
-            </svg>
-          </div>
-          <sub-stack class="map-side" role="complementary">
-            <div class="map-legend" id="map-legend" aria-label="Legend"></div>
-            <div class="map-detail" id="map-detail" aria-live="polite"></div>
-          </sub-stack>
-        </div>
-        <div class="map-body map-panel hidden" id="map-panel-region" role="tabpanel" aria-labelledby="mapmode-region">
-          <div class="map-stage">
-            <div id="map-terrain-region" class="map-terrain" aria-hidden="true"></div>
-            <svg id="map-region-svg" class="map-svg map-region-svg" viewBox="0 0 1000 700" role="group" aria-label="Schematic overview of the Wendover region" xmlns="http://www.w3.org/2000/svg">
-              <rect class="region-field" x="0" y="0" width="1000" height="700"/>
-              <path class="region-flats" d="M262 166 C380 93 667 104 856 199 L814 487 C619 542 371 523 188 425 Z"/>
-              <path class="region-ponds" d="M318 505 C429 468 704 476 825 534 L786 642 C620 673 401 649 276 590 Z"/>
-              <path class="region-ridge" d="M82 114 166 58 234 124 305 74 373 145 433 95 498 164"/>
-              <path class="region-ridge region-ridge--far" d="M607 105 682 45 750 113 826 65 917 153"/>
-              <path class="region-corridor" d="M42 377 C237 352 379 370 512 356 S759 350 968 329"/>
-              <path class="region-track" d="M38 405 C236 382 378 399 510 386 S759 380 966 359"/>
-              <text class="region-label" x="522" y="224" text-anchor="middle">BONNEVILLE SALT FLATS</text>
-              <text class="region-route-label" x="503" y="340" text-anchor="middle">I-80 CORRIDOR</text>
-              <g id="map-region-pins"></g>
-            </svg>
-          </div>
-          <sub-stack class="map-side" role="complementary" id="map-region-side">
-            <div class="map-legend" aria-label="Regional map legend">
-              <div class="map-legend-title">Regional orientation</div>
-              <span class="map-legend-item"><span class="map-legend-swatch pin-other"></span>Reviewed landmark</span>
-              <span class="map-legend-note map-schematic-note">Schematic only — not a road or terrain survey.</span>
-              <span class="map-legend-note terrain-credit">Relief: USGS 3DEP · coast and water: Natural Earth · public domain.</span>
-              <span class="map-legend-note terrain-fallback-note">Enhanced terrain unavailable — using the schematic.</span>
-            </div>
-            <div class="map-detail" id="map-region-detail" aria-live="polite"></div>
-          </sub-stack>
-        </div>
-        <div class="map-reference map-panel hidden" id="map-panel-local" role="tabpanel" aria-labelledby="mapmode-local" tabindex="0">
-          <div class="map-reference-inner">
-            <div class="map-reference-kicker">Wendover Local</div>
-            <div class="map-reference-title">Playable area</div>
-            <p class="map-reference-msg">The game space at a useful tabletop scale. Its original schematic will be built from the supplied references, with named landmarks confirmed before they are published.</p>
-          </div>
-        </div>
+        <div class="map-atlas-v2" id="map-atlas-v2"></div>
       </section>
 
-      <!-- PAPERWORK — fillable SS14 form templates (copy to clipboard); starter set, expandable -->
+      <!-- PAPERWORK: fillable SS14 form templates (copy to clipboard); starter set, expandable -->
       <section id="paperwork" class="paperwork-view hidden" aria-label="Paperwork">
         <div class="pw-head">
           <h2 class="pw-viewtitle">Paperwork</h2>
-          <p class="pw-viewsub">Fillable SS14 form templates — copy one, fill the [BRACKETS] in-game.</p>
+          <p class="pw-viewsub">Fillable SS14 form templates: copy one, fill the [BRACKETS] in-game.</p>
         </div>
         <div class="pw-list" id="paperwork-list"></div>
       </section>
 
-      <!-- COMMUNITY CONTENT — one shared list/composer shell for Events, Stories, and Proposals -->
+      <!-- COMMUNITY CONTENT: one shared list/composer shell for Events, Stories, and Proposals -->
       <section id="community" class="community-view hidden" aria-label="Community content"></section>
 
       <!-- LOADING / ERROR -->
@@ -400,7 +305,7 @@
     </main>
     <!-- bottom STATUS BAR: breadcrumb (left) · emblem (centre) · document context or signature (right) -->
     <footer class="statusbar">
-      <div class="sb-zone sb-left"><span class="sb-crumb" id="sb-crumb">Misfits Database</span></div>
+      <div class="sb-zone sb-left"><nav aria-label="Breadcrumb"><ol class="sb-crumb" id="sb-crumb"><li class="sb-seg" aria-current="page">Misfits Database</li></ol></nav></div>
       <div class="sb-zone sb-center"><span class="sb-emblem" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.1"/><g fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="12" cy="12" rx="10" ry="4.1"/><ellipse cx="12" cy="12" rx="10" ry="4.1" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.1" transform="rotate(120 12 12)"/></g></svg></span></div>
       <div class="sb-zone sb-right">
         <span class="sb-docmeta">
@@ -444,6 +349,17 @@
           <button class="btn uslot-btn" data-slot="front">＋ Choose photo</button></div>
       </div>
       <p class="uploadnote" id="uploaddest"></p>
+    </div>
+  </div>
+
+  <!-- submit a new character. Discovered by modalLayer along with every other .modal-back, so it gets
+       focus trapping, inert, Escape and focus restoration without being registered anywhere. -->
+  <div class="modal-back" id="addback" role="dialog" aria-modal="true" aria-labelledby="addtitle" aria-hidden="true" inert>
+    <div class="modal" id="addmodal">
+      <button class="btn close" id="addclose">✕ Close</button>
+      <h2 class="addtitle" id="addtitle">Add a character</h2>
+      <p class="addnote">Submitted entries go to the archivists for review before they appear on the roster.</p>
+      <form class="addform" id="addform" novalidate></form>
     </div>
   </div>
 

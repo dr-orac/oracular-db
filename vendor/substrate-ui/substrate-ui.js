@@ -1639,14 +1639,38 @@ var SuiteSidebar = class SuiteSidebar extends SuiteElement {
     :host([gap='6']) { --_gap: var(--sub-space-6); }
     :host([gap='8']) { --_gap: var(--sub-space-8); }
 
+    /* A flex item's automatic minimum size is its min-content, so without this
+       the widest unbreakable slotted word floors the side pane and side-width
+       stops being authoritative (measured: 422px against a 200px side-width).
+       Only the INLINE axis needs this — it is the container's main axis. The
+       block axis is the cross axis, where the automatic-minimum rule does not
+       apply, so a min-block-size here would be inert. */
     .side {
       flex-basis: var(--_side-width);
       flex-grow: 1;
+      min-inline-size: 0;
     }
     .content {
       flex-basis: 0;
       flex-grow: 999;
       min-inline-size: var(--_content-min);
+    }
+    /* Let a slotted overflow child own a scroll instead of stretching the pane
+       to its content (measured: 3000px for a pane that should be ~300px).
+       A percentage max resolves against the host only when the host's block
+       size is definite and computes to none when it is auto, so the cap appears
+       exactly when an app sizes the shell and is absent otherwise.
+       TWO LIMITS, both deliberate and tested:
+       - It caps the pane BOX, not the slotted subtree. A pane child taller than
+         the host must own its own scroll, or it will paint outside the pane.
+       - The cap is per PANE, not per flex line, so in stacked (wrapped) mode
+         each pane may be up to the full host height and the two together can
+         exceed it. A sized host at stacked width needs its own scroll.
+       (No backticks in this comment — it lives inside a css template literal,
+       where one would terminate the string.) */
+    .side,
+    .content {
+      max-block-size: 100%;
     }
     :host([side='end']) .side { order: 1; }
   `;
@@ -1727,13 +1751,18 @@ var SuiteListDetail = class SuiteListDetail extends SuiteElement {
     }
     /* Slot-wiring only (L3 guardrail): flow-root makes each region a
        containment box so slotted default margins (ul, p, …) cannot collapse
-       through and shift the region; min-inline-size keeps pane content from
-       forcing the sidebar's panes wider than their flex bases. */
+       through and shift the region.
+       These regions previously also carried min-inline-size: 0. All three were
+       inert and have been removed. The shrink that actually matters belongs to
+       the flex item, not to what is slotted into it, and it only applies on the
+       container's MAIN axis: .list/.detail sit in sub-sidebar (row), which now
+       carries it on its own panes; .header sits in sub-stack (column), where
+       the inline axis is the cross axis and the rule never applied at all.
+       See docs/changes/sub-sidebar-fill/packet.md. */
     .header,
     .list,
     .detail {
       display: flow-root;
-      min-inline-size: 0;
     }
     /* Fill wiring (gap found by L4, the notes retrofit): when the app sizes
        the shell (e.g. height: 100vh), the body region grows to fill the

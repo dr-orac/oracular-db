@@ -1,32 +1,32 @@
 /* ====================================================================
-   MISFITS DATABASE  —  multi-faction live read-only viewer for Google Sheets
-   (umbrella brand; each faction keeps its own brand — see FACTIONS below)
+   MISFITS DATABASE, multi-faction live read-only viewer for Google Sheets
+   (umbrella brand; each faction keeps its own brand: see FACTIONS below)
    --------------------------------------------------------------------
    Reads the public sheet via the gviz CSV endpoint (CORS-enabled for
    "anyone with link -> Viewer" sheets). No API key required to read.
    To point at a different sheet/tab, change CONFIG below.
 
    MODULE MAP (search these banners to jump around):
-     · CONFIG / EXTRA_CHARACTERS / MEDIA   — data sources & code-defined entries
-     · FACTIONS / FACTION_ICONS / FACTION_WIKI — the faction skins + per-faction prefs/appearance
-     · themes (colour / background / font) — CSS-variable presets + persistence
-     · CRT icon library                    — inline SVG sigils + spirit matcher
-     · data fetch / parseCSV / buildModel  — load + normalise the sheet
-     · rendering                           — dossier, portrait, cards, roster, home
-     · Relations view                      — renderRelations: a character's relationship web from roster data
-     · hash router                         — #home · #<faction>/<section>[/<target>] (roster·relations·doc) · #wiki/<Page>
-     · section nav / doc reader            — FACTION_DOCS tabs; fetch + re-theme Google Docs (docClean/styleTOC)
-     · WIKI reader                         — loadWiki/normaliseWikiImages/renderWiki: re-skin a MediaWiki page (with images) in-theme
-     · photo upload                        — single-photo upload modal + write-back
-     · edit mode / icon picker             — write-back UIs (gated by passphrase)
-     · events / keyboard / load / init     — wiring and startup
+     · CONFIG / EXTRA_CHARACTERS / MEDIA, data sources & code-defined entries
+     · FACTIONS / FACTION_ICONS / FACTION_WIKI, the faction skins + per-faction prefs/appearance
+     · themes (colour / background / font), CSS-variable presets + persistence
+     · CRT icon library, inline SVG sigils + spirit matcher
+     · data fetch / parseCSV / buildModel, load + normalise the sheet
+     · rendering, dossier, portrait, cards, roster, home
+     · Relations view, renderRelations: a character's relationship web from roster data
+     · hash router, #home · #<faction>/<section>[/<target>] (roster·relations·doc) · #wiki/<Page>
+     · section nav / doc reader: FACTION_DOCS tabs; fetch + re-theme Google Docs (docClean/styleTOC)
+     · WIKI reader, loadWiki/normaliseWikiImages/renderWiki: re-skin a MediaWiki page (with images) in-theme
+     · photo upload, single-photo upload modal + write-back
+     · edit mode / icon picker, write-back UIs (gated by passphrase)
+     · events / keyboard / load / init, wiring and startup
    All write actions go through CONFIG.webAppUrl (Apps Script); reads never write.
    ==================================================================== */
 
 const CONFIG = {
-  // The tribe's ORIGINAL sheet — the community's source of truth, shared
+  // The tribe's ORIGINAL sheet: the community's source of truth, shared
   // "anyone with the link → Viewer". The site READS it; never write to it
-  // (by hand, tool, or script — standing directive).
+  // (by hand, tool, or script, standing directive).
   sheetId: "10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY",
   // Parked private working copy (only relevant if write-back is ever deployed):
   //   1649xQIHyrZtJWbVdTcg_ll7yS2ee_V9jGPtHLdgbyDQ
@@ -37,20 +37,52 @@ const CONFIG = {
   webAppUrl: "",
 };
 
+// Wasteland Atlas v2: the #map section's only map. Phases 0–4
+// (docs/changes/map-timeline/integration-plan.md) built lib/atlas.mjs behind
+// an `ATLAS_V2` flag so the old hand-rolled SVG map kept shipping while the
+// new one was extracted, fed from apps/misfits/data/, and brought to feature
+// parity. Phase 5 flipped the flag and then deleted the old map entirely
+// (MAP_LOCATIONS, renderMap()'s old branch, wireMap(), setMapScope(), ...):
+// there is no fallback left to gate, so the flag and its atlasV2Enabled()/
+// `window.__ATLAS_V2__` override are retired along with it. See
+// mountAtlasV2()/teardownAtlasV2()/applyAtlasV2Route() near renderMap().
+// Bridge state for the mount above: ONE const object (not new `let`s) so
+// wiring this in doesn't widen tools/state-metric.py's mutable-globals count
+// (its own failure message says the same: "add state to an existing owner,
+// or extract it, do not widen the globals"). `.load` memoises the
+// fetch+dynamic-import so re-entering #map doesn't refetch; `.handle` is
+// lib/atlas.mjs mount()'s returned handle, kept so leaving #map can
+// destroy() it; `.pendingRoute` holds a #map/... route that arrived before
+// the async load finished (the same deferred-consumption shape the roster's
+// own pending-target field below uses for its deep links); `.slugToName`/
+// `.nameToSlug` resolve between the app's #map/us/<slug> route segment and
+// an atlas pin's *name* (what handle.selectLoc() takes); `.eventSlugToIndex`/
+// `.eventIndexToSlug` do the same for #map/event/<slug> and EVENTS' array
+// index (handle.selectEvent()): see applyAtlasV2Route() near renderMap().
+// `.scope`/`.selection` mirror the atlas's OWN internal state (kept in sync
+// via the handle.on('scope'/'select', ...) listeners in mountAtlasV2()) so
+// mapRoute() below can write the URL from atlas-driven interaction, the
+// reverse of applyAtlasV2Route(), closing the one-directional gap Phase 4
+// left (opts.hashRouting stays false: the app owns the hash, never the
+// atlas, integration-plan.md's "the two routers must not fight").
+const _atlasV2 = { load:null, handle:null, pendingRoute:null, slugToName:null,
+  nameToSlug:null, eventSlugToIndex:null, eventIndexToSlug:null,
+  scope:"us", selection:{type:"clear"} };
+
 /* ── Factions ──────────────────────────────────────────────────────────────
    A "faction" is a server variant of this same app: ONE codebase + ONE data
-   schema, differing only by a config *skin* — a name, a colour/style, and its own
+   schema, differing only by a config *skin*, a name, a colour/style, and its own
    data sheet. A contributor adds a variant by appending ONE entry here (plus their
-   own Google Sheet, shared "anyone with the link → Viewer") — no code fork. When two
+   own Google Sheet, shared "anyone with the link → Viewer"): no code fork. When two
    or more factions exist, the masthead title becomes a switcher (see renderBrand).
-     name    — short label shown in the switcher menu
-     brand   — the masthead title (big text)
-     tagline — the // sub-label after it
-     theme   — a { color, bg } pair of keys from the Settings palette (THEMES / BGS)
-     data    — { sheetId, gid } for THIS faction's roster (gid "" = the first tab) */
+     name: short label shown in the switcher menu
+     brand, the masthead title (big text)
+     tagline, the // sub-label after it
+     theme, a { color, bg } pair of keys from the Settings palette (THEMES / BGS)
+     data, { sheetId, gid } for THIS faction's roster (gid "" = the first tab) */
 /* The faction roster mirrors the Misfits wiki's own faction listing (each with its signature colour),
    plus the Unity. tribe + brotherhood have live sheet data; the rest are "coming soon" until linked.
-   No per-faction FONT: switching faction changing the interface typeface read as jumpy — every faction
+   No per-faction FONT: switching faction changing the interface typeface read as jumpy, every faction
    uses the classic Fallout font (FACTION_FONT_DEFAULT). Per-faction differences live in the CONTENT
    (data, colour, docs). Users can still pick fonts in Settings (remembered per faction). */
 const FACTIONS = {
@@ -68,7 +100,7 @@ const FACTIONS = {
   supermutants:{ name:"Super Mutants",               brand:"SUPER MUTANTS",           tagline:"// MUTANT-NET",   theme:{color:"green",   bg:"phosphor"}, data:{sheetId:"", gid:""}, docs:[] },
   unity:       { name:"The Unity",                   brand:"THE UNITY",               tagline:"// FEV-NET",      theme:{color:"green",   bg:"phosphor"}, data:{sheetId:"", gid:""}, docs:[] },
 };
-/* each faction's page on the Misfits wiki (the wiki's own faction listing) — used to offer a
+/* each faction's page on the Misfits wiki (the wiki's own faction listing): used to offer a
    "read about this faction on the wiki" link even before its roster is linked. Unity has no page. */
 const FACTION_WIKI = {
   tribe:"Wasteland_Tribes", brotherhood:"Brotherhood_of_Steel", ncr:"New_California_Republic",
@@ -93,10 +125,10 @@ function factionAppearance(id){
   };
 }
 /* Switcher order (top→bottom in the dropdown). Add each new faction id here too.
-   docs: a faction's own doc tabs — [] until linked (configured below in FACTION_DOCS).
+   docs: a faction's own doc tabs: [] until linked (configured below in FACTION_DOCS).
    data.sheetId: "" = "not linked yet" → the app shows a themed coming-soon roster. */
 const FACTION_ORDER = ["tribe","brotherhood","ncr","legion","enclave","vault","followers","townsfolk","wastelanders","outlaws","synthetics","supermutants","unity"];
-const DEFAULT_FACTION = "tribe";   // the only faction with data today — new visitors start here
+const DEFAULT_FACTION = "tribe";   // the only faction with data today: new visitors start here
 let currentFaction = DEFAULT_FACTION;
 try{ const _f = localStorage.getItem("mdb-faction"); if(_f && FACTIONS[_f]) currentFaction = _f; }catch(e){}
 function activeFaction(){ return FACTIONS[currentFaction] || FACTIONS[DEFAULT_FACTION]; }
@@ -159,11 +191,24 @@ function factionSections(f){
 }
 function factionSection(id, f){ return factionSections(f).find(s=>s.id===id); }
 function sectionAvailable(id, f){ return !!umbrellaSection(id) || !!factionSection(id, f); }
-function factionLinked(f){ return /^[A-Za-z0-9_-]{20,}$/.test((f && f.data && f.data.sheetId) || ""); }
+/* A faction's roster source is a (sheetId, gid) PAIR, not a sheet. Today each linked faction owns its own
+   spreadsheet and gid "" means "the first tab". The intended shape is one primary spreadsheet with a tab
+   per faction, where gid is what distinguishes them; so "" would silently mean "whatever tab is first"
+   for every faction at once. The rule that covers both: a gid is required only when the sheet is SHARED. */
+function factionLinked(f){
+  const d=(f&&f.data)||{};
+  if(!/^[A-Za-z0-9_-]{20,}$/.test(d.sheetId||"")) return false;
+  // Counted per call, deliberately. A memoised sheetId→count map was tried and reverted: FACTIONS is
+  // mutable (docs are spliced in at init, and tests/tools repoint data), so a cache that never
+  // invalidates reports a faction as linked on stale membership. n is 13; the scan is not worth a
+  // staleness bug.
+  const sharers=FACTION_ORDER.filter(id=>FACTIONS[id].data.sheetId===d.sheetId).length;
+  return sharers<2 || !!d.gid;   // sole owner → "" is the first tab; shared → name your tab
+}
 /* switch faction: apply its skin (colour + bg + brand), persist it, and reload the
    roster only if this faction's data sheet differs from the current one. */
 /* CRT "re-tune" transition on a faction switch: a brief signal-loss flicker (desaturate + dim), a bright
-   scanline sweeps down, and the new faction's phosphor colour blooms back in — masking the colour swap.
+   scanline sweeps down, and the new faction's phosphor colour blooms back in: masking the colour swap.
    Reduced-motion → no-op (the swap is instant). */
 let _retuneTimer=null;
 function crtRetune(){
@@ -201,14 +246,14 @@ function applyFaction(id){
 function showRosterFor(f){
   if(!factionLinked(f)){ showFactionComingSoon(f); return; }
   document.body.classList.remove("coming-soon");
-  if(!state.model || state.loadedSheet !== f.data.sheetId) load(false);   // (re)fetch this faction's sheet
+  if(!state.model || state.loadedSheet !== factionIdent(f)) load(false);   // (re)fetch THIS faction's tab
   else render();                                                          // already in memory → instant
 }
 /* Relations shares the roster's data; same live-vs-coming-soon gate as showRosterFor. */
 function showRelationsFor(f){
   if(!factionLinked(f)){ showFactionComingSoon(f); return; }
   document.body.classList.remove("coming-soon");
-  if(!state.model || state.loadedSheet !== f.data.sheetId){
+  if(!state.model || state.loadedSheet !== factionIdent(f)){
     $("#relations").classList.add("hidden");   // the loader (#state) owns the screen until data lands
     load(false);                               // → render() → renderRelations() once the model is in
   } else {
@@ -226,10 +271,10 @@ function showFactionComingSoon(f){
   const wlink = wpage
     ? `<div class="coming-wiki"><a href="#wiki/${encodeURIComponent(wpage)}" data-wiki="${escAttr(wpage)}">▸ Read about ${esc(f.name)} on the wiki</a></div>`
     : "";
-  $("#statesub").innerHTML = `Roster not linked yet — <b>${esc(f.name)}</b>${poss} archive will be connected soon.${wlink}`;
+  $("#statesub").innerHTML = `Roster not linked yet: <b>${esc(f.name)}</b>${poss} archive will be connected soon.${wlink}`;
 }
 /* Original, in-house SVG glyph per faction (flat single-colour silhouettes, fill:currentColor so they
-   tint to the active theme — NOT the trademarked Fallout logos). Each evokes the faction distinctly:
+   tint to the active theme, NOT the trademarked Fallout logos). Each evokes the faction distinctly:
    Brotherhood=gear+sword · Vault=vault door+wheel · Legion=the Bull · Tribe=campfire · Enclave=eagle ·
    NCR=bear paw · Unity=DNA helix · Followers=medical cross · Townsfolk=bazaar stall (they're the
    bazaar folk) · Wastelanders=compass · Outlaws=skull · Synthetics=robot head · Super Mutants=fist.
@@ -237,11 +282,11 @@ function showFactionComingSoon(f){
 const FACTION_ICONS = {
   brotherhood:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M13.3 2.3h-2.6l-.34 2.02c-.52.14-1.02.35-1.48.61L7.24 3.9 5.4 5.74l1.06 1.65c-.26.46-.47.96-.61 1.48L3.83 9.2v2.6l2.02.34c.14.52.35 1.02.61 1.48l-1.06 1.65 1.84 1.84 1.65-1.06c.46.26.96.47 1.48.61l.34 2.02h2.6l.34-2.02c.52-.14 1.02-.35 1.48-.61l1.65 1.06 1.84-1.84-1.06-1.65c.26-.46.47-.96.61-1.48l2.02-.34V9.2l-2.02-.34a6.4 6.4 0 0 0-.61-1.48l1.06-1.65-1.84-1.84-1.65 1.06a6.4 6.4 0 0 0-1.48-.61L13.3 2.3Zm-1.3 5.4a3.4 3.4 0 1 1 0 6.8 3.4 3.4 0 0 1 0-6.8Z"/><path d="M9.1 7.1h5.8v1.5H9.1z"/><path d="M11.2 8.6h1.6v9.6l-.8 3-.8-3V8.6Z"/></svg>',
   vault:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2.6a7.4 7.4 0 1 1 0 14.8 7.4 7.4 0 0 1 0-14.8Z"/><circle cx="12" cy="3.6" r="1"/><circle cx="12" cy="20.4" r="1"/><circle cx="3.6" cy="12" r="1"/><circle cx="20.4" cy="12" r="1"/><circle cx="12" cy="12" r="3.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M12 9v6M9.4 10.5l5.2 3M14.6 10.5l-5.2 3" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>',
-  /* the Bull (Caesar's Legion) — adapted from Lorc's "bull" on game-icons.net (CC BY 3.0); see CREDITS.md */
+  /* the Bull (Caesar's Legion): adapted from Lorc's "bull" on game-icons.net (CC BY 3.0); see CREDITS.md */
   legion:'<svg viewBox="0 0 512 512" aria-hidden="true"><path d="M68.596 28.182c-86.767 50.67-51.027 136.884 123.35 136.884l2.835-70.433c-71.07 14-169.105 15.57-126.184-66.45zm378.455 0c42.92 82.022-55.114 80.45-126.185 66.45l2.836 70.434c174.378 0 210.117-86.213 123.35-136.884zM174.206 220.768c-3.798.104-7.758.785-11.816 2.087-1.887 29.822 11.63 50.308 48.516 39.88-.462-26.26-16.194-42.53-36.7-41.967zm167.213 0c-20.507-.563-36.24 15.707-36.7 41.966 36.886 10.43 50.404-10.057 48.518-39.88-4.058-1.3-8.02-1.982-11.818-2.086zm-53.123 162.7l-10.793 15.266c15.535 10.978 19.19 32.196 8.21 47.73C274.736 462 253.533 465.64 238 454.663c-15.535-10.978-19.19-32.193-8.21-47.728 2.03-2.875 4.483-5.42 7.288-7.543l-11.263-14.894c-4.34 3.283-8.153 7.203-11.292 11.645-16.805 23.784-11.098 56.982 12.685 73.788 23.784 16.806 56.956 11.098 73.762-12.686 16.806-23.783 11.11-56.967-12.672-73.773z"/></svg>',
-  /* Followers of the Apocalypse — a Rod of Asclepius topped with a radiation trefoil finial */
+  /* Followers of the Apocalypse: a Rod of Asclepius topped with a radiation trefoil finial */
   followers:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4" r="3.5" fill="none" stroke="currentColor" stroke-width=".9"/><path d="M11.55 3.22 10.5 1.4A3 3 0 0 1 13.5 1.4L12.45 3.22A.9 .9 0 0 0 11.55 3.22ZM12.9 4 15 4A3 3 0 0 1 13.5 6.6L12.45 4.78A.9 .9 0 0 0 12.9 4ZM11.1 4 9 4A3 3 0 0 0 10.5 6.6L11.55 4.78A.9 .9 0 0 1 11.1 4Z"/><circle cx="12" cy="4" r=".85"/><path d="M12 7.4v14.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M12 20.9c-3.8 0-3.8-3.5 0-3.5s3.8-3.5 0-3.5-3.8-3.5 0-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 12.6c1.4 0 2.5-.8 2.9-2 .3 1-.1 2-1 2.6l1.7.5-2.2.7z"/></svg>',
-  townsfolk:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3.5h18v3H3z"/><path d="M3 6.5h18l-1.8 2.2-1.8-2.2-1.8 2.2-1.8-2.2-1.8 2.2-1.8-2.2-1.8 2.2-1.8-2.2-1.8 2.2L3 6.5Z"/><path d="M4.3 6.5h1.5v13H4.3zM18.2 6.5h1.5v13h-1.5z"/></svg>',   /* the bazaar market stall — townsfolk are the bazaar folk */
+  townsfolk:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3.5h18v3H3z"/><path d="M3 6.5h18l-1.8 2.2-1.8-2.2-1.8 2.2-1.8-2.2-1.8 2.2-1.8-2.2-1.8 2.2-1.8-2.2-1.8 2.2L3 6.5Z"/><path d="M4.3 6.5h1.5v13H4.3zM18.2 6.5h1.5v13h-1.5z"/></svg>',   /* the bazaar market stall: townsfolk are the bazaar folk */
   wastelanders:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2.3a7.7 7.7 0 1 1 0 15.4 7.7 7.7 0 0 1 0-15.4Z"/><path d="m12 6 2 5 4 1-4 1-2 5-2-5-4-1 4-1z"/></svg>',
   outlaws:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.6c-4.5 0-7.6 3.1-7.6 7.4 0 2.4 1.1 4.1 2.5 5.3v2.3c0 .8.6 1.4 1.4 1.4h.4v1.2c0 .8.6 1.4 1.4 1.4s1.4-.6 1.4-1.4v-1.2h.9v1.2c0 .8.6 1.4 1.4 1.4s1.4-.6 1.4-1.4v-1.2h.4c.8 0 1.4-.6 1.4-1.4v-2.3c1.4-1.2 2.5-2.9 2.5-5.3 0-4.3-3.1-7.4-7.5-7.4ZM9 9.5a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4Zm6 0a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4Z"/></svg>',
   synthetics:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 2.3h2v2.2h-2z"/><path d="M6 6h12a1.6 1.6 0 0 1 1.6 1.6v8.8A1.6 1.6 0 0 1 18 18H6a1.6 1.6 0 0 1-1.6-1.6V7.6A1.6 1.6 0 0 1 6 6Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="9" cy="11.5" r="1.7"/><circle cx="15" cy="11.5" r="1.7"/><path d="M2.4 10v4M21.6 10v4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
@@ -272,14 +317,16 @@ function renderBrand(){
       inner + FACTION_ARROW +
     `</button>`+
     `<div class="faction-menu" id="faction-menu" role="listbox" aria-label="Faction">`+
-      FACTION_ORDER.map((id,i) =>
-        `<button class="faction-opt${id===currentFaction?' active':''}" style="--i:${i}" type="button" role="option" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">`+
+      FACTION_ORDER.map((id,i) => {
+        const linked = factionLinked(FACTIONS[id]);   // mirrors the home grid: one state, shown the same way twice
+        return `<button class="faction-opt${id===currentFaction?' active':''}${linked?"":" is-pending"}" style="--i:${i}" type="button" role="option" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">`+
           `<span class="faction-opt-ico" aria-hidden="true">${FACTION_ICONS[id]||""}</span><span>${esc(FACTIONS[id].name)}</span>`+
-        `</button>`
-      ).join("")+
+          (linked?"":`<span class="faction-opt-pending">soon</span>`)+
+        `</button>`;
+      }).join("")+
     `</div>`;
 }
-/* one-time delegated wiring for the switcher — open/close + select, fully keyboard-navigable
+/* one-time delegated wiring for the switcher, open/close + select, fully keyboard-navigable
    (the listbox supports ↑/↓/Home/End, Esc returns focus to the button). */
 function wireFactionMenu(){
   const brand = () => document.querySelector(".brand.has-switch");
@@ -337,7 +384,7 @@ Object.entries(FACTION_DOCS).forEach(([factionId, docs])=>{ if(FACTIONS[factionI
 
 /* Code-defined entries that aren't rows in the sheet (e.g. visiting characters).
    Each: { name, section, fields:{ usename, honorific, ... image, icon } }. */
-const EXTRA_CHARACTERS = [{"name": "Dr Orac Piyre", "section": "Visitors to the Tribe", "fields": {"discord": "", "usename": "Dr Orac Piyre", "honorific": "The First Doctor", "truename": "(sealed \u2014 \u201cthat man ended in the vat\u201d)", "birth": "His pre-mutation human name, kept private \u2014 a sealed chapter from Vault 13.", "address": "\u201cDoctor.\u201d He addresses humans as \u201cprecursors,\u201d first-generation mutants as \u201cbrethren,\u201d and second-generation as \u201ccousins.\u201d", "species": "Super Mutant (first-generation, FEV-dipped) \u2014 rare, near-uniform deep blue-black / jet-black skin.", "role": "Visitor to the tribe \u00b7 itinerant field surgeon, theologian & FEV researcher (not a member).", "appearance": "Male. A towering ~2.5m first-generation super mutant with rare, near-uniform jet-black (deep blue-black) skin \u2014 smooth where most mutants are mottled, the result of a clean FEV expression in a low-radiation vault dweller. Heavy, bone-dense build; slow to bleed or bruise; hands large enough to palm a human skull. Strikingly human grey eyes that observe before they engage. He wears a faded Vault 13 jumpsuit collar sewn around his left upper arm and a well-maintained pre-war surgical kit on his right hip.\nMannerisms: observant stillness; a slow head-tilt that serves as both invitation and warning; he smiles only with the lower half of his face. Dipped circa 2161 \u2014 active for over 130 years.", "spirit": "", "relationships": "BIG BROM MATLOK: A theological counterpart. Orac is drawn to the Chief-Shaman as a mind worth debating \u2014 a potential clash, or dialogue, between two very different faiths.\nTHE MASTER: Revered (privately). Orac holds that the Master\u2019s diagnosis of the wastes was correct \u2014 only the execution was a terrible misapplication of FEV.\nTHE LIEUTENANT (\u2018THE LOU\u2019): Deeply respected preceptor who oversaw his dipping at Mariposa and treated him as a peer.\nTHE VAULT DWELLER: Diagnosed, coldly, as \u2018a dangerous iatrogenic complication.\u2019\nBROTHERHOOD OF STEEL: A respected enemy that hunted his band of mutants for over a century.\nNCR: A frustrating impediment that killed many of his best troops.", "plot": "VAULT 13: Rose to Chief Medical Officer of Vault 13.\nTHE DIPPING (c.2161): Captured on a surface survey by Unity recruiters who prized a low-radiation vault doctor; carried to Mariposa and dipped under the Master\u2019s program. The clean FEV expression granted enhanced cognition and his signature jet-black skin.\nTHE FIRST DOCTOR: Served ~six months as clinical advisor \u2014 the self-styled \u2018First Doctor\u2019 \u2014 to the Master\u2019s program.\nFALL OF THE MASTER (2162): Away on inspection when the Vault Dweller destroyed the Master\u2019s forces; he survived.\nTHE REMNANT CHURCH: Gathered ~40 first-generation survivors and led them for over a century under attrition from Brotherhood patrols and NCR Rangers; by 2295 only three remained.\nTHE CANCER PHENOMENON: Now moving between the factions with a proposal \u2014 a plant/animal hybrid that is driving regional cancers toward near zero. He claims the FE virus lies at its heart, and campaigns to lift the stigma around FEV.", "notes": "A VISITOR, not a member of the tribe.\nTWO FACES: Publicly he decries the Unity\u2019s acts as \u2018a terrible misapplication of the medical potential of FEV\u2019 and champions the virus\u2019s healing promise. Privately he still reveres the Master\u2019s diagnosis and dreams of a refined \u2018Second Unity\u2019 \u2014 the Master was right about the disease, he believes, and wrong only about the cure.\nBELIEFS: Pre-war humanity was \u2018a chronic, terminal condition.\u2019 Dipping is \u2018a merciful procedure.\u2019 Mutants are not superior \u2014 they are \u2018humanity at its next phase.\u2019 He applies primum non nocere to the species, not the individual, and styles himself \u2018physician to the body politic.\u2019\nVOICE: Velvet, clinical, vault-educated \u2014 Charles Dance / David Warner. Medical metaphors for everything; slips into medical Latin under stress. He never says \u2018abomination\u2019 or \u2018monster,\u2019 only clinical terms.\nHe carries a faded Vault 13 jumpsuit collar sewn around his left arm, an immaculate pre-war surgical kit, and the names of every fallen mutant sibling.", "tastes": "A bitter medicinal tisane he distils himself; the clean sting of antiseptic. He does not so much eat at the fire as observe it \u2014 and quietly diagnose everyone around it.", "activities": "Diagnosing strangers on sight; cataloguing wasteland flora for medicinal properties; long \u2018teaching\u2019 monologues; maintaining his surgical kit; long stretches of observant stillness.", "image": "", "icon": "radiation"}}, {"name": "Azalea Webb", "section": "Sage's Goobers", "fields": {"discord": "Sage", "usename": "Azalea Webb", "species": "Human", "role": "NCR combat medic (NCRA) \u00b7 stationed at Wendover", "appearance": "29. Grew up in Shady Sands. Enlisted as a combat medic at 25 to make her son proud \u2014 and drew the worst posting, Wendover. Captured and enslaved by the Legion for a month; torturers poured boiling water down her throat, leaving her partially mute. She speaks slowly, in broken sentences, and prefers sign language.", "relationships": "SHANNON WEBB: Older sister (by two years).\nBRANDON WEBB: Her son (born when she was 19) \u2014 a father's boy, obsessed with soldiers and the NCRA.\nJUSTIN 'JJ' JENNINGS: Ex-husband; Brandon's father.", "notes": "Married JJ at 18, had Brandon at 19. Feeling her life going nowhere, she enlisted to become a 'superhero' to her son.\nQUOTE: \u201c\u2026\u201d", "special": "4 4 4 3 10 10 5", "address": "Partially mute \u2014 prefers sign language."}}, {"name": "Shannon Webb", "section": "Sage's Goobers", "fields": {"discord": "Sage", "usename": "Shannon Webb", "species": "Human", "role": "NCR Captain \u00b7 platoon commanding officer, Wendover", "appearance": "Azalea's older sister. Loud and impulsive, but always tries to do the right thing. Enlisted at 18, rose through the ranks and earned her commission as a Squad Leader.", "relationships": "AZALEA WEBB: Younger sister (by two years).", "notes": "Now Captain Webb, commanding the platoon deployed at Wendover.\nQUOTE: \u201cA true leader leads their men into battle themselves.\u201d", "special": "4 6 5 5 5 10 5"}}, {"name": "Stacey Webb", "section": "Sage's Goobers", "fields": {"discord": "Sage", "usename": "Stacey Webb", "species": "Human", "role": "Mercenary \u2014 self-proclaimed 'Best Merc in Wendover'", "appearance": "Abandoned at birth by two drug addicts and raised by the Followers of the Apocalypse in Wendover. Took to linguistics and philosophy \u2014 speaks Latin, Chinese, Spanish and sign language, and studied the pantheons of China, Rome, Greece and Egypt. Never seen without a 7.62 rifle on her back; loves the C70 and the Marksman carbine.", "relationships": "ORAC: Met this super mutant and his talk of Unity, Vault 13 and FEV \u2014 didn't believe much of it, but got dragged into his mess and is along for the ride, even if it costs her life.", "notes": "Left on her own at 18; learned to handle herself on the streets and finds work doing almost everything but actual merc work.\nQUOTE: \u201c7.62 is a god given gift, if such a thing even exists.\u201d", "special": "4 6 6 4 5 10 5"}}, {"name": "Lily Weaver", "faction": "brotherhood", "section": "Sage's Goobers", "fields": {"discord": "Sage", "usename": "Lily Weaver", "species": "Human", "role": "Brotherhood of Steel \u2014 Head Knight, 509th Chapter", "appearance": "29. Born to a Shi family in San Francisco; paler than her kin, with white hair (she refers to her 'condition'). Carries her family heirloom \u2014 a finely crafted double-edged sword.", "relationships": "BROTHERHOOD OF STEEL: Found passed out in the sand west of Lost Hills, taken in, and rose to Knighthood.\nNCR: Sympathised with the Republic's values as a teenager.", "notes": "Fled home at 18 after an argument with her parents, taking the family sword, and barely survived the wasteland until a Brotherhood patrol found her. Deployed to the Mojave Chapter and then the 509th, where she now serves as Head Knight \u2014 a middle ground between the paladins and the scribes.\nQUOTE: \u201cI cope with the stress of my job by goofing off more than I should.\u201d\nOOC: Sage's self-insert (carried over from earlier SS14/RMC characters in the Slimeweaver / Lightweaver line).", "special": "4 6 5 4 10 7 5"}}, {"name": "Scratchy", "section": "The Tribe", "fields": {"usename": "Scratchy", "species": "Super Mutant", "role": "Tribal", "appearance": "A super mutant who walks with the Tribe.", "notes": "Another tribal mutant of the Tribe. (Bio to be expanded.)"}}];
+const EXTRA_CHARACTERS = [{"name": "Dr Orac Piyre", "section": "Visitors to the Tribe", "fields": {"discord": "", "usename": "Dr Orac Piyre", "honorific": "The First Doctor", "truename": "(sealed \u2014 \u201cthat man ended in the vat\u201d)", "birth": "His pre-mutation human name, kept private \u2014 a sealed chapter from Vault 13.", "address": "\u201cDoctor.\u201d He addresses humans as \u201cprecursors,\u201d first-generation mutants as \u201cbrethren,\u201d and second-generation as \u201ccousins.\u201d", "species": "Super Mutant (first-generation, FEV-dipped) \u2014 rare, near-uniform very dark blue skin.", "role": "Visitor to the tribe \u00b7 itinerant field surgeon, theologian & FEV researcher (not a member).", "appearance": "Male. A towering ~2.5m first-generation super mutant with rare, near-uniform very dark blue skin \u2014 not quite black \u2014 smooth where most mutants are mottled, the result of a clean FEV expression in a low-radiation vault dweller. Heavy, bone-dense build; slow to bleed or bruise; hands large enough to palm a human skull. Large, startlingly human pale eyes that observe before they engage \u2014 kept behind oversized custom prescription sunglasses, ground to fit a mutant skull, which he is never seen without. He wears a faded Vault 13 jumpsuit collar sewn around his left upper arm and a well-maintained pre-war surgical kit on his right hip.\nMannerisms: observant stillness; a slow head-tilt that serves as both invitation and warning; he smiles only with the lower half of his face. Dipped circa 2161 \u2014 active for over 130 years.", "spirit": "", "relationships": "BIG BROM MATLOK: A theological counterpart. Orac is drawn to the Chief-Shaman as a mind worth debating \u2014 a potential clash, or dialogue, between two very different faiths.\nTHE MASTER: Revered (privately). Orac holds that the Master\u2019s diagnosis of the wastes was correct \u2014 only the execution was a terrible misapplication of FEV.\nTHE LIEUTENANT (\u2018THE LOU\u2019): Deeply respected preceptor who oversaw his dipping at Mariposa and treated him as a peer.\nTHE VAULT DWELLER: Diagnosed, coldly, as \u2018a dangerous iatrogenic complication.\u2019\nBROTHERHOOD OF STEEL: A respected enemy that hunted his band of mutants for over a century.\nNCR: A frustrating impediment that killed many of his best troops.", "plot": "VAULT 13: Rose to Chief Medical Officer of Vault 13.\nTHE DIPPING (c.2161): Captured on a surface survey by Unity recruiters who prized a low-radiation vault doctor; carried to Mariposa and dipped under the Master\u2019s program. The clean FEV expression granted enhanced cognition and his signature jet-black skin.\nTHE FIRST DOCTOR: Served ~six months as clinical advisor \u2014 the self-styled \u2018First Doctor\u2019 \u2014 to the Master\u2019s program.\nFALL OF THE MASTER (2162): Away on inspection when the Vault Dweller destroyed the Master\u2019s forces; he survived.\nTHE REMNANT CHURCH: Gathered ~40 first-generation survivors and led them for over a century under attrition from Brotherhood patrols and NCR Rangers; by 2295 only three remained.\nTHE CANCER PHENOMENON: Now moving between the factions with a proposal \u2014 a plant/animal hybrid that is driving regional cancers toward near zero. He claims the FE virus lies at its heart, and campaigns to lift the stigma around FEV.", "notes": "A VISITOR, not a member of the tribe.\nTWO FACES: Publicly he decries the Unity\u2019s acts as \u2018a terrible misapplication of the medical potential of FEV\u2019 and champions the virus\u2019s healing promise. Privately he still reveres the Master\u2019s diagnosis and dreams of a refined \u2018Second Unity\u2019 \u2014 the Master was right about the disease, he believes, and wrong only about the cure.\nBELIEFS: Pre-war humanity was \u2018a chronic, terminal condition.\u2019 Dipping is \u2018a merciful procedure.\u2019 Mutants are not superior \u2014 they are \u2018humanity at its next phase.\u2019 He applies primum non nocere to the species, not the individual, and styles himself \u2018physician to the body politic.\u2019\nVOICE: Velvet, clinical, vault-educated \u2014 Charles Dance / David Warner. Medical metaphors for everything; slips into medical Latin under stress. He never says \u2018abomination\u2019 or \u2018monster,\u2019 only clinical terms.\nHe carries a faded Vault 13 jumpsuit collar sewn around his left arm, an immaculate pre-war surgical kit, and the names of every fallen mutant sibling.", "tastes": "A bitter medicinal tisane he distils himself; the clean sting of antiseptic. He does not so much eat at the fire as observe it \u2014 and quietly diagnose everyone around it.", "activities": "Diagnosing strangers on sight; cataloguing wasteland flora for medicinal properties; long \u2018teaching\u2019 monologues; maintaining his surgical kit; long stretches of observant stillness.", "image": "", "icon": "radiation"}}, {"name": "Azalea Webb", "section": "Sage's Goobers", "fields": {"discord": "Sage", "usename": "Azalea Webb", "species": "Human", "role": "NCR combat medic (NCRA) \u00b7 stationed at Wendover", "appearance": "29. Grew up in Shady Sands. Enlisted as a combat medic at 25 to make her son proud \u2014 and drew the worst posting, Wendover. Captured and enslaved by the Legion for a month; torturers poured boiling water down her throat, leaving her partially mute. She speaks slowly, in broken sentences, and prefers sign language.", "relationships": "SHANNON WEBB: Older sister (by two years).\nBRANDON WEBB: Her son (born when she was 19) \u2014 a father's boy, obsessed with soldiers and the NCRA.\nJUSTIN 'JJ' JENNINGS: Ex-husband; Brandon's father.", "notes": "Married JJ at 18, had Brandon at 19. Feeling her life going nowhere, she enlisted to become a 'superhero' to her son.\nQUOTE: \u201c\u2026\u201d", "special": "4 4 4 3 10 10 5", "address": "Partially mute \u2014 prefers sign language."}}, {"name": "Shannon Webb", "section": "Sage's Goobers", "fields": {"discord": "Sage", "usename": "Shannon Webb", "species": "Human", "role": "NCR Captain \u00b7 platoon commanding officer, Wendover", "appearance": "Azalea's older sister. Loud and impulsive, but always tries to do the right thing. Enlisted at 18, rose through the ranks and earned her commission as a Squad Leader.", "relationships": "AZALEA WEBB: Younger sister (by two years).", "notes": "Now Captain Webb, commanding the platoon deployed at Wendover.\nQUOTE: \u201cA true leader leads their men into battle themselves.\u201d", "special": "4 6 5 5 5 10 5"}}, {"name": "Stacey Webb", "section": "Sage's Goobers", "fields": {"discord": "Sage", "usename": "Stacey Webb", "species": "Human", "role": "Mercenary \u2014 self-proclaimed 'Best Merc in Wendover'", "appearance": "Abandoned at birth by two drug addicts and raised by the Followers of the Apocalypse in Wendover. Took to linguistics and philosophy \u2014 speaks Latin, Chinese, Spanish and sign language, and studied the pantheons of China, Rome, Greece and Egypt. Never seen without a 7.62 rifle on her back; loves the C70 and the Marksman carbine.", "relationships": "ORAC: Met this super mutant and his talk of Unity, Vault 13 and FEV \u2014 didn't believe much of it, but got dragged into his mess and is along for the ride, even if it costs her life.", "notes": "Left on her own at 18; learned to handle herself on the streets and finds work doing almost everything but actual merc work.\nQUOTE: \u201c7.62 is a god given gift, if such a thing even exists.\u201d", "special": "4 6 6 4 5 10 5"}}, {"name": "Lily Weaver", "faction": "brotherhood", "section": "Sage's Goobers", "fields": {"discord": "Sage", "usename": "Lily Weaver", "species": "Human", "role": "Brotherhood of Steel \u2014 Head Knight, 509th Chapter", "appearance": "29. Born to a Shi family in San Francisco; paler than her kin, with white hair (she refers to her 'condition'). Carries her family heirloom \u2014 a finely crafted double-edged sword.", "relationships": "BROTHERHOOD OF STEEL: Found passed out in the sand west of Lost Hills, taken in, and rose to Knighthood.\nNCR: Sympathised with the Republic's values as a teenager.", "notes": "Fled home at 18 after an argument with her parents, taking the family sword, and barely survived the wasteland until a Brotherhood patrol found her. Deployed to the Mojave Chapter and then the 509th, where she now serves as Head Knight \u2014 a middle ground between the paladins and the scribes.\nQUOTE: \u201cI cope with the stress of my job by goofing off more than I should.\u201d\nOOC: Sage's self-insert (carried over from earlier SS14/RMC characters in the Slimeweaver / Lightweaver line).", "special": "4 6 5 4 10 7 5"}}, {"name": "Scratchy", "section": "The Tribe", "fields": {"usename": "Scratchy", "species": "Super Mutant", "role": "Tribal", "appearance": "A super mutant who walks with the Tribe.", "notes": "Another tribal mutant of the Tribe. (Bio to be expanded.)"}}];
 
 /* Code-defined portraits for characters whose images aren't in the sheet.
    slug -> { front, side }, values are file paths under media/ (extracted from
@@ -347,8 +394,8 @@ const MEDIA = {"big-brom-matlok": {"front": "media/big-brom-matlok-front.png"}, 
 /* ------------------------ themes (text colour + background) ------------------------ */
 /* `dim` is used for SECONDARY TEXT (labels, role sub-lines, meta), so each value is
    tuned to clear WCAG AA (≥4.5:1) against every background incl. the lightest (slate).
-   `faint` is borders/rules ONLY — never text. (See the legibility-floor convention.) */
-/* `dim` is the DIMMEST colour used for TEXT (secondary/captions) — it carries a readability floor
+   `faint` is borders/rules ONLY, never text. (See the legibility-floor convention.) */
+/* `dim` is the DIMMEST colour used for TEXT (secondary/captions), it carries a readability floor
    (~6.5:1 on its bg, comfortably past WCAG AA 4.5), staying below `primary` for hierarchy. `faint`
    is NON-TEXT only (borders/rules); it is intentionally sub-legible and must never colour prose. */
 const THEMES = {
@@ -374,21 +421,21 @@ const BGS = {
 };
 const BG_ORDER = ["phosphor","warm","cool","black","slate"];
 /* Typeface catalogue. Headings and body text are picked SEPARATELY (two radio groups
-   in the Theme popover), so the picker states exactly what each choice affects —
+   in the Theme popover), so the picker states exactly what each choice affects,
    replacing the old fixed head+body preset pairs.
    `css` = the applied font-family stack. `preview` (optional) = stack used to render
    the option's own name in the picker when it differs from `css`. */
 const LEGIBLE='"IBM Plex Mono", ui-monospace, monospace';
 const FACES = {
-  /* the primary/iconic face — "Fallouty" (Sébastien Caisse / "Red!", 2002): the real, widely-known
+  /* the primary/iconic face: "Fallouty" (Sébastien Caisse / "Red!", 2002): the real, widely-known
      fan recreation of the Fallout 1/2 title lettering. A clean, even pixel face whose glyphs fill
      ~58% of the em, so it reads bigger without the heavy/irregular look of the chunkier JH face.
-     ("Fallout"=Fallout12 and VT323 are only fallbacks.) Internal key stays `fallout` — renaming it
+     ("Fallout"=Fallout12 and VT323 are only fallbacks.) Internal key stays `fallout`: renaming it
      would churn stored prefs, PRESET_MIGRATE, the font orders and the body[data-font-*] CSS hooks. */
   fallout:   { name:"Fallouty",    css:'"Fallouty", "Fallout", "VT323", monospace' },
   /* Workbench is a wide display face: as a HEADINGS pick it styles the brand + character
      name plates only (via body[data-font-head="workbench"] CSS); other headings stay
-     Fallout. Too loud for every label — this is the curated behaviour it always had. */
+     Fallout. Too loud for every label; this is the curated behaviour it always had. */
   workbench: { name:"Workbench",   css:'"Fallouty", "Fallout", "VT323", monospace',
                preview:'"Workbench", monospace', note:"name plates only" },
   overseer:  { name:"Overseer",   css:'"Overseer", "VT323", monospace' },
@@ -400,17 +447,17 @@ const FACES = {
   ticker:    { name:"Ticker",     css:'"DotGothic16", monospace' },
   typewriter:{ name:"Typewriter", css:'"Special Elite", monospace' },
   block:     { name:"Block",      css:'"Pixelify Sans", monospace' },
-  gothic:    { name:"Gothic 821", css:'"Gothic 821", "Oswald", sans-serif' },   // METALWORK ONLY — the faded-yellow FO1 chassis signage (body[data-frame="border"] .brand). Deliberately not in any picker order: it is a metal face, never a screen/phosphor one.
+  gothic:    { name:"Gothic 821", css:'"Gothic 821", "Oswald", sans-serif' },   // METALWORK ONLY: the faded-yellow FO1 chassis signage (body[data-frame="border"] .brand). Deliberately not in any picker order: it is a metal face, never a screen/phosphor one.
 };
 /* "typewriter" (paper sections) and "overseer" (metalwork) are reserved for surfaces not built
-   yet — kept in FACES but out of the pickers for now. */
+   yet, kept in FACES but out of the pickers for now. */
 const HEAD_ORDER = ["fallout","workbench","monofonto","terminal","fixedsys","plex","ticker","block"];
 const BODY_ORDER = ["fallout","plex","sharetech","monofonto","terminal","fixedsys","block"];
 /* Doc-reader fonts are picked separately from the app's (a Google Doc reads differently
    from the roster chrome). Three tiers → CSS vars --doc-font-title/head/body. Defaults:
-   Overseer masthead · Fallout section headings · Plex prose — all phosphor-screen faces.
+   Overseer masthead · Fallout section headings · Plex prose, all phosphor-screen faces.
    'gothic' and 'workbench' are excluded on purpose: Gothic 821 is metalwork-only (the FO1
-   chassis signage), and workbench's css is just Fallouty (an app name-plate special) —
+   chassis signage), and workbench's css is just Fallouty (an app name-plate special),
    both misleading in a doc picker, which sets a SCREEN surface. */
 const DOC_HEAD_FACES = ["fallout","monofonto","terminal","fixedsys","block","ticker"];
 const DOC_BODY_FACES = ["plex","sharetech","fallout","monofonto","terminal","fixedsys","block"];
@@ -434,7 +481,7 @@ function hexToRgbTriplet(hex){
   const n=parseInt(h,16);
   return isNaN(n) ? "60,255,122" : `${(n>>16)&255},${(n>>8)&255},${n&255}`;
 }
-/* hue (deg) + saturation (0–1) of a hex — used to tint monochrome images to the theme colour
+/* hue (deg) + saturation (0–1) of a hex: used to tint monochrome images to the theme colour
    (a single sepia+hue-rotate filter, cribbed from carterfromsl's NV Pip-Boy pen). */
 function hslOf(hex){
   let h=(hex||"").replace("#","").trim();
@@ -455,11 +502,11 @@ function applyColor(key, persist){
   _curColor = key;
   const hc = document.body.dataset.contrast==="high";   // High-Contrast: lift the dim/faint tiers
   /* --fg = the theme's FOREGROUND / phosphor colour (pairs with --bg). It's whatever hue the
-     chosen theme sets — amber, rust, blue, green… — so it's named for its ROLE, not a colour.
+     chosen theme sets: amber, rust, blue, green…; so it's named for its ROLE, not a colour.
        --fg        the phosphor colour (primary text, accents, borders-lit)
-       --fg-bright brighter tint — headings, hovers, the "lit" state
-       --fg-dim    dimmer shade — secondary text (min ≈4.6:1, the legibility floor)
-       --fg-faint  faintest — hairlines/borders/box-shadows ONLY, never type
+       --fg-bright brighter tint, headings, hovers, the "lit" state
+       --fg-dim    dimmer shade: secondary text (min ≈4.6:1, the legibility floor)
+       --fg-faint  faintest, hairlines/borders/box-shadows ONLY, never type
        --fg-rgb    the same colour as an "r,g,b" triplet, for rgba(var(--fg-rgb), a) fills/glows */
   r.setProperty("--fg",t.primary);  r.setProperty("--fg-bright",t.bright);
   r.setProperty("--fg-dim", hc ? t.primary : t.dim);    // HC: secondary text → full phosphor
@@ -474,6 +521,16 @@ function applyColor(key, persist){
   const {h:_hu, s:_sat}=hslOf(t.primary);
   r.setProperty("--img-hue", Math.round(_hu-40)+"deg");
   r.setProperty("--img-sat", _sat<0.2 ? "0" : "2.1");   // near-grey themes (white) desaturate rather than mis-tint
+  /* --ph is the phosphor HUE as a bare number, for the handful of values in
+     lib/atlas.css with no token of their own: the veils behind the atlas's
+     floating panels, its crosshair, epoch rules, range window and button shadow
+     are hsl(var(--ph) …). Without it the map sits green inside an amber terminal.
+     --ph-sat carries the SAME near-grey guard the --img-sat line above applies:
+     the White preset's primary is #dbe3df, whose hue is a perfectly real 150, so
+     publishing the hue alone painted green accents onto a neutral terminal,
+     re-introducing the mis-tint its neighbour was written to prevent. */
+  r.setProperty("--ph", String(Math.round(_hu)));
+  r.setProperty("--ph-sat", _sat < 0.2 ? "0" : "1");
   if(persist!==false) localStorage.setItem(fkey("color"), key);   // explicit choices are remembered per faction
   document.querySelectorAll("#color-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
@@ -508,7 +565,7 @@ function applyFontBody(key, persist){
    .docreader CSS reads (title = masthead + h1; head = subtitle + h2; body = prose + h3/h4). */
 function applyDocFont(kind, key, persist){
   /* coerce any unknown/retired key (e.g. a persisted "gothic" from when it was a title
-     option — it's metalwork-only now) back to the default, so screen faces stay screen. */
+     option, it's metalwork-only now) back to the default, so screen faces stay screen. */
   if(!DOC_FONT_ORDERS[kind].includes(key)) key=DOC_FONT_DEFAULT[kind];
   const f=FACES[key]||FACES[DOC_FONT_DEFAULT[kind]];
   document.documentElement.style.setProperty("--doc-font-"+kind, f.css);
@@ -519,7 +576,7 @@ function applyDocFont(kind, key, persist){
 /* Live hover-preview for the font pickers: hovering a swatch applies that face immediately
    (WITHOUT persisting); leaving the group restores the committed face (the .active swatch);
    clicking commits via the existing click handler. So you SEE each face in place before
-   choosing — and it reveals exactly which text a category controls. */
+   choosing; and it reveals exactly which text a category controls. */
 function wireFontPreview(wrap, cssVar, dataAttr){
   if(!wrap) return;
   const show=key=>{ const f=FACES[key]; if(!f) return;
@@ -547,7 +604,7 @@ function applyGlass(key, persist){
   if(persist!==false) localStorage.setItem("mdb-sheen", key);
   document.querySelectorAll("#glass-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
-/* dossier "focus panel" — the soft pool of light behind the dossier header. On by default;
+/* dossier "focus panel": the soft pool of light behind the dossier header. On by default;
    off gives a pure flat screen (body[data-dosspanel="off"] hides the .doss-head::before). */
 function applyDossPanel(key, persist){
   if(key!=="off") key="on";
@@ -562,7 +619,20 @@ function applyRosterFilters(key, persist){
   if(persist!==false) localStorage.setItem("mdb-rosterfilters", key);
   document.querySelectorAll("#rosterfilters-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
-/* Cards view — how many cards per row. "auto" = responsive fill; 2/3/4 = fixed (wide screens
+/* Document contents connectors: the branching arrows in the TOC rail. On by default:
+   they are part of the terminal character, not decoration bolted on. Off is offered
+   because they encode depth a second time (indent already carries it), so a reader
+   who finds them busy can have the plainer rail. */
+function applyDocConn(key, persist){
+  if(key!=="off") key="on";
+  document.body.dataset.docconn = key;
+  if(persist!==false) localStorage.setItem("mdb-docconn", key);
+  document.querySelectorAll("#docconn-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
+  // Re-measure: the connector overlay is drawn from real element boxes, so it must
+  // be rebuilt rather than merely re-shown, or it paints against a stale layout.
+  if(typeof scheduleDocToc==="function") scheduleDocToc();
+}
+/* Cards view: how many cards per row. "auto" = responsive fill; 2/3/4 = fixed (wide screens
    only, see the @media guard in styles.css so phones never get tiny cards). */
 function applyCards(key, persist){
   if(!["auto","2","3","4"].includes(key)) key="auto";
@@ -570,7 +640,7 @@ function applyCards(key, persist){
   if(persist!==false) localStorage.setItem("mdb-cards", key);
   document.querySelectorAll("#cards-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
-/* Image colour — "screen" (default: phosphor monochrome, matching the terminal) or
+/* Image colour: "screen" (default: phosphor monochrome, matching the terminal) or
    "original" (true colour). Applies to doc images + character portraits. */
 function applyImgColor(key, persist){
   if(key!=="original") key="screen";
@@ -578,20 +648,28 @@ function applyImgColor(key, persist){
   if(persist!==false) localStorage.setItem("mdb-imgcolor", key);
   document.querySelectorAll("#imgcolor-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
-/* the always-on jet-black monitor bezel (screen mode) — toggleable off for a flush, borderless screen. */
+/* the always-on jet-black monitor bezel (screen mode), toggleable off for a flush, borderless screen. */
 function applyBezel(key, persist){
   if(key!=="off") key="on";
   document.body.dataset.bezel = key;
   if(persist!==false) localStorage.setItem("mdb-bezel", key);
   document.querySelectorAll("#bezel-swatches .swatch").forEach(s=>s.classList.toggle("active",s.dataset.key===key));
 }
-/* Reading Width (T71) — the reading measure of the doc + wiki readers. Each preset sets both
+/* Reading Width (T71): the reading measure of the doc + wiki readers. Each preset sets both
    --doc-measure and --doc-measure-wiki on :root (the wiki runs a touch wider); "full" spans the
    whole reading pane. min(…,100%) in the CSS keeps every preset overflow-safe on narrow screens. */
+/* The DEFAULT preset derives from Substrate's measure tokens rather than repeating
+   their numbers: --sub-measure-base is 66ch and --sub-measure-wide is 72ch, which
+   is exactly what "medium" already was. The readable-measure decision now lives in
+   one place, so research that moves it propagates instead of drifting.
+   The other three presets stay local on purpose; they are a user-facing preference
+   RANGE, not a design constant, and Substrate has no opinion about how wide someone
+   may choose to read. The var() fallbacks keep the app correct if the vendored
+   bundle ever fails to load. */
 const DOC_WIDTHS = {
-  narrow: { doc:"66ch",  wiki:"74ch"  },
-  medium: { doc:"78ch",  wiki:"92ch"  },   // default — the link-dense wiki gets a little more room
-  wide:   { doc:"92ch",  wiki:"102ch" },
+  narrow: { doc:"58ch",  wiki:"62ch"  },
+  medium: { doc:"var(--sub-measure-base, 66ch)", wiki:"var(--sub-measure-wide, 72ch)" },   // default: ~10–12 words/line (~66 CPL); wiki a touch wider
+  wide:   { doc:"80ch",  wiki:"92ch"  },
   full:   { doc:"100%",  wiki:"100%"  },
 };
 function applyDocWidth(key, persist){
@@ -609,7 +687,7 @@ function applyDocWidth(key, persist){
    Fallouty fills most of the em, so it reads large already at "comfortable".) */
 const SMALL_FONTS = new Set(["fixedsys","terminal","sharetech","ticker","block"]);
 /* Text size is a numeric px stepper with a hard legibility floor. Stored ("mdb-textsize") as
-   "auto" (font-aware default — pixel faces render small, so they START larger) or an ABSOLUTE px
+   "auto" (font-aware default: pixel faces render small, so they START larger) or an ABSOLUTE px
    string. Absolute sizes are decoupled from the font, so switching face never swings the size. */
 const TS_MIN=17, TS_MAX=30;
 function autoSizeForFont(bodyKey){ return SMALL_FONTS.has(bodyKey) ? 22 : 19; }
@@ -696,6 +774,9 @@ function buildSettings(){
   document.querySelector("#rosterfilters-swatches").innerHTML =
     [["off","Off"],["on","On"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#rosterfilters-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyRosterFilters(b.dataset.key); });
+  document.querySelector("#docconn-swatches").innerHTML =
+    [["on","On"],["off","Off"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
+  document.querySelector("#docconn-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyDocConn(b.dataset.key); });
   document.querySelector("#cards-swatches").innerHTML =
     [["auto","Auto"],["2","2"],["3","3"],["4","4"]].map(([k,l])=>`<button class="swatch" data-key="${k}">${l}</button>`).join("");
   document.querySelector("#cards-swatches").addEventListener("click",e=>{ const b=e.target.closest(".swatch"); if(b) applyCards(b.dataset.key); });
@@ -717,7 +798,7 @@ function buildSettings(){
   // after ANY click in the popover, refresh the collapsed-group value lines + radio a11y
   // state. Synchronous is safe: this listener is on an ANCESTOR, so the per-group apply
   // handler (on the swatch container) has already run by the time the event bubbles here.
-  // (Not rAF — rAF callbacks are suspended in hidden tabs.)
+  // (Not rAF: rAF callbacks are suspended in hidden tabs.)
   document.querySelector("#settings-pop").addEventListener("click", refreshCur);
 }
 
@@ -817,7 +898,7 @@ function setLocalIcon(slug,key){ const m=localIcons(); m[slug]=key; lsSetData("m
 function iconForChar(ch){
   return explicitIcon(ch) || spiritIconKey(ch.fields.spirit||"");
 }
-/* only a deliberately-chosen icon (sheet Icon column or picker) — no spirit fallback */
+/* only a deliberately-chosen icon (sheet Icon column or picker), no spirit fallback */
 function explicitIcon(ch){
   const ex=((ch.fields.icon||"").trim().toLowerCase()) || localIcons()[ch.slug];
   return (ex && ICONS[ex]) ? ex : "";
@@ -870,17 +951,17 @@ const EDIT_FIELDS = [
 /* ------------------------ data fetch ------------------------ */
 /* Effective sheet id. A `?sheet=<id>` URL param (or a 'mdb-sheet-override' localStorage
    value) takes precedence over CONFIG.sheetId. This lets the PREVIEW point at a public
-   mirror sheet WITHOUT editing the source file — so syncing app.js can no longer clobber
+   mirror sheet WITHOUT editing the source file; so syncing app.js can no longer clobber
    the real sheet id. Production deploys just use CONFIG.sheetId (no param = no override).
    The id is validated (Google sheet ids are long base64url-ish strings) so junk is ignored. */
-function effectiveSheetId(){
+function effectiveSheetIdFor(f){
   const ok = v => typeof v === "string" && /^[A-Za-z0-9_-]{20,}$/.test(v);
   // A faction with its OWN sheet (different from the default/tribe) ALWAYS uses it. The preview override +
-  // ?sheet= only stand in for the DEFAULT sheet — they must never mask a linked faction (that made every
+  // ?sheet= only stand in for the DEFAULT sheet; they must never mask a linked faction (that made every
   // faction show the tribe's roster in the preview, since the override is the tribe's sheet).
-  try{ const fs = activeFaction().data.sheetId; if(ok(fs) && fs !== CONFIG.sheetId) return fs; }catch(e){}
+  try{ const fs = f && f.data && f.data.sheetId; if(ok(fs) && fs !== CONFIG.sheetId) return fs; }catch(e){}
   try{
-    // injected by tools/preview.py into the SERVED copy only — never present in the repo file
+    // injected by tools/preview.py into the SERVED copy only: never present in the repo file
     if(ok(window.MDB_SHEET_OVERRIDE)) return window.MDB_SHEET_OVERRIDE;
     // ?sheet= / localStorage overrides are DEV-ONLY. Honouring them on the deployed site would
     // let a crafted link render an arbitrary spreadsheet under this site's own URL (content
@@ -891,13 +972,41 @@ function effectiveSheetId(){
       const ls = localStorage.getItem("mdb-sheet-override");
       if(ok(ls)) return ls;
     }
-  }catch(e){ /* sandboxed / no storage — fall through to the faction / configured id */ }
-  try{ const fs = activeFaction().data.sheetId; if(ok(fs)) return fs; }catch(e){}   // active faction's sheet (yuma = CONFIG.sheetId)
+  }catch(e){ /* sandboxed / no storage: fall through to the faction / configured id */ }
+  try{ const fs = f && f.data && f.data.sheetId; if(ok(fs)) return fs; }catch(e){}   // this faction's sheet (the tribe uses CONFIG.sheetId)
   return CONFIG.sheetId;
+}
+function effectiveSheetId(){ return effectiveSheetIdFor(activeFaction()); }
+function activeGid(){ return factionGid(activeFaction()); }
+function factionGid(f){ return ((f&&f.data&&f.data.gid) || CONFIG.gid || ""); }
+/* The identity of a faction's roster: the sheet it EFFECTIVELY reads (honouring the preview/?sheet=
+   override exactly as load() does) plus its gid. Computed for the passed faction, so a caller that gates
+   on one faction cannot key the cache off another, AND it agrees with the key load() stores, a raw
+   sheetId here disagreed with the override-aware stored key and refetched on every roster entry in preview. */
+function factionIdent(f){ return `${effectiveSheetIdFor(f)}#${factionGid(f)}`; }
+/* Active-faction shorthand: identical to factionIdent(activeFaction()), used at the fetch boundary. */
+function sheetIdent(){ return factionIdent(activeFaction()); }
+/* "Open the row in the sheet", the same move the reader already makes for documents (#doclink) and for a
+   faction's wiki article: when another system owns the data, link to it rather than reimplement it.
+   The sheet owns rosters, so corrections belong there, in the tool that already has permissions, history
+   and comments. This is a READ link, it opens the sheet; it does not write. Write-back is a separate,
+   parked mechanism (CONFIG.webAppUrl) and is deliberately off.
+   Characters injected from EXTRA_CHARACTERS have no sheet row, so they get no link rather than a wrong one. */
+function sheetRowLink(ch){
+  if(!ch || !ch.srcRow) return "";
+  const id=effectiveSheetId(); if(!id) return "";
+  // Omit gid when empty, exactly as sheetUrl() does. "First tab" is NOT reliably gid 0, a sheet whose
+  // original first tab was deleted has a non-zero one; and assuming 0 would make the link open a
+  // different tab from the one the app reads.
+  const gid=activeGid();
+  const href=`https://docs.google.com/spreadsheets/d/${id}/edit`
+    + `#${gid?`gid=${encodeURIComponent(gid)}&`:""}range=A${ch.srcRow}`;
+  return `<a class="btn sheetbtn" role="menuitem" href="${escAttr(href)}" target="_blank" rel="noopener noreferrer"`+
+    ` title="Open this character's row in the source sheet; the sheet is where rosters are edited">▤ Open row in the sheet</a>`;
 }
 function sheetUrl(){
   let u = `https://docs.google.com/spreadsheets/d/${effectiveSheetId()}/gviz/tq?tqx=out:csv`;
-  const gid = (activeFaction().data.gid) || CONFIG.gid;
+  const gid = activeGid();
   if (gid) u += `&gid=${encodeURIComponent(gid)}`;
   u += `&_=${Date.now()}`;          // cache-buster
   return u;
@@ -948,11 +1057,13 @@ function mapColumns(headerRow){
 }
 
 /* turn raw rows into structured entries (sections + characters) */
-/* display rebrand: "the Yuma Tribe" → "the Tribe" everywhere it's shown (the underlying sheet
-   keeps its own wording; this only relabels for display). Scoped to the phrase, so place-name
-   "Yuma" on its own is left untouched. */
-/* the "Yuma Tribe" → "Tribe" display rebrand is tribe-specific — don't rewrite other factions' data */
-const relabelTribe = s => (currentFaction==="tribe" ? (s||"").replace(/\bYuma Tribe\b/g, "Tribe") : (s||""));
+/* DISPLAY REBRAND, and the one place the retired name is allowed to appear: this is the
+   code that removes it, so it must name it. retired-name-ok
+   The source spreadsheet still says "Yuma Tribe" (retired-name-ok) and is not ours to
+   rewrite, so the rename happens on the way to the screen. Scoped to the exact phrase,
+   because "Yuma" alone (retired-name-ok) is a real place in Arizona and appears in canon. Tribe-faction only, so another
+   faction's rows are never touched. retired-name-ok */
+const relabelTribe = s => (currentFaction==="tribe" ? (s||"").replace(/\bYuma Tribe\b/g, "Tribe") : (s||""));  // retired-name-ok
 function buildModel(rows){
   // find header row: the one containing "discord" (or "use-name")
   let hIdx = rows.findIndex(r=>r.some(c=>{const x=norm(c);return x.includes("discord")||x.includes("use-name");}));
@@ -969,7 +1080,11 @@ function buildModel(rows){
   let current=activeFaction().name || CONFIG.defaultSection;   // default section = the active faction's name
   sections.push(current);
 
-  for(const r of dataRows){
+  for(const [j, r] of dataRows.entries()){
+    // The character's row in the SHEET, 1-indexed as Google shows it: rows[] is 0-indexed and dataRows
+    // starts at hIdx+2, so dataRows[j] === rows[hIdx+2+j] === sheet row hIdx+j+3. Carried so a dossier
+    // can point at the exact row it came from.
+    const srcRow = hIdx + j + 3;
     const filled = r.filter(c=>clean(c)!=="").length;
     if(filled===0) continue;
     const useName = clean(r[usenameCol]);
@@ -990,11 +1105,11 @@ function buildModel(rows){
       if(v) fields[key]=relabelTribe(v);
     }
     const displayName = fields.usename || fields.discord || "(unnamed)";
-    characters.push({ name:displayName, section:current, fields, search:norm(r.join(" ")) });
+    characters.push({ name:displayName, section:current, fields, srcRow, search:norm(r.join(" ")) });
   }
 
   // merge in code-defined extra characters (visitors etc. not present in the sheet). Each extra
-  // belongs to ONE faction (ex.faction, default "tribe"), gated on the CHARACTER's affiliation —
+  // belongs to ONE faction (ex.faction, default "tribe"), gated on the CHARACTER's affiliation:
   // so e.g. a Brotherhood knight only appears in the Brotherhood roster, never leaks into the Tribe.
   for(const ex of (EXTRA_CHARACTERS||[])){
     if((ex.faction||"tribe")!==currentFaction) continue;
@@ -1040,12 +1155,12 @@ function buildModel(rows){
 }
 
 /* locally-saved additions (used when there's no write-back backend configured) */
-/* quota-safe write: image data URLs are big, and localStorage is ~5MB — a full store throws
+/* quota-safe write: image data URLs are big, and localStorage is ~5MB, a full store throws
    QuotaExceededError mid-save. Catch it and TELL the user (the on-screen copy already shows
    optimistically, so without this the save silently evaporates on reload). */
 function lsSetData(key, val){
   try{ localStorage.setItem(key, val); return true; }
-  catch(e){ toast("⚠ Device storage is full — this won't survive a reload. Remove some saved photos/screenshots first."); return false; }
+  catch(e){ toast("⚠ Device storage is full; this won't survive a reload. Remove some saved photos/screenshots first."); return false; }
 }
 function localPhotos(){ try{ return JSON.parse(localStorage.getItem("mdb-photos")||"{}"); }catch{ return {}; } }
 function setLocalPhoto(slug, slot, src){
@@ -1082,7 +1197,7 @@ function toast(msg){
 window.addEventListener("error", e=>{ toast("⚠ "+((e&&e.message)||"script error")); });
 window.addEventListener("unhandledrejection", e=>{ toast("⚠ "+((e&&e.reason&&e.reason.message)||"async error")); });
 const escAttr = s => esc(s).replace(/"/g,"&quot;");        // for use inside attributes
-/* Friendly empty-state block — explains WHY nothing matched and offers a way out. */
+/* Friendly empty-state block, explains WHY nothing matched and offers a way out. */
 function emptyStateHTML(q){
   const term = (q||"").trim();
   return term
@@ -1206,7 +1321,7 @@ function fieldBlock(key, value, selfSlug){
   const def=FIELDS[key]; if(!value) return "";
   const body = def.type==="lead" ? renderLead(value, selfSlug) : esc(value);
   const labelIcon = key==="spirit" ? svgIcon(spiritIconKey(value))+" " : "";
-  // columnise lead lists only when there are several entries — a single long entry
+  // columnise lead lists only when there are several entries, a single long entry
   // reads better full-width than crammed into one narrow column.
   const entryCount = def.type==="lead" ? value.split("\n").filter(s=>s.trim()).length : 0;
   const bodyCls = def.type==="lead" ? (entryCount>=3 ? "body lead-list lead-list--multi" : "body lead-list") : "body";
@@ -1215,7 +1330,7 @@ function fieldBlock(key, value, selfSlug){
 
 /* dossier narrative blocks in BLOCK_ORDER, with ONE special case: "At The Fire"
    (tastes) and "Off-Duty" (activities) are short blocks that each ate a full-width
-   row for a couple of lines — paired side-by-side on very wide screens only (see
+   row for a couple of lines, paired side-by-side on very wide screens only (see
    .field-pair; narrow/normal screens are byte-for-byte the same markup+spacing as
    before pairing). Deliberately not generalised to any other block pair. */
 function narrativeBlocksHTML(ch){
@@ -1237,7 +1352,7 @@ function narrativeBlocksHTML(ch){
 function imageSrc(val){
   if(!val) return "";
   val=val.trim();
-  if(/^(data:|blob:)/i.test(val)) return val;     // already an inline/blob image — never rewrite
+  if(/^(data:|blob:)/i.test(val)) return val;     // already an inline/blob image: never rewrite
   const driveId =
     (val.match(/\/d\/([a-zA-Z0-9_-]{20,})/)||[])[1] ||
     (val.match(/[?&]id=([a-zA-Z0-9_-]{20,})/)||[])[1] ||
@@ -1247,8 +1362,89 @@ function imageSrc(val){
 }
 
 /* flat Pip-Boy glyphs for the portrait actions (fill:currentColor). */
-/* the portrait "add your own picture" affordance — a simple PLUS (reads as "add", clearer than a camera) */
+/* the portrait "add your own picture" affordance: a simple PLUS (reads as "add", clearer than a camera) */
+/* ── ADDING THINGS ────────────────────────────────────────────────────────────────────────────────────
+   One glyph, one button, one registry. Before this there were four different add affordances (a floating
+   hover-revealed icon, an inline 22px chip, a labelled toolbar button, a form submit), two different plus
+   glyphs (this SVG and the fullwidth ＋ U+FF0B), and a fifth ＋ in the stories empty state that LOOKED
+   clickable and was not.
+
+   To make a surface addable, add ONE entry here. The button renders itself, is styled once, and is wired
+   by one delegated handler; there is nothing per-surface to remember.
+
+   Deliberately NOT built on <sub-button>: it has no icon-only mode and no accessible-label attribute, and
+   its shadow root would cut this button off from the entire .btn cascade (a dozen contextual overrides
+   plus the high-contrast, reduced-motion and 44px touch rules). Deliberately NOT built on <sub-dialog>
+   either: modalLayer below already solves the harder half, restoring focus through a wholesale innerHTML
+   re-render, via an opener chain sub-dialog has no answer for; and app.js is a classic script that runs
+   BEFORE the deferred module that defines sub-*, so the element would not exist at render time. */
 const IC_PLUS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3h3v7.5H21v3h-7.5V21h-3v-7.5H3v-3h7.5z"/></svg>';
+const ADD_ACTIONS = {
+  // `available` gates the trigger: a roster submission needs the Apps Script endpoint, so the button is
+  // hidden until one is configured rather than promising an action that renders a "not connected" form.
+  // Stories persist to localStorage, so they are always available.
+  roster:  { label:"Add a character", hint:"Submit a new character for the roster", available:()=>!!CONFIG.webAppUrl },
+  stories: { label:"Add a story",     hint:"Write a new short story" },
+};
+/* The trigger. One class, one size, one glyph, everywhere. Returns "" for a surface that cannot be added
+   to (or is not currently available), so a caller can drop it into any header unconditionally. */
+function addButtonHTML(key){
+  const a=ADD_ACTIONS[key]; if(!a || (a.available && !a.available())) return "";
+  return `<button class="btn addbtn" type="button" data-add="${escAttr(key)}" title="${escAttr(a.hint)}">`+
+    `<span class="addbtn-glyph" aria-hidden="true">${IC_PLUS}</span>${esc(a.label)}</button>`;
+}
+/* The fields a player may submit. This list is DUPLICATED in apps-script.gs (SUBMIT_FIELDS) because the
+   two run in different places, and the server must never trust the client's idea of what is allowed.
+   tools/check-apps-script.mjs asserts the two stay identical: drift here means a field silently vanishes
+   on submit, which looks like data loss to the person who typed it. */
+const SUBMIT_FIELDS = ["Discord Name", "Use-Name", "Honorific / Brave-Name", "Role",
+                       "Species", "Appearance", "Relationships", "Notes"];
+const SUBMIT_LONG = ["Appearance", "Relationships", "Notes"];   // textarea rather than one line
+
+function openAddCharacter(){
+  const form=$("#addform"); if(!form) return;
+  form.innerHTML = SUBMIT_FIELDS.map(f=>{
+    const id="add-"+f.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+    const req=f==="Use-Name";
+    const label=`<label class="addlabel" for="${escAttr(id)}">${esc(f)}${req?' <span class="addreq" aria-hidden="true">*</span>':""}</label>`;
+    const attrs=`id="${escAttr(id)}" name="${escAttr(f)}" maxlength="2000"${req?" required":""}`;
+    return `<div class="addfield${SUBMIT_LONG.includes(f)?" addfield--long":""}">${label}`+
+      (SUBMIT_LONG.includes(f) ? `<textarea class="addinput" rows="3" ${attrs}></textarea>`
+                               : `<input class="addinput" type="text" ${attrs}>`)+
+    `</div>`;
+  }).join("") +
+    `<p class="addnote addnote--dest">${CONFIG.webAppUrl
+      ? "Sent to the archivists for review. It will not appear on the roster until approved."
+      : "Submissions are not connected yet; this form is not accepting entries."}</p>`+
+    `<div class="addactions">`+
+      `<button class="btn" type="button" id="addcancel">Cancel</button>`+
+      `<button class="btn addsubmit" type="submit"${CONFIG.webAppUrl?"":" disabled"}>Submit for review</button>`+
+    `</div>`;
+  // modalLayer owns focus-on-open for every .modal-back, so it lands on ✕ Close like the other four
+  // modals. Not overridden here: a form that grabs focus differently from its siblings is exactly the
+  // per-surface divergence this whole pattern exists to remove.
+  $("#addback").classList.add("open");
+}
+
+async function submitCharacter(form){
+  const fields={};
+  for(const f of SUBMIT_FIELDS) fields[f]=(form.elements[f]?.value||"").trim();
+  if(!fields["Use-Name"]){ toast("A use-name is required."); form.elements["Use-Name"]?.focus(); return; }
+  if(!CONFIG.webAppUrl){ toast("Submissions are not connected yet."); return; }
+  const btn=form.querySelector(".addsubmit");
+  btn.disabled=true; btn.textContent="Sending…";
+  try{
+    // No pass: addEntry is the one open action, and it appends to the submissions tab only.
+    const res=await fetch(CONFIG.webAppUrl, { method:"POST", body:JSON.stringify({ action:"addEntry", fields }) });
+    const out=await res.json();
+    if(!out.ok) throw new Error(out.error||"submission failed");
+    $("#addback").classList.remove("open");
+    toast(`Thanks: ${fields["Use-Name"]} has been sent for review.`);
+  }catch(err){
+    toast(String(err.message||err));
+    btn.disabled=false; btn.textContent="Submit for review";
+  }
+}
 const IC_EMBLEM = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l7.5 2.8v5.5c0 4.6-3.2 7.9-7.5 9.7-4.3-1.8-7.5-5.1-7.5-9.7V5.3L12 2.5Z"/></svg>';
 /* CRT-treated portrait frame (used in dossier + cards). cls = size modifier. */
 function portraitHTML(ch, cls){
@@ -1260,7 +1456,7 @@ function portraitHTML(ch, cls){
     : "";
   // Photo-edit controls live only on the large dossier portrait. On the small
   // card portrait they were nested inside the card's own role="button" (an
-  // a11y nested-interactive violation) and are browse-clutter — you edit a
+  // a11y nested-interactive violation) and are browse-clutter, you edit a
   // photo from the open dossier, not the roster grid.
   const editBtns =
     cls === 'lg'
@@ -1373,7 +1569,7 @@ function parseRelationshipEntries(text, selfSlug){
 }
 
 /* Build the relationship graph for the whole roster: forward = a character's own stated
-   relationships (parsed case-insensitively via nameSlug — the leads are ALLCAPS, the names
+   relationships (parsed case-insensitively via nameSlug; the leads are ALLCAPS, the names
    Title-Case, so the prose mention graph misses them); back = who lists them. The looser
    prose mention graph (buildConnections) is folded in for extra coverage. Recomputed each
    render (roster is small) so it never goes stale after an in-place field edit. */
@@ -1426,7 +1622,7 @@ function relationsPanelHTML(ch, graph){
   }
 
   if(!stated.length && !backlinks.length){
-    html += `<div class="rel-empty">No relationships recorded for <b>${esc(ch.name)}</b> yet — add them in the character’s <b>Relationships</b> field on the sheet, or mention another member by name in their story.</div>`;
+    html += `<div class="rel-empty">No relationships recorded for <b>${esc(ch.name)}</b> yet: add them in the character’s <b>Relationships</b> field on the sheet, or mention another member by name in their story.</div>`;
   }
   return html;
 }
@@ -1474,8 +1670,8 @@ function renderRelations(){
 }
 
 /* re-centre the web on a character (from the rail or any in-panel cross-link). Kept in the
-   Relations view — the "Open dossier" button is the explicit hop to the roster.
-   NB: `state.selected` is shared with the roster (deliberate continuity — the character you
+   Relations view: the "Open dossier" button is the explicit hop to the roster.
+   NB: `state.selected` is shared with the roster (deliberate continuity, the character you
    last looked at in one view is the one the other opens on). */
 function relationsSelect(slug){
   const idx=state.model.characters.findIndex(c=>c.slug===slug);
@@ -1490,7 +1686,7 @@ $("#relations").addEventListener("click", e=>{
   const nav=e.target.closest(".xref, .rel-railitem");
   if(nav && nav.dataset.slug){ e.stopPropagation(); relationsSelect(nav.dataset.slug); }
 });
-/* rail keyboard nav — parity with the roster listbox (arrows/Home/End/Page move the selection). */
+/* rail keyboard nav: parity with the roster listbox (arrows/Home/End/Page move the selection). */
 $("#rel-rail").addEventListener("keydown", e=>{
   const slugs=[...$("#rel-rail").querySelectorAll(".rel-railitem")].map(el=>el.dataset.slug);
   if(!slugs.length) return;
@@ -1509,7 +1705,7 @@ function logSectionHTML(ch){
     return `<div class="logentry"><div class="logmeta">▶ ${esc(when)}</div><div class="logbody">${esc(e.s)}</div></div>`;
   }).join("");
   return `<div class="field">
-    <div class="label">Personal Log <button class="mini addlog" data-slug="${esc(ch.slug)}" title="Add an entry" aria-label="Add a personal log entry">＋</button></div>
+    <div class="label">Personal Log <button class="mini addlog" data-slug="${esc(ch.slug)}" title="Add an entry" aria-label="Add a personal log entry"><span class="addbtn-glyph" aria-hidden="true">${IC_PLUS}</span></button></div>
     ${items?`<div class="loglist">${items}</div>`:""}
     <div class="composer hidden" data-slug="${esc(ch.slug)}">
       <textarea class="logtext" rows="4" placeholder="A short story / journal entry from the game…"></textarea>
@@ -1528,7 +1724,7 @@ function shotsSectionHTML(ch){
     `<div class="screenshot" role="button" tabindex="0" data-slug="${esc(ch.slug)}" data-shotidx="${i}" title="View full" aria-label="View screenshot ${i+1}">
        <img src="${escAttr(s)}" loading="lazy" alt=""><span class="scan"></span></div>`).join("");
   return `<div class="field">
-    <div class="label">Screenshots <button class="mini addshot" data-slug="${esc(ch.slug)}" title="Add a screenshot" aria-label="Add a screenshot">＋</button></div>
+    <div class="label">Screenshots <button class="mini addshot" data-slug="${esc(ch.slug)}" title="Add a screenshot" aria-label="Add a screenshot"><span class="addbtn-glyph" aria-hidden="true">${IC_PLUS}</span></button></div>
     ${shots.length?`<div class="shotgrid">${tiles}</div>`:""}</div>`;
 }
 
@@ -1564,14 +1760,14 @@ function editFormHTML(ch){
 function dossierHTML(ch){
   const f=ch.fields;
   let html="";
-  // T95 — "case file" folder tab protruding from the top of the dossier. Labelled with the
+  // T95: "case file" folder tab protruding from the top of the dossier. Labelled with the
   // character's section (the file category), so it reads as a physical folder tab, not a chip.
   const tabLabel = sectionLabel(ch.section) || "Dossier";
   html+=`<div class="filetab" aria-hidden="true"><span>${esc(tabLabel)}</span></div>`;
   html+=`<div class="doss-head">`;
   // portrait beside the name block; the "More" overflow menu tucks into the top-right of THIS
   // row (not a floating row of its own). The old "Unit Dossier · <section>" eyebrow was dropped
-  // as redundant — affiliation shows in the role line + the roster's section grouping.
+  // as redundant, affiliation shows in the role line + the roster's section grouping.
   html+=`<div class="doss-headmain">`;
   html+=portraitHTML(ch, "lg");        // single portrait (front photo, or spirit sigil if none)
   html+=`<div class="doss-headtext">`;
@@ -1582,17 +1778,19 @@ function dossierHTML(ch){
   const tags=getTags(ch);
   if(tags.length) html+=`<div class="tags">${tags.map(t=>`<span class="tag" role="button" tabindex="0" data-tag="${escAttr(t)}" aria-label="Filter by ${escAttr(t)}">${esc(t)}</span>`).join("")}</div>`;
   html+=`</div>`;  // close headtext
-  // "More" overflow menu — top-right of the name row, aligned with the portrait/name top
+  // "More" overflow menu: top-right of the name row, aligned with the portrait/name top
+  // (see sheetRowLink below for the "open the row in the sheet" entry)
   html+=`<div class="doss-actions"><div class="morewrap">`+
         `<button class="btn morebtn" aria-haspopup="true" aria-expanded="false" title="More actions">⋯ More</button>`+
         `<div class="moremenu" role="menu">`+
           `<button class="btn linkbtn" role="menuitem" data-slug="${esc(ch.slug)}" title="Copy a direct link to this dossier">⧉ Copy link</button>`+
           `<button class="btn exportbtn" role="menuitem" data-slug="${esc(ch.slug)}" title="Print / export this dossier (PDF)">⎙ Export PDF</button>`+
           (CONFIG.webAppUrl?`<button class="btn editbtn" role="menuitem" data-slug="${esc(ch.slug)}" title="Edit this dossier and save to the sheet">✎ Edit</button>`:"")+
+          sheetRowLink(ch)+
         `</div></div></div>`;   // close moremenu, morewrap, doss-actions
   html+=`</div>`;  // close headmain (still inside doss-head panel)
 
-  // identity grid — lives INSIDE the head panel so the whole top area shares one dim
+  // identity grid, lives INSIDE the head panel so the whole top area shares one dim
   // background; a single hairline (CSS) separates the stat grid from the name block.
   const cells = ID_ORDER.map(k=>{
     if(!f[k]) return "";
@@ -1611,10 +1809,10 @@ function dossierHTML(ch){
   const spec=specialSectionHTML(ch);
   if(spec){ html+=`<div class="rule"><span>S.P.E.C.I.A.L</span></div>`+spec; }
 
-  // block fields — the identity data-panel's own (feathered) edge already separates
+  // block fields: the identity data-panel's own (feathered) edge already separates
   // the at-a-glance record from the narrative, so no extra "FILE" divider is needed.
   html+=narrativeBlocksHTML(ch);
-  html+=connectionsSectionHTML(ch);    // labels carry the sections now — no extra dividers
+  html+=connectionsSectionHTML(ch);    // labels carry the sections now: no extra dividers
   html+=logSectionHTML(ch);
   html+=shotsSectionHTML(ch);
   return html;
@@ -1644,9 +1842,9 @@ function cardHTML(ch, idx){
 }
 
 /* ------------------------ app state ------------------------ */
-const state = { model:null, view:"roster", query:"", selected:0, sortBy:"rank", filterSection:"all" };
+const state = { model:null, view:"roster", query:"", selected:0, sortBy:"rank", filterSection:"all", homeVariant:"atlas" };
 
-/* T96 — fuzzy, typo-tolerant subsequence test: q's letters appear in order in text, packed tightly enough
+/* T96: fuzzy, typo-tolerant subsequence test: q's letters appear in order in text, packed tightly enough
    to be a real hit (so "matlok"≈"matlock", "califrnia"≈"california") without matching scattered noise. */
 function fuzzySubseq(text, q){
   if(q.length<3) return false;                        // too short to fuzzy-match safely
@@ -1656,7 +1854,7 @@ function fuzzySubseq(text, q){
   }
   return i===q.length && (end-start+1) <= q.length*2 + 2;
 }
-/* T96 — score a character against the query: name > role > the full search blob; prefix + word-start +
+/* T96: score a character against the query: name > role > the full search blob; prefix + word-start +
    whole-field bonuses; a fuzzy subsequence match scores lower than an exact substring. 0 = no match. */
 function scoreMatch(c, q){
   const scoreField=(text, w)=>{
@@ -1755,11 +1953,12 @@ function renderListControls(model){
     .map(([value,label])=>({value,label}));
   const ctl=$("#listctl");
   // only show the section filter when there's actually more than one section to pick
-  // (a lone section makes the dropdown a no-op — drop the clutter).
+  // (a lone section makes the dropdown a no-op, drop the clutter).
   const showSecFilter = model.sections.length > 1;
   ctl.innerHTML =
     (showSecFilter ? buildSelect("filter-section", state.filterSection, secOpts, "Filter roster by section") : "") +
     buildSelect("sort-by", state.sortBy, sortOpts, "Sort roster");
+  const bar=$("#roster-addbar"); if(bar) bar.innerHTML=addButtonHTML("roster");
 }
 
 function rankOf(ch){
@@ -1795,7 +1994,7 @@ function renderRoster(){
   };
   let html="";
   if(q){
-    // SEARCH MODE — one relevance-RANKED list (filtered() already ranked it); section grouping is dropped
+    // SEARCH MODE: one relevance-RANKED list (filtered() already ranked it); section grouping is dropped
     // so the best match is always first. The section filter still narrows the pool.
     const hits = chars;
     if(hits.length){
@@ -1803,7 +2002,7 @@ function renderRoster(){
       for(const c of hits) html+=rowHTML(c);
     }
   } else {
-    // BROWSE MODE — grouped by section, sorted within each.
+    // BROWSE MODE: grouped by section, sorted within each.
     const sections = state.filterSection==="all" ? state.model.sections
       : state.model.sections.filter(s=>s===state.filterSection);
     for(const sec of sections){
@@ -1840,7 +2039,7 @@ function render(){
     if(currentSection==="relations"){
       renderRelations();                       // the Relations web owns the main area
     }else if(currentSection!=="roster"){
-      /* a doc section owns the main area — leave roster/cards hidden */
+      /* a doc section owns the main area: leave roster/cards hidden */
     }else if(state.view==="roster"){
       $("#roster").classList.remove("hidden");
       $("#cards").classList.add("hidden");
@@ -1852,7 +2051,7 @@ function render(){
     }
   }catch(err){
     console.error("render failed:", err);
-    toast("Render error — see console");
+    toast("Render error: see console");
   }
 }
 
@@ -1862,7 +2061,7 @@ $("#list").addEventListener("click", e=>{
   selectIndex(+row.dataset.idx);
 });
 /* shared listbox arrow-key math: given a nav key, the list length, and the current position,
-   return the new position — or -1 if the key isn't a navigation key. Used by both the roster
+   return the new position, or -1 if the key isn't a navigation key. Used by both the roster
    #list and the Relations rail so the two listboxes step identically and can't drift. */
 function listboxStep(key, len, pos){
   const PAGE=10;
@@ -1878,7 +2077,7 @@ function listboxStep(key, len, pos){
     default:          return -1;                                                  // not a nav key
   }
 }
-/* keyboard nav for the roster listbox (aria-activedescendant pattern — focus stays on #list,
+/* keyboard nav for the roster listbox (aria-activedescendant pattern, focus stays on #list,
    arrows move the selected row). Steps through the rows in DISPLAY order (section + sort), which
    isn't the global character order, so read the rendered rows rather than the model index. */
 $("#list").addEventListener("keydown", e=>{
@@ -1995,7 +2194,7 @@ async function saveEdit(slug, container){
       action:"setFields", usename: ch.fields.usename || ch.name, pass, fields:changes
     })});
     const out=await res.json();
-    if(out.error==="unauthorized"){ sessionStorage.removeItem("mdb-pass"); throw new Error("wrong passphrase — try again"); }
+    if(out.error==="unauthorized"){ sessionStorage.removeItem("mdb-pass"); throw new Error("wrong passphrase: try again"); }
     if(!out.ok) throw new Error(out.error||("could not write: "+(out.missed||[]).join(", ")));
     Object.assign(ch.fields, localUpdates);
     if(localUpdates.usename) ch.name=localUpdates.usename;
@@ -2025,7 +2224,7 @@ function openUpload(slug){
   $("#uploadhead").innerHTML=`<div class="doss-role" style="margin:0 0 4px">PHOTO · ${esc(ch.name)}</div>`;
   $("#uploaddest").textContent = CONFIG.webAppUrl
     ? "Saved to the sheet (passphrase required)."
-    : "No write-back configured — photo is saved on this device only.";
+    : "No write-back configured: photo is saved on this device only.";
   refreshUploadSlots();
   $("#uploadback").classList.add("open");
 }
@@ -2041,6 +2240,21 @@ $$("#uploadback .uslot-btn").forEach(b=>b.addEventListener("click", ()=>{
   uploadKind="photo"; uploadSlot=b.dataset.slot; $("#fileinput").click();
 }));
 $("#uploadclose").addEventListener("click", ()=>$("#uploadback").classList.remove("open"));
+
+/* ONE handler for every add button in the app. A surface gets its trigger by calling addButtonHTML();
+   nothing else is wired per-surface, which is what stops the four divergent affordances growing back.
+   Delegated from document, so a button that appears in a re-rendered section still works. */
+document.addEventListener("click", e=>{
+  const btn=e.target.closest("[data-add]"); if(!btn) return;
+  const key=btn.dataset.add;
+  if(key==="roster"){ openAddCharacter(); return; }
+  if(key==="stories"){ _storyDraftId="new"; renderCommunitySection("stories"); $("#story-title")?.focus(); return; }
+});
+$("#addclose").addEventListener("click", ()=>$("#addback").classList.remove("open"));
+$("#addform").addEventListener("click", e=>{
+  if(e.target.closest("#addcancel")) $("#addback").classList.remove("open");
+});
+$("#addform").addEventListener("submit", e=>{ e.preventDefault(); submitCharacter(e.currentTarget); });
 $("#uploadback").addEventListener("click", e=>{ if(e.target.id==="uploadback") $("#uploadback").classList.remove("open"); });
 $("#shotclose").addEventListener("click", ()=>$("#shotback").classList.remove("open"));
 $("#shotback").addEventListener("click", e=>{ if(e.target.id==="shotback") $("#shotback").classList.remove("open"); });
@@ -2158,7 +2372,7 @@ function fileToDataURL(file, maxDim, mime){
 
 /* ---------- URL deep-linking (hash router) ----------------------------------------------
    The URL reflects the current view so any of it can be linked to. HASH-based on purpose: it's
-   entirely client-side — no server round-trip, no extra loading, no 404 on static hosting.
+   entirely client-side: no server round-trip, no extra loading, no 404 on static hosting.
      #home                              the landing page
      #<faction>/<section>[/<target>]    e.g. #tribe/roster · #tribe/lore
      #tribe/roster/big-brom-matlok      a character   ·  #tribe/lore/<heading>  a doc section
@@ -2168,13 +2382,30 @@ let _pendingTarget = null;    // a character/heading slug to open once its view 
 function slugify(s){ return (s||"").toString().toLowerCase().trim()
   .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); }
 /* write the current view to the URL (target = character slug in roster, or heading slug in a doc) */
+/* the map's URL tail: /<scope>, or (on the US scope) /us/<pin slug> | /event/<event slug>. Reads
+   _atlasV2's mirror of the mounted atlas's own state (kept current by mountAtlasV2()'s
+   handle.on('scope'/'select', ...) listeners: see the field-by-field doc comment on
+   _atlasV2's declaration above) rather than any DOM the atlas doesn't own. */
+function mapRoute(){
+  if(_atlasV2.scope!=="us") return "/"+_atlasV2.scope;
+  const sel=_atlasV2.selection;
+  if(sel?.type==="event"){
+    const slug=_atlasV2.eventIndexToSlug?.[sel.index];
+    return slug ? "/event/"+encodeURIComponent(slug) : "";
+  }
+  if(sel?.type==="loc"){
+    const slug=_atlasV2.nameToSlug?.[sel.name];
+    return slug ? "/us/"+encodeURIComponent(slug) : "";
+  }
+  return "";
+}
 function writeRoute(target){
   if(_routing) return;
   // the wiki is umbrella content (not faction-scoped) → a top-level #wiki/<Page> route
   const community=communityCollection(currentSection);
   const h = currentSection==="home" ? "home"
           : currentSection==="paperwork" ? "paperwork"
-          : currentSection==="map" ? "map" + (_mapScope!=="us" ? "/"+_mapScope : "")
+          : currentSection==="map" ? "map" + mapRoute()
           : currentSection==="wiki" ? "wiki" + (_wikiPage && _wikiPage!==WIKI.home ? "/"+encodeURIComponent(_wikiPage) : "")
           : currentSection==="stories" ? "stories" + (_storyEventId ? "/"+encodeURIComponent(_storyEventId) : "")
           : community ? currentSection + (_communityDoc ? "/"+encodeURIComponent(_communityDoc.id)+(target ? "/"+target : "") : "")
@@ -2191,7 +2422,7 @@ function parseRoute(){
   const p = raw.split("/").filter(Boolean).map(x=>{ try{ return decodeURIComponent(x); }catch(e){ return x; } });
   if(FACTIONS[p[0]]) return { faction:p[0], section:p[1], target:p[2] };
   return communityCollection(p[0]) ? { section:p[0], item:p[1], target:p[2] }
-                                   : { section:p[0], target:p[1] };
+                                   : { section:p[0], target:p[1], sub:p[2] };
 }
 /* apply the URL to the app: faction → section → target */
 function applyRoute(){
@@ -2218,9 +2449,17 @@ function applyRoute(){
       _pendingTarget = r.target || null;
       return;
     }
-    if(sec==="map"){ if(r.target && !MAP_SCOPES[r.target]) repairRoute=true;
-      setMapScope(r.target, { route:false }); if(sec!==currentSection) setSection("map"); _pendingTarget=null; return; }
-    if(sec==="wiki"){                        // #wiki/<Page> — the target IS the wiki page to open
+    if(sec==="map"){
+      // 'event' is a valid map target too (#map/event/<slug>, Phase 3.1) even though it isn't a
+      // MAP_SCOPES key: that's a selection kind, not a scope. Everything else must be a real scope.
+      if(r.target && r.target!=="event" && !MAP_SCOPES[r.target]) repairRoute=true;
+      // v2 owns selection through mount()'s returned handle, never opts.hashRouting: this
+      // hashchange listener is the ONE thing driving location.hash; wiring both would fight
+      // (integration-plan.md Phase 4: "the two routers must not fight").
+      setSection("map");   // idempotent when already on #map: mountAtlasV2()'s own handle check no-ops the remount
+      applyAtlasV2Route(r);
+      _pendingTarget=null; return; }
+    if(sec==="wiki"){                        // #wiki/<Page>; the target IS the wiki page to open
       const pg = r.target || WIKI.home;
       if(sec!==currentSection){ _wikiPage = pg; setSection("wiki"); }   // setSection loads _wikiPage
       else if(pg!==_wikiPage){ loadWiki(pg); }
@@ -2267,8 +2506,10 @@ const canRestoreFocus=el=>!!(el && document.contains(el) && !el.closest("[inert]
    only the top layer is exposed, Escape closes one layer, and focus walks back through the
    opener chain. Mutation observers keep every existing open/close call site on one path. */
 const modalLayer=(function modalFocusLayer(){
-  const ids=["#modalback","#iconback","#uploadback","#shotback"];
-  const layers=ids.map(id=>$(id)).filter(Boolean);
+  // Every .modal-back in the document, discovered: NOT a hand-maintained list. The previous
+  // hardcoded array meant adding a modal silently skipped focus trapping, inert, Escape and
+  // focus restoration, and nothing failed loudly when you forgot.
+  const layers=[...document.querySelectorAll(".modal-back")];
   const restoreTargets=new WeakMap();
   let stack=[];
   let reconcileQueued=false;
@@ -2371,6 +2612,17 @@ $("#search-clear").addEventListener("click", ()=>{
 
 $("#view-roster").addEventListener("click", ()=>setView("roster"));
 $("#view-cards").addEventListener("click", ()=>setView("cards"));
+/* Segmented control: drive the sliding thumb generically from the DOM so any N-segment
+   .seg (roster List/Cards, map US/Region/Local, or a future control) works with no
+   per-variant CSS, sets --seg-n (button count) + --seg-i (active index). */
+function syncSegs(){
+  document.querySelectorAll(".seg").forEach(seg=>{
+    const btns=[...seg.querySelectorAll(":scope > button")];
+    if(!btns.length) return;
+    seg.style.setProperty("--seg-n", btns.length);
+    seg.style.setProperty("--seg-i", Math.max(0, btns.findIndex(b=>b.classList.contains("active"))));
+  });
+}
 function setView(v){
   state.view=v;
   const listBtn=$("#view-roster"), cardsBtn=$("#view-cards");
@@ -2379,8 +2631,10 @@ function setView(v){
   listBtn.setAttribute("aria-selected", v==="roster");
   cardsBtn.setAttribute("aria-selected", v==="cards");
   localStorage.setItem("mdb-view", v);
+  syncSegs();
   render();
 }
+syncSegs();
 
 /* ---------- top-level section nav: Roster + embedded Google Docs ---------- */
 let currentSection = "roster";
@@ -2396,7 +2650,7 @@ const NAV_ICONS = {
   roleplay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M4.4 4.2 11 5.5a1 1 0 0 1 .8 1.14l-1 6.3a5.3 5.3 0 0 1-10.4-2.05l.8-5.86a1 1 0 0 1 1.2-.85ZM4 8a1 1 0 1 0 .3 1.98A1 1 0 0 0 4 8Zm4.4.9a1 1 0 1 0 .3 1.98 1 1 0 0 0-.3-1.98ZM3.5 12.4c1.1 1.3 2.5 1.9 4.2 1.55" fill-rule="evenodd"/><path d="M13.1 6.06 19.6 4.2a1 1 0 0 1 1.2.85l.8 5.86A5.3 5.3 0 0 1 14 13.35l.66-4.13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
   relations:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm10 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M8.6 6.5l6.8 4M8.6 17.5l6.8-4M7 8v8m10-8v8" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
   wiki:    '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16Z"/><path d="M4 12h16M12 4c2.6 2.2 2.6 13.8 0 16M12 4c-2.6 2.2-2.6 13.8 0 16" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
-  /* map = a folded paper map with a location pin — flat currentColor, matched to the others */
+  /* map = a folded paper map with a location pin, flat currentColor, matched to the others */
   map:     '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2Zm-.5 1.8 5 1.67v12.7l-5-1.67V4.8Z"/><path d="M15.5 8.5a2.5 2.5 0 0 0-2.5 2.5c0 1.9 2.5 4.5 2.5 4.5s2.5-2.6 2.5-4.5a2.5 2.5 0 0 0-2.5-2.5Zm0 1.7a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8Z"/></svg>',
   /* paperwork = a stamped document */
   paperwork:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M6 2h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm7 1.6V7h3.4L13 3.6ZM8 10h8v1.5H8V10Zm0 3.2h8v1.5H8v-1.5Zm0 3.2h5v1.5H8v-1.5Z"/><circle cx="16.5" cy="17.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M15 17.4l1.1 1.1 1.9-2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -2405,7 +2659,7 @@ const NAV_ICONS = {
   proposals:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M8 2h8v2h3v18H5V4h3V2Zm2 2h4V3h-4v1ZM7 7v13h10V7H7Z"/><path d="M9 10h6v1.5H9zm0 3h6v1.5H9zm0 3h4v1.5H9z"/></svg>',
   _default:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6V3Zm7 1.5V8h3.5L13 4.5Z"/></svg>',
 };
-/* T75/T76 — per-category icons for the weapon/armor "hub" nav chips (shared across those pages). Flat
+/* T75/T76: per-category icons for the weapon/armor "hub" nav chips (shared across those pages). Flat
    currentColor, matched to NAV_ICONS. Keyed by the chip label, lower-cased. */
 const WEAPON_ICONS = {
   "weapons hub":'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2 5.5 5.8.3-4.5 3.7 1.5 5.6L12 19l-4.8 3.1 1.5-5.6L4.2 7.8 10 7.5z"/></svg>',
@@ -2422,11 +2676,11 @@ const WEAPON_ICONS = {
 };
 /* one-line explainer per section, shown on the home tiles */
 const HOME_INFO = {
-  roster:   "Every member — dossiers, appearance, and story. Search, filter, browse.",
-  relations:"Who knows whom — allies, rivals, kin. Follow the web from any character.",
-  lore:     "The world, beliefs, and history — customs and how things work.",
-  roleplay: "How to play the faction well — voice, conflict, and etiquette.",
-  wiki:     "The Misfits wiki — factions, gameplay, crafting, survival and more.",
+  roster:   "Every member: dossiers, appearance, and story. Search, filter, browse.",
+  relations:"Who knows whom: allies, rivals, kin. Follow the web from any character.",
+  lore:     "The world, beliefs, and history: customs and how things work.",
+  roleplay: "How to play the faction well: voice, conflict, and etiquette.",
+  wiki:     "The Misfits wiki: factions, gameplay, crafting, survival and more.",
   map:      "Explore the wasteland from the US atlas down to Wendover's local game space.",
   paperwork:"Open practical in-world forms ready to fill, copy, and use in play.",
   events:   "Event briefs and planning documents, gathered into one shared list.",
@@ -2437,12 +2691,21 @@ const HOME_INFO = {
 /* the home landing page: a full-height tile per section (icon + title + explainer). */
 const HOME_ARROW = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 9h9.2l-3.7-3.7L11 4l6 6-6 6-1.5-1.3L13.2 11H4z"/></svg>`;
 /* The landing, laid out by HIERARCHY (not a flat list):
-   · TOP — the umbrella brand + every registered global section.
-   · LOWER-LEFT — the faction picker.
-   · LOWER-RIGHT — the SELECTED faction's own sections (Roster · Relations · its docs), updating live as
+   · TOP, the umbrella brand + every registered global section.
+   · LOWER-LEFT, the faction picker.
+   · LOWER-RIGHT: the SELECTED faction's own sections (Roster · Relations · its docs), updating live as
      you pick a faction on the left. A two-column master–detail: choose a faction, see what it offers. */
+/* Home has TWO renderers. The atlas is the live one; the classic tile home is kept, working and unlinked,
+   reachable only by typing #home/classic, a backup while the atlas earns its place. Nothing links to it. */
 function renderHome(){
   const el=$("#home"); if(!el) return;
+  // Latched on `state` (not a new global): writeRoute rewrites #home/classic back to #home after one
+  // render, so without a latch the backup lasted a single frame. Reload resets it.
+  if(/^#home\/classic\b/.test(location.hash)) state.homeVariant = "classic";
+  const fid = currentFaction;   // read the shared selection ONCE for whichever renderer runs
+  return state.homeVariant === "classic" ? renderHomeClassic(el, fid) : renderHomeAtlas(el, fid);
+}
+function renderHomeClassic(el, fid){
   const f = activeFaction();
   const single = FACTION_ORDER.length < 2;
 
@@ -2464,11 +2727,19 @@ function renderHome(){
     `<section class="home-col home-col--factions" aria-label="Choose a faction">`+
       `<h2 class="home-col-head">Choose a Faction</h2>`+
       `<div class="home-fac-grid" role="tablist" aria-label="Choose faction">`+
-        FACTION_ORDER.map(id =>
-          `<button class="home-fac${id===currentFaction?' active':''}" type="button" role="tab" aria-selected="${id===currentFaction}" data-faction="${escAttr(id)}">`+
+        FACTION_ORDER.map(id => {
+          // 11 of 13 factions have no roster sheet yet. They stay in the grid; they are real factions and
+          // the wiki has pages for them; but they must LOOK different, or the grid promises 13 rosters and
+          // delivers 2. The state is already known (factionLinked); it was simply never shown.
+          const linked = factionLinked(FACTIONS[id]);
+          return `<button class="home-fac${id===fid?' active':''}${linked?"":" is-pending"}" type="button" role="tab"`+
+            ` aria-selected="${id===fid}" data-faction="${escAttr(id)}"`+
+            `${linked?"":` title="${escAttr(FACTIONS[id].name)}: roster not linked yet"`}>`+
             `<span class="home-fac-ico" aria-hidden="true">${FACTION_ICONS[id]||""}</span>`+
             `<span class="home-fac-name">${esc(FACTIONS[id].name.replace(/^The\s+/i,""))}</span>`+
-          `</button>`).join("")+
+            (linked?"":`<span class="home-fac-pending">soon</span>`)+
+          `</button>`;
+        }).join("")+
       `</div>`+
     `</section>`;
 
@@ -2481,14 +2752,158 @@ function renderHome(){
         `<span class="home-sec-desc">${esc(HOME_INFO[s.id]||HOME_INFO._default)}</span></span>`+
       `<span class="home-sec-cta" aria-hidden="true">${HOME_ARROW}</span>`+
     `</button>`).join("");
+  // The faction's wiki article is its THIRD facet, alongside roster and relations, the app owns the people,
+  // the wiki owns the lore. Until now that link was offered only on the "roster not linked" screen, so the two
+  // factions that DO have data were the only ones with no route to their own canonical article.
+  const wpage = FACTION_WIKI[fid];
+  const wikiCard = wpage
+    ? `<a class="home-sec home-sec--external" href="#wiki/${encodeURIComponent(wpage)}" data-wiki="${escAttr(wpage)}" style="--i:${sections.length}">`+
+        `<span class="home-sec-ico">${NAV_ICONS.wiki||NAV_ICONS._default}</span>`+
+        `<span class="home-sec-body"><span class="home-sec-title">${esc(f.name)} on the Wiki</span>`+
+          `<span class="home-sec-desc">Lore, history and description: maintained by the wiki, the source of truth.</span></span>`+
+        `<span class="home-sec-cta" aria-hidden="true">${HOME_ARROW}</span>`+
+      `</a>`
+    : "";
   const right = `<section class="home-col home-col--sections" aria-label="${escAttr(f.name)} sections">`+
-    `<h2 class="home-col-head"><span class="home-col-ico" aria-hidden="true">${FACTION_ICONS[currentFaction]||""}</span>${esc(f.name)}</h2>`+
-    `<div class="home-sec-list">${secCards}</div>`+
+    `<h2 class="home-col-head"><span class="home-col-ico" aria-hidden="true">${FACTION_ICONS[fid]||""}</span>${esc(f.name)}</h2>`+
+    `<div class="home-sec-list">${secCards}${wikiCard}</div>`+
   `</section>`;
 
   el.innerHTML = top + `<div class="home-cols${single?' home-cols--solo':''}">` + left + right + `</div>`;
 }
-/* ROW 2 (faction-scoped): this faction's own sections — Roster + its docs. Home + Wiki are umbrella
+
+/* ── THE ATLAS HOME ───────────────────────────────────────────────────────────────────────────────────
+   The home page IS the sitemap. Three tiers, each answering one question, drawn with the same connector
+   grammar as the masthead so the two teach each other:
+
+     DESTINATIONS, where can I go?            (the 7 umbrella sections)
+     FACTIONS, whose version am I seeing? (13, in ONE unwrapped line)
+     FACETS, what does this faction offer? (roster · relations · its docs · its wiki article)
+
+   The single faction LINE is what makes the diagram legible: the fan connector needs its children on one
+   unwrapped row, and a line also gives every faction the same visual weight, so the fan below reads as
+   "this one is selected" rather than competing with a grid's own shape. */
+function renderHomeAtlas(el, fid){
+  const f = activeFaction();
+  const dests = UMBRELLA_SECTIONS.filter(s=>s.id!=="home");
+  const destChips = dests.map((s,i)=>
+    `<button class="atlas-dest" type="button" data-section="${escAttr(s.id)}" aria-label="Open ${escAttr(s.label)}" style="--i:${i}">`+
+      `<span class="atlas-dest-ico">${NAV_ICONS[s.id]||NAV_ICONS._default}</span>`+
+      `<span class="atlas-dest-label">${esc(s.label)}</span>`+
+    `</button>`).join("");
+
+  const facChips = FACTION_ORDER.map((id,i)=>{
+    const linked = factionLinked(FACTIONS[id]);
+    const on = id===fid;
+    return `<button class="atlas-fac${on?" active":""}${linked?"":" is-pending"}" type="button" role="tab"`+
+      ` aria-selected="${on}" data-faction="${escAttr(id)}" style="--i:${i}"`+
+      ` title="${escAttr(FACTIONS[id].name)}${linked?"":": roster not linked yet"}">`+
+      `<span class="atlas-fac-ico">${FACTION_ICONS[id]||""}</span>`+
+      `<span class="atlas-fac-name">${esc(FACTIONS[id].name.replace(/^The\s+/i,""))}</span>`+
+    `</button>`;
+  }).join("");
+
+  // The facets of the SELECTED faction: the app's own sections, then its wiki article. The article is
+  // marked as owned elsewhere, because the wiki is the source of truth for lore and this app only reads it.
+  const facetSections = factionSections();
+  const facets = facetSections.map((s,i)=>
+    `<button class="atlas-facet" type="button" data-section="${escAttr(s.id)}" style="--i:${i}">`+
+      `<span class="atlas-facet-ico">${NAV_ICONS[s.id]||NAV_ICONS._default}</span>`+
+      `<span class="atlas-facet-label">${esc(s.label)}</span>`+
+    `</button>`).join("");
+  const wpage = FACTION_WIKI[fid];
+  const wikiFacet = wpage
+    ? `<a class="atlas-facet atlas-facet--external" href="#wiki/${encodeURIComponent(wpage)}"`+
+      ` style="--i:${facetSections.length}" title="${escAttr(f.name)} on the wiki; the wiki is the source of truth">`+
+        `<span class="atlas-facet-ico">${NAV_ICONS.wiki||NAV_ICONS._default}</span>`+
+        `<span class="atlas-facet-label">Wiki Article</span>`+
+      `</a>`
+    : "";
+
+  el.innerHTML =
+    `<div class="atlas">`+
+      `<div class="home-brand"><span class="home-brand-name">Misfits Database</span>`+
+        `<span class="home-brand-tag">Multi-faction archive</span></div>`+
+      `<nav class="atlas-tier atlas-dests" aria-label="Global sections">${destChips}</nav>`+
+      `<div class="atlas-stage">`+
+        `<svg class="atlas-connectors" id="atlas-connectors" aria-hidden="true" focusable="false">`+
+          `<path class="atlas-connector-dim" data-connector-dim></path>`+
+          `<path class="atlas-connector-lit" data-connector-lit></path>`+
+          `<g class="atlas-connector-arrows" data-connector-arrows></g>`+
+        `</svg>`+
+        `<div class="atlas-tier atlas-facs" role="tablist" aria-label="Choose a faction">${facChips}</div>`+
+        `<div class="atlas-tier atlas-facets" role="group" aria-label="${escAttr(f.name)} sections">${facets}${wikiFacet}</div>`+
+      `</div>`+
+    `</div>`;
+  atlasConnector.watch();
+}
+
+/* A FAN connector: one parent, N children on one unwrapped row below it. Same grammar as the masthead
+   (stem → bus → risers → arrowheads) and the same paint contract, but parameterised so a second surface
+   can have one without a second copy of the geometry. Kept as a factory rather than module-level state,
+   because two fans on one page would otherwise share one ResizeObserver and fight. */
+function makeFanConnector(opts){
+  let ro=null, mo=null, raf=0, resizeT=0;
+  const q=sel=>document.querySelector(sel);
+  const reset=()=>resetMeasuredConnector(q(opts.svg));
+  function position(){
+    const root=q(opts.root), svg=q(opts.svg), parent=q(opts.parent);
+    if(!root || !svg) return;
+    const kids=[...document.querySelectorAll(opts.children)];
+    if(!parent || kids.length<2 || (opts.canDraw && !opts.canDraw())){ reset(); return; }
+    const rr=root.getBoundingClientRect(), pr=parent.getBoundingClientRect();
+    const rects=kids.map(k=>k.getBoundingClientRect());
+    // A wrapped child row has no unambiguous single bus, hide rather than draw across controls.
+    if(!rr.width || !rr.height || !pr.width || rects.some(r=>!r.width)
+        || rects.some(r=>Math.abs(r.top-rects[0].top)>2)){ reset(); return; }
+    const snap=n=>Math.round(n*2)/2;
+    const px=snap(pr.left+pr.width/2-rr.left), py=snap(pr.bottom-rr.top);
+    const kidTop=snap(Math.min(...rects.map(r=>r.top-rr.top)));
+    const xs=rects.map(r=>snap(r.left+r.width/2-rr.left));
+    const gap=opts.busGap||18, arrowTall=7, arrowHalf=5.5;
+    const busY=snap(kidTop-gap), arrowBase=kidTop-arrowTall;
+    if(busY<=py+2 || arrowBase<=busY+2){ reset(); return; }   // no clear channel at this size
+    const busL=snap(Math.min(px,...xs)-1), busR=snap(Math.max(px,...xs)+1);
+    const activeIndex=opts.activeIndex ? opts.activeIndex(kids) : -1;
+    let litD="";
+    if(activeIndex>=0){ const ax=xs[activeIndex];
+      litD=`M ${px} ${py} V ${busY} M ${px} ${busY} H ${ax} M ${ax} ${busY} V ${arrowBase+1}`; }
+    renderMeasuredConnector(svg,{
+      width:snap(rr.width), height:snap(rr.height),
+      dimPath:`M ${px} ${py} V ${busY} M ${busL} ${busY} H ${busR} `+
+        xs.map(x=>`M ${x} ${busY} V ${arrowBase+1}`).join(" "),
+      litPath:litD,
+      arrows:xs.map((x,i)=>
+        `<polygon class="${opts.arrowClass}${i===activeIndex?" is-active":""}" points="${x-arrowHalf},${arrowBase} ${x+arrowHalf},${arrowBase} ${x},${kidTop}" />`
+      ).join(""),
+      activeKey:activeIndex>=0 ? String(activeIndex) : null,
+    });
+  }
+  const schedule=()=>{ if(raf) cancelAnimationFrame(raf); raf=requestAnimationFrame(()=>{ raf=0; position(); }); };
+  function watch(){
+    if(ro) ro.disconnect(); if(mo) mo.disconnect();
+    const root=q(opts.root); if(!root) return;
+    const targets=[root, q(opts.parent), ...document.querySelectorAll(opts.children)].filter(Boolean);
+    ro=new ResizeObserver(schedule); targets.forEach(t=>ro.observe(t));
+    mo=new MutationObserver(schedule);
+    mo.observe(root,{subtree:true, attributes:true, attributeFilter:["class","aria-selected"]});
+    position(); schedule(); requestAnimationFrame(()=>requestAnimationFrame(schedule));
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+    clearTimeout(resizeT); resizeT=setTimeout(schedule,140);
+  }
+  return { position, watch, reset, schedule };
+}
+const atlasConnector = makeFanConnector({
+  root:".atlas-stage", svg:"#atlas-connectors",
+  parent:".atlas-fac.active", children:".atlas-facet",
+  arrowClass:"atlas-connector-arrow", busGap:20,
+  canDraw:()=>matchMedia("(min-width:900px)").matches && document.body.dataset.section==="home",
+  // No activeIndex: no facet is "current" while sitting on home, so the fan shows structure, not position.
+  // The builder keeps the lit-path capability for consumers that DO have a selection (the masthead shape).
+});
+window.addEventListener("resize",()=>atlasConnector.schedule());
+
+/* ROW 2 (faction-scoped): this faction's own sections: Roster + its docs. Home + Wiki are umbrella
    controls that live in ROW 1 (the primary nav), not here. */
 function renderNav(){
   const nav=$("#topnav"); if(!nav) return;
@@ -2499,6 +2914,7 @@ function renderNav(){
   nav.classList.remove("hidden");
   renderPrimaryNav();
   watchConnector();
+  watchCompactNavigation();
 }
 /* Shared connector paint contract. Each adopting surface owns its semantic selection and measurement, then
    hands one complete frame to this renderer. Invalid frames are cleared synchronously, and an idle frame has
@@ -2610,6 +3026,7 @@ if(document.fonts && document.fonts.addEventListener) document.fonts.addEventLis
 });
 window.addEventListener("resize", ()=>{
   scheduleConnector();
+  scheduleCompactNavigation();
   clearTimeout(_connResizeT); _connResizeT=setTimeout(scheduleConnector, 120);
   scheduleDocTocConnector();
   clearTimeout(_docTocResizeT); _docTocResizeT=setTimeout(scheduleDocTocConnector, 120);
@@ -2624,15 +3041,56 @@ function renderPrimaryNav(){
     const on=currentSection===id;
     b.classList.toggle("active", on); b.setAttribute("aria-current", on?"page":"false");
   });
+  syncCompactNavigation();
+  scheduleCompactNavigation();
+}
+
+/* Compact rails keep the selected control reachable without asking scrollIntoView() to move the page or
+   a content panel. Both rails reuse their ordinary desktop controls and selection state. */
+let _compactNavRAF=0, _compactNavRO=null, _compactNavSettleT=null;
+function revealCompactSelection(rail, selector){
+  if(!rail || !matchMedia("(max-width:760px)").matches) return;
+  const active=rail.querySelector(selector); if(!active) return;
+  const rr=rail.getBoundingClientRect(), ar=active.getBoundingClientRect();
+  const inset=4; let left=rail.scrollLeft;
+  if(ar.left<rr.left+inset || ar.right>rr.right-inset){
+    left+=ar.left-(rr.left+inset);   // align to a real snap point; a minimal delta can snap back out of view
+  }
+  if(Math.abs(left-rail.scrollLeft)>1){
+    rail.scrollTo({left,behavior:document.body.dataset.reducemotion==="on"?"auto":"smooth"});
+  }
+}
+function syncCompactNavigation(){
+  revealCompactSelection(document.querySelector(".global-nav-rail"),'[aria-current="page"]');
+  revealCompactSelection($("#topnav"),'[aria-selected="true"]');
+}
+function scheduleCompactNavigation(){
+  if(_compactNavRAF) cancelAnimationFrame(_compactNavRAF);
+  _compactNavRAF=requestAnimationFrame(()=>{
+    _compactNavRAF=0; syncCompactNavigation();
+    requestAnimationFrame(syncCompactNavigation);
+  });
+  clearTimeout(_compactNavSettleT); _compactNavSettleT=setTimeout(syncCompactNavigation,120);
+}
+function watchCompactNavigation(){
+  if(_compactNavRO) _compactNavRO.disconnect();
+  if(window.ResizeObserver){
+    _compactNavRO=new ResizeObserver(scheduleCompactNavigation);
+    [document.querySelector(".global-nav-rail"),$("#topnav"),
+      ...document.querySelectorAll(".global-nav-rail .navbox, #topnav .navtab")]
+      .filter(Boolean).forEach(el=>_compactNavRO.observe(el));
+  }
+  scheduleCompactNavigation();
+  if(document.fonts?.ready) document.fonts.ready.then(scheduleCompactNavigation).catch(()=>{});
 }
 /* Re-render a Google Doc in the terminal theme. We fetch the doc's HTML export
    (a CORS-readable endpoint for link-shared docs) and rebuild it from a strict
-   element whitelist — dropping all of Google's inline styles/classes so OUR CSS
+   element whitelist, dropping all of Google's inline styles/classes so OUR CSS
    styles it. The whitelist walk also sanitises (no scripts/handlers/styles). */
 const DOC_OK = {h1:1,h2:1,h3:1,h4:1,h5:1,h6:1,p:1,ul:1,ol:1,li:1,a:1,hr:1,br:1,
   blockquote:1,strong:1,em:1,b:1,i:1,u:1,sub:1,sup:1,table:1,thead:1,tbody:1,tr:1,td:1,th:1,img:1};
 /* Google's HTML export expresses bold/italic via CSS CLASSES in a <style> block
-   (e.g. .c5{font-weight:700}), not inline styles — parse those so we can detect emphasis. */
+   (e.g. .c5{font-weight:700}), not inline styles: parse those so we can detect emphasis. */
 let docBoldClasses=new Set(), docItalicClasses=new Set(), docTitleCount=0;
 function parseDocStyles(parsed){
   docBoldClasses=new Set(); docItalicClasses=new Set(); docTitleCount=0;
@@ -2656,7 +3114,7 @@ function docItalic(el){
 }
 /* escape text, and wrap "double-quoted" runs in a styled span so quoted speech stands out */
 function docText(raw){
-  raw=relabelTribe(raw);                                    // rebrand "the Yuma Tribe" → "the Tribe" in docs too
+  raw=relabelTribe(raw);                                    // retired-name-ok: rebrand "the Yuma Tribe" → "the Tribe" in docs too
   let out="", re=/[“"][^”"\n]{1,300}?[”"]/g, last=0, m;
   while((m=re.exec(raw))){ out+=esc(raw.slice(last, m.index))+`<span class="dq">${esc(m[0])}</span>`; last=re.lastIndex; }
   return out + esc(raw.slice(last));
@@ -2687,7 +3145,7 @@ function docClean(node, imgSink){
       if(/^(https?:|data:image\/)/i.test(src)){
         const alt=n.getAttribute("alt")||"";
         // base64 images are extracted into the prepared doc's side-table and hydrated
-        // lazily on scroll (see hydrateDocImages) — they're ~99% of the export's bytes,
+        // lazily on scroll (see hydrateDocImages), they're ~99% of the export's bytes,
         // and inlining them all makes first paint wait on every image at once.
         const srcAttr = (imgSink && /^data:/i.test(src))
           ? ` data-docimg="${imgSink.push(src)-1}"`
@@ -2759,8 +3217,8 @@ function docClean(node, imgSink){
 /* Consistent "Label:" mini-heading formatting (T80). A short "Word(s):" lead-in (≤4 words, letters) at the
    START of a paragraph/list-item becomes a bright .doc-label so every such lead reads the same regardless
    of source emphasis; a short trailing "Word(s):" that introduces a list breaks onto its OWN line above it.
-   Guarded to only fire on genuine short labels — never mid-sentence colons, times ("10:00"), or ratios. */
-/* a genuine label is ≤4 words, each Capitalised / ALLCAPS / a short connective (of/the/and…) — this
+   Guarded to only fire on genuine short labels: never mid-sentence colons, times ("10:00"), or ratios. */
+/* a genuine label is ≤4 words, each Capitalised / ALLCAPS / a short connective (of/the/and…), this
    rejects prose fragments that merely start with a capital and have an early colon ("He said the
    following:") while accepting real labels ("The New Mandate:", "Elder/Senior:", "Protocol:"). */
 function isLabel(label){
@@ -2779,7 +3237,7 @@ function trailLabel(html){
     isLabel(label) ? `${sp}<br><span class="doc-label">${label}</span>` : m);
 }
 /* Google Docs (and some wiki markup) export a single logical bullet list as a RUN of separate
-   adjacent <ul>/<ol> siblings — so identical-source bullets render with gaps + inconsistent spacing.
+   adjacent <ul>/<ol> siblings; so identical-source bullets render with gaps + inconsistent spacing.
    Fold each run of same-type adjacent lists into one, so every same-level bullet is uniform. (Truly
    separate lists have a heading/paragraph between them, so they stay apart.) */
 function mergeAdjacentLists(root){
@@ -2792,17 +3250,17 @@ function mergeAdjacentLists(root){
     }
   });
 }
-/* T81 — tables must render FULLY, never a lateral scrollbar. PREP each data table for a possible reflow:
+/* T81: tables must render FULLY, never a lateral scrollbar. PREP each data table for a possible reflow:
    find the header row, carry each column's header into its body cells as data-label, and tag banner rows.
    Only tables that can be safely stacked are marked stackable="yes" (skip rowspan / no real header row /
-   fewer than 2 body rows — those keep the normal scroll fallback). evalTableStacking() then decides, per
+   fewer than 2 body rows, those keep the normal scroll fallback). evalTableStacking() then decides, per
    current width, whether each stackable table actually needs to reflow. */
 function prepareStackTables(root){
   root.querySelectorAll(".doctable > table").forEach(table=>{
     const box=table.parentElement;
     const rows=[...table.rows];
     if(rows.length<1){ return; }
-    // NAV STRIP (weapon-page hub etc.) — a short table that's really a row of category chips → wrap it,
+    // NAV STRIP (weapon-page hub etc.): a short table that's really a row of category chips → wrap it,
     // don't scroll. Detected as a ≤2-row table with a row of ≥4 SHORT cells (each ≤4 words: a link or the
     // current-page label).
     const navRow = rows.find(r=>r.cells.length>=4 && [...r.cells].every(c=>{
@@ -2810,7 +3268,7 @@ function prepareStackTables(root){
     if(navRow && rows.length<=2){
       box.setAttribute("data-navflow","");
       rows.forEach(r=>{ if(r!==navRow && r.cells.length===1) r.cells[0].classList.add("dt-banner"); });
-      // T75/T76 — give each category chip its icon (matched on the chip label)
+      // T75/T76: give each category chip its icon (matched on the chip label)
       [...navRow.cells].forEach(c=>{
         const ico=WEAPON_ICONS[c.textContent.trim().toLowerCase()];
         if(ico && !c.querySelector(".dt-chip-ico")){
@@ -2865,7 +3323,7 @@ function styleTOC(reader){
     p.classList.add("tocitem", cls);
   });
 }
-/* in-page outline sidebar (wide screens) — built from the doc's H1/H2 headings */
+/* in-page outline sidebar (wide screens): built from the doc's H1/H2 headings */
 let docHeads=[], _docRouteIdx=null;
 function buildDocSidebar(reader){
   const toc=$("#doctoc");
@@ -2875,14 +3333,14 @@ function buildDocSidebar(reader){
     .filter(h=>h.textContent.trim() && !h.classList.contains("doc-title"));                // …minus the masthead title
   if(docHeads.length<3){ toc.innerHTML=""; watchDocTocConnector(); return; } // too short to bother
   // reuse the roster's own section-header component so the two index rails share one
-  // element (»-prefix + trailing dashed rule come with the class) — not a parallel style.
+  // element (»-prefix + trailing dashed rule come with the class), not a parallel style.
   toc.innerHTML = '<svg class="doctoc-connectors" aria-hidden="true" focusable="false">'+
       '<path class="doctoc-connector-dim" data-connector-dim></path>'+
       '<path class="doctoc-connector-lit" data-connector-lit></path>'+
       '<g class="doctoc-connector-arrows" data-connector-arrows></g></svg>'+
     '<div class="sectionhdr">CONTENTS</div>' + docHeads.map((h,i)=>{
     if(!h.id) h.id="doch-"+i;                                   // ensure a jump target (URL / in-doc anchors)
-    // data-i scrolls to the ELEMENT by its index in docHeads — immune to duplicate ids that Google's
+    // data-i scrolls to the ELEMENT by its index in docHeads, immune to duplicate ids that Google's
     // export can emit (getElementById would return the first match → jump to the wrong heading). data-h
     // stays for the current-section highlight in trackDocSection.
     return `<a href="#${escAttr(h.id)}" class="tl${h.tagName[1]}" data-i="${i}" data-h="${escAttr(h.id)}">${esc(h.textContent.trim())}</a>`;
@@ -2966,7 +3424,7 @@ function positionDocTocConnector(){
   svg.style.height=height+"px";
   renderMeasuredConnector(svg,{
     width:snap(toc.clientWidth), height, dimPath:dimParts.join(" "), litPath,
-    // Roots receive no marker. The arrowhead is reserved for a branch TERMINAL — a leaf that is the
+    // Roots receive no marker. The arrowhead is reserved for a branch TERMINAL, a leaf that is the
     // last child of its group, where the connector line ends. Every node the line passes on its way
     // lower (an intermediate sibling, or any node with its own children) becomes a small glowing dot.
     // Fewer arrowheads, and the tree reads as "passes through here" (dot) vs "ends here" (arrow).
@@ -3100,7 +3558,7 @@ $("#doctoc").addEventListener("click", e=>{
   scrollDocTarget(docHeads[+a.dataset.i]);                          // scroll to the element, not an id lookup
 });
 
-/* Focus (fullscreen) reader — a borderless in-app state (NOT the OS Fullscreen API). The existing contents
+/* Focus (fullscreen) reader: a borderless in-app state (NOT the OS Fullscreen API). The existing contents
    outline becomes a collapsible floating panel, so active-section tracking and its connector keep one owner.
    Pointer movement over the reading lane quiets the floating HUD; moving into the side gutters restores it.
    Touch and keyboard never inherit that hover-only hiding state. Nothing is persisted. */
@@ -3128,7 +3586,7 @@ function setDocFocus(on){
   if(btn){
     btn.setAttribute("aria-pressed", on ? "true" : "false");
     btn.setAttribute("aria-label", on ? "Exit focus mode" : "Enter focus mode");
-    btn.title=on ? "Exit focus mode (Esc)" : "Focus mode — hide application chrome";
+    btn.title=on ? "Exit focus mode (Esc)" : "Focus mode: hide application chrome";
   }
   setDocFocusUiQuiet(false);
   if(on) setDocFocusToc(true);
@@ -3167,10 +3625,10 @@ $("#docscroll").addEventListener("pointermove", e=>{
 $("#docscroll").addEventListener("pointerleave", ()=>setDocFocusUiQuiet(false));
 $("#docview").addEventListener("focusin", ()=>setDocFocusUiQuiet(false));
 /* ---- doc cache (memory + IndexedDB) + lazy image hydration ----
-   Google's export inlines every image as base64 — measured: ~99% of the payload is
+   Google's export inlines every image as base64: measured: ~99% of the payload is
    images, the actual text is under 100KB. Two-part strategy:
    1. PERSIST the prepared doc in IndexedDB, so the multi-MB download happens once per
-      device — every later open (even after a browser restart) is served locally, with a
+      device, every later open (even after a browser restart) is served locally, with a
       background re-fetch when the copy is stale so content stays fresh.
    2. STRIP the base64 images out of the rendered HTML into a side-table and hydrate each
       one only as it scrolls near (IntersectionObserver). Text paints immediately; image
@@ -3181,7 +3639,7 @@ const _docInFlight = new Map();                               // docId -> cold r
 const _docRefreshes = new Map();                              // docId -> stale-cache refresh promise
 const DOC_STALE_MS = 15*60*1000;                              // background-refresh IDB copies older than this
 
-/* minimal IndexedDB k/v — never throws, resolves null / no-ops when unavailable */
+/* minimal IndexedDB k/v, never throws, resolves null / no-ops when unavailable */
 function idbGet(key){ return new Promise(res=>{ try{
   const r=indexedDB.open("mdb-docdb",1);
   r.onupgradeneeded=()=>r.result.createObjectStore("kv");
@@ -3243,14 +3701,14 @@ async function fetchAndPrepare_(docId, signal){
 /* attach lazy loading: placeholder imgs get their base64 src only when scrolled near;
    the "RECEIVING IMAGE" skeleton (CSS .pending) clears once each image has painted.
    Two mechanisms, belt + braces:
-   - IntersectionObserver (primary; efficient) — but IO callbacks are SUSPENDED in
+   - IntersectionObserver (primary; efficient); but IO callbacks are SUSPENDED in
      hidden documents (background tabs, prerender), so it can't be the only path.
-   - a synchronous rect-check pass at render time + on throttled doc scroll — plain
+   - a synchronous rect-check pass at render time + on throttled doc scroll, plain
      events + getBoundingClientRect, which work everywhere. Also gives above-the-fold
      images an instant start instead of waiting for IO's async callback. */
 let _docImgIO = null, _docHydrateCtx = null;
 const _figDone = img => { const s=img.closest(".docfig-screen"); if(s){ s.classList.remove("pending"); classifyDocImage(img, s); } };
-/* a mostly-white image with dark marks is a line-art DIAGRAM (flow chart), not a photo — it
+/* a mostly-white image with dark marks is a line-art DIAGRAM (flow chart), not a photo, it
    would render as a pale block on the dark screen. Detect it (sample a downscaled copy for the
    light-pixel ratio) and flag it so CSS inverts it to light-on-dark, then the phosphor tint
    colourises it to the theme. data: URLs are same-origin so the canvas read is untainted. */
@@ -3262,7 +3720,7 @@ function classifyDocImage(img, screen){
     const d=ctx.getImageData(0,0,n,n).data; let light=0;
     for(let p=0;p<d.length;p+=4){ if(d[p]>210 && d[p+1]>210 && d[p+2]>210) light++; }
     screen.classList.toggle("docfig-invert", light/(n*n) > 0.55);
-  }catch(e){ /* unsupported / tainted — treat as a normal photo */ }
+  }catch(e){ /* unsupported / tainted: treat as a normal photo */ }
 }
 const _figArm  = img => { img.addEventListener("load", ()=>_figDone(img), {once:true});
                           img.addEventListener("error", ()=>_figDone(img), {once:true}); };
@@ -3285,7 +3743,7 @@ function hydrateDocImages(reader, images){
   _docHydrateCtx = { reader, images };
   const imgs=[...reader.querySelectorAll(".docfig img")];
   if("IntersectionObserver" in window){
-    // observe the framed WRAPPER, not the img — a src-less img has zero height and a
+    // observe the framed WRAPPER, not the img, a src-less img has zero height and a
     // zero-area target doesn't reliably intersect; the wrapper has a min-height.
     _docImgIO = new IntersectionObserver(ents=>{
       ents.forEach(en=>{
@@ -3296,12 +3754,12 @@ function hydrateDocImages(reader, images){
     }, {rootMargin:"900px 0px"});                             // start decoding well before it's on screen
     imgs.forEach(img=>{ if(img.dataset.docimg!=null) _docImgIO.observe(img.closest(".docfig-screen")||img); });
   }
-  // direct http(s) images already have src — just clear their skeleton once painted
+  // direct http(s) images already have src, just clear their skeleton once painted
   imgs.forEach(img=>{ if(img.dataset.docimg==null){ if(img.complete) _figDone(img); else _figArm(img); } });
   runHydratePass();                                           // hydrate what's already in/near view now
 }
 /* Warm ONE doc's cache on intent (tab hover / keyboard focus) rather than blanket-fetching
-   every doc on load. The exports are image-heavy (multi-MB — Google inlines images as
+   every doc on load. The exports are image-heavy (multi-MB, Google inlines images as
    base64), so speculatively downloading them all would waste bandwidth, especially on
    mobile. Hover/focus = the user is about to open it, so the head start is well spent. */
 function prefetchDoc(docId){ if(docId && !_docCache.has(docId)) prepareDoc(docId).catch(()=>{}); }
@@ -3312,7 +3770,7 @@ function prefetchDoc(docId){ if(docId && !_docCache.has(docId)) prepareDoc(docId
    pixel-font tofu. One interval, cleared the moment the fetch settles. */
 const _LOADMSG = ["establishing archive link", "retrieving document", "decoding transmission", "rendering dossier"];
 let _docLoaderTimer = null;
-/* announce a STABLE doc/wiki state to screen readers (loading / error). Not the animated loader —
+/* announce a STABLE doc/wiki state to screen readers (loading / error). Not the animated loader:
    that repaints 12×/s and would flood a live region; this fires once per state change. */
 function announceDoc(msg){ const a=$("#doc-announce"); if(a) a.textContent = msg || ""; }
 function startDocLoader(status){
@@ -3339,7 +3797,7 @@ function stopDocLoader(){ if(_docLoaderTimer){ clearInterval(_docLoaderTimer); _
 
 /* inject a prepared doc into the reader (shared by the cold + cached paths) */
 function renderPreparedDoc(reader, prepared, doc){
-  reader.innerHTML = prepared.html;                           // text-only markup — paints fast
+  reader.innerHTML = prepared.html;                           // text-only markup: paints fast
   mergeAdjacentLists(reader);                                 // fold Google's split bullet runs into one list
   prepareStackTables(reader);                                 // reflow over-wide tables instead of h-scrolling
   hydrateDocImages(reader, prepared.images||[]);              // images stream in on approach
@@ -3361,7 +3819,7 @@ function docLoadError(status, e){
   announceDoc(why.replace(/<[^>]+>/g,""));                    // screen-reader error cue (tags stripped)
 }
 /* the reader's top-right external link is reused across modes: "Docs" (opens the Google Doc) vs
-   "Source Wiki" (opens the original wiki page — the reader shows our re-themed copy). */
+   "Source Wiki" (opens the original wiki page, the reader shows our re-themed copy). */
 function setDocLink(label, title){
   const a=$("#doclink"); if(!a) return;
   a.textContent=label; a.title=title; a.setAttribute("aria-label", title);
@@ -3395,7 +3853,7 @@ async function loadDoc(doc){
     const prepared=await prepareDoc(doc.docId, ctrl.signal);
     // stale-load guard: if the user switched to another section (or back to roster) while
     // this cold fetch was in flight, a newer loadDoc() call now owns the reader/status/
-    // loader — bail out silently instead of clobbering it. Applies to BOTH outcomes:
+    // loader, bail out silently instead of clobbering it. Applies to BOTH outcomes:
     // a late success must not overwrite the newer doc, and a late failure must not paint
     // this doc's error over it.
     if(!isCurrent()) return;
@@ -3405,7 +3863,7 @@ async function loadDoc(doc){
     if(!isCurrent()) return;
     docLoadError(status, e);
   }finally{
-    // only stop the loader if we're still the current doc — startDocLoader shares one
+    // only stop the loader if we're still the current doc: startDocLoader shares one
     // module-level timer, so an unconditional stop here would freeze a newer doc's loader.
     if(isCurrent()) stopDocLoader();
     clearTimeout(timer);
@@ -3416,12 +3874,15 @@ async function loadDoc(doc){
    The Misfits wiki is a MediaWiki whose parse API is CORS-enabled, so we fetch a page's HTML
    client-side (like the Google Docs) and re-render it in the terminal theme. Rather than flatten
    the wiki's hand-built landing structure into a wall of text, renderWiki() RECOGNISES its
-   semantics (hero banner, callouts/alerts, a faction card grid, column layouts — all built with
+   semantics (hero banner, callouts/alerts, a faction card grid, column layouts, all built with
    inline styles) and re-skins each as a native phosphor component, so the page reads better than
    the source. Leaf/prose content still goes through docClean (the strict sanitiser). Internal
    wiki links load in-app so you can browse through it. */
 const WIKI = { host:"wiki.misfitsystems.net", home:"Main_Page" };
 let _wikiPage = WIKI.home;
+/* true while the current wiki page failed to load, the trail says so rather than
+   silently keeping the last page that DID load. */
+let _wikiFailed = false;
 let _wikiRequest=0, _wikiController=null;
 function cancelWikiLoad(){
   _wikiRequest++;
@@ -3438,7 +3899,7 @@ function wikiIsAlert(el){
   if(/red|crimson|darkred/.test(c)) return true;
   const rgb=wikiHexRgb(c); return !!rgb && rgb.r>90 && rgb.r>rgb.g*1.7 && rgb.r>rgb.b*1.7;
 }
-/* docClean drops <div>, merging sibling text runs — so convert leaf content-divs (no block child,
+/* docClean drops <div>, merging sibling text runs; so convert leaf content-divs (no block child,
    and NOT a styled box) to <p> first, so a box/cell's title·body·links stack on their own lines */
 function wikiLeafDivsToP(root){
   root.querySelectorAll("div").forEach(d=>{
@@ -3449,7 +3910,7 @@ function wikiLeafDivsToP(root){
   });
 }
 function wikiClean(el){ wikiLeafDivsToP(el); return docClean(el); }
-/* Which of OUR factions a wiki card is about — by its faction-page link first (robust), else by the
+/* Which of OUR factions a wiki card is about, by its faction-page link first (robust), else by the
    card title matching a faction name. Returns a faction id (key into FACTION_ICONS/FACTIONS) or null. */
 function wikiCardFaction(cell){
   const norm=s=>(s||"").replace(/_/g," ").trim().toLowerCase();
@@ -3474,10 +3935,10 @@ function wikiCard(cell){
   return `<div class="wiki-card">${wikiClean(cell)}</div>`;
 }
 /* Normalise MediaWiki images into bare <img> (src absolute + caption in alt), so docClean re-skins
-   each as a themed .docfig — the same treatment roster/doc images get. MediaWiki wraps thumbs in a
+   each as a themed .docfig: the same treatment roster/doc images get. MediaWiki wraps thumbs in a
    <figure>/.thumb with a File: link + a <figcaption>, and galleries in <ul class="gallery">; both carry
    chrome (magnify icon, the File: link) we don't want, so we replace the whole wrapper with one clean
-   <img> rather than trying to prune it. (Google-Doc images can't render cross-origin — wiki images,
+   <img> rather than trying to prune it. (Google-Doc images can't render cross-origin: wiki images,
    served from the host we already fetch from, can.) */
 function normaliseWikiImages(root){
   const clean=(src,cap)=>{ const i=document.createElement("img"); i.setAttribute("src",src); if(cap) i.setAttribute("alt",cap); return i; };
@@ -3499,7 +3960,7 @@ function normaliseWikiImages(root){
     const box=document.createElement("div"); while(gal.firstChild) box.appendChild(gal.firstChild); gal.replaceWith(box);
   });
 }
-/* clear the loading state on plain-src (wiki) figures once each image settles — the doc path only
+/* clear the loading state on plain-src (wiki) figures once each image settles, the doc path only
    arms data: images (hydrated lazily); wiki images carry a real src, so arm them here. */
 function armWikiFigures(reader){
   reader.querySelectorAll(".docfig-screen.pending img[src]").forEach(img=>{
@@ -3539,7 +4000,7 @@ function renderWiki(node){
       const w=document.createElement("div"); w.appendChild(el.cloneNode(true)); out+=docClean(w); return;
     }
     if(tag==="div"){ out += el.querySelector("div,table") ? renderWiki(el) : wikiClean(el); return; }
-    // a top-level image (a MediaWiki thumb, normalised to a bare <img> in loadWiki) — docClean only
+    // a top-level image (a MediaWiki thumb, normalised to a bare <img> in loadWiki): docClean only
     // themes an <img> it meets as a CHILD, so wrap it, same as the table path above.
     if(tag==="img"){ const w=document.createElement("div"); w.appendChild(el.cloneNode(true)); out+=docClean(w); return; }
     out+=docClean(el);
@@ -3559,6 +4020,13 @@ function wikiPageFromHref(href){                               // wiki page titl
 }
 async function loadWiki(page){
   page = page || WIKI.home; _wikiPage = page;
+  // Announce the DESTINATION immediately, not on success. These used to be set
+  // only after the fetch resolved, so a deep link to a page that failed to load
+  // left the status bar naming the PREVIOUS page while the route and the body
+  // said something else, three surfaces disagreeing about where the reader is.
+  _wikiFailed = false;
+  updateCrumb();
+  warmWikiSitemap();        // so a deep link gets its parent segment without visiting the landing first
   cancelWikiLoad();
   const request=_wikiRequest, isCurrent=()=>request===_wikiRequest && currentSection==="wiki" && _wikiPage===page;
   const reader=$("#docreader"), status=$("#docstatus");
@@ -3570,6 +4038,12 @@ async function loadWiki(page){
   reader.innerHTML=""; startDocLoader(status);
   const ctrl=new AbortController(); _wikiController=ctrl;
   const timer=setTimeout(()=>ctrl.abort(),15000);
+  // The try below spans the fetch AND the whole render, so a bug in any of the
+  // synchronous re-skinning steps lands in the same catch as a network failure.
+  // Without this flag the reader would show the page while the status bar and
+  // the trail both called it unavailable, precisely the surfaces-disagreeing
+  // problem this function was just fixed to stop causing.
+  let painted = false;
   try{
     const url="https://"+WIKI.host+"/api.php?action=parse&format=json&formatversion=2&origin=*"+
       "&redirects=1&prop=text&page="+encodeURIComponent(page);
@@ -3589,6 +4063,7 @@ async function loadWiki(page){
     // components; the .wikibody wrapper keeps loose prose in the reader's centre measure (the reader
     // is a grid, so bare runs would otherwise fall into the narrow side column).
     reader.innerHTML = `<div class="wikibody">${renderWiki(tmp)}</div>`;
+    painted = true;                                           // past this point the reader HAS the page
     mergeAdjacentLists(reader);                                // fold any split bullet runs into one list
     prepareStackTables(reader);                                // reflow over-wide tables instead of h-scrolling
     armWikiFigures(reader);                                    // fade wiki images in as they load
@@ -3603,7 +4078,10 @@ async function loadWiki(page){
     }
     styleTOC(reader); buildDocSidebar(reader); trackDocSection();
     reader.dataset.docid = "wiki:"+page;
-    updateCrumb();                                             // reflect the wiki page in the status-bar breadcrumb
+    // #docnow is the position WITHIN the document (trackDocSection overwrites it
+    // with the active heading on scroll), so it is set here on success only,
+    // clearDocSidebar blanks it earlier in this function. Page identity is the
+    // crumb's job, and the crumb is now set up front for every outcome.
     $("#docnow").textContent = "› "+page.replace(/_/g," ");
     status.className="docstatus"; status.textContent="";
     announceDoc(page.replace(/_/g," ")+" loaded");           // screen-reader cue for the loaded page
@@ -3611,9 +4089,19 @@ async function loadWiki(page){
     if(page===WIKI.home) appendWikiSitemap(reader);          // the wiki landing gets a live site map
   }catch(e){
     if(!isCurrent()) return;
-    stopDocLoader(); status.className="docstatus error";
+    stopDocLoader();
+    if(painted){
+      // The page is on screen; only a post-render step failed. Reporting this as
+      // "couldn't load" would contradict what the reader can plainly see, so the
+      // page keeps its identity and the reader keeps the content.
+      console.error("wiki render step failed after paint:", e);
+      status.className="docstatus"; status.textContent="";
+      return;
+    }
+    status.className="docstatus error";
     status.innerHTML = `Couldn’t load the wiki page. <a href="${escAttr($("#doclink").href)}" target="_blank" rel="noopener noreferrer">Open the wiki ↗</a>`;
-    announceDoc("Couldn’t load the wiki page.");
+    announceDoc("Couldn’t load "+page.replace(/_/g," ")+".");  // name the page, as the success cue does
+    _wikiFailed = true; updateCrumb();                        // the trail must not claim a page the reader cannot see
   }finally{
     if(isCurrent()) stopDocLoader();
     if(_wikiController===ctrl) _wikiController=null;
@@ -3625,8 +4113,11 @@ async function loadWiki(page){
    landing. Pages are grouped by category into curated top-level sections; specific domains are listed
    first so they claim shared pages before the generic Gameplay/Mechanics catch-alls, and anything with
    no curated category lands in an "Uncategorised" bucket. As the wiki's categories get tidied up
-   (docs/WIKI-CATEGORISATION.md), the map re-groups itself on the next load — no code change needed. */
-const SITEMAP_SECTIONS = [
+   (docs/WIKI-CATEGORISATION.md), the map re-groups itself on the next load, no code change needed. */
+/* PRIORITY + LABELS, not the taxonomy. These categories sort first and get friendly labels; every OTHER
+   category the wiki actually defines still appears (alphabetically, under its raw name). The wiki owns the
+   taxonomy: the app only owns the running order at the top and the display names. */
+const SITEMAP_PRIORITY = [
   { cat:"Server",    label:"Server & Rules" },
   { cat:"Factions",  label:"Factions" },
   { cat:"Weapons",   label:"Weapons" },
@@ -3636,6 +4127,43 @@ const SITEMAP_SECTIONS = [
   { cat:"Gameplay",  label:"Gameplay" },
   { cat:"Mechanics", label:"Mechanics" },
 ];
+/* PURE grouping: no globals, so tools/check-wiki-sitemap.mjs can exercise it directly.
+   Three defects this replaces, all documented in docs/navigation-architecture.md section 1:
+     1. An 8-item allowlist discarded 6 of the wiki's 14 categories (7 correctly-tagged pages vanished).
+     2. "First curated match wins" filed each page under ONE section, so Lore/Gameplay/Mechanics rendered
+        empty while the wiki had pages in them; the pages had been absorbed by a higher-priority tag.
+     3. Faction pages skipped categorisation entirely (an early return), so a faction tagged Lore never
+        appeared under Lore.
+   The rule now: a page joins EVERY category it carries; a page with none joins Uncategorised; a known
+   faction page also joins Factions (a convenience the wiki need not have tagged yet) WITHOUT losing its
+   real categories. */
+function groupWikiPages(items, factionTitles, priority){
+  const order = priority.map(p=>p.cat);
+  const labelFor = cat => (priority.find(p=>p.cat===cat)?.label) || cat;
+  const byCat = new Map();   // cat -> { label, cat, pages:[] }
+  const misc = [];
+  for(const it of items){
+    const cats = new Set(it.cats);
+    if(factionTitles.has(it.title)) cats.add("Factions");
+    if(cats.size===0){ misc.push(it.title); continue; }
+    for(const c of cats){
+      if(!byCat.has(c)) byCat.set(c, { label:labelFor(c), cat:c, pages:[] });
+      byCat.get(c).pages.push(it.title);
+    }
+  }
+  const groups=[...byCat.values()].sort((a,b)=>{
+    const ia=order.indexOf(a.cat), ib=order.indexOf(b.cat);
+    if(ia<0 && ib<0) return a.label.localeCompare(b.label);   // both off-list → alphabetical
+    if(ia<0) return 1;                                        // off-list sinks below the priority block
+    if(ib<0) return -1;
+    return ia-ib;                                             // both on-list → declared order
+  });
+  for(const g of groups) g.pages.sort((a,b)=>a.localeCompare(b));
+  const out=groups.filter(g=>g.pages.length);
+  misc.sort((a,b)=>a.localeCompare(b));
+  if(misc.length) out.push({ label:"Uncategorised", cat:null, pages:misc });
+  return out;
+}
 let _wikiSitemapCache=null, _wikiSitemapPending=null;
 async function fetchWikiSitemap(signal){
   // Follow MediaWiki's continuation token so the map remains complete as the wiki grows.
@@ -3655,22 +4183,10 @@ async function fetchWikiSitemap(signal){
   const items=pages
     .filter(p=>p.title!=="Main Page")                         // the landing itself isn't a map entry
     .map(p=>({ title:p.title, cats:new Set((p.categories||[]).map(c=>c.title.replace(/^Category:/,""))) }));
-  const groups=SITEMAP_SECTIONS.map(s=>({ label:s.label, cat:s.cat, pages:[] }));
-  const byCat=Object.fromEntries(groups.map(g=>[g.cat,g]));
-  const misc=[];
-  // the app already KNOWS its factions (FACTION_WIKI), so group those pages under Factions even before
-  // the wiki tags them Category:Factions — the map is useful now, and category tagging is still honoured.
+  // the app already KNOWS its factions (FACTION_WIKI), so group those under Factions even before the wiki
+  // tags them; but their real categories are honoured too (no early return).
   const factionPages=new Set(Object.values(FACTION_WIKI).map(t=>t.replace(/_/g," ")));
-  items.forEach(it=>{
-    if(factionPages.has(it.title)){ byCat["Factions"].pages.push(it.title); return; }
-    const sec=SITEMAP_SECTIONS.find(s=>it.cats.has(s.cat));   // first curated match wins (order = priority)
-    (sec ? byCat[sec.cat].pages : misc).push(it.title);
-  });
-  groups.forEach(g=>g.pages.sort((a,b)=>a.localeCompare(b)));
-  misc.sort((a,b)=>a.localeCompare(b));
-  const out=groups.filter(g=>g.pages.length);
-  if(misc.length) out.push({ label:"Uncategorised", cat:null, pages:misc });
-  return out;
+  return groupWikiPages(items, factionPages, SITEMAP_PRIORITY);
 }
 function getWikiSitemap(){
   if(_wikiSitemapCache) return Promise.resolve(_wikiSitemapCache);
@@ -3679,6 +4195,29 @@ function getWikiSitemap(){
   _wikiSitemapPending=work;
   work.then(groups=>{ _wikiSitemapCache=groups; _wikiSitemapPending=null; }, ()=>{ _wikiSitemapPending=null; });
   return work;
+}
+/* The page → category parent link, read from the sitemap ALREADY fetched for the
+   Wiki Map. Deriving it means there is no second table to drift: when the wiki's
+   categories are re-tidied, the trail follows on the next fetch.
+   Deliberately synchronous and cache-only; the trail must never block or flicker
+   waiting on a network round trip. Before the sitemap resolves this returns null
+   and the trail is simply one level shorter; warmWikiSitemap() then refreshes it. */
+function wikiParent(page){
+  if(!_wikiSitemapCache || !page) return null;
+  const title=String(page).replace(/_/g," ");
+  if(title===String(WIKI.home).replace(/_/g," ")) return null;   // the home page has no parent
+  for(const g of _wikiSitemapCache){
+    if(!g.cat) continue;                                          // "Uncategorised" is a bucket, not a parent
+    if(g.pages.some(p=>p===title)) return g.label;                // first match wins, deterministically
+  }
+  return null;
+}
+/* Kick the sitemap fetch off without awaiting it, then redraw the trail once it
+   lands. Used by loadWiki so a reader who deep-links to a deep page still gets a
+   parent segment, instead of only ever getting one after visiting the landing. */
+function warmWikiSitemap(){
+  if(_wikiSitemapCache) return;
+  getWikiSitemap().then(()=>{ if(currentSection==="wiki") updateCrumb(); }, ()=>{});
 }
 function sitemapHTML(groups){
   // links are real wiki-host URLs so the #docreader click handler intercepts them → in-app loadWiki
@@ -3702,7 +4241,8 @@ async function appendWikiSitemap(reader){
     const holder=document.createElement("div"); holder.innerHTML=sitemapHTML(groups);
     wb.appendChild(holder.firstElementChild);
     buildDocSidebar(reader);                                     // the map's headings join the contents rail
-  }catch(e){ /* the map is a bonus — a failure just leaves the landing as-is */ }
+    revealSitemapCategory();                                     // if the reader arrived via a trail category, land them on it
+  }catch(e){ /* the map is a bonus, a failure just leaves the landing as-is */ }
 }
 /* clicking an internal wiki link browses to that page in-app instead of leaving the site */
 $("#docreader").addEventListener("click", e=>{
@@ -3772,251 +4312,173 @@ function focusDocFind(i){
 }
 function stepDocFind(dir){ if(_docFindMatches.length) focusDocFind(_docFindIdx+dir); }
 /* ============================ T86 · MAP ============================
-   Three scales share one route and selector: US reference atlas, Wendover region, then the local game
-   space. The US outlines live in index.html (#map-svg > .map-states); its coordinates use a 650×500
-   viewBox. Regional/local landmark data will use their own documented 1000×700 coordinate space. */
-const MAP_FACTIONS = {
-  ncr:    { label:"NCR",         cls:"pin-ncr" },
-  legion: { label:"Caesar's Legion", cls:"pin-legion" },
-  other:  { label:"Independent", cls:"pin-other" },
-};
-const MAP_LOCATIONS = [
-  { id:"vault13", name:"Vault 13", game:"Fallout 1", faction:"other", x:135, y:245, desc:"The vault the first wanderer set out from.", timeline:[
-    { year:"2161", event:"Its water chip fails, forcing a search above ground." },
-    { year:"2162", event:"The Master's army is broken." },
-    { year:"2241", event:"Its people are resettled under the NCR." }]},
-  { id:"shadySands", name:"Shady Sands", game:"Fallout 1", faction:"ncr", x:155, y:265, desc:"The settlement that grew into the New California Republic.", timeline:[
-    { year:"2142", event:"Founded by survivors out of Vault 15." },
-    { year:"2186", event:"Becomes the capital of the NCR." }]},
-  { id:"theHub", name:"The Hub", game:"Fallout 1", faction:"other", x:175, y:310, desc:"The great trade town of the south.", timeline:[
-    { year:"2162", event:"Its caravans prove decisive against the Master." }]},
-  { id:"necropolis", name:"Necropolis", game:"Fallout 1", faction:"other", x:195, y:325, desc:"A city of ghouls raised over a ruined vault.", timeline:[
-    { year:"2077", event:"A direct strike births its ghoul population." }]},
-  { id:"boneyard", name:"Boneyard", game:"Fallout 1", faction:"other", x:125, y:375, desc:"The sprawling ruins of old Los Angeles.", timeline:[
-    { year:"2162", event:"A base of the Followers of the Apocalypse." }]},
-  { id:"brotherhood", name:"Lost Hills", game:"Fallout 1", faction:"other", x:150, y:280, desc:"The bunker stronghold of the Brotherhood of Steel.", timeline:[
-    { year:"2162", event:"Its knights aid the fight against the Master." }]},
-  { id:"mariposa", name:"Mariposa Base", game:"Fallout 1", faction:"other", x:90, y:190, desc:"A pre-war military site and mutant-making lab.", timeline:[
-    { year:"2162", event:"Sealed off after the first wanderer's raid." }]},
-  { id:"theGlow", name:"The Glow", game:"Fallout 1", faction:"other", x:205, y:355, desc:"A crater still humming with radiation.", timeline:[
-    { year:"2077", event:"A direct nuclear strike leaves the crater." }]},
-  { id:"cathedral", name:"The Cathedral", game:"Fallout 1", faction:"other", x:130, y:395, desc:"The seat of the Master's cult.", timeline:[
-    { year:"2162", event:"Brought down as the Master falls." }]},
-  { id:"arroyo", name:"Arroyo", game:"Fallout 2", faction:"other", x:95, y:125, desc:"A tribal village descended from Vault 13.", timeline:[
-    { year:"2241", event:"Its chosen one sets out to save the crops." }]},
-  { id:"newReno", name:"New Reno", game:"Fallout 2", faction:"other", x:220, y:195, desc:"A lawless city run by feuding crime families.", timeline:[
-    { year:"2241", event:"Held in the grip of rival families." }]},
-  { id:"vaultCity", name:"Vault City", game:"Fallout 2", faction:"other", x:210, y:150, desc:"An advanced, insular city grown from a vault.", timeline:[
-    { year:"2241", event:"Guards its technology and keeps to itself." }]},
-  { id:"goodsprings", name:"Goodsprings", game:"New Vegas", faction:"other", x:215, y:285, desc:"A quiet Mojave town.", timeline:[
-    { year:"2281", event:"A courier is shot nearby and left for dead." }]},
-  { id:"primm", name:"Primm", game:"New Vegas", faction:"other", x:220, y:310, desc:"A small town beside a notorious prison.", timeline:[
-    { year:"2281", event:"Thrown into chaos by escaped convicts." }]},
-  { id:"novac", name:"Novac", game:"New Vegas", faction:"other", x:245, y:300, desc:"A roadside town marked by a giant dinosaur.", timeline:[
-    { year:"2281", event:"A watchpost against raiders on the highway." }]},
-  { id:"boulderCity", name:"Boulder City", game:"New Vegas", faction:"ncr", x:285, y:275, desc:"A ruin held by the NCR.", timeline:[
-    { year:"2281", event:"Site of a hard NCR–Legion clash." }]},
-  { id:"hooverDam", name:"Hoover Dam", game:"New Vegas", faction:"ncr", x:305, y:280, desc:"The prize of the Mojave — power and water.", timeline:[
-    { year:"2281", event:"The flashpoint between NCR and Legion." }]},
-  { id:"theFort", name:"The Fort", game:"New Vegas", faction:"legion", x:320, y:285, desc:"Caesar's Legion's camp across the river.", timeline:[
-    { year:"2281", event:"The Legion's seat of command in the east." }]},
-  { id:"campMccarran", name:"Camp McCarran", game:"New Vegas", faction:"ncr", x:255, y:258, desc:"The NCR's fortified airfield.", timeline:[
-    { year:"2281", event:"A hub for NCR supply and command." }]},
-  { id:"cottonwoodCove", name:"Cottonwood Cove", game:"New Vegas", faction:"legion", x:315, y:315, desc:"A Legion landing on the Colorado.", timeline:[
-    { year:"2281", event:"A crossing point for Legion forces." }]},
-  { id:"nelson", name:"Nelson", game:"New Vegas", faction:"legion", x:275, y:305, desc:"A town taken by the Legion.", timeline:[
-    { year:"2281", event:"Seized from the NCR as a foothold." }]},
-  { id:"jacobstown", name:"Jacobstown", game:"New Vegas", faction:"other", x:210, y:210, desc:"A mountain refuge for super mutants.", timeline:[
-    { year:"2281", event:"A haven seeking a cure for its own." }]},
-  { id:"blackMountain", name:"Black Mountain", game:"New Vegas", faction:"other", x:270, y:270, desc:"A radio-blaring peak ruled by mutants.", timeline:[
-    { year:"2281", event:"Held by a hostile nightkin broadcaster." }]},
-];
-function mapDetailPrompt(){
-  return `<div class="map-detail-empty">Select a marker to read its place in wasteland history.</div>`;
-}
-/* Wendover — the "you are here" home region (where the game is set). A prominent hero marker on the US
-   atlas; clicking it opens the regional overview. Coords in the 650×500 viewBox (UT–NV border, N of
-   the New Vegas cluster). */
-const MAP_HOME = { x:300, y:200, label:"WENDOVER" };
-const REGION_LANDMARKS = [
-  { id:"wendover", name:"Wendover", kind:"Settlement", x:174, y:367, labelX:174, labelY:344,
-    desc:"The western anchor of the region and the approach to the local game space." },
-  { id:"salt-flats", name:"Bonneville Salt Flats", kind:"Open terrain", x:530, y:299, labelX:530, labelY:276,
-    desc:"The broad salt plain crossed by the region's main east–west corridor." },
-  { id:"silver-islands", name:"Silver Island Mountains", kind:"High ground", x:257, y:144, labelX:257, labelY:170,
-    desc:"A northern high-ground landmark above the flats." },
-  { id:"salt-works", name:"Salt Works", kind:"Industrial site", x:632, y:555, labelX:632, labelY:582,
-    desc:"Southern industrial evaporation works, shown only as a regional orientation point." },
-];
+   One route and selector across the Wasteland Atlas's three scales: US,
+   Wendover region, local, all served by lib/atlas.mjs (mounted via
+   mountAtlasV2() below). MAP_SCOPES is the one piece of that original T86
+   design lib/atlas.mjs's own SCOPES (see its Phase 3.3 comment) mirrors 1:1
+   and app.js still owns: the app's route validates against it (applyRoute()
+   above) and its title/sub feed setAppHeading()/updateCrumb() (below). */
 const MAP_SCOPES = {
-  us:     { title:"Wasteland Atlas", sub:"Reference map of the old west — the places that shaped the wasteland. Select a marker." },
+  us:     { title:"Wasteland Atlas", sub:"The wasteland coast to coast: the places that shaped it, from California to the Commonwealth. Filter by game, or select a marker." },
   region: { title:"Wendover Region", sub:"A wider overview of the approaches, settlements, and routes around Wendover." },
-  local:  { title:"Wendover Local", sub:"The playable game space — landmark detail is shown at a closer scale." },
+  local:  { title:"Wendover Local", sub:"The playable game space: landmark detail is shown at a closer scale." },
 };
-let _mapScope="us";
-let _terrainApi=null, _terrainLoad=null, _terrainStartedAt=0;
-function terrainAsset(type, id, src){
-  const existing=document.getElementById(id);
-  if(existing && existing.dataset.ready==="1") return Promise.resolve(existing);
-  return new Promise((resolve,reject)=>{
-    const element=existing || document.createElement(type==="style" ? "link" : "script");
-    let timer;
-    const done=()=>{ clearTimeout(timer); element.dataset.ready="1"; resolve(element); };
-    const fail=()=>{ clearTimeout(timer); reject(new Error(`Could not load ${src}`)); };
-    element.id=id;
-    element.addEventListener("load",done,{once:true});
-    element.addEventListener("error",fail,{once:true});
-    if(!existing){
-      if(type==="style"){
-        element.rel="stylesheet"; element.href=src;
-        const appStyle=document.querySelector('link[href="styles.css"]');
-        (appStyle?.parentNode || document.head).insertBefore(element, appStyle || null);
-      }else{
-        element.src=src; element.defer=true; document.body.appendChild(element);
-      }
-    }
-    timer=setTimeout(fail,15000);
+/* ---- Wasteland Atlas v2 bridge (integration-plan.md Phase 4 TASK 1, Phase 5
+   the flip + reverse route sync) ---- */
+
+/* Reimplements lib/atlas.mjs's internal slug algorithms (PIN_SLUG/EVENT_SLUG)
+   so the app's own #map/us/<slug> and #map/event/<slug> route segments can
+   resolve to/from an atlas pin's *name* or an event's array *index*: what
+   handle.selectLoc()/selectEvent() take and what the 'select' handle event
+   reports: without lib/atlas.mjs needing to widen its returned handle past
+   {selectEvent,selectLoc,clearSel,destroy,on,setFilter,setScope}. Both maps
+   are built in both directions here (slug→name/index for forward routing,
+   name/index→slug for the reverse sync in mountAtlasV2() below) since the
+   handle exposes neither. */
+function atlasSlugify(s){
+  return String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") || "x";
+}
+function atlasPinSlugMaps(pins){
+  const slugToName={}, nameToSlug={}, used=new Set();
+  pins.forEach(p=>{
+    const base=atlasSlugify(p.name); let s=base, n=2;
+    while(used.has(s)) s=base+"-"+(n++);
+    used.add(s); slugToName[s]=p.name; nameToSlug[p.name]=s;
+  });
+  return {slugToName, nameToSlug};
+}
+function atlasEventSlugMaps(events){
+  const bySlug={}, byIndex=[], used=new Set();
+  events.forEach((e,i)=>{
+    const base=e.y+"-"+atlasSlugify(e.t); let s=base, n=2;
+    while(used.has(s)) s=base+"-"+(n++);
+    used.add(s); bySlug[s]=i; byIndex[i]=s;
+  });
+  return {bySlug, byIndex};
+}
+/* fetch + dynamic `import()` (app.js is a classic, non-module script, a
+   top-level `import` isn't legal here, so the module load has to happen
+   inside this async function) of lib/atlas.mjs and its four data files.
+   Memoised on _atlasV2.load so re-entering #map doesn't refetch. */
+async function loadAtlasV2(){
+  if(_atlasV2.load) return _atlasV2.load;
+  _atlasV2.load = (async()=>{
+    const fetchJSON = async name=>{
+      const res=await fetch("data/"+name);
+      if(!res.ok) throw new Error(name+": HTTP "+res.status);
+      return res.json();
+    };
+    const fetchText = async name=>{
+      const res=await fetch("data/"+name);
+      if(!res.ok) throw new Error(name+": HTTP "+res.status);
+      return res.text();
+    };
+    const [mod, pins, events, threadsFile, basemapSvg] = await Promise.all([
+      import("./lib/atlas.mjs"),
+      fetchJSON("atlas-pins.json"),
+      fetchJSON("atlas-events.json"),
+      fetchJSON("atlas-threads.json"),
+      fetchText("atlas-basemap.svg"),
+    ]);
+    const pinSlugs=atlasPinSlugMaps(pins), eventSlugs=atlasEventSlugMaps(events);
+    return {
+      mount: mod.mount,
+      pins, events,
+      threads: threadsFile.threads,
+      threadOrder: threadsFile.threadOrder,
+      basemapSvg,
+      slugToName: pinSlugs.slugToName,
+      nameToSlug: pinSlugs.nameToSlug,
+      eventSlugToIndex: eventSlugs.bySlug,
+      eventIndexToSlug: eventSlugs.byIndex,
+    };
+  })();
+  return _atlasV2.load;
+}
+/* Mount lib/atlas.mjs into its own container: the #map section's only map. */
+function mountAtlasV2(){
+  const host=$("#map-atlas-v2"); if(!host) return;
+  if(_atlasV2.handle) return;   // already mounted from an earlier visit this session
+  host.setAttribute("aria-busy","true");
+  loadAtlasV2().then(data=>{
+    // guard against a slow fetch resolving after the user navigated away
+    // (teardownAtlasV2() clears _atlasV2.handle) or a second mountAtlasV2()
+    // call already won the race
+    if(_atlasV2.handle) return;
+    // mapId avoids a real id collision: <section id="map"> (index.html) already owns
+    // that id, and lib/atlas.mjs's default would give its inner base-map SVG the same
+    // one, document.getElementById('map') would then silently resolve to the section,
+    // not the SVG (found via a failing integration test asserting on the viewBox).
+    _atlasV2.handle = data.mount(host, data, { hashRouting:false, mapId:"atlas-map" });
+    _atlasV2.slugToName = data.slugToName;
+    _atlasV2.nameToSlug = data.nameToSlug;
+    _atlasV2.eventSlugToIndex = data.eventSlugToIndex;
+    _atlasV2.eventIndexToSlug = data.eventIndexToSlug;
+    // Reverse route sync: opts.hashRouting stays false (the app owns the hash,
+    // see the field doc comment on _atlasV2's declaration), so scope switches and
+    // pin/event selection made INSIDE the mounted atlas (clicking a scope button,
+    // a pin, or a timeline dot, never a URL change) would otherwise never reach
+    // location.hash at all, unlike the old map's own tab handler which pushed the
+    // hash both ways. Mirror the atlas's state into _atlasV2 and let mapRoute()/
+    // writeRoute() (above) do the actual write, same replaceState-only,
+    // no-history-flood behaviour lib/atlas.mjs's own (disabled) writeHash() uses,
+    // just through the app's one router instead of a second one. Attached before
+    // the pendingRoute replay below so a route that gets "repaired" (an unknown
+    // slug) still corrects the URL to match what actually applied.
+    _atlasV2.handle.on("scope", ({scope})=>{ _atlasV2.scope=scope; writeRoute(); });
+    _atlasV2.handle.on("select", sel=>{ _atlasV2.selection=sel; writeRoute(); });
+    host.removeAttribute("aria-busy");
+    if(_atlasV2.pendingRoute){ const r=_atlasV2.pendingRoute; _atlasV2.pendingRoute=null; applyAtlasV2Route(r); }
+  }).catch(err=>{
+    console.error("Wasteland Atlas v2 failed to load", err);
+    host.removeAttribute("aria-busy");
+    host.innerHTML = `<p class="map-atlas-error">Couldn't load the Wasteland Atlas. See the console for details.</p>`;
   });
 }
-function markTerrainFailure(scope, error){
-  const panel=$("#map-panel-"+scope);
-  if(panel){ panel.classList.remove("terrain-ready"); panel.classList.add("terrain-failed"); }
-  if(error) console.warn("Enhanced terrain unavailable; retained SVG map.", error);
+/* Undo mountAtlasV2(): called from setSection() when the app navigates away
+   from #map, so lib/atlas.mjs's document/window listeners (keydown, resize,
+   pointer drag) don't leak once the section is hidden. Resets the reverse-sync
+   mirror too, so a fresh mount's boot state (scope 'us', no selection) isn't
+   shadowed by whatever the previous mount last reported. */
+function teardownAtlasV2(){
+  if(_atlasV2.handle){ try{ _atlasV2.handle.destroy(); }catch(e){} _atlasV2.handle=null; }
+  _atlasV2.pendingRoute=null;
+  _atlasV2.scope="us"; _atlasV2.selection={type:"clear"};
+  const host=$("#map-atlas-v2"); if(host) host.innerHTML="";
 }
-function ensureTerrainRenderer(){
-  if(_terrainLoad) return _terrainLoad;
-  _terrainStartedAt=performance.now();
-  _terrainLoad=Promise.all([
-    terrainAsset("style","maplibre-style","vendor/maplibre/maplibre-gl.css"),
-    terrainAsset("script","maplibre-script","vendor/maplibre/maplibre-gl.js"),
-  ]).then(()=>terrainAsset("script","map-terrain-script","map-terrain.js"))
-    .then(()=>{
-      if(!window.OracularTerrain) throw new Error("Terrain adapter did not initialise");
-      _terrainApi=window.OracularTerrain.init({
-        locations:MAP_LOCATIONS,
-        factions:MAP_FACTIONS,
-        onUsSelect:showMapDetail,
-        onRegionSelect:showTerrainRegionDetail,
-        onOpenRegion:()=>setMapScope("region"),
-        startedAt:_terrainStartedAt,
-      });
-      return _terrainApi;
-    })
-    .catch(error=>{ markTerrainFailure(_mapScope,error); return null; });
-  return _terrainLoad;
-}
-function requestTerrainScope(scope){
-  if(scope!=="us" && scope!=="region") return;
-  ensureTerrainRenderer().then(api=>{
-    if(api) api.show(scope);
-    else markTerrainFailure(scope);
-  });
-}
-function setMapScope(scope, opts={}){
-  scope=MAP_SCOPES[scope] ? scope : "us";
-  _mapScope=scope;
-  const modes=$(".map-modes");
-  if(modes) modes.querySelectorAll("button").forEach(x=>{ const on=x.dataset.mapscope===scope; x.classList.toggle("active",on); x.setAttribute("aria-selected", on?"true":"false"); });
-  document.querySelectorAll("#map .map-panel").forEach(x=>x.classList.toggle("hidden", x.id!=="map-panel-"+scope));
-  const meta=MAP_SCOPES[scope], title=$(".map-title"), sub=$("#map-sub");
-  if(title) title.textContent=meta.title;
-  if(sub) sub.textContent=meta.sub;
-  if(currentSection==="map"){
-    setAppHeading();
-    if(opts.route!==false) writeRoute();
-    requestTerrainScope(scope);
+/* Apply a #map route to the mounted v2 atlas via its handle, called from
+   applyRoute() above. `r` is parseRoute()'s parsed route: r.target is either
+   a scope ("us"/"region"/"local", matching both MAP_SCOPES and lib/atlas.mjs's
+   own SCOPES stubs 1:1) or the literal "event" (a selection kind, not a scope:
+   see applyRoute()'s own r.target check), and r.sub is the pin/event slug
+   segment. If the atlas isn't mounted yet (async load still in flight), the
+   route is queued on _atlasV2.pendingRoute and replayed once mountAtlasV2()
+   finishes. Each handle call below emits its own 'scope'/'select' event,
+   which mountAtlasV2()'s listeners mirror straight back into _atlasV2; so
+   this function only ever needs to drive the atlas forward, never write
+   location.hash itself. */
+function applyAtlasV2Route(r){
+  if(!_atlasV2.handle){ _atlasV2.pendingRoute=r; return; }
+  const scope = (r.target && MAP_SCOPES[r.target]) ? r.target : "us";
+  _atlasV2.handle.setScope(scope, false);
+  if(scope!=="us") return;   // selection only applies in the US scope, same as the old map
+  if(r.target==="event"){
+    const idx = r.sub && _atlasV2.eventSlugToIndex && _atlasV2.eventSlugToIndex[r.sub];
+    if(idx!=null) _atlasV2.handle.selectEvent(idx);
+    // unresolved event slug: leave selection as-is, same treatment as an
+    // unresolved pin slug below (the id-space note on atlasPinSlugMaps applies
+    // here too, nothing currently produces an event slug that wouldn't resolve,
+    // but a future data edit reordering/removing events could).
+    return;
   }
+  const name = r.sub && _atlasV2.slugToName && _atlasV2.slugToName[r.sub];
+  if(name) _atlasV2.handle.selectLoc(name);
+  else if(r.sub) { /* unresolved id: leave selection as-is, see atlasPinSlugMaps's doc comment */ }
+  else _atlasV2.handle.clearSel();
 }
+
 function renderMap(){
-  const pinsG = $("#map-pins"); if(!pinsG) return;
-  pinsG.innerHTML = MAP_LOCATIONS.map(loc=>{
-    const fac = MAP_FACTIONS[loc.faction] || MAP_FACTIONS.other;
-    return `<g class="map-pin ${fac.cls}" data-id="${escAttr(loc.id)}" tabindex="0" role="button" aria-label="${escAttr(loc.name)}">`
-      + `<circle class="map-pin-hit" cx="${loc.x}" cy="${loc.y}" r="10"/>`
-      + `<circle class="map-pin-ring" cx="${loc.x}" cy="${loc.y}" r="6"/>`
-      + `<circle class="map-pin-dot" cx="${loc.x}" cy="${loc.y}" r="3.2"/>`
-      + `</g>`;
-  }).join("")
-  // the Wendover hero marker (rendered last → on top). Pulsing ring + label; click → regional overview.
-  + `<g class="map-home" data-home="1" tabindex="0" role="button" aria-label="Wendover — you are here. Open the regional map.">`
-    + `<circle class="map-home-hit" cx="${MAP_HOME.x}" cy="${MAP_HOME.y}" r="16"/>`
-    + `<circle class="map-home-pulse" cx="${MAP_HOME.x}" cy="${MAP_HOME.y}" r="7"/>`
-    + `<circle class="map-home-dot" cx="${MAP_HOME.x}" cy="${MAP_HOME.y}" r="5"/>`
-    + `<text class="map-home-label" x="${MAP_HOME.x}" y="${MAP_HOME.y-14}" text-anchor="middle">${esc(MAP_HOME.label)}</text>`
-  + `</g>`;
-  const leg = $("#map-legend");
-  if(leg) leg.innerHTML = `<div class="map-legend-title">Allegiance</div>`
-    + Object.values(MAP_FACTIONS).map(f=>`<span class="map-legend-item"><span class="map-legend-swatch ${f.cls}"></span>${esc(f.label)}</span>`).join("")
-    + `<span class="map-legend-note terrain-credit">Relief: USGS 3DEP · coast and water: Natural Earth · public domain.</span>`
-    + `<span class="map-legend-note terrain-fallback-note">Enhanced terrain unavailable — using the SVG atlas.</span>`;
-  const det = $("#map-detail");
-  if(det && !det.dataset.sel) det.innerHTML = mapDetailPrompt();
-  else if(det && det.dataset.sel) showMapDetail(det.dataset.sel);   // keep the selection across re-renders
-  renderRegionMap();
-}
-function showMapDetail(id){
-  const loc = MAP_LOCATIONS.find(l=>l.id===id), det=$("#map-detail"); if(!loc || !det) return;
-  const fac = MAP_FACTIONS[loc.faction] || MAP_FACTIONS.other;
-  det.dataset.sel = id;
-  det.innerHTML =
-      `<div class="map-detail-head"><span class="map-detail-dot ${fac.cls}"></span><h3 class="map-detail-name">${esc(loc.name)}</h3></div>`
-    + `<div class="map-detail-meta">${esc(loc.game)} · ${esc(fac.label)}</div>`
-    + `<p class="map-detail-desc">${esc(loc.desc)}</p>`
-    + (loc.timeline && loc.timeline.length
-        ? `<ul class="map-timeline">` + loc.timeline.map(t=>`<li><span class="map-tl-year">${esc(t.year)}</span><span class="map-tl-event">${esc(t.event)}</span></li>`).join("") + `</ul>`
-        : "")
-    + `<button type="button" class="btn map-detail-clear">◂ All markers</button>`;
-  document.querySelectorAll('#map-pins .map-pin').forEach(p=>p.classList.toggle('sel', p.dataset.id===id));
-  _terrainApi?.select("us",id);
-}
-function clearMapDetail(){
-  const det=$("#map-detail"); if(!det) return;
-  delete det.dataset.sel; det.innerHTML = mapDetailPrompt();
-  document.querySelectorAll('#map-pins .map-pin.sel').forEach(p=>p.classList.remove('sel'));
-  _terrainApi?.select("us",null);
-}
-function regionDetailPrompt(){
-  return `<div class="map-detail-empty">Select a landmark to orient yourself in the wider region.</div>`;
-}
-function renderRegionMap(){
-  const pinsG=$("#map-region-pins"); if(!pinsG) return;
-  pinsG.innerHTML=REGION_LANDMARKS.map(loc=>
-    `<g class="map-pin pin-other" data-id="${escAttr(loc.id)}" tabindex="0" role="button" aria-label="${escAttr(loc.name)}">`
-      +`<circle class="map-pin-hit" cx="${loc.x}" cy="${loc.y}" r="20"/>`
-      +`<circle class="map-pin-ring" cx="${loc.x}" cy="${loc.y}" r="9"/>`
-      +`<circle class="map-pin-dot" cx="${loc.x}" cy="${loc.y}" r="4.4"/>`
-      +`<text class="map-region-pin-label" x="${loc.labelX}" y="${loc.labelY}" text-anchor="middle">${esc(loc.name)}</text>`
-    +`</g>`).join("");
-  const det=$("#map-region-detail");
-  if(det && !det.dataset.sel) det.innerHTML=regionDetailPrompt();
-  else if(det && det.dataset.sel) showRegionDetail(det.dataset.sel);
-}
-function showRegionDetail(id){
-  const loc=REGION_LANDMARKS.find(x=>x.id===id), det=$("#map-region-detail"); if(!loc || !det) return;
-  det.dataset.sel=id;
-  det.innerHTML=`<div class="map-detail-head"><span class="map-detail-dot pin-other"></span><h3 class="map-detail-name">${esc(loc.name)}</h3></div>`
-    +`<div class="map-detail-meta">${esc(loc.kind)} · Regional orientation</div>`
-    +`<p class="map-detail-desc">${esc(loc.desc)}</p>`
-    +`<button type="button" class="btn map-region-clear">◂ All landmarks</button>`;
-  document.querySelectorAll("#map-region-pins .map-pin").forEach(p=>p.classList.toggle("sel", p.dataset.id===id));
-  _terrainApi?.select("region",null);
-}
-function showTerrainRegionDetail(location){
-  const det=$("#map-region-detail"); if(!location || !det) return;
-  const body=location.terminal_entry?.body || [];
-  const confidence=location.source_confidence || location.placement?.status || "provisional";
-  det.dataset.sel=location.id;
-  det.innerHTML=`<div class="map-detail-head"><span class="map-detail-dot pin-other"></span><h3 class="map-detail-name">${esc(location.name)}</h3></div>`
-    +`<div class="map-detail-meta">${esc(String(location.type||"landmark").replaceAll("_"," "))} · ${esc(confidence)} confidence</div>`
-    +(body.length ? body.slice(0,2).map(text=>`<p class="map-detail-desc">${esc(text)}</p>`).join("") : `<p class="map-detail-desc">Reviewed regional orientation point.</p>`)
-    +`<button type="button" class="btn map-region-clear">◂ All landmarks</button>`;
-  _terrainApi?.select("region",location.id);
-}
-function clearRegionDetail(){
-  const det=$("#map-region-detail"); if(!det) return;
-  delete det.dataset.sel; det.innerHTML=regionDetailPrompt();
-  document.querySelectorAll("#map-region-pins .map-pin.sel").forEach(p=>p.classList.remove("sel"));
-  _terrainApi?.select("region",null);
+  mountAtlasV2();
 }
 
 /* ============================ COMMUNITY CONTENT ================================================
@@ -4111,7 +4573,7 @@ function storyComposerHTML(){
     `<div class="story-workspace"><label class="story-editor-label">Markdown<textarea id="story-markdown" name="markdown" required placeholder="# Title\n\nWrite with **bold**, *italics*, lists, quotes, and [links](https://…).">${esc(body)}</textarea></label>`+
       `<section class="story-preview" aria-label="Markdown preview"><div class="story-preview-label">Preview</div><div class="story-markdown" id="story-preview">${renderStoryMarkdown(body)}</div></section></div>`+
     `<div class="story-form-actions"><span class="story-format-hint">Markdown: headings · emphasis · lists · quotes · links · code</span>`+
-      `<button class="btn story-save" type="submit">${existing?'Save changes':'＋ Add story'}</button></div></form>`;
+      `<button class="btn story-save" type="submit">${existing?'Save changes':'Add story'}</button></div></form>`;
 }
 function renderStoriesSection(){
   if(!eventDocuments().some(d=>d.id===_storyEventId)) _storyEventId=eventDocuments()[0]?.id||"";
@@ -4119,19 +4581,22 @@ function renderStoriesSection(){
   const selected=rows.find(s=>s.id===_storySelectedId);
   const list=rows.length ? rows.map(s=>`<button class="story-row${s.id===_storySelectedId?' active':''}" type="button" data-story-id="${escAttr(s.id)}">`+
       `<span><strong>${esc(s.title)}</strong><small>${esc(storyDate(s.updatedAt))}</small></span><span aria-hidden="true">›</span></button>`).join("")
-    : `<div class="community-empty"><span class="community-empty-mark">＋</span><h3>No stories for this event yet</h3><p>Add a finished Markdown story when it is ready.</p></div>`;
+    : `<div class="community-empty"><h3>No stories for this event yet</h3><p>Use <strong>Add a story</strong> above when a finished Markdown story is ready.</p></div>`;
   const detail=selected ? `<article class="story-detail"><header><div><span class="community-kicker">Local story</span><h3>${esc(selected.title)}</h3><p>${esc(storyDate(selected.updatedAt))}</p></div>`+
       `<div class="story-detail-actions"><button class="btn story-copy" type="button" data-story-id="${escAttr(selected.id)}">Copy Markdown</button>`+
       `<button class="btn story-edit" type="button" data-story-id="${escAttr(selected.id)}">Edit</button><button class="btn story-delete" type="button" data-story-id="${escAttr(selected.id)}">Delete</button></div></header>`+
       `<div class="story-markdown">${renderStoryMarkdown(selected.body)}</div></article>` : "";
   return `<div class="community-story-picker"><h2 class="community-subhead">Choose an event</h2><div class="community-grid community-event-grid">${communityCards("events",eventDocuments(),"events")}</div></div>`+
     (_storyDraftId ? storyComposerHTML() : `<div class="community-writing-note"><strong>Finished work only.</strong> Draft and revise in a dedicated writing tool, then paste the final Markdown here. Stories are local to this browser until copied elsewhere.</div>`)+
-    `<div class="story-library"><div class="story-list"><h2 class="community-subhead">Stories</h2>${list}</div><div class="story-reading">${detail||`<div class="community-empty community-empty--reading"><p>Select a story to read it here.</p></div>`}</div></div>`;
+    `<sub-sidebar class="story-library" side-width="clamp(230px,26%,310px)" content-min="55%" gap="0">`+
+      `<div slot="side" class="story-list"><h2 class="community-subhead">Stories</h2>${list}</div>`+
+      `<div class="story-reading">${detail||`<div class="community-empty community-empty--reading"><p>Select a story to read it here.</p></div>`}</div>`+
+    `</sub-sidebar>`;
 }
 function renderCommunitySection(section){
   const el=$("#community"), collection=communityCollection(section); if(!el||!collection) return;
   el.dataset.community=section; el.setAttribute("aria-label",collection.label);
-  const add=section==="stories" ? `<button class="btn community-add" type="button" aria-label="Add a short story">＋ Add story</button>` : "";
+  const add=addButtonHTML(section);   // one renderer; the registry decides which sections get one
   const body=section==="stories" ? renderStoriesSection()
     : `<div class="community-grid">${communityCards(section,collection.documents||[],"documents")}</div>`;
   el.innerHTML=`<header class="community-head"><div><span class="community-kicker">Community archive</span><h2>${esc(collection.label)}</h2><p>${esc(collection.intro)}</p></div>${add}</header>${body}`;
@@ -4160,7 +4625,7 @@ communityView.addEventListener("click",e=>{
   if(docButton){ const doc=communityDocument(docButton.dataset.communitySection,docButton.dataset.communityDoc); if(doc) showCommunityDocument(docButton.dataset.communitySection,doc); return; }
   const eventButton=e.target.closest(".community-event-pick");
   if(eventButton){ _storyEventId=eventButton.dataset.eventId; _storySelectedId=null; _storyDraftId=null; renderCommunitySection("stories"); writeRoute(); return; }
-  if(e.target.closest(".community-add")){ _storyDraftId="new"; renderCommunitySection("stories"); $("#story-title")?.focus(); return; }
+
   if(e.target.closest(".story-cancel")){ _storyDraftId=null; renderCommunitySection("stories"); return; }
   const storyRow=e.target.closest(".story-row");
   if(storyRow){ _storySelectedId=storyRow.dataset.storyId; _storyDraftId=null; renderCommunitySection("stories"); return; }
@@ -4196,6 +4661,11 @@ function setSection(id){
   if(id!=="roster" && id!=="relations") cancelRosterLoad();
   if(id!=="wiki") cancelWikiLoad();
   exitDocFocus();                          // leaving/entering any view drops the reader's focus mode
+  // leaving #map while the atlas is mounted: destroy() its listeners before the
+  // section's DOM is torn down/hidden, so nothing leaks (integration-plan.md Phase 4 TASK 1).
+  // Checked via the handle rather than the old-section value below, it's only ever
+  // truthy while the atlas is actually mounted, which implies the section was "map".
+  if(_atlasV2.handle && id!=="map") teardownAtlasV2();
   currentSection = id;
   document.body.setAttribute("data-section", id);
   document.querySelectorAll("#topnav .navtab").forEach(b=>{
@@ -4231,7 +4701,6 @@ function setSection(id){
     $("#state").classList.add("hidden");
   }else if(isMap){
     renderMap();
-    requestTerrainScope(_mapScope);
     $("#roster").classList.add("hidden");
     $("#cards").classList.add("hidden");
     $("#state").classList.add("hidden");
@@ -4252,26 +4721,79 @@ function setSection(id){
   setAppHeading();
   writeRoute();   // reflect the section in the URL (character/heading is added by its own handler)
 }
-/* the page's single H1 (sr-only) — describes the current view for screen readers */
+/* the page's single H1 (sr-only): describes the current view for screen readers */
 function setAppHeading(){
   updateCrumb();
   const h=$("#app-h1"); if(!h) return;
   const umbrella=umbrellaSection(currentSection);
-  if(umbrella){ h.textContent="Misfits Database — "+(currentSection==="map" ? MAP_SCOPES[_mapScope].title : umbrella.label); return; }
+  if(umbrella){ h.textContent="Misfits Database: "+(currentSection==="map" ? MAP_SCOPES[_atlasV2.scope].title : umbrella.label); return; }
   const section=factionSection(currentSection);
-  h.textContent = activeFaction().name + " — " + (section ? section.label : currentSection);
+  h.textContent = activeFaction().name + ": " + (section ? section.label : currentSection);
 }
-/* the status-bar breadcrumb (left zone) — echoes the current location (the H1 is the a11y source). */
+/* the status-bar breadcrumb (left zone), echoes the current location (the H1 is the a11y source). */
+/* The trail as ORDERED SEGMENTS, broadest first. Every segment but the last is a
+   place the reader can go UP to.
+   Up is not Back. Back retraces history: arrive here from a search and Back
+   returns to the search. Up moves through the hierarchy. The browser already
+   provides Back; this provides the other one. */
+function crumbSegments(){
+  if(currentSection==="home") return [{label:"Misfits Database"}];
+  if(currentSection==="map") return [{label:"Map"},{label:MAP_SCOPES[_atlasV2.scope].title}];
+  if(currentSection==="wiki"){
+    const segs=[{label:"Wiki", href:"#wiki"}];
+    const parent=wikiParent(_wikiPage);
+    // A category is not a page, so it has no route of its own, it opens the Wiki
+    // Map and reveals that section. An action, honestly rendered as a button.
+    if(parent) segs.push({label:parent, act:"cat:"+parent});
+    segs.push({label:String(_wikiPage||WIKI.home).replace(/_/g," ")+(_wikiFailed?" (unavailable)":"")});
+    return segs;
+  }
+  if(communityCollection(currentSection)){
+    const c=communityCollection(currentSection);
+    return _communityDoc ? [{label:c.label, href:"#"+currentSection},{label:_communityDoc.label}] : [{label:c.label}];
+  }
+  const section=factionSection(currentSection);
+  return [{label:activeFaction().name, href:"#"+currentFaction+"/roster"},
+          {label:section ? section.label : currentSection}];
+}
 function updateCrumb(){
   const el=$("#sb-crumb"); if(!el) return;
-  let c;
-  if(currentSection==="home") c="Misfits Database";
-  else if(currentSection==="map") c="Map ▸ "+MAP_SCOPES[_mapScope].title;
-  else if(currentSection==="wiki") c="Wiki ▸ " + String(_wikiPage||WIKI.home).replace(/_/g," ");
-  else if(communityCollection(currentSection)) c=communityCollection(currentSection).label+(_communityDoc ? " ▸ "+_communityDoc.label : "");
-  else{ const section=factionSection(currentSection);
-    c = activeFaction().name + " ▸ " + (section ? section.label : currentSection); }
-  el.textContent = c;
+  const segs=crumbSegments();
+  el.innerHTML = segs.map((s,i)=>{
+    const last=i===segs.length-1;
+    const inner=esc(s.label);
+    // aria-current marks where the reader IS; it is never a link to itself.
+    if(last) return `<li class="sb-seg" aria-current="page">${inner}</li>`;
+    if(s.href) return `<li class="sb-seg"><a class="sb-up" href="${escAttr(s.href)}">${inner}</a></li>`;
+    return `<li class="sb-seg"><button class="sb-up" type="button" data-act="${escAttr(s.act)}">${inner}</button></li>`;
+  }).join("");
+}
+/* Category segment → open the Wiki Map and reveal that section. */
+$("#sb-crumb").addEventListener("click", e=>{
+  const b=e.target.closest("button[data-act]"); if(!b) return;
+  const act=b.dataset.act||"";
+  if(!act.startsWith("cat:")) return;
+  _wikiRevealCat = act.slice(4);
+  if(_wikiPage===WIKI.home && currentSection==="wiki") revealSitemapCategory();
+  else location.hash = "#wiki";                                  // loadWiki → sitemap → reveal
+});
+let _wikiRevealCat = null;
+/* Scroll the Wiki Map to a category and flag it, so arriving from the trail lands
+   the reader ON the thing they asked for rather than at the top of a long map. */
+function revealSitemapCategory(){
+  const want=_wikiRevealCat; if(!want) return;
+  const head=[...document.querySelectorAll(".sitemap-sec-head")]
+    .find(h=>h.textContent.replace(/\d+$/,"").trim()===want);
+  if(!head) return;                                              // map not rendered yet: appendWikiSitemap retries
+  _wikiRevealCat=null;
+  const sec=head.closest(".sitemap-sec");
+  sec.classList.add("sitemap-sec--revealed");
+  // The sitemap lives inside #docscroll, which has ONE scroll owner (see the
+  // coordinator above). scrollIntoView() would move the page and any scrollable
+  // ancestor too, and hardcoding a smooth behaviour would override the app's
+  // Reduce Motion preference: scrollDocTarget respects both.
+  scrollDocTarget(sec, {block:"center"});
+  setTimeout(()=>sec.classList.remove("sitemap-sec--revealed"), 2200);
 }
 $("#topnav").addEventListener("click", e=>{
   const b=e.target.closest(".navtab"); if(b) setSection(b.dataset.section);
@@ -4280,33 +4802,16 @@ $("#topnav").addEventListener("click", e=>{
 $(".titlebar").addEventListener("click", e=>{
   const b=e.target.closest(".navbox"); if(b) setSection(b.dataset.section);
 });
-/* MAP pins: click / Enter / Space on a marker opens its detail; the Wendover marker opens Region. */
-(function wireMap(){
-  const svg=$("#map-svg"); if(!svg) return;
-  const hit=e=>{ const h=e.target.closest(".map-home"); if(h){ setMapScope("region"); return true; }
-                 const p=e.target.closest(".map-pin"); if(p){ showMapDetail(p.dataset.id); return true; } return false; };
-  svg.addEventListener("click", hit);
-  svg.addEventListener("keydown", e=>{ if((e.key==="Enter"||e.key===" ") && hit(e)) e.preventDefault(); });
-  const side=$(".map-side");
-  if(side) side.addEventListener("click", e=>{ if(e.target.closest(".map-detail-clear")) clearMapDetail(); });
-  const regionSvg=$("#map-region-svg");
-  const regionHit=e=>{ const p=e.target.closest(".map-pin"); if(p){ showRegionDetail(p.dataset.id); return true; } return false; };
-  if(regionSvg){
-    regionSvg.addEventListener("click", regionHit);
-    regionSvg.addEventListener("keydown", e=>{ if((e.key==="Enter"||e.key===" ") && regionHit(e)) e.preventDefault(); });
-  }
-  const regionSide=$("#map-region-side");
-  if(regionSide) regionSide.addEventListener("click", e=>{ if(e.target.closest(".map-region-clear")) clearRegionDetail(); });
-  // Scope pill → one route-aware map selector.
-  const modes=$(".map-modes");
-  if(modes) modes.addEventListener("click", e=>{ const b=e.target.closest("[data-mapscope]"); if(b) setMapScope(b.dataset.mapscope); });
-})();
-/* home landing: a faction cell (left) SELECTS the faction — re-skins + re-renders home so the right
+/* home landing: a faction cell (left) SELECTS the faction, re-skins + re-renders home so the right
    column shows that faction's sections, without leaving home. Faction and umbrella cards navigate
    through the same section router. */
 $("#home").addEventListener("click", e=>{
-  const fac=e.target.closest(".home-fac"); if(fac){ applyFaction(fac.dataset.faction); return; }
-  const sec=e.target.closest(".home-sec, .home-umbrella-card"); if(sec) setSection(sec.dataset.section);
+  const fac=e.target.closest(".home-fac, .atlas-fac"); if(fac){ applyFaction(fac.dataset.faction); return; }
+  // guard on data-section: the wiki facet cards share styling with their siblings but are real
+  // <a href="#wiki/…"> elements that navigate through the hash router on their own. Without the guard
+  // this would call setSection(undefined), which silently lands on the roster.
+  const sec=e.target.closest(".home-sec, .home-umbrella-card, .atlas-dest, .atlas-facet");
+  if(sec && sec.dataset.section) setSection(sec.dataset.section);
 });
 /* prefetch a doc the moment its tab is hovered or focused (just-in-time cache warming) */
 ["pointerover","focusin"].forEach(ev => $("#topnav").addEventListener(ev, e=>{
@@ -4314,7 +4819,7 @@ $("#home").addEventListener("click", e=>{
   const doc=factionDocs().find(d=>d.id===b.dataset.section); if(doc) prefetchDoc(doc.docId);
 }));
 /* on doc scroll: back-to-top visibility + sticky section / sidebar tracking (rAF-throttled)
-   + the image-hydration fallback pass (timestamp-throttled — NOT rAF, which is suspended
+   + the image-hydration fallback pass (timestamp-throttled, NOT rAF, which is suspended
    in hidden tabs; scroll events still fire there) */
 let docScrollTick=false, _hydLast=0;
 $("#docscroll").addEventListener("scroll", ()=>{
@@ -4334,7 +4839,7 @@ $("#docreader").addEventListener("click", e=>{
   const frag=a.getAttribute("href").slice(1);
   const reader=$("#docreader");
   let target = frag && [...reader.querySelectorAll("[id]")].find(el=>el.id===frag);
-  if(!target){                                          // Docs sometimes exports a bare "#" — match heading by text
+  if(!target){                                          // Docs sometimes exports a bare "#", match heading by text
     const txt=a.textContent.trim().toLowerCase();
     target=[...reader.querySelectorAll("h1,h2,h3,h4")].find(h=>h.textContent.trim().toLowerCase()===txt);
   }
@@ -4387,7 +4892,7 @@ $("#refresh").addEventListener("click", ()=>load(true));
 const SETTINGS_GLOBAL_KEYS = [
   "mdb-font","mdb-font-head","mdb-font-body","mdb-docfont-title","mdb-docfont-head","mdb-docfont-body",
   "mdb-color","mdb-bg","mdb-textsize","mdb-frame","mdb-frametint","mdb-sheen","mdb-crt",
-  "mdb-dosspanel","mdb-rosterfilters","mdb-cards","mdb-imgcolor","mdb-bezel","mdb-docwidth","mdb-contrast","mdb-reducemotion",
+  "mdb-dosspanel","mdb-rosterfilters","mdb-docconn","mdb-cards","mdb-imgcolor","mdb-bezel","mdb-docwidth","mdb-contrast","mdb-reducemotion",
 ];
 const SETTINGS_FACTION_KEY = /^mdb-(?:color|bg|font-head|font-body)-/;
 function clearSettingPreferences(){
@@ -4408,6 +4913,7 @@ $("#reset-settings").addEventListener("click", ()=>{
   applyColor(_defaultAppearance.color,false); applyBg(_defaultAppearance.bg,false);
   applyFrame("screen",false); applyFrameTint("olive",false); applyGlass("off",false); applyDossPanel("on",false);
   applyRosterFilters("off",false);
+  applyDocConn("on",false);
   applyCards("auto",false); applyImgColor("screen",false); applyBezel("off",false); applyDocWidth("medium",false);
   document.body.classList.add("crt");
   $("#crt-toggle").textContent="Scanlines: ON"; $("#crt-toggle").classList.add("active");
@@ -4555,11 +5061,11 @@ function cancelRosterLoad(){
 }
 async function load(isRefresh){
   cancelRosterLoad();
-  const request=_rosterRequest, faction=currentFaction, sheet=effectiveSheetId(), url=sheetUrl();
+  const request=_rosterRequest, faction=currentFaction, sheet=sheetIdent(), url=sheetUrl();
   // A refresh may preserve only data owned by this exact sheet. A model left in memory from a
   // different faction is useful if the user goes back, but it is not a valid fallback for this load.
   const preserveLastGood=!!(isRefresh && state.model && state.loadedSheet===sheet);
-  const isCurrent=()=>request===_rosterRequest && faction===currentFaction && sheet===effectiveSheetId();
+  const isCurrent=()=>request===_rosterRequest && faction===currentFaction && sheet===sheetIdent();
   const ctrl=new AbortController(); _rosterController=ctrl;
   document.body.classList.remove("coming-soon");
   const _main=document.querySelector("main"); if(_main) _main.setAttribute("aria-busy","true");   // a11y: fetching
@@ -4591,8 +5097,8 @@ async function load(isRefresh){
     if(!isCurrent()) return;                                  // aborted/stale failures stay silent
     setLink("OFFLINE", true);
     // a failed REFRESH keeps the last good roster on screen (don't blank working data
-    // over a transient network error) — the full error state is for first load only
-    if(preserveLastGood){ toast("Refresh failed ("+err.message+") — showing the last good data."); return; }
+    // over a transient network error), the full error state is for first load only
+    if(preserveLastGood){ toast("Refresh failed ("+err.message+"): showing the last good data."); return; }
     showState("", `Could not read the sheet (<code>${esc(err.message)}</code>).<br><br>
       Make sure the Google Sheet is shared <b>“Anyone with the link → Viewer”</b>.
       Then hit <b>⟳ Refresh</b>. Nothing is ever written back to the sheet.`, true);
@@ -4611,7 +5117,7 @@ async function load(isRefresh){
    in startDocLoader, but linear 0->100% once, not ping-pong) -> type-on "ONLINE" ->
    fade. No live data (the sheet hasn't loaded yet at this point in init(), and keeping
    the sequence self-contained keeps its ~3.3s timing deterministic regardless of
-   network conditions). Generic RobCo-terminal styling only — no Vault-Tec/Vault-Boy
+   network conditions). Generic RobCo-terminal styling only: no Vault-Tec/Vault-Boy
    art, this ships on a public site. Skippable (click/any key) at every step; a hard
    safety timeout guarantees it can never trap the user even if a step's logic stalls. */
 function runBoot(){
@@ -4637,7 +5143,7 @@ function runBoot(){
 
   const CHECKS=["MEMORY CHECK".padEnd(20,".")+"OK","ARCHIVE LINK".padEnd(20,".")+"OK","SUBSYSTEMS".padEnd(20,".")+"OK"];
   // three ordered zones, each rendered in its own typeface: preLines (branding, plain
-  // --font-head) -> monoLines (self-test + sweep bar, forced true monospace — same
+  // --font-head) -> monoLines (self-test + sweep bar, forced true monospace, same
   // reasoning .docload forces a real monospace rather than trusting --font-head, which
   // can be an uneven pixel face) -> postLines ("ONLINE", plain again). monoLines is
   // frozen once the sweep completes, so it never re-flows/snaps once typing resumes.
@@ -4662,7 +5168,7 @@ function runBoot(){
   })();
 
   // step 2: a quick self-test readout, lines revealed with a short stagger (a POST
-  // screen doesn't type each character — it blips lines in) rather than typed
+  // screen doesn't type each character: it blips lines in) rather than typed
   function selfTest(){
     let i=0;
     (function next(){
@@ -4673,7 +5179,7 @@ function runBoot(){
     })();
   }
 
-  // step 3: one-shot sweep bar, linear 0->100%. Narrower on phones — #boot's 8vw side
+  // step 3: one-shot sweep bar, linear 0->100%. Narrower on phones: #boot's 8vw side
   // padding plus a 30-char bar doesn't fit a 375px viewport (verified: wraps the "]100%"
   // onto its own line). 20 chars comfortably fits down to 375px with margin.
   function sweep(){
@@ -4696,7 +5202,7 @@ function runBoot(){
 
   // step 4: type the final "online" line, brief pause, then fade
   function finalLine(){
-    const text="MISFITS DATABASE — ONLINE";
+    const text="MISFITS DATABASE: ONLINE";
     let ci2=0;
     (function typeFinal(){
       if(done) return;
@@ -4727,7 +5233,7 @@ function runBoot(){
   if(_gB && !localStorage.getItem(fkey("font-body"))) localStorage.setItem(fkey("font-body"), _gB);
   localStorage.removeItem("mdb-font-head"); localStorage.removeItem("mdb-font-body");
   /* the per-faction signature FONT was removed (switching faction changing the interface typeface read
-     as jumpy) — every faction now uses the classic Fallout font. Clear, ONCE, the stale per-faction
+     as jumpy), every faction now uses the classic Fallout font. Clear, ONCE, the stale per-faction
      font overrides the old signature defaults auto-persisted, so the classic font takes effect for
      existing browsers too. A deliberate Settings font choice made AFTER this still persists per faction. */
   if(!localStorage.getItem("mdb-migr-fontreset")){
@@ -4754,9 +5260,17 @@ function runBoot(){
   applyGlass(localStorage.getItem("mdb-sheen") || "off",false);
   applyDossPanel(localStorage.getItem("mdb-dosspanel") || "on",false);
   applyRosterFilters(localStorage.getItem("mdb-rosterfilters") || "off",false);
+  applyDocConn(localStorage.getItem("mdb-docconn") || "on",false);
   applyCards(localStorage.getItem("mdb-cards") || "auto",false);
   applyImgColor(localStorage.getItem("mdb-imgcolor") || "screen",false);
-  applyBezel(localStorage.getItem("mdb-bezel") || "off",false);   // off by default — the frame glow adds clutter; opt in via Settings → Layout → Screen Bezel
+  /* OFF, and the bezel/glass edge system is RETIRED pending a fresh start (owner,
+     2026-07-26). It was briefly flipped ON here after docs/crt-audit.md ranked it the
+     highest-value change, and it does transform the look; but it also carried a third
+     corner vignette that took composited dim-on-panel to 3.62:1, and the owner would
+     rather rebuild it deliberately than tune what is there. The CSS is parked in place,
+     not deleted, with that measurement recorded beside it. The layout no longer reserves
+     space for it either: see the data-bezel="off" header overrides in styles.css. */
+  applyBezel(localStorage.getItem("mdb-bezel") || "off",false);
   applyDocWidth(localStorage.getItem("mdb-docwidth") || "medium",false);
   applyReduceMotion(localStorage.getItem("mdb-reducemotion") === "on",false);   // loading is not a preference write
   const crtOn = localStorage.getItem("mdb-crt") !== "0";
@@ -4768,13 +5282,13 @@ function runBoot(){
   renderBrand(); wireFactionMenu();  // masthead = plain title (1 faction) or a switcher (2+)
   renderNav();                       // build the active faction's Home + Roster + docs section tabs
   // guarded: a fresh load directly on #paperwork routes before that block's const initialises (TDZ);
-  // catching here prevents the throw from halting the rest of the script — the paperwork block's own
+  // catching here prevents the throw from halting the rest of the script, the paperwork block's own
   // load-order guard then renders it. Normal loads never throw, so this is a no-op for them.
   try{ applyRoute(); }catch(e){}     // land on the view named in the URL (defaults to #home)
 })();
 
 /* ============================ T96 · GLOBAL COMMAND PALETTE (⌘K / Ctrl-K) ============================
-   Jump anywhere — factions, their rosters/relations/docs, wiki pages, the map — from one fuzzy-ranked box.
+   Jump anywhere, factions, their rosters/relations/docs, wiki pages, the map, from one fuzzy-ranked box.
    Each item is a hash target, so selecting it routes through applyRoute (same as typing the URL). Self-
    contained: it builds its own overlay, reuses the roster search's fuzzySubseq for typo tolerance. */
 (function cmdk(){
@@ -4795,7 +5309,7 @@ function runBoot(){
     FACTION_ORDER.forEach(id=>{
       const f=FACTIONS[id]; if(!f) return;
       factionSections(f).forEach(s=> out.push({
-        label:s.id==="roster" ? f.name : f.name+" — "+s.label,
+        label:s.id==="roster" ? f.name : f.name+": "+s.label,
         sub:s.kind==="document" ? "Document" : s.label,
         hash:"#"+id+"/"+s.id,
         kw:"faction "+id+" "+f.name+" "+s.id+" "+s.label,
@@ -4873,7 +5387,7 @@ const PAPERWORK_TEMPLATES = [
 [bold]Arresting officer:[/bold] ${v.officer||"____"}
 [bold]Time of arrest:[/bold] ${v.time||"____"}
 [bold]Rights read:[/bold] ${v.rights||"____"}
-[bold]Notes:[/bold] ${v.notes||"—"}
+[bold]Notes:[/bold] ${v.notes||": "}
 
 Signed: __________________________` },
 ];
@@ -4890,7 +5404,7 @@ function renderPaperwork(){
         (f.multiline
           ? `<textarea data-k="${escAttr(f.key)}" rows="2">${esc(_pwVals[f.key]||"")}</textarea>`
           : `<input type="text" data-k="${escAttr(f.key)}" value="${escAttr(_pwVals[f.key]||"")}" />`)+`</label>`).join("")+`</form>`
-     +`<div class="pw-out"><div class="pw-outhead"><span>Preview — paste into an in-game paper</span>`
+     +`<div class="pw-out"><div class="pw-outhead"><span>Preview: paste into an in-game paper</span>`
        +`<button class="btn pw-copy" type="button">⧉ Copy</button></div>`
        +`<pre class="pw-preview" id="pw-preview">${esc(t.render(_pwVals))}</pre></div>`
    +`</div>`;

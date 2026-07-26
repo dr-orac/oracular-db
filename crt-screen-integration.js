@@ -24,7 +24,8 @@
 (function () {
   "use strict";
 
-  var KEY = "yuma-crt-engine";              // "native" | "enhanced"
+  var KEY = "mdb-crt-engine";               // "native" | "enhanced"
+  var LEGACY_KEY = "yuma-crt-engine";       // retired-name-ok: pre-rename; migrated below
   var CSS_HREF = "vendor/crt-screen/crt.css";
   var JS_SRC = "vendor/crt-screen/crt.js";
   var TARGET_SEL = ".app";                  // whole app (in-place; layout-safe)
@@ -87,8 +88,27 @@
   }
 
   // Whether the project's native effect should be on (their Scanlines toggle).
+  // Reads "mdb-crt", which is what app.js actually writes. It read the legacy key until
+  // 2026-07-26: T49b renamed every legacy key to mdb-* in app.js and missed this
+  // file, so this function returned true no matter what the Scanlines toggle said,
+  // and turning scanlines off was silently ignored whenever the enhanced engine was
+  // disabled. A rename that misses one reader does not fail loudly; it just stops
+  // agreeing with the writer.
   function nativeWanted() {
-    return localStorage.getItem("yuma-crt") !== "0";
+    return localStorage.getItem("mdb-crt") !== "0";
+  }
+
+  // One-time migration of the engine choice. Renaming a persisted key without this
+  // silently resets whatever the reader had chosen, and "Enhanced" is exactly the
+  // preference someone would have gone looking for.
+  function migrateLegacyKey() {
+    try {
+      var legacy = localStorage.getItem(LEGACY_KEY);
+      if (legacy !== null && localStorage.getItem(KEY) === null) {
+        localStorage.setItem(KEY, legacy === "enhanced" ? "enhanced" : "native");
+      }
+      if (legacy !== null) localStorage.removeItem(LEGACY_KEY);
+    } catch (e) { /* private mode: the default is native, which is safe */ }
   }
 
   function enable() {
@@ -154,6 +174,7 @@
   }
 
   function init() {
+    migrateLegacyKey();
     injectEnhancedCSS();
     mountUI();
     apply(localStorage.getItem(KEY) === "enhanced" ? "enhanced" : "native", false);

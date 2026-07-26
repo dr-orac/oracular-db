@@ -33,13 +33,23 @@
    Adding `Content-Type: application/json` on the client would trigger a
    preflight that Apps Script does not answer, and every write would fail.
 
-   ⚠ ARCHITECTURE NOTE (read before deploying): the live site reads the tribe's
-   ORIGINAL sheet directly; this script is designed to bind to the private
-   WORKING COPY. Deploying write-back as-is means edits land in the working copy
-   and would NOT appear on the site. Resolve the data-flow decision first (see
-   MAINTENANCE.md -> "Open / future work") — do not "fix" it by binding this
-   script to the original sheet without the group's sign-off; the original is
-   read-only by standing directive.
+   ARCHITECTURE — decided by the repo owner 2026-07-19, superseding the previous
+   "the original is read-only by standing directive" rule:
+
+     * This script now binds to the tribe's ORIGINAL sheet, so edits appear on the
+       live site instead of landing in a working copy nobody reads.
+     * Player-submitted NEW entries do NOT go into the roster tab. They append to a
+       separate SUBMISSIONS tab in the same spreadsheet, and a human moves approved
+       rows across. Appending cannot overwrite anyone; editing can.
+     * Consequently `addEntry` is the ONE action that needs no passphrase. Every
+       other action still requires it, because every other action mutates a row
+       that already exists.
+
+   Two safety properties follow, and both must be preserved by any future change:
+     1. The unauthenticated path may ONLY append to SUBMISSIONS_TAB. It must never
+        reach locate_(), which resolves the roster.
+     2. Submissions have their own rate budget, so a flood of them cannot exhaust
+        the shared budget and lock legitimate editors out.
 
    MIRROR SYNC (dormant): syncToMirror() copies this sheet's first tab over
    MIRROR_SHEET_ID's first tab. Only relevant in a copy-based architecture;
@@ -50,11 +60,19 @@
 
 // The sheet this script writes to. "" = the sheet this script is bound to.
 var SHEET_ID = "";
+// The roster tab, BY NAME. Leave "" to use the first tab — but set it as soon as the
+// spreadsheet has more than one tab. locate_() used to take getSheets()[0] blindly, so
+// adding a Submissions tab (or a per-faction tab) that sorts first would silently point
+// every edit at the wrong sheet.
+var ROSTER_TAB = "";
+// Where player-submitted entries land. Created on first use. NEVER set this to the
+// roster tab: it is the one surface an unauthenticated caller can write to.
+var SUBMISSIONS_TAB = "Submissions";
 // syncToMirror TARGET — LEAVE "" unless the architecture ever becomes copy-based
 // (site reading a disposable copy that this working copy overwrites).
-// ⚠ NEVER set this to 10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY — that is the
-// tribe's ORIGINAL source-of-truth sheet, which the live site reads directly and
-// which must never be written to. syncToMirror REPLACES the target's first tab.
+// ⚠ NEVER set this to 10n4TFnuMWekZLD3pucKS050h1cNItcYmL9v0ciuBsSY. The original is
+// now WRITTEN to (see the architecture note above), but syncToMirror does not write —
+// it REPLACES the target's first tab wholesale, which would destroy the roster.
 var MIRROR_SHEET_ID = "";
 // Drive folder where uploaded portraits are stored (created if missing).
 var IMAGE_FOLDER = "Yuma Roster Portraits";
@@ -70,6 +88,17 @@ var RATE_MAX_WRITES   = 30;               // successful writes allowed per windo
 var RATE_WINDOW_SEC   = 60;
 var AUTH_MAX_FAILS    = 10;               // bad-passphrase attempts per window before lockout
 var AUTH_WINDOW_SEC   = 600;
+// Submissions are UNAUTHENTICATED, so they get their own tighter budget. Sharing the
+// write budget would let a flood of submissions lock out legitimate editors.
+var SUBMIT_MAX        = 8;                // submissions accepted per window (global)
+var SUBMIT_WINDOW_SEC = 300;
+var SUBMIT_MAX_FIELD  = 2000;             // per-field character cap
+var SUBMIT_MAX_TOTAL  = 8000;             // whole-submission character cap
+// Only these may be submitted. An allowlist, not a blocklist: an open endpoint must not
+// be able to invent columns, and "Image"/"Icon" are deliberately absent (no Drive writes
+// on the unauthenticated path).
+var SUBMIT_FIELDS = ["Discord Name", "Use-Name", "Honorific / Brave-Name", "Role",
+                     "Species", "Appearance", "Relationships", "Notes"];
 
 // OPTIONAL Discord webhook: posts a one-line note to a channel after each successful
 // edit/upload. Prefer the Script Property DISCORD_WEBHOOK_URL (keeps it out of the repo).
@@ -78,7 +107,7 @@ var AUTH_WINDOW_SEC   = 600;
 var DISCORD_WEBHOOK_URL = "";
 
 function doGet() {
-  return json_({ ok: true, msg: "Yuma roster web app is live. POST actions: setPhoto, addLog, addShot, setIcon, setFields." });
+  return json_({ ok: true, msg: "Yuma roster web app is live. POST actions: addEntry (open), setPhoto, addLog, addShot, setIcon, setFields (passphrase)." });
 }
 
 function doPost(e) {
@@ -87,15 +116,31 @@ function doPost(e) {
     if (!e || !e.postData || !e.postData.contents) return json_({ ok: false, error: "empty request" });
     var req = JSON.parse(e.postData.contents);
 
-    if (authLocked_())      return json_({ ok: false, error: "too many failed attempts — try again later" });
-    if (!passOK_(req.pass)) { countAuthFail_(); return json_({ ok: false, error: "unauthorized" }); }
-    if (!rateOK_())         return json_({ ok: false, error: "rate limit — slow down and try again in a minute" });
+    // addEntry is the ONLY action exempt from the passphrase, because it is the only one
+    // that cannot touch existing data — it appends to the submissions tab and nothing else.
+    // Stated as an allowlist of ONE so that adding a case below never silently opens it up.
+    var isOpen = (req.action === "addEntry");
+
+    if (!isOpen) {
+      // The lockout counter is global (Apps Script exposes no caller identity), so it is a DoS primitive:
+      // ten bad-passphrase POSTs from anyone would freeze every editor for AUTH_WINDOW_SEC. Only count a
+      // failure when the caller at least SUPPLIED a passphrase, and let a caller holding the correct one
+      // through a lockout — otherwise an anonymous attacker can disable editing for the cost of a loop.
+      var supplied = typeof req.pass === "string" && req.pass.length > 0;
+      var authorised = supplied && passOK_(req.pass);
+      if (!authorised && authLocked_()) return json_({ ok: false, error: "too many failed attempts — try again later" });
+      if (!authorised) { if (supplied) countAuthFail_(); return json_({ ok: false, error: "unauthorized" }); }
+      if (!rateOK_())     return json_({ ok: false, error: "rate limit — slow down and try again in a minute" });
+    } else if (!submitOK_()) {
+      return json_({ ok: false, error: "too many submissions just now — please try again in a few minutes" });
+    }
 
     // serialise writes: read-modify-write on the sheet (and column creation) races otherwise
     if (!lock.tryLock(10000)) return json_({ ok: false, error: "busy — another write is in progress, try again" });
 
     var result;
     switch (req.action) {
+      case "addEntry":    result = addEntry_(req);    break;   // OPEN — appends to SUBMISSIONS_TAB only
       case "uploadImage": result = setPhoto_(req);    break;   // legacy alias
       case "setPhoto":    result = setPhoto_(req);    break;
       case "addLog":      result = addLog_(req);      break;
@@ -105,6 +150,10 @@ function doPost(e) {
       case "setFields":   result = setFields_(req);   break;
       default:            return json_({ ok: false, error: "unknown action: " + req.action });
     }
+    // Release BEFORE notifying: the webhook is an outbound HTTP round-trip, and holding the script lock
+    // across it let a burst of submissions starve editors on tryLock(10000) even though their rate
+    // budgets are separate.
+    try { lock.releaseLock(); } catch (ignored) {}
     notifyDiscord_(req.action, req, result);   // best-effort; never blocks the write
     return json_(result);
   } catch (err) {
@@ -138,6 +187,7 @@ function authLocked_() {
   return parseInt(CacheService.getScriptCache().get("authfails") || "0", 10) >= AUTH_MAX_FAILS;
 }
 function rateOK_() { return bumpCounter_("writes", RATE_WINDOW_SEC) <= RATE_MAX_WRITES; }
+function submitOK_() { return bumpCounter_("submits", SUBMIT_WINDOW_SEC) <= SUBMIT_MAX; }
 
 /* OPTIONAL: announce a successful write to a Discord channel via webhook.
    Wrapped so a webhook failure can never break the actual sheet write. */
@@ -146,7 +196,13 @@ function notifyDiscord_(action, req, result) {
     if (!result || result.ok === false) return;
     var url = PropertiesService.getScriptProperties().getProperty("DISCORD_WEBHOOK_URL") || DISCORD_WEBHOOK_URL;
     if (!url) return;
-    var who = req.usename || req.name || req.slug || "a character";
+    // Anything interpolated here comes from a request, and addEntry is unauthenticated. Take only the
+    // allowlisted Use-Name for that action, and strip markdown/newlines so a submission cannot forge a
+    // multi-line announcement — allowed_mentions blocks the ping, not the text.
+    var who = action === "addEntry"
+      ? String((req.fields && req.fields["Use-Name"]) || "someone")
+      : String(req.usename || req.name || req.slug || "a character");
+    who = who.replace(/[\r\n]+/g, " ").replace(/[*_`~|@<>]/g, "").slice(0, 60);
     var verb = {
       uploadImage: "updated the portrait for",
       setPhoto:    "set a photo for",
@@ -154,7 +210,8 @@ function notifyDiscord_(action, req, result) {
       addShot:     "added a screenshot for",
       setIcon:     "changed the sigil for",
       setField:    "edited",
-      setFields:   "edited"
+      setFields:   "edited",
+      addEntry:    "submitted a new entry for"
     }[action] || ("updated " + action + " for");
     var msg = "📟 Roster update: someone " + verb + " **" + who + "**.";
     var pub = PropertiesService.getScriptProperties().getProperty("PUBLIC_URL");
@@ -255,10 +312,68 @@ function setFields_(req) {
   return { ok: missed.length === 0, wrote: wrote, missed: missed };
 }
 
+/* ---- OPEN: append a player-submitted entry to the submissions tab ----
+   Deliberately does NOT call locate_(): the unauthenticated path must have no way to reach the
+   roster. It only ever appends, so it cannot overwrite an existing row even within its own tab.
+   Values are capped and matched against an allowlist so an open endpoint cannot invent columns
+   or store unbounded text. */
+function addEntry_(req) {
+  var fields = req.fields;
+  if (!fields || typeof fields !== "object") return { ok: false, error: "no fields" };
+
+  var name = String(fields["Use-Name"] || "").replace(/\s+/g, " ").trim();
+  if (!name) return { ok: false, error: "a use-name is required" };
+
+  var total = 0, clean = {};
+  for (var i = 0; i < SUBMIT_FIELDS.length; i++) {
+    var key = SUBMIT_FIELDS[i];
+    var raw = String(fields[key] == null ? "" : fields[key]);
+    if (raw.length > SUBMIT_MAX_FIELD) return { ok: false, error: key + " is too long (max " + SUBMIT_MAX_FIELD + " characters)" };
+    total += raw.length;
+    // A leading =, +, -, @ or | makes Sheets (and Excel, on export) treat the value as a formula or a
+    // DDE payload. Anchoring on character 0 was not enough: a leading tab, CR or non-breaking space
+    // sails past it, stays inert in-cell, and then goes live the moment the row is exported to CSV or an
+    // admin copies the DISPLAYED text into the roster. Trim first, then test, then prefix.
+    var trimmed = raw.replace(/^[\s\u0000-\u001F\u00A0\uFEFF]+/, "");
+    clean[key] = /^[=+\-@|]/.test(trimmed) ? "'" + trimmed : trimmed;
+  }
+  if (total > SUBMIT_MAX_TOTAL) return { ok: false, error: "submission is too long overall" };
+
+  var book = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+  var tab = book.getSheetByName(SUBMISSIONS_TAB);
+  if (!tab) {
+    // Append, never insert at 0. Without the index this lands at the active sheet's position, which in a
+    // headless doPost is index 0 — and rosterSheet_() then throws for every authenticated action until a
+    // human edits the script. One anonymous request would have caused a persistent outage.
+    tab = book.insertSheet(SUBMISSIONS_TAB, book.getNumSheets());
+    tab.appendRow(["Submitted"].concat(SUBMIT_FIELDS).concat(["Status"]));
+    tab.setFrozenRows(1);
+  }
+  var stamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm");
+  var row = [stamp];
+  for (var j = 0; j < SUBMIT_FIELDS.length; j++) row.push(clean[SUBMIT_FIELDS[j]]);
+  row.push("pending");
+  tab.appendRow(row);
+  return { ok: true, name: name, tab: SUBMISSIONS_TAB };
+}
+
 /* ---- shared locator: sheet + header row + headers + use-name column + target row ---- */
+function rosterSheet_() {
+  var book = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+  if (ROSTER_TAB) {
+    var named = book.getSheetByName(ROSTER_TAB);
+    if (!named) throw new Error("ROSTER_TAB is set to '" + ROSTER_TAB + "' but no such tab exists");
+    return named;
+  }
+  var first = book.getSheets()[0];
+  // Fail loudly rather than editing submissions as if they were the roster. This is reachable
+  // only by misconfiguration, and silently corrupting the intake tab is the worse outcome.
+  if (first.getName() === SUBMISSIONS_TAB)
+    throw new Error("the first tab is '" + SUBMISSIONS_TAB + "' — set ROSTER_TAB to the roster's tab name");
+  return first;
+}
 function locate_(useName) {
-  var sheet = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID).getSheets()[0]
-                       : SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  var sheet = rosterSheet_();
   var data = sheet.getDataRange().getValues();
   var hRow = -1;
   for (var r = 0; r < data.length; r++) {
@@ -346,8 +461,10 @@ function syncToMirror() {
 
 // Quick manual check from the Apps Script editor.
 function selfTest() {
+  Logger.log("roster tab: " + rosterSheet_().getName());
   var loc = locate_("Big Brom Matlok");
   Logger.log(loc && loc.row >= 0
     ? "row found (sheet row " + (loc.row + 1) + ") — locator OK"
     : "no match — check the sheet has a Use-Name column and that row");
+  Logger.log(passOK_("") ? "PASSPHRASE NOT SET — writes would be open" : "passphrase configured — edits are gated");
 }

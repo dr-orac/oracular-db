@@ -46,6 +46,13 @@
   --sub-font-weight-regular: 400;
   --sub-font-weight-medium: 500;
   --sub-font-weight-bold: 700;
+  --sub-line-height-tight: 1.15;
+  --sub-line-height-snug: 1.35;
+  --sub-line-height-base: 1.5;
+  --sub-line-height-loose: 1.75;
+  --sub-measure-narrow: 52ch;
+  --sub-measure-base: 66ch;
+  --sub-measure-wide: 72ch;
 }
 
 /**

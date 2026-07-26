@@ -1,0 +1,535 @@
+{
+ "space": {
+  "w": 2778,
+  "h": 3323
+ },
+ "note": "Per-tribe density-field anchors [x, y, radius_px, weight] in the atlas's pixel space. Derived from the KML's tribal polygons by trace/kml_tribes.py; deliberately NOT polygons \u2014 see docs/changes/map-timeline/roadmap-tribal-territories.md for why a tribe drawn with a hard edge misleads. Anchors marked provenance:owner are authored, not sourced.",
+ "tribes": [
+  {
+   "key": "arroyo",
+   "label": "Arroyo",
+   "kind": "tribe",
+   "status": "active",
+   "note": "NW California. Vault 13 descendants \u2014 ties to Orac's arc.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "camp"
+   ],
+   "anchors": [
+    [
+     687.8,
+     1701.1,
+     28.9,
+     0.7
+    ]
+   ]
+  },
+  {
+   "key": "ciphers",
+   "label": "Ciphers",
+   "kind": "tribe",
+   "status": "active",
+   "note": "Inside NCR territory but not under its control.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "camp",
+    "camp"
+   ],
+   "anchors": [
+    [
+     786.8,
+     1884.0,
+     28.9,
+     0.7
+    ],
+    [
+     1156.5,
+     2020.4,
+     28.9,
+     0.7
+    ]
+   ]
+  },
+  {
+   "key": "dead-horses",
+   "label": "Dead Horses",
+   "kind": "tribe",
+   "status": "active",
+   "note": "Zion Canyon.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "camp"
+   ],
+   "anchors": [
+    [
+     1006.6,
+     1994.2,
+     28.9,
+     0.45
+    ],
+    [
+     1022.8,
+     1970.2,
+     28.9,
+     0.36
+    ]
+   ],
+   "adjusted": "The fighters of the two: they give ground but hold nearer, so the refuge sits closer to the canyon than the Sorrows'.",
+   "refuge_km": 55,
+   "weight_scale": 0.65
+  },
+  {
+   "key": "great-khans",
+   "label": "Great Khans",
+   "kind": "tribe",
+   "status": "active",
+   "note": "Mojave; Vault 15 descendants. Mostly camp footprints in the source, not range \u2014 and a second source (the 2290 map) shows them expanded into an Empire of the Khans, which is a reconciliation still open.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "camp",
+    "range",
+    "camp",
+    "camp",
+    "camp",
+    "camp"
+   ],
+   "anchors": [
+    [
+     934.3,
+     2044.1,
+     15.9,
+     0.91
+    ],
+    [
+     839.6,
+     2047.2,
+     22.2,
+     1.0
+    ],
+    [
+     926.9,
+     2032.1,
+     15.9,
+     0.91
+    ],
+    [
+     919.3,
+     2022.7,
+     15.9,
+     0.91
+    ],
+    [
+     920.9,
+     2027.4,
+     15.9,
+     0.91
+    ],
+    [
+     945.9,
+     2021.8,
+     15.9,
+     0.91
+    ]
+   ],
+   "adjusted": "Owner decision: treat the 2290 map's Empire of the Khans as the extent and the KML's six camps as its HARDPOINTS. Reach and grip are different things, which is the same distinction the tribe/gang treatments already encode. The empire's own outline needs the 2290 trace, so today only the hardpoints are real geometry and the field stays camp-shaped.",
+   "hardpoints": 6,
+   "pending": "empire extent awaits the 2290 trace"
+  },
+  {
+   "key": "sorrows",
+   "label": "Sorrows",
+   "kind": "tribe",
+   "status": "active",
+   "note": "Zion Canyon.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "camp"
+   ],
+   "anchors": [
+    [
+     1008.1,
+     1988.9,
+     28.9,
+     0.39
+    ],
+    [
+     1025.4,
+     1956.4,
+     28.9,
+     0.31
+    ]
+   ],
+   "adjusted": "Driven deeper into the canyons rather than erased. Canon has them as the pacifists of the two, so a refuge reads truer than a fighting retreat \u2014 they keep a thin presence in Zion AND gain ground they were pushed into.",
+   "refuge_km": 70,
+   "weight_scale": 0.55
+  },
+  {
+   "key": "the-tribe",
+   "label": "The Tribe (Willowers)",
+   "kind": "tribe",
+   "status": "active",
+   "note": "Home tribe. Wendover and the Bonneville flats; the dominant share at Wendover.",
+   "provenance": "owner-invented",
+   "source": "owner",
+   "shapes": [
+    "authored"
+   ],
+   "anchors": [
+    [
+     991.6,
+     1833.1,
+     36.8,
+     1.0
+    ],
+    [
+     1001.9,
+     1833.2,
+     28.9,
+     0.8
+    ],
+    [
+     982.1,
+     1836.2,
+     23.7,
+     0.6
+    ],
+    [
+     1013.0,
+     1830.8,
+     21.1,
+     0.45
+    ]
+   ],
+   "authored_anchors": 4
+  },
+  {
+   "key": "unnamed-cw",
+   "label": "Unnamed tribes (Capital Wasteland)",
+   "kind": "tribe",
+   "status": "active",
+   "note": "The source's generic 'Tribals' marker east of the Potomac.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "camp"
+   ],
+   "anchors": [
+    [
+     2228.5,
+     1911.1,
+     28.9,
+     0.7
+    ]
+   ]
+  },
+  {
+   "key": "unnamed-nw",
+   "label": "Unnamed tribes (NW coast)",
+   "kind": "tribe",
+   "status": "active",
+   "note": "The source calls these 'Primitive tribals'; we do not. Near Arroyo and Klamath, so plausibly Sulik's people, but the source does not say so and neither will we.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "camp"
+   ],
+   "anchors": [
+    [
+     670.9,
+     1723.5,
+     28.9,
+     0.7
+    ]
+   ]
+  },
+  {
+   "key": "white-legs",
+   "label": "White Legs",
+   "kind": "tribe",
+   "status": "active",
+   "note": "Salt Lake and Zion, raiding west. Sacked New Canaan. The lesser share of the shared Wendover ground, reaching in from the south-east \u2014 Salt Lake and Zion are their centre, Wendover is their edge.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "range",
+    "camp",
+    "camp"
+   ],
+   "anchors": [
+    [
+     1004.1,
+     1975.7,
+     40.3,
+     1.0
+    ],
+    [
+     1007.9,
+     1940.4,
+     40.3,
+     1.0
+    ],
+    [
+     1012.2,
+     1905.4,
+     40.3,
+     1.0
+    ],
+    [
+     1046.2,
+     1912.2,
+     40.3,
+     1.0
+    ],
+    [
+     1016.9,
+     1870.6,
+     40.3,
+     1.0
+    ],
+    [
+     1050.6,
+     1877.5,
+     40.3,
+     1.0
+    ],
+    [
+     1008.5,
+     1989.7,
+     28.9,
+     0.88
+    ],
+    [
+     1008.7,
+     1988.9,
+     28.9,
+     0.88
+    ],
+    [
+     995.6,
+     1839.3,
+     28.9,
+     0.45
+    ],
+    [
+     1004.9,
+     1851.0,
+     31.6,
+     0.35
+    ],
+    [
+     990.8,
+     1833.8,
+     20.0,
+     0.28
+    ]
+   ],
+   "adjusted": "Honest Hearts' worst ending, which the 2290 source assumes: the White Legs hold Zion. Strengthened, not moved.",
+   "weight_scale": 1.25,
+   "authored_anchors": 3
+  },
+  {
+   "key": "blackfoot",
+   "label": "Blackfoot",
+   "kind": "tribe",
+   "status": "historical",
+   "note": "Legion-absorbed. Van Buren-tier canon \u2014 flag as contested.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "camp"
+   ],
+   "anchors": [
+    [
+     1030.9,
+     2046.6,
+     28.9,
+     0.7
+    ]
+   ]
+  },
+  {
+   "key": "hangdogs",
+   "label": "Hangdogs",
+   "kind": "tribe",
+   "status": "historical",
+   "note": "Legion-absorbed. Van Buren-tier canon \u2014 flag as contested.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "camp"
+   ],
+   "anchors": [
+    [
+     1280.3,
+     1923.8,
+     28.9,
+     0.7
+    ]
+   ]
+  },
+  {
+   "key": "khans-historical",
+   "label": "Khans (historical)",
+   "kind": "tribe",
+   "status": "historical",
+   "note": "Earlier Khan and New Khan ground, before the Mojave.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "camp",
+    "camp"
+   ],
+   "anchors": [
+    [
+     806.3,
+     1976.2,
+     28.9,
+     0.7
+    ],
+    [
+     814.7,
+     1965.7,
+     28.9,
+     0.7
+    ]
+   ]
+  },
+  {
+   "key": "twisted-hairs",
+   "label": "Twisted Hairs",
+   "kind": "tribe",
+   "status": "historical",
+   "note": "Legion-absorbed c. 2247. Van Buren-tier canon.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "camp"
+   ],
+   "anchors": [
+    [
+     1019.6,
+     2123.8,
+     28.9,
+     0.7
+    ]
+   ]
+  },
+  {
+   "key": "fota",
+   "label": "Followers of the Apocalypse",
+   "kind": "faction",
+   "status": "active",
+   "note": "FOTA. One of the Misfits server's minor factions, and present in the source under its full name \u2014 so this one is corroborated rather than authored.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "camp",
+    "camp",
+    "camp",
+    "camp",
+    "camp",
+    "camp"
+   ],
+   "anchors": [
+    [
+     930.7,
+     2022.9,
+     28.9,
+     0.7
+    ],
+    [
+     923.0,
+     2016.3,
+     28.9,
+     0.7
+    ],
+    [
+     934.6,
+     2030.0,
+     28.9,
+     0.7
+    ],
+    [
+     932.4,
+     2023.3,
+     28.9,
+     0.7
+    ],
+    [
+     815.3,
+     2100.3,
+     28.9,
+     0.7
+    ],
+    [
+     795.4,
+     1835.7,
+     28.9,
+     0.7
+    ]
+   ]
+  },
+  {
+   "key": "eighties",
+   "label": "The 80s",
+   "kind": "gang",
+   "status": "active",
+   "note": "The I-80 corridor. Outlaws rather than a tribe. The only territory in the source that actually contains Wendover (point-in-polygon, not bbox). The corridor tightens at Wendover: the sourced range covers the I-80 line, and this is the local grip on the town itself.",
+   "provenance": "doc-sourced",
+   "source": "fallout-universe-map.kml",
+   "shapes": [
+    "range"
+   ],
+   "anchors": [
+    [
+     939.2,
+     1874.5,
+     40.3,
+     0.85
+    ],
+    [
+     978.9,
+     1847.9,
+     40.3,
+     0.85
+    ],
+    [
+     950.4,
+     1805.2,
+     40.3,
+     0.85
+    ],
+    [
+     984.5,
+     1813.4,
+     40.3,
+     0.85
+    ],
+    [
+     1018.7,
+     1821.1,
+     40.3,
+     0.85
+    ],
+    [
+     990.2,
+     1833.2,
+     25.3,
+     0.55
+    ],
+    [
+     979.1,
+     1829.7,
+     22.1,
+     0.4
+    ]
+   ],
+   "authored_anchors": 2
+  }
+ ]
+}

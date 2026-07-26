@@ -1,0 +1,60 @@
+{
+ "threads": {
+  "unity": {
+   "label": "Unity: the Master's war",
+   "short": "UNITY",
+   "c": "#c96fd8"
+  },
+  "ncr": {
+   "label": "NCR",
+   "short": "NCR",
+   "c": "#e0a83a"
+  },
+  "legion": {
+   "label": "Legion",
+   "short": "LEGION",
+   "c": "#d8492f"
+  },
+  "brotherhood": {
+   "label": "Brotherhood",
+   "short": "BROTHERHOOD",
+   "c": "#c9ccd2"
+  },
+  "enclave": {
+   "label": "Enclave",
+   "short": "ENCLAVE",
+   "c": "#6f7bd6"
+  },
+  "tribe": {
+   "label": "Tribe",
+   "short": "TRIBE",
+   "c": "#4fb8ad"
+  },
+  "town": {
+   "label": "Town",
+   "short": "TOWN",
+   "c": "#d97a5e"
+  },
+  "vault": {
+   "label": "Vault-Tec",
+   "short": "VAULT",
+   "c": "#2f6fb0"
+  },
+  "world": {
+   "label": "World: shared history",
+   "short": "WORLD",
+   "c": "#6c7568"
+  }
+ },
+ "threadOrder": [
+  "brotherhood",
+  "enclave",
+  "legion",
+  "ncr",
+  "town",
+  "tribe",
+  "unity",
+  "vault",
+  "world"
+ ]
+}

@@ -1,33 +1,745 @@
 {
-  "version": 1,
-  "source": "app.js MAP_LOCATIONS",
+  "version": 2,
+  "source": "data/atlas-pins.json",
   "coverage_status": "inventory_complete",
-  "marker_count": 23,
+  "marker_count": 137,
   "markers": [
-    { "legacy_id": "vault13", "game_id": "fallout_1", "name": "Vault 13", "world_location_id": "f1_vault_13", "status": "matched" },
-    { "legacy_id": "shadySands", "game_id": "fallout_1", "name": "Shady Sands", "world_location_id": "f1_shady_sands", "status": "matched" },
-    { "legacy_id": "theHub", "game_id": "fallout_1", "name": "The Hub", "world_location_id": "f1_the_hub", "status": "matched" },
-    { "legacy_id": "necropolis", "game_id": "fallout_1", "name": "Necropolis", "world_location_id": "f1_necropolis", "status": "matched" },
-    { "legacy_id": "boneyard", "game_id": "fallout_1", "name": "Boneyard", "world_location_id": "f1_boneyard", "status": "matched" },
-    { "legacy_id": "brotherhood", "game_id": "fallout_1", "name": "Lost Hills", "world_location_id": "f1_lost_hills", "status": "matched" },
-    { "legacy_id": "mariposa", "game_id": "fallout_1", "name": "Mariposa Base", "world_location_id": "f1_mariposa_base", "status": "matched" },
-    { "legacy_id": "theGlow", "game_id": "fallout_1", "name": "The Glow", "world_location_id": "f1_the_glow", "status": "matched" },
-    { "legacy_id": "cathedral", "game_id": "fallout_1", "name": "The Cathedral", "world_location_id": "f1_cathedral", "status": "matched" },
-
-    { "legacy_id": "arroyo", "game_id": "fallout_2", "name": "Arroyo", "world_location_id": "f2_arroyo", "status": "matched" },
-    { "legacy_id": "newReno", "game_id": "fallout_2", "name": "New Reno", "world_location_id": "f2_new_reno", "status": "matched" },
-    { "legacy_id": "vaultCity", "game_id": "fallout_2", "name": "Vault City", "world_location_id": "f2_vault_city", "status": "matched" },
-
-    { "legacy_id": "goodsprings", "game_id": "fallout_new_vegas", "name": "Goodsprings", "world_location_id": "fnv_goodsprings", "status": "matched" },
-    { "legacy_id": "primm", "game_id": "fallout_new_vegas", "name": "Primm", "world_location_id": "fnv_primm", "status": "matched" },
-    { "legacy_id": "novac", "game_id": "fallout_new_vegas", "name": "Novac", "world_location_id": "fnv_novac", "status": "matched" },
-    { "legacy_id": "boulderCity", "game_id": "fallout_new_vegas", "name": "Boulder City", "world_location_id": "fnv_boulder_city", "status": "matched" },
-    { "legacy_id": "hooverDam", "game_id": "fallout_new_vegas", "name": "Hoover Dam", "world_location_id": "fnv_hoover_dam", "status": "matched" },
-    { "legacy_id": "theFort", "game_id": "fallout_new_vegas", "name": "The Fort", "world_location_id": "fnv_the_fort", "status": "matched" },
-    { "legacy_id": "campMccarran", "game_id": "fallout_new_vegas", "name": "Camp McCarran", "world_location_id": "fnv_camp_mccarran", "status": "matched" },
-    { "legacy_id": "cottonwoodCove", "game_id": "fallout_new_vegas", "name": "Cottonwood Cove", "world_location_id": "fnv_cottonwood_cove", "status": "matched" },
-    { "legacy_id": "nelson", "game_id": "fallout_new_vegas", "name": "Nelson", "world_location_id": "fnv_nelson", "status": "matched" },
-    { "legacy_id": "jacobstown", "game_id": "fallout_new_vegas", "name": "Jacobstown", "world_location_id": "fnv_jacobstown", "status": "matched" },
-    { "legacy_id": "blackMountain", "game_id": "fallout_new_vegas", "name": "Black Mountain", "world_location_id": "fnv_black_mountain", "status": "matched" }
+    {
+      "name": "Vault 13",
+      "legacy_id": "vault13",
+      "world_location_id": "f1_vault_13",
+      "status": "matched"
+    },
+    {
+      "name": "Shady Sands",
+      "legacy_id": "shadySands",
+      "world_location_id": "f1_shady_sands",
+      "status": "matched"
+    },
+    {
+      "name": "The Hub",
+      "legacy_id": "theHub",
+      "world_location_id": "f1_the_hub",
+      "status": "matched"
+    },
+    {
+      "name": "Necropolis",
+      "legacy_id": "necropolis",
+      "world_location_id": "f1_necropolis",
+      "status": "matched"
+    },
+    {
+      "name": "Boneyard",
+      "legacy_id": "boneyard",
+      "world_location_id": "f1_boneyard",
+      "status": "matched"
+    },
+    {
+      "name": "Lost Hills",
+      "legacy_id": "brotherhood",
+      "world_location_id": "f1_lost_hills",
+      "status": "matched"
+    },
+    {
+      "name": "Mariposa",
+      "legacy_id": "mariposa",
+      "world_location_id": "f1_mariposa_base",
+      "status": "matched"
+    },
+    {
+      "name": "The Glow",
+      "legacy_id": "theGlow",
+      "world_location_id": "f1_the_glow",
+      "status": "matched"
+    },
+    {
+      "name": "The Cathedral",
+      "legacy_id": "cathedral",
+      "world_location_id": "f1_cathedral",
+      "status": "matched"
+    },
+    {
+      "name": "Arroyo",
+      "legacy_id": "arroyo",
+      "world_location_id": "f2_arroyo",
+      "status": "matched"
+    },
+    {
+      "name": "New Reno",
+      "legacy_id": "newReno",
+      "world_location_id": "f2_new_reno",
+      "status": "matched"
+    },
+    {
+      "name": "Vault City",
+      "legacy_id": "vaultCity",
+      "world_location_id": "f2_vault_city",
+      "status": "matched"
+    },
+    {
+      "name": "San Francisco",
+      "legacy_id": "sanFrancisco",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Navarro",
+      "legacy_id": "navarro",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Redding",
+      "legacy_id": "redding",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Goodsprings",
+      "legacy_id": "goodsprings",
+      "world_location_id": "fnv_goodsprings",
+      "status": "matched"
+    },
+    {
+      "name": "Primm",
+      "legacy_id": "primm",
+      "world_location_id": "fnv_primm",
+      "status": "matched"
+    },
+    {
+      "name": "Novac",
+      "legacy_id": "novac",
+      "world_location_id": "fnv_novac",
+      "status": "matched"
+    },
+    {
+      "name": "Boulder City",
+      "legacy_id": "boulderCity",
+      "world_location_id": "fnv_boulder_city",
+      "status": "matched"
+    },
+    {
+      "name": "Hoover Dam",
+      "legacy_id": "hooverDam",
+      "world_location_id": "fnv_hoover_dam",
+      "status": "matched"
+    },
+    {
+      "name": "The Fort",
+      "legacy_id": "theFort",
+      "world_location_id": "fnv_the_fort",
+      "status": "matched"
+    },
+    {
+      "name": "Camp McCarran",
+      "legacy_id": "campMccarran",
+      "world_location_id": "fnv_camp_mccarran",
+      "status": "matched"
+    },
+    {
+      "name": "Cottonwood Cove",
+      "legacy_id": "cottonwoodCove",
+      "world_location_id": "fnv_cottonwood_cove",
+      "status": "matched"
+    },
+    {
+      "name": "Nelson",
+      "legacy_id": "nelson",
+      "world_location_id": "fnv_nelson",
+      "status": "matched"
+    },
+    {
+      "name": "The Strip",
+      "legacy_id": "theStrip",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Jacobstown",
+      "legacy_id": "jacobstown",
+      "world_location_id": "fnv_jacobstown",
+      "status": "matched"
+    },
+    {
+      "name": "Black Mountain",
+      "legacy_id": "blackMountain",
+      "world_location_id": "fnv_black_mountain",
+      "status": "matched"
+    },
+    {
+      "name": "Zion Canyon",
+      "legacy_id": "zion",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "The Sierra Madre",
+      "legacy_id": "sierraMadre",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Raven Rock",
+      "legacy_id": "ravenRock",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "The Citadel",
+      "legacy_id": "citadel",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Megaton",
+      "legacy_id": "megaton",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Rivet City",
+      "legacy_id": "rivetCity",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "The Pitt",
+      "legacy_id": "thePitt",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Point Lookout",
+      "legacy_id": "pointLookout",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "The Institute",
+      "legacy_id": "institute",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Diamond City",
+      "legacy_id": "diamondCity",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Sanctuary Hills",
+      "legacy_id": "sanctuary",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Far Harbor",
+      "legacy_id": "farHarbor",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 76",
+      "legacy_id": "vault76",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "The Whitespring",
+      "legacy_id": "whitespring",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Flatwoods",
+      "legacy_id": "flatwoods",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Denver",
+      "legacy_id": "denver",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Mount Rushmore",
+      "legacy_id": "rushmore",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Seattle",
+      "legacy_id": "seattle",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Chicago",
+      "legacy_id": "chicago",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Detroit",
+      "legacy_id": "detroit",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Dallas",
+      "legacy_id": "dallas",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "New Orleans",
+      "legacy_id": "nawlins",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Phoenix",
+      "legacy_id": "phoenix",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Memphis",
+      "legacy_id": "memphis",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "The New Master",
+      "legacy_id": "treeMaster",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 101",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 111",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 15",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 87",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 112",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 81",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 114",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 11",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 34",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 3",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 22",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 21",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 19",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 95",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 0",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 79",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 63",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 94",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Griffith Observatory",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vaults 33/32/31",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Ruins of Shady Sands",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Filly",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Super Duper Mart",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Enclave Research Base",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Brotherhood Outpost",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Villa",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Flagstaff",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Cathedral of the Fire (Phoenix)",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Casa Grande",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Two-Sun",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Puerto Penasco",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 8 (Nevada)",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "New Vegas (2140)",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Area 51",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Hawthorne",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Battle Mountain",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Sedit",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "New Hope",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Imperial City",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Rat Hole",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Camp Phoenix",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Ostia",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Salt Town",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Sanctuary (Frontier)",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 18",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Union City",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Fort Daggerpoint",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Cajon Pass (2260)",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Enclave Oil Rig",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Kearny Airfield (Wendover Field)",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Wendover",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Bonneville Salt Flats",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Hidden Valley Bunker",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "HELIOS One",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Fort Independence",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Adams Air Force Base",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Boston Airport",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Cambridge Police Station",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Camp Venture",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Fort Defiance",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Thunder Mountain",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Carbon, Texas",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Grand Canyon",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Coronado",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Yosemite",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Junktown",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault-Tec University (Morgantown)",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Broken Hills",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Gecko",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Modoc",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Bitter Springs",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "The Divide",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Nipton",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Bunker Hill",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 4",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 108",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 77",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 29",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 27",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 92",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 106",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 118",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 88",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 96",
+      "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Nellis Air Force Base",
+      "world_location_id": null,
+      "status": "research_required"
+    }
   ]
 }
