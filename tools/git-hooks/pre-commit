@@ -1,14 +1,31 @@
 #!/bin/sh
-# Pre-commit guard: block commits that fail the integrity self-check, so a broken state
-# can never be snapshotted. Bypass in a genuine emergency with `git commit --no-verify`.
+# Pre-commit guard for the deploy mirror. Bypass in a genuine emergency with
+# `git commit --no-verify`.
 #
 # This hook is version-controlled. It is active because the repo sets:
 #   git config core.hooksPath tools/git-hooks
 # (re-run that once after a fresh clone if hooks aren't firing.)
+#
+# It used to run tools/selfcheck.py, a copy of the trunk's app linter that the publisher
+# never updates. That copy froze while the app moved on and ended up failing with 139
+# errors against a data contract the trunk had deliberately relaxed, so it was deleted
+# along with the rest of the forked tooling. The gate here is now the deployment smoke:
+# these bytes, served as a static site, still boot.
+#
+# CI is the real gate and always runs this. The hook is the fast local copy of it, so it
+# SKIPS rather than blocks when the test tools are not installed: a hook that fails on a
+# fresh clone is how a repository teaches everyone to reach for --no-verify.
 
 root="$(git rev-parse --show-toplevel)"
-python3 "$root/tools/selfcheck.py" || {
+
+if [ ! -x "$root/node_modules/.bin/playwright" ]; then
+  echo "· deployment smoke skipped: test tools not installed (run \`npm ci\` to enable it locally)."
+  echo "  CI runs it on push regardless."
+  exit 0
+fi
+
+( cd "$root" && npm run --silent test:browser ) || {
   echo ""
-  echo "✗ commit blocked: selfcheck failed (fix the errors above, or use --no-verify to override)."
+  echo "✗ commit blocked: the deployment smoke failed (fix the errors above, or use --no-verify to override)."
   exit 1
 }

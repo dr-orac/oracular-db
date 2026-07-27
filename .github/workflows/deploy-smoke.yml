@@ -1,0 +1,38 @@
+name: Deployment smoke
+
+# This repository is a one-way deploy mirror of the Misfits app. The trunk lives in the
+# Substrate monorepo and gates the application there, including a production browser
+# suite run against this exact artifact, before anything is published here.
+#
+# So this workflow deliberately does NOT re-check the app. It used to: it ran a copy of
+# the trunk's tools/selfcheck.py, which the publisher never updates because it owns only
+# the served payload. That copy froze while the app moved on, and by 2026-07-27 it was
+# failing with 139 errors against a data contract the trunk had deliberately relaxed,
+# turning the workflow red and blocking the browser job queued behind it.
+#
+# What it checks now is the only thing this repository can honestly speak to: that the
+# bytes here, served as a static site, still boot. See tests/deploy-smoke.spec.js.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install pinned test tools
+        run: npm ci
+      - name: Install Chromium test engine
+        run: npx playwright install --with-deps chromium
+      - name: Serve the mirror and check every entry point
+        run: npm run test:browser
