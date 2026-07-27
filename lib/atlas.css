@@ -173,7 +173,17 @@
   container-type:size;   /* for the short-map legend rule, further down the sheet */
   background:radial-gradient(ellipse 90% 80% at 50% 45%,var(--bg2) 0%,var(--bg) 78%)}
 .atl .atl-map{position:absolute;inset:0;width:100%;height:100%;display:block;font-family:inherit;
-  cursor:crosshair;touch-action:none}
+  cursor:crosshair;touch-action:none;
+  /* Stop wheel scrolling from chaining out to the page once the map has handled it.
+     preventDefault alone does not cover every path a browser will take to scroll an
+     ancestor, which is why the map both zoomed and scrolled. */
+  overscroll-behavior:contain}
+/* The map is focusable so it can be panned and zoomed from the keyboard, and the browser
+   was painting its default blue ring on every CLICK. Suppress the outline for pointer
+   focus only and give keyboard focus a themed ring instead: dropping it outright would
+   leave keyboard users with no idea where they are. */
+.atl .atl-map:focus{outline:none}
+.atl .atl-map:focus-visible{outline:2px solid var(--fg);outline-offset:-2px}
 .atl .atl-map.grabbing{cursor:grabbing}
 
 /* NOTE; there are deliberately no `.land` or `.grid` rules here. They existed
