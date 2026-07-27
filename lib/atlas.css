@@ -121,9 +121,9 @@
     linear-gradient(var(--fg-dim),var(--fg-dim)) 8px 0/6px 6px no-repeat,
     linear-gradient(var(--fg-faint),var(--fg-faint)) 0 8px/6px 6px no-repeat;
 }
-.atl .title::after{content:"";display:inline-block;width:8px;height:13px;margin-left:8px;vertical-align:-2px;
-  background:var(--fg-bright);animation:atl-blink 1.2s steps(1) infinite}
-@keyframes atl-blink{50%{opacity:0}}
+/* No blinking caret after the title. It was terminal flavour with nothing behind it:
+   the title is not a prompt and nothing is being typed, so the motion drew the eye to
+   the one place on the map where nothing was happening. Removed at owner request. */
 .atl .sub{font-size:10px;letter-spacing:1.5px;color:var(--fg-dim);
   flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .atl .sub b{color:var(--fg);font-weight:400}
@@ -184,7 +184,13 @@
    Both rules therefore matched zero elements in either host. Removed rather than
    left as inventory, because dead CSS in a file the design-system ratchet now
    measures would be counted as shipped.
-   TODO stage 2: region-name labels (.terrlbl/.terrname/.terrsigil, drawTerrLabel). */
+
+   Region-name labels (stage 2) ARE the one exception to "no rules here beyond
+   the base-map import": `.terrlbl` is an SVG <text> per labelled region, one
+   per id in data/atlas-region-meta.json that carries a `primary` name, built
+   and positioned by atlas.mjs's renderRegionLabels() at that region's pole of
+   inaccessibility (never the polygon centroid, see atlas.mjs's own note on
+   concave regions). See the rule block below the macro-territory layer. */
 .atl .xhair line{stroke:hsl(var(--p) calc(100% * var(--psat)) 70% / .4);stroke-width:1;stroke-dasharray:2 5;
   vector-effect:non-scaling-stroke}
 .atl .xhair{visibility:hidden}
@@ -197,6 +203,36 @@
    no hard pop: opacity only, eased, honouring reduced-motion globally. */
 .atl .macrolayer{opacity:.8;transition:opacity .3s ease}
 .atl .atl-map.zoomed .macrolayer{opacity:.05}
+
+/* region-name labels (stage 2): one <text> per region with a `primary` name
+   in atlas-region-meta.json, positioned by atlas.mjs at that region's pole of
+   inaccessibility. LOD-gated the same way pin labels are (`.atl-map.lod0/
+   .lod1/.lod2`, tierForWidth()'s 700/1300 thresholds, see atlas.mjs's "LABEL
+   PLACEMENT"), keyed off `data-tier`: 1 = every tier (the data's "continental"
+   scale), 2 = lod1 inward ("regional"), 3 = lod0 only, everything smaller,
+   including a region with no recorded scale at all. Always
+   pointer-events:none: unlike a pin, a region label has no click behaviour of
+   its own, so the simplest way to guarantee an invisible one never steals a
+   click (the exact bug `.pin .lbl`'s own comment below documents) is to never
+   let it take pointer events, visible or not, rather than reproduce that
+   rule's per-visibility overrides for a label that never needed them. Sits
+   below the pins in SVG document order (atlas.mjs builds `.terrlabels` before
+   the pins layer), so a pin's own opaque label halo always wins a visual
+   collision against a region name underneath it. */
+.atl .terrlbl{
+  /* 34px is a SOURCE-MAP UNIT, not a UI type size, so it is deliberately off the type
+     scale and the design metric's baseline is re-recorded for it. The label sits in the
+     SVG's own 2778x3323 coordinate space inside a counter-scaled wrapper, so this number
+     is chosen against region sizes on the artwork, and a token from the interface scale
+     would render at whatever the current zoom happened to make of it. */
+  font-size:34px;letter-spacing:1px;fill:var(--fg-dim);opacity:0;
+  paint-order:stroke;stroke:hsl(var(--p) 45% 3.5% / .85);stroke-width:6px;
+  pointer-events:none;transition:opacity .2s;
+}
+.atl .atl-map.lod2 .terrlbl[data-tier="1"]{opacity:.85}
+.atl .atl-map.lod1 .terrlbl[data-tier="1"],
+.atl .atl-map.lod1 .terrlbl[data-tier="2"]{opacity:.85}
+.atl .atl-map.lod0 .terrlbl{opacity:.85}
 
 /* ================= territory presence fields ================= */
 /* Off unless the layer is toggled on, so it can never compete with faction
@@ -582,6 +618,14 @@
    (an embed, a sandboxed iframe), atlas.mjs falls back to it and then
    owns Escape itself, which the real API gives us free.
    ===================================================================== */
+/* 9999 deliberately beats the host's whole overlay band, including its CRT layers at
+   9000-9200. That is what lets the rule below be true for the FALLBACK as well as for
+   native fullscreen: native fullscreen promotes the element to the top layer so the host's
+   overlays are genuinely gone, while the fallback merely covers them, and the atlas draws
+   one treatment either way rather than stacking a second over the host's. Lowering it to
+   sit under the host band was tried and reverted for exactly that reason. The cost is that
+   toasts and modals cannot reach the screen during fallback fullscreen; the settings drawer
+   is unaffected because its button is behind the map and cannot be clicked to begin with. */
 .atl.atl--fs{position:fixed;inset:0;width:100%;height:100%;z-index:9999}
 /* The host page's own CRT overlays (scanlines, vignette) live outside the
    fullscreen element and vanish with it, so the atlas carries its own for

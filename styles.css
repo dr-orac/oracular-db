@@ -79,9 +79,18 @@
     --bezel-line:  1.25px;  /* the theme-coloured hairline (thinned from 1.5px) */
     --bezel-in:    calc(var(--bezel-black) + var(--bezel-gap) + var(--bezel-line));  /* edge → inner side of hairline (~22.5px) */
     --bezel-radius:0;       /* square screen corners: the very edge is just the dark band, no rounding */
-    /* responsive negative space, the breathing margin from the bezel HAIRLINE to the content.
-       Always clears --bezel-in so content never crowds the border; grows on large displays. */
+    /* Responsive negative space: the breathing margin from the bezel HAIRLINE to the
+       content. Its whole job is to clear --bezel-in so content never crowds the border,
+       which is why it is this large. With the bezel system retired (2026-07-26) there is
+       no hairline to clear, so the body rule below collapses it to a structural edge and
+       this value is what returns if the bezel ever comes back.
+       Measured cost of applying it with no bezel present: the atlas map lost 179px at
+       1920 wide, 134px at 1440 and 103px at 1100, all of it to margin. */
     --edge: clamp(38px, 4.6vw, 90px);
+    /* Home is framed deliberately as a poster with an equal inset on all four sides,
+       which is a design decision rather than bezel clearance, so it keeps the generous
+       value regardless of what --edge does. */
+    --edge-poster: clamp(38px, 4.6vw, 90px);
     --rail: clamp(312px, 26vw, 432px);   /* the left index column (roster rail), the search sits over it */
     --row-gap: 30px;                     /* gap between masthead row 1 (titlebar) and row 2 (tabs); the
                                             measured SVG connector uses the real boxes inside this channel */
@@ -411,7 +420,15 @@
        is what actually reads as curved glass. */
   }
   /* Settings → Screen Bezel: OFF removes the jet-black border + rounding + reflection */
-  body[data-bezel="off"]{ border-radius:0; }
+  body[data-bezel="off"]{
+    border-radius:0;
+    /* No bezel means nothing to clear, so the page-wide gutter becomes a structural edge:
+       enough to keep content off the very pixel and to respect a device safe area, and
+       nothing more. Roadmap decision 7, "the application is a full-width instrument":
+       prose still constrains its own measure in ch, while maps, timelines, grids and
+       tables may run to the available edge. */
+    --edge: clamp(6px, 0.8vw, 12px);
+  }
   body[data-bezel="off"]::before, body[data-bezel="off"]::after{ display:none; }
 
   /* ---------- layout shell ---------- */
@@ -967,8 +984,8 @@
   body[data-section="home"]:not([data-frame="border"]) .masthead{ position:static; }
   body[data-section="home"]:not([data-frame="border"]) .titlebar{ display:block; }
   body[data-section="home"]:not([data-frame="border"]) .titlebar-right{
-    position:absolute; top:var(--edge); right:var(--edge); margin-left:0; z-index:30; }
-  body[data-section="home"]:not([data-frame="border"]) main{ padding:var(--edge); }
+    position:absolute; top:var(--edge-poster); right:var(--edge-poster); margin-left:0; z-index:30; }
+  body[data-section="home"]:not([data-frame="border"]) main{ padding:var(--edge-poster); }
   /* Laid out by HIERARCHY: a TOP row (brand + the umbrella destinations), then a two-column LOWER split,
      faction picker (left) · the picked faction's own sections (right). See renderHome(). */
   /* ── TOP: the brand, then the equal registry-generated global destination grid. ── */
@@ -2586,7 +2603,9 @@
   @media (max-width:760px){
     :root{ --frame:16px; }   /* slimmer metal frame so it doesn't eat the small screen */
     /* slimmer exterior bezel on small screens so the border doesn't eat the content width */
-    :root{ --bezel-black:10px; --bezel-gap:3px; --bezel-radius:18px; --edge:clamp(20px, 5vw, 46px); }
+    :root{ --bezel-black:10px; --bezel-gap:3px; --bezel-radius:18px;
+           --edge:clamp(20px, 5vw, 46px); --edge-poster:clamp(20px, 5vw, 46px); }
+    body[data-bezel="off"]{ --edge: max(6px, var(--safe-left, 0px)); }
     .navtab{ font-size:16px; padding:7px 13px 6px; letter-spacing:1px; gap:7px; }
     .navico{ width:17px; height:17px; }
     /* shrink the cog + faction box on small screens so the tabs keep their width.
