@@ -96,3 +96,25 @@ test("the served tree has the files the page asks for", async ({ page, baseURL }
   await page.waitForTimeout(1500);
   expect(missing).toEqual([]);
 });
+
+test("the published preview mounts the complete atlas without errors", async ({ page, baseURL }) => {
+  const problems = [];
+  const previewRoot = new URL("/preview/", baseURL);
+  page.on("pageerror", error => problems.push(`threw: ${error.message}`));
+  page.on("console", message => {
+    if (message.type() === "error") problems.push(`logged: ${message.text().slice(0, 200)}`);
+  });
+  page.on("request", request => {
+    const url = new URL(request.url());
+    if (url.origin === previewRoot.origin && !url.pathname.startsWith(previewRoot.pathname)) {
+      problems.push(`escaped preview root: ${url.pathname}`);
+    }
+  });
+
+  await page.addInitScript(() => sessionStorage.setItem("mdb-booted", "1"));
+  await page.goto("/preview/#map", { waitUntil: "networkidle" });
+
+  await expect(page.locator('#atlas-map .terr[d]:not([d=""])')).toHaveCount(188, { timeout: 15_000 });
+  await expect(page.locator(".pin")).toHaveCount(137, { timeout: 15_000 });
+  expect([...new Set(problems)], "errors or misplaced requests while mounting the preview atlas").toEqual([]);
+});
