@@ -343,8 +343,8 @@ function mulberry32(seed){
 }
 const DISPLACE_DEPTH = 3;        /* recursive subdivisions per original arc segment (max 8x points) */
 const DISPLACE_FALLOFF = 0.55;   /* roughness shrinks each level, like real coastline detail */
-const DISPLACE_MAX_PX = 5;       /* hard clamp, source-pixel units: subtle, never garish */
-function displaceSegment(a, b, arcIndex, segId, depth, amp){
+const DISPLACE_MAX_PX = 5;       /* default hard clamp, source-pixel units: subtle, never garish */
+function displaceSegment(a, b, arcIndex, segId, depth, amp, maxPx){
   if (depth >= DISPLACE_DEPTH || amp < 0.02) return [a, b];
   const dx = b[0] - a[0], dy = b[1] - a[1];
   const len = Math.hypot(dx, dy);
@@ -352,24 +352,40 @@ function displaceSegment(a, b, arcIndex, segId, depth, amp){
   const nx = -dy / len, ny = dx / len; /* unit normal to a->b */
   const rnd = mulberry32(hashSeed32(arcIndex, segId, depth))();
   let off = (rnd * 2 - 1) * amp * len;
-  if (off > DISPLACE_MAX_PX) off = DISPLACE_MAX_PX;
-  if (off < -DISPLACE_MAX_PX) off = -DISPLACE_MAX_PX;
+  if (off > maxPx) off = maxPx;
+  if (off < -maxPx) off = -maxPx;
   const mid = [(a[0] + b[0]) / 2 + nx * off, (a[1] + b[1]) / 2 + ny * off];
-  const left = displaceSegment(a, mid, arcIndex, segId * 2, depth + 1, amp * DISPLACE_FALLOFF);
-  const right = displaceSegment(mid, b, arcIndex, segId * 2 + 1, depth + 1, amp * DISPLACE_FALLOFF);
+  const left = displaceSegment(a, mid, arcIndex, segId * 2, depth + 1, amp * DISPLACE_FALLOFF, maxPx);
+  const right = displaceSegment(mid, b, arcIndex, segId * 2 + 1, depth + 1, amp * DISPLACE_FALLOFF, maxPx);
   return left.concat(right.slice(1));
 }
-function displaceArcPoints(pts, arcIndex, amp){
+function displaceArcPoints(pts, arcIndex, amp, maxPx){
   if (amp <= 0 || pts.length < 2) return pts;
   let out = [pts[0]];
-  for (let i = 0; i < pts.length - 1; i++) out = out.concat(displaceSegment(pts[i], pts[i + 1], arcIndex, i, 0, amp).slice(1));
+  for (let i = 0; i < pts.length - 1; i++) out = out.concat(displaceSegment(pts[i], pts[i + 1], arcIndex, i, 0, amp, maxPx).slice(1));
   return out;
 }
-/* amp is a FRACTION of each segment's own length (clamped in absolute px
-   above), applied only to two-owner region borders in LOD0. */
-function getDisplacedArcs(decodedArcs, arcUses, amp){
+/* amp is a FRACTION of each segment's own length; maxPx is the absolute
+   clamp in source-pixel units. Applied only to two-owner region borders,
+   at every LOD tier (see the note on fractalDetailFor below for why the
+   clamp is now a parameter rather than the constant it used to be). */
+function getDisplacedArcs(decodedArcs, arcUses, amp, maxPx = DISPLACE_MAX_PX){
   if (amp <= 0) return decodedArcs;
-  return decodedArcs.map((pts, idx) => arcUses[idx] === 2 ? displaceArcPoints(pts, idx, amp) : pts);
+  return decodedArcs.map((pts, idx) => arcUses[idx] === 2 ? displaceArcPoints(pts, idx, amp, maxPx) : pts);
+}
+/* The median length of an arc segment in this tier, source-pixel units. A
+   simplified tier has the same borders drawn with fewer points, so this is
+   the one number that says how much coarser it is, and it is measured from
+   the shipped data rather than written down, so it cannot go stale when the
+   topology is rebuilt. */
+function medianSegmentLength(decodedArcs){
+  const lens = [];
+  for (const pts of decodedArcs){
+    for (let i = 1; i < pts.length; i++) lens.push(Math.hypot(pts[i][0] - pts[i-1][0], pts[i][1] - pts[i-1][1]));
+  }
+  if (!lens.length) return 1;
+  lens.sort((a, b) => a - b);
+  return lens[Math.floor(lens.length / 2)] || 1;
 }
 /* ---- zoom -> tier/bucket mapping (recommended thresholds from
    docs/changes/map-timeline/trace/README.md's LOD section, keyed off the
@@ -388,13 +404,72 @@ function tierForWidth(w){ return w < 700 ? 'lod0' : (w < 1300 ? 'lod1' : 'lod2')
    deepest tier, same as an unrecognised value: never assume prominence. */
 const REGION_SCALE_TIER = { continental: 1, regional: 2, district: 3, local: 3 };
 function regionLabelTier(scale){ return REGION_SCALE_TIER[scale] || 3; }
-const FRACTAL_BUCKETS = 4;   /* discrete steps between the LOD0 threshold and the zoom floor, cached, not per-frame */
-const FRACTAL_AMP_MAX = 0.35;
-function fractalBucketForWidth(w){
-  const t = Math.min(1, Math.max(0, (700 - w) / (700 - 300)));
+/* ---- how much detail a border gets, at any tier and any zoom ----
+   A fractal looks the same at every scale, which is the whole reason to
+   roughen a border with one rather than to draw the roughness in. The
+   amplitude is already a fraction of each segment's own length, so it is
+   scale-free by construction. What was NOT scale-free was everything around
+   it, and both parts were pinned to lod0:
+
+     1. displacement ran at lod0 only. Zoom out past a 700-unit viewBox and
+        the roughened border was replaced by the simplifier's straight one.
+        That is the "borders become straight and linear when you zoom out"
+        complaint, exactly, and it is a two-line consequence rather than
+        anything to do with the simplifier's quality.
+     2. the clamp was a constant 5 SOURCE pixels. A source pixel covers more
+        of the screen the further you zoom in, so a constant clamp is a
+        different size at every zoom. Worse, coarser tiers have longer
+        segments (median 2.5 / 10.0 / 26.9 px at lod0 / lod1 / lod2), so at
+        lod2 a 5px clamp binds on most segments and flattens the fractal
+        into a uniform sawtooth: the one shape that reads as machine-made.
+
+   So both are expressed against the view width instead of against lod0.
+   DETAIL_K and CLAMP_K are anchored so that lod0 at full zoom is exactly
+   what it has always been; every other tier and zoom follows from that one
+   calibration rather than from a second set of hand-picked numbers. */
+const FRACTAL_BUCKETS = 4;   /* discrete zoom steps per tier: cached, never recomputed per frame */
+const FRACTAL_AMP_MAX = 0.35;   /* a midpoint may not move by more than this fraction of its segment */
+const TIER_RANGE = { lod0: [300, 700], lod1: [700, 1300], lod2: [1300, 2778] };
+/* The width the calibration is anchored at. NOT the zoom floor (300): detail is
+   cached per bucket, so the deepest lod0 bucket is only ever evaluated at its
+   own midpoint, 350. Anchoring at 300 made the clamp 5.83px where it had always
+   been 5, and quietly moved 60 arcs at the tier this was supposed to leave
+   untouched. Derived rather than written down so a change to FRACTAL_BUCKETS
+   cannot reintroduce the same drift. */
+const ANCHOR_W = TIER_RANGE.lod0[1] - ((FRACTAL_BUCKETS - 0.5) / FRACTAL_BUCKETS) * (TIER_RANGE.lod0[1] - TIER_RANGE.lod0[0]);
+const DETAIL_K = 0.875 / ANCHOR_W;   /* target top-level offset, as a fraction of the view width */
+const CLAMP_K = 5 / ANCHOR_W;        /* the absolute clamp, likewise */
+function fractalBucketForWidth(tier, w){
+  const [lo, hi] = TIER_RANGE[tier] || TIER_RANGE.lod0;
+  const t = Math.min(1, Math.max(0, (hi - w) / (hi - lo)));   /* 0 at the tier's wide end, 1 at its deep end */
   return Math.min(FRACTAL_BUCKETS - 1, Math.floor(t * FRACTAL_BUCKETS));
 }
-function fractalAmpForBucket(bucket){ return FRACTAL_AMP_MAX * (bucket + 1) / FRACTAL_BUCKETS; }
+/* The representative view width for a bucket: the midpoint of the slice of
+   the tier's zoom range that the bucket covers. Detail is cached per bucket,
+   so it has to be a function of the bucket and not of the live view width. */
+function widthForBucket(tier, bucket){
+  const [lo, hi] = TIER_RANGE[tier] || TIER_RANGE.lod0;
+  const t = (bucket + 0.5) / FRACTAL_BUCKETS;
+  return hi - t * (hi - lo);
+}
+function fractalDetailFor(tier, bucket, medianSeg){
+  const w = widthForBucket(tier, bucket);
+  return { amp: Math.min(FRACTAL_AMP_MAX, DETAIL_K * w / (medianSeg || 1)), maxPx: CLAMP_K * w };
+}
+/* The tier-and-bucket -> arcs decision, as one pure function.
+   It exists because the border-detail gate used to call the displacement helpers
+   directly, which proved the HELPERS worked and proved nothing about whether the
+   app called them. A regression as small as
+       tier === 'lod2' ? state.decodedArcs : getDisplacedArcs(...)
+   would have passed a green gate. Now updateRegionTier() and the gate go through
+   this same function, so the gate measures the decision the app actually makes.
+   The same shape of mistake put the contrast probe above the vignette it was
+   meant to measure; a gate aimed at the wrong layer reports on nothing. */
+function arcsForTier(decodedArcs, arcUses, medianSeg, tier, bucket){
+  const { amp, maxPx } = fractalDetailFor(tier, bucket, medianSeg);
+  if (amp <= 0) return { arcs: decodedArcs, amp, maxPx };
+  return { arcs: getDisplacedArcs(decodedArcs, arcUses, amp, maxPx), amp, maxPx };
+}
 
 function el(tag, attrs, parent){
   const n = document.createElementNS(SVGNS, tag);
@@ -539,8 +614,12 @@ const MARKUP = `
     <div class="tlhead">
       <h2 class="atl-kicker atl-rule">Timeline <em>2000&#8229;2308</em></h2>
       <div class="threadbox">
-        <label for="thread">THREAD</label>
-        <span class="selwrap"><select id="thread"></select></span>
+        <label id="thread-lbl">THREAD</label>
+        <span class="selwrap"><span class="atl-select-trigger" id="thread" tabindex="0"
+          role="combobox" aria-haspopup="listbox" aria-expanded="false"
+          aria-controls="thread-listbox" aria-labelledby="thread-lbl thread"></span></span>
+        <ul class="atl-select-list" id="thread-listbox" role="listbox"
+          aria-labelledby="thread-lbl" hidden></ul>
       </div>
       <div class="atl-stepper">
         <button class="atl-btn" id="prev" aria-label="Previous event">&#9668; Prev</button>
@@ -677,7 +756,7 @@ export function mount(container, data, opts = {}){
   }
   const LOD_FILES = { lod2:'atlas-regions.lod2.topojson', lod1:'atlas-regions.lod1.topojson', lod0:'atlas-regions.lod0.topojson' };
   const topoState = {};      /* tier -> {promise, topology, decodedArcs, baseMap} */
-  const fractalCache = new Map(); /* lod0 zoom-bucket -> {regions, macros}: precomputed once, never per frame */
+  const fractalCache = new Map(); /* "<tier>:<bucket>" -> {regions, macros}: precomputed once, never per frame */
   let currentTier = null, currentBucket = null;
   const pendingTimeouts = [];
   /* ---- region-name labels (stage 2) ----
@@ -787,7 +866,8 @@ export function mount(container, data, opts = {}){
         entry.topology = topology;
         entry.decodedArcs = decodeTopoArcs(topology);
         entry.arcUses = sharedRegionArcs(topology);
-        entry.baseMap = buildRegionPaths(topology, entry.decodedArcs); /* undisplaced: used as-is by lod1/lod2, and by lod0 at zero amplitude */
+        entry.medianSeg = medianSegmentLength(entry.decodedArcs);
+        entry.baseMap = buildRegionPaths(topology, entry.decodedArcs); /* undisplaced: the zero-amplitude path, and the label geometry */
         entry.baseMacros = buildMacroPaths(topology, entry.decodedArcs);
         return entry;
       });
@@ -826,24 +906,21 @@ export function mount(container, data, opts = {}){
      per (tier, bucket) pair, then reads from cache. */
   async function updateRegionTier(w){
     const tier = tierForWidth(w);
-    const bucket = tier === 'lod0' ? fractalBucketForWidth(w) : null;
+    const bucket = fractalBucketForWidth(tier, w);
     if (tier === currentTier && bucket === currentBucket) return;
     let state;
     try { state = await loadTier(tier); }
     catch (err){ console.error('atlas.mjs: LOD tier load failed', err); return; }
     if (tierForWidth(view.w) !== tier) return; /* view moved on while this fetch was in flight */
-    let geometry;
-    if (tier === 'lod0'){
-      geometry = fractalCache.get(bucket);
-      if (!geometry){
-        const amp = fractalAmpForBucket(bucket);
-        const arcs = amp > 0 ? getDisplacedArcs(state.decodedArcs, state.arcUses, amp) : state.decodedArcs;
-        geometry = { regions: amp > 0 ? buildRegionPaths(state.topology, arcs) : state.baseMap,
-                     macros: amp > 0 ? buildMacroPaths(state.topology, arcs) : state.baseMacros };
-        fractalCache.set(bucket, geometry);
-      }
-    } else {
-      geometry = { regions: state.baseMap, macros: state.baseMacros };
+    /* Every tier is displaced now, so the cache is keyed by BOTH: one entry
+       per (tier, zoom bucket), twelve at most, each built once. */
+    const cacheKey = tier + ':' + bucket;
+    let geometry = fractalCache.get(cacheKey);
+    if (!geometry){
+      const { arcs, amp } = arcsForTier(state.decodedArcs, state.arcUses, state.medianSeg, tier, bucket);
+      geometry = { regions: amp > 0 ? buildRegionPaths(state.topology, arcs) : state.baseMap,
+                   macros: amp > 0 ? buildMacroPaths(state.topology, arcs) : state.baseMacros };
+      fractalCache.set(cacheKey, geometry);
     }
     /* the very first tier a fresh mount ever applies has nothing on screen
        yet to crossfade FROM (regions boot with d="", see the base-map
@@ -1497,8 +1574,18 @@ export function mount(container, data, opts = {}){
   }
 
   function zoomAt(fx, fy, k){ /* fx,fy in viewBox coords */
-    const w = view.w * k;
-    setView({x: fx - (fx - view.x) * k, y: fy - (fy - view.y) * k, w}, false);
+    /* Anchor on the zoom that will ACTUALLY happen, not the one that was asked for.
+       This used to scale x and y by the requested k and let clampView fix the width
+       afterwards. At a zoom stop that silently turned a refused zoom into a PAN: the
+       width snapped back to the floor while x and y had already been recomputed for a
+       larger window, so every further wheel notch walked the origin toward its own
+       clamp and the map crept north at full zoom-out.
+       Deriving the effective factor from the clamped width fixes both ends at once,
+       because at either stop it is exactly 1 and nothing moves. */
+    const w = Math.min(Math.max(view.w * k, 300), floorW);
+    const kEff = w / view.w;
+    if (kEff === 1) return;
+    setView({x: fx - (fx - view.x) * kEff, y: fy - (fy - view.y) * kEff, w}, false);
   }
   function clientToVb(ev){
     const r = svg.getBoundingClientRect();
@@ -1945,7 +2032,9 @@ export function mount(container, data, opts = {}){
      outside `.mapwrap` in the DOM, so no capture/bubble conflict is possible;
      this is purely "which surface is the pointer over." */
   $('.tl').addEventListener('wheel', ev => {
-    if (ev.target.closest('select')) return; /* let native select-scroll behave normally */
+    if (ev.target.closest('.atl-select-trigger, .atl-select-list')) return; /* let the thread
+      control's own scroll/interaction behave normally, same guard the native <select> it
+      replaced needed */
     ev.preventDefault();
     let cy;
     if (ev.target.closest('#tlov')){
@@ -2227,13 +2316,13 @@ export function mount(container, data, opts = {}){
     card.querySelectorAll('[data-ev]').forEach(b =>
       b.addEventListener('click', () => {
         const i = +b.dataset.ev;
-        if (!visibleEvents().includes(i)){ $('#thread').value = 'all'; applyThread('all', true); }
+        if (!visibleEvents().includes(i)){ threadSelect.setValue('all', {silent:true}); applyThread('all', true); }
         selectEvent(i);
       }));
     card.querySelectorAll('[data-step]').forEach(b =>
       b.addEventListener('click', () => stepEvent(+b.dataset.step)));
     card.querySelectorAll('.atl-chip[data-th]').forEach(b =>
-      b.addEventListener('click', () => { $('#thread').value = b.dataset.th; applyThread(b.dataset.th); }));
+      b.addEventListener('click', () => { threadSelect.setValue(b.dataset.th, {silent:true}); applyThread(b.dataset.th); }));
   }
 
   /* ---------- selection (the single source of truth) ---------- */
@@ -2311,12 +2400,170 @@ export function mount(container, data, opts = {}){
       ? `All threads: ${EVENTS.length} events.`
       : `Thread ${THREADS[t].label}: ${visibleEvents().length} events.`);
   }
-  {
-    const sel = $('#thread');
-    sel.innerHTML = '<option value="all">ALL THREADS</option>' + THREAD_ORDER.map(k =>
-      `<option value="${k}">${THREADS[k].label.toUpperCase()}</option>`).join('');
-    sel.addEventListener('change', () => applyThread(sel.value));
+  /* ---------- themed listbox, standing in for a native <select> ----------
+     A native <select>'s popup is drawn by the OS (system blue, system font,
+     system corner radius), which is exactly wrong against this CRT skin,
+     where every other control is hand-styled. This reimplements the ARIA 1.2
+     "select-only combobox" pattern by hand: role="combobox" trigger +
+     role="listbox" popup (options built by JS below), so the keyboard and
+     screen-reader support a real <select> gave for free has to be earned
+     back explicitly rather than assumed. Lives in atlas.mjs (not either
+     host) because the .atl markup and stylesheet are shared byte-identical
+     between apps/misfits and the standalone harness; fixing it once here
+     fixes it in both, the reason this control was left native in the first
+     place. */
+  function mountListSelect({ trigger, listbox, entries, initial, onChange }){
+    let open = false, activeIdx = 0, typeahead = '', typeaheadTimer = null;
+
+    /* Reparented onto the atlas root, never left inside .threadbox:
+       `.atl{overflow:hidden}` clips anything whose containing block is
+       `.atl` itself, and the thread control sits at the bottom of that box
+       (the timeline is the LAST of the three grid rows), so a tall dropdown
+       opening downward routinely has nowhere to go. position:fixed, placed
+       via JS from the trigger's own rect, escapes that clip entirely: a
+       fixed element's containing block is the viewport (or the fullscreen
+       element's box, which fills the viewport), never a scrolling/clipping
+       ancestor. A z-index of 100 clears the fullscreen vignette's 80
+       (see the FULLSCREEN rules in atlas.css) in both the real Fullscreen
+       API and its .atl--fs CSS fallback. */
+    root.appendChild(listbox);
+
+    function render(){
+      listbox.innerHTML = entries.map((e, i) =>
+        `<li role="option" id="${listbox.id}-opt-${i}" data-value="${esc(e.value)}">` +
+        `${esc(e.label)}</li>`).join('');
+    }
+    function currentIdx(){
+      const i = entries.findIndex(e => e.value === trigger.dataset.value);
+      return i === -1 ? 0 : i;
+    }
+    function paint(){
+      [...listbox.children].forEach((li, i) => {
+        li.setAttribute('aria-selected', String(entries[i].value === trigger.dataset.value));
+        li.classList.toggle('act', i === activeIdx);
+      });
+    }
+    function setValue(v, opts = {}){
+      if (!entries.some(e => e.value === v)) return;
+      trigger.dataset.value = v;
+      trigger.textContent = entries.find(e => e.value === v).label;
+      paint();
+      if (!opts.silent) onChange(v);
+    }
+    function place(){
+      const r = trigger.getBoundingClientRect();
+      const estH = Math.min(listbox.scrollHeight || entries.length * 24 + 8, window.innerHeight * 0.6);
+      let top = r.bottom + 4, flip = false;
+      if (top + estH > window.innerHeight && r.top - 4 - estH > 0){ top = r.top - 4 - estH; flip = true; }
+      listbox.dataset.flip = flip ? '1' : '';
+      listbox.style.left = Math.max(4, Math.min(r.left, window.innerWidth - r.width - 4)) + 'px';
+      listbox.style.top = top + 'px';
+      listbox.style.minWidth = r.width + 'px';
+    }
+    function focusOption(i){
+      activeIdx = Math.max(0, Math.min(entries.length - 1, i));
+      trigger.setAttribute('aria-activedescendant', `${listbox.id}-opt-${activeIdx}`);
+      paint();
+      listbox.children[activeIdx]?.scrollIntoView({block:'nearest'});
+    }
+    function onDocPointer(ev){
+      if (trigger.contains(ev.target) || listbox.contains(ev.target)) return;
+      closeList(false);
+    }
+    function openList(){
+      if (open) return;
+      open = true;
+      render();
+      activeIdx = currentIdx();
+      listbox.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+      place();
+      paint();
+      focusOption(activeIdx);
+      /* enter transition: set the "from" state, force a layout, then release
+         to the CSS target so there is actually something to interpolate.
+         prefers-reduced-motion is honoured in atlas.css (transition:none),
+         not here, so this stays one code path either way. */
+      listbox.style.transition = 'none';
+      listbox.style.opacity = '0';
+      listbox.style.transform = listbox.dataset.flip ? 'translateY(4px)' : 'translateY(-4px)';
+      listbox.getBoundingClientRect();
+      listbox.style.transition = '';
+      listbox.style.opacity = '';
+      listbox.style.transform = '';
+      document.addEventListener('pointerdown', onDocPointer, true);
+      window.addEventListener('resize', place);
+      window.addEventListener('scroll', place, true);
+    }
+    function closeList(returnFocus){
+      if (!open) return;
+      open = false;
+      listbox.hidden = true;
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.removeAttribute('aria-activedescendant');
+      document.removeEventListener('pointerdown', onDocPointer, true);
+      window.removeEventListener('resize', place);
+      window.removeEventListener('scroll', place, true);
+      if (returnFocus) trigger.focus();
+    }
+
+    trigger.addEventListener('click', () => (open ? closeList(true) : openList()));
+    trigger.addEventListener('keydown', ev => {
+      switch (ev.key){
+        case 'ArrowDown': ev.preventDefault(); open ? focusOption(activeIdx + 1) : openList(); break;
+        case 'ArrowUp':   ev.preventDefault(); open ? focusOption(activeIdx - 1) : openList(); break;
+        case 'Home': if (open){ ev.preventDefault(); focusOption(0); } break;
+        case 'End':  if (open){ ev.preventDefault(); focusOption(entries.length - 1); } break;
+        case 'Enter': case ' ':
+          ev.preventDefault();
+          if (open){ setValue(entries[activeIdx].value); closeList(true); } else openList();
+          break;
+        case 'Escape': if (open){ ev.preventDefault(); closeList(true); } break;
+        case 'Tab': if (open) closeList(false); break;
+        default:
+          if (ev.key.length === 1 && /[a-z0-9]/i.test(ev.key)){
+            clearTimeout(typeaheadTimer);
+            typeahead += ev.key.toLowerCase();
+            typeaheadTimer = setTimeout(() => { typeahead = ''; }, 600);
+            const from = open ? activeIdx : currentIdx();
+            const pool = entries.map((e, i) => ({e, i}));
+            const rotated = pool.slice(from + 1).concat(pool.slice(0, from + 1));
+            const hit = rotated.find(({e}) => e.label.toLowerCase().startsWith(typeahead));
+            if (hit){ if (open) focusOption(hit.i); else setValue(hit.e.value); }
+          }
+      }
+    });
+    listbox.addEventListener('click', ev => {
+      const li = ev.target.closest('[role="option"]');
+      if (!li) return;
+      setValue(entries[[...listbox.children].indexOf(li)].value);
+      closeList(true);
+    });
+    listbox.addEventListener('pointermove', ev => {
+      const li = ev.target.closest('[role="option"]');
+      if (!li) return;
+      const idx = [...listbox.children].indexOf(li);
+      if (idx !== activeIdx) focusOption(idx);
+    });
+
+    cleanups.push(() => closeList(false)); /* safety net: destroy() while the popup happens to be open */
+
+    render();
+    setValue(initial, {silent:true});
+    return { setValue, getValue: () => trigger.dataset.value };
   }
+
+  const threadSelect = mountListSelect({
+    trigger: $('#thread'), listbox: $('#thread-listbox'),
+    entries: [{value:'all', label:'ALL THREADS'}]
+      .concat(THREAD_ORDER.map(k => ({value:k, label: THREADS[k].label.toUpperCase()}))),
+    initial: 'all',
+    onChange: v => applyThread(v),
+  });
+  /* <label for> only auto-focuses "labelable" elements (button, input, select,
+     textarea...); a <span role="combobox"> isn't one, so the native
+     select's click-the-label-to-focus behaviour needs restating by hand. */
+  $('#thread-lbl').addEventListener('click', () => $('#thread').focus());
   $('#prev').addEventListener('click', () => stepEvent(-1));
   $('#next').addEventListener('click', () => stepEvent(1));
 
@@ -2489,4 +2736,5 @@ export function mount(container, data, opts = {}){
    Exported so tools/border-detail-gate.mjs can hold the one rule that has broken twice
    and was, until now, guarded only by a comment. Nothing in the app imports it. */
 export const __geometry = { decodeTopoArcs, sharedRegionArcs, getDisplacedArcs, buildRegionPaths,
-  poleOfInaccessibility, buildRegionLabelRings, regionLabelPoint };
+  poleOfInaccessibility, buildRegionLabelRings, regionLabelPoint,
+  medianSegmentLength, fractalDetailFor, arcsForTier, FRACTAL_BUCKETS };
