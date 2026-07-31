@@ -1,0 +1,2492 @@
+/* =====================================================================
+   WASTELAND ATLAS, mount() seam
+   ---------------------------------------------------------------------
+   Extracted from docs/changes/map-timeline/atlas.html (Phase 0 of
+   docs/changes/map-timeline/integration-plan.md). This module owns the
+   atlas's rendering and interaction: projection/pixel space, the
+   base+macro map layers, pin rendering (via GLYPHS), the timeline lanes,
+   the detail card, selection (selectEvent/selectLoc/clearSel), viewBox
+   zoom with the cover clamp + pan clamping, and keyboard/ARIA.
+
+   It DOES own its layout and component CSS, in the sibling file
+   ./atlas.css, which mount() injects once per page. It does NOT own the
+   theme: colour comes from the host's tokens (`--fg*`, `--bg*`, `--glow*`,
+   `--font-body`, plus the fixed-identity `--fac-*`), so the atlas is amber
+   in an amber terminal and green in a green one. Until 2026-07-26 the
+   stylesheet lived in atlas.html's own <style> block instead, which meant
+   mounting this module anywhere else produced correct markup with no rules
+, the app rendered the atlas unstyled and collapsed for exactly that
+   reason. See docs/changes/map-timeline/roadmap-map-section-layout.md.
+
+   Class names are namespaced `.atl` / `.atl-*` because a host page has its
+   own generic ones: apps/misfits/styles.css already owns `.atlas` (the home
+   page's site-shape graph) and defines `.btn`, `.card`, `.chip`, `.rule`
+   and `.stepper` for its own chrome: an unprefixed `.card` here inherited
+   a pointer cursor and a hover lift meant for roster cards. For the same
+   reason the map viewport is a `<section>` and the header a `<div>`: the
+   host styles `header` by element, and a second `<main>` inside its shell
+   would be a duplicate landmark. `#map` is the imported base-map SVG's id
+   and is overridable via `opts.mapId`: see mount()'s doc comment: for a
+   host page (apps/misfits/index.html) that already owns `id="map"` on an
+   ancestor element; CSS reaches the SVG through its `.atl-map` class
+   instead, so the id is free to change per host.
+
+   Usage:
+     import { mount } from './lib/atlas.mjs';
+     const handle = mount(containerEl, {
+       pins, events, threads, threadOrder, basemapSvg,
+     }, opts);
+     // handle: { selectEvent, selectLoc, clearSel, destroy, on, setFilter, setScope }
+
+   `data.basemapSvg` is the raw text of a standalone SVG document (see
+   apps/misfits/data/atlas-basemap.svg): the traced land silhouette,
+   faction territory regions and the macro-territory LOD layer. This
+   module parses it, imports its root <svg> as the live #map element, and
+   appends the dynamic layers (crosshair, pins) into it.
+
+   Single-instance note: like the original script, this still reaches out
+   to `document`/`window` for global keyboard/resize/pointer handling
+   (Escape, +/-, drag-to-pan) and tracks those listeners so `destroy()`
+   can remove them. Mounting more than one atlas on the same page at once
+   is not a supported configuration yet (ids such as #card/#legend/#lanes
+   are not namespaced); that is future work, not a Phase 0/1 concern.
+   ===================================================================== */
+
+const SVGNS = 'http://www.w3.org/2000/svg';
+
+const FACTIONS = {
+  ncr:        {label:'New California Republic', c:'var(--fac-ncr)'},
+  legion:     {label:"Caesar's Legion",         c:'var(--fac-legion)'},
+  brotherhood:{label:'Brotherhood of Steel',    c:'var(--fac-brotherhood)'},
+  enclave:    {label:'Enclave',                 c:'var(--fac-enclave)'},
+  texas:      {label:'Texas',                   c:'var(--fac-texas)'},
+  vault:      {label:'Vault-Tec',               c:'var(--fac-vault)'},
+  other:      {label:'Independent',             c:'var(--fac-other)'},
+};
+
+/* ---- scope stubs (Phase 3.3 of integration-plan.md) ----
+   US is the fully-working scope (the CONUS framing already computed per
+   instance below). Region/Local are deliberately NOT a second map: they
+   reframe the same US canvas to a bbox around the home pin (509th /
+   Wendover) and show a badge marking them as a stub. The real Wendover
+   local map is a separate piece of work (local-map-wendover.md). `w` is
+   the viewBox width in the same units as CONUS/floorW below; clampView's
+   300-unit zoom-in floor means `local` is already at the tightest this
+   canvas allows. */
+const SCOPES = {
+  region: { w:900, badge:'REGION: stub: frames the Great Basin around Wendover. The full regional map is separate work.',
+            announce:'Scope: Region. Stub: frames the Great Basin around Wendover; the full regional map is separate work.' },
+  local:  { w:300, badge:'LOCAL: stub: tight on Wendover, 40.7°N 114.0°W. The playable local map is separate work.',
+            announce:'Scope: Local. Stub: frames tight on Wendover; the playable local map is separate work.' },
+};
+
+/* =====================================================================
+   LOD TIERS, TopoJSON decode + deterministic fractal displacement
+   ---------------------------------------------------------------------
+   docs/changes/map-timeline/roadmap-border-topology.md steps 3 (wiring)
+   and 4 (fractal detail). The region *tint* geometry (the 188 `.terr`
+   paths the base-map SVG imports with empty `d=""`: see the note at the
+   top of apps/misfits/data/atlas-basemap.svg) is supplied at runtime from
+   one of three topology-preserving TopoJSON tiers generated from a SINGLE
+   shared-arc topology (docs/changes/map-timeline/trace/README.md's
+   "Border topology" section): LOD2 (~8% vertices, the default CONUS
+   framing), LOD1 (~30%), LOD0 (100%, deep zoom only). Every tier abuts
+   identically because simplification moves a shared arc once and both
+   neighbouring regions read the same result back, never re-derived
+   independently; so swapping tiers cannot open a gap.
+
+   Everything below this comment down to loadTier()/updateRegionTier() (in
+   mount()) is pure: no DOM, no fetch, so it can decode/displace/test in
+   isolation. TopoJSON's own encoding (quantised, delta-coded arcs, shared
+   by reference and by reversal) is documented at https://github.com/topojson/topojson-specification:
+   decodeTopoArcs()/buildRegionPaths() are a ~40-line reimplementation of
+   just the subset this file needs (Polygon + MultiPolygon, no arcs of
+   arcs), not a dependency. */
+
+/* arc index -> array of [x,y] in the SVG's own pixel space (2778x3323:
+   the topojson's quantised coordinates were verified byte-for-byte against
+   the original traced region bboxes in this same space; no reprojection
+   needed). Decoded once per fetched tier and cached by the caller. */
+function decodeTopoArcs(topology){
+  const [sx, sy] = topology.transform.scale;
+  const [tx, ty] = topology.transform.translate;
+  return topology.arcs.map(arc => {
+    let x = 0, y = 0;
+    const pts = new Array(arc.length);
+    for (let i = 0; i < arc.length; i++){
+      x += arc[i][0]; y += arc[i][1];
+      pts[i] = [x * sx + tx, y * sy + ty];
+    }
+    return pts;
+  });
+}
+/* one ring = an array of arc indices (negative index i means "arc ~i,
+   traversed in reverse", the TopoJSON convention for a shared arc used
+   backwards by its second owner). Adjacent arcs in a ring share an
+   endpoint, so every arc after the first drops its opening point. */
+function ringPoints(ring, decodedArcs){
+  let pts = [];
+  ring.forEach((idx, k) => {
+    const i = idx >= 0 ? idx : ~idx;
+    const fwd = decodedArcs[i];
+    const arcPts = idx >= 0 ? fwd : fwd.slice().reverse();
+    pts = k === 0 ? pts.concat(arcPts) : pts.concat(arcPts.slice(1));
+  });
+  return pts;
+}
+function ringsToPathD(rings, decodedArcs){
+  const d = [];
+  for (const ring of rings){
+    const pts = ringPoints(ring, decodedArcs);
+    if (pts.length < 2) continue;
+    let s = 'M' + pts[0][0].toFixed(2) + ' ' + pts[0][1].toFixed(2);
+    for (let i = 1; i < pts.length; i++) s += 'L' + pts[i][0].toFixed(2) + ' ' + pts[i][1].toFixed(2);
+    d.push(s + 'Z');
+  }
+  return d.join(' ');
+}
+/* topology.objects.regions.geometries[*].properties.id is the stable
+   region id shared across every tier AND across the document order of the
+   base-map SVG's `.terr` paths (verified: recolor.py emits one `.terr`
+   path per entry of the same `regions` list this topology was built from,
+   in the same order, and drops none, 188 in, 188 out; so `.terr` path
+   index i IS region id i; see roadmap-border-topology.md's own note on
+   this). That equivalence is what lets applyRegionGeometry() below write
+   straight into the existing elements instead of rebuilding the DOM. */
+function buildRegionPaths(topology, decodedArcs){
+  const map = new Map();
+  for (const geom of topology.objects.regions.geometries){
+    let d;
+    if (geom.type === 'Polygon') d = ringsToPathD(geom.arcs, decodedArcs);
+    else if (geom.type === 'MultiPolygon') d = geom.arcs.map(rings => ringsToPathD(rings, decodedArcs)).join(' ');
+    else d = '';
+    map.set(geom.properties.id, d);
+  }
+  return map;
+}
+
+/* Macro territories are deliberately another view of the same arc table, not
+   separately traced SVG.  A MultiPolygon stays one SVG path (with multiple
+   subpaths), which also means a disconnected macro such as Brotherhood is
+   painted once rather than with duplicate opacity. */
+function buildMacroPaths(topology, decodedArcs){
+  const macros = topology.objects.macroTerritories;
+  if (!macros || !Array.isArray(macros.geometries)){
+    throw new Error('atlas.mjs: topology is missing objects.macroTerritories');
+  }
+  const map = new Map();
+  for (const geom of macros.geometries){
+    let d;
+    if (geom.type === 'Polygon') d = ringsToPathD(geom.arcs, decodedArcs);
+    else if (geom.type === 'MultiPolygon') d = geom.arcs.map(rings => ringsToPathD(rings, decodedArcs)).join(' ');
+    else d = '';
+    map.set(geom.properties.id, d);
+  }
+  return map;
+}
+
+/* =====================================================================
+   REGION-NAME LABEL PLACEMENT (stage 2, replacing atlas.css's old TODO)
+   ---------------------------------------------------------------------
+   apps/misfits/data/atlas-region-meta.json supplies a `primary` display
+   name per region id (built by build_region_meta.py from a point-in-
+   polygon resolution against this same lod0 topology). Placement must NOT
+   be the polygon centroid: several of the 188 regions are concave (a
+   coastline notch, a river bend folded back on itself) and a centroid for
+   those lands outside the shape entirely, in the sea or in a neighbour's
+   territory. Instead this computes each region's POLE OF INACCESSIBILITY,
+   the interior point of maximum distance from the boundary, via the same
+   grid-refinement technique Mapbox's `polylabel` uses (well-known, small,
+   reimplemented here rather than adding a dependency, the same call this
+   file already made for TopoJSON decoding above). Pure: no DOM, only
+   points already decoded from the topology. */
+function ringSignedArea(ring){
+  let a = 0;
+  for (let i = 0, n = ring.length, j = n - 1; i < n; j = i++) a += (ring[j][0] + ring[i][0]) * (ring[i][1] - ring[j][1]);
+  return a / 2;
+}
+function pointInRing(x, y, ring){
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++){
+    const xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+    if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+function pointInPolygon(x, y, rings){ /* rings[0] = outer, rest = holes */
+  if (!pointInRing(x, y, rings[0])) return false;
+  for (let k = 1; k < rings.length; k++) if (pointInRing(x, y, rings[k])) return false;
+  return true;
+}
+function distToSegment(px, py, ax, ay, bx, by){
+  const dx = bx - ax, dy = by - ay;
+  const len2 = dx * dx + dy * dy;
+  const t = len2 ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / len2)) : 0;
+  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+}
+function distToPolygonBoundary(x, y, rings){
+  let min = Infinity;
+  for (const ring of rings){
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++){
+      const d = distToSegment(x, y, ring[j][0], ring[j][1], ring[i][0], ring[i][1]);
+      if (d < min) min = d;
+    }
+  }
+  return min;
+}
+function signedDistToPolygon(x, y, rings){
+  const d = distToPolygonBoundary(x, y, rings);
+  return pointInPolygon(x, y, rings) ? d : -d;
+}
+/* Grid-refinement pole of inaccessibility. `rings` is ONE polygon: [outer,
+   ...holes]. Guards a hard iteration cap (POLE_MAX_CELLS) rather than trusting
+   precision alone to terminate: a degenerate sliver ring (near-zero area)
+   could otherwise spin the priority queue indefinitely. */
+const POLE_MAX_CELLS = 3000;
+function poleOfInaccessibility(rings){
+  const outer = rings[0];
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const [x, y] of outer){
+    if (x < minX) minX = x; if (x > maxX) maxX = x;
+    if (y < minY) minY = y; if (y > maxY) maxY = y;
+  }
+  const width = maxX - minX, height = maxY - minY;
+  if (!(width > 0) || !(height > 0)) return [minX, minY];
+  const cellSize = Math.min(width, height);
+  const precision = Math.max(1, cellSize * 0.02);
+  const h0 = cellSize / 2;
+  const makeCell = (x, y, h) => { const d = signedDistToPolygon(x, y, rings); return {x, y, h, d, max: d + h * Math.SQRT2}; };
+  const cells = [];
+  for (let x = minX; x < maxX; x += cellSize) for (let y = minY; y < maxY; y += cellSize) cells.push(makeCell(x + h0, y + h0, h0));
+  let best = makeCell(minX + width / 2, minY + height / 2, 0);
+  let n = 0;
+  while (cells.length && n++ < POLE_MAX_CELLS){
+    cells.sort((a, b) => a.max - b.max); /* ascending: pop the best (largest max) off the end */
+    const cell = cells.pop();
+    if (cell.d > best.d) best = cell;
+    if (cell.max - best.d <= precision) continue; /* nothing left in the queue can beat best by enough to matter */
+    const h = cell.h / 2;
+    cells.push(makeCell(cell.x - h, cell.y - h, h), makeCell(cell.x + h, cell.y - h, h),
+               makeCell(cell.x - h, cell.y + h, h), makeCell(cell.x + h, cell.y + h, h));
+  }
+  return [best.x, best.y];
+}
+/* Rings-per-polygon (not path strings): a Polygon is one polygon [outer,
+   ...holes]; a MultiPolygon is several. Only decoded for region ids a caller
+   actually needs labelled (idsNeeded); the label set is a small fraction of
+   the 188 regions, so this stays cheap despite being O(vertices) per id. */
+function buildRegionLabelRings(topology, decodedArcs, idsNeeded){
+  const map = new Map();
+  for (const geom of topology.objects.regions.geometries){
+    const id = geom.properties.id;
+    if (!idsNeeded.has(id)) continue;
+    let polys;
+    if (geom.type === 'Polygon') polys = [geom.arcs.map(ring => ringPoints(ring, decodedArcs))];
+    else if (geom.type === 'MultiPolygon') polys = geom.arcs.map(rings => rings.map(ring => ringPoints(ring, decodedArcs)));
+    else polys = [];
+    map.set(id, polys);
+  }
+  return map;
+}
+/* The id's one labelled point: largest sub-polygon by |area| (a MultiPolygon
+   region is labelled once, on its biggest piece, never once per piece), then
+   that piece's pole of inaccessibility. */
+function regionLabelPoint(polys){
+  let best = null, bestArea = -1;
+  for (const poly of polys){
+    if (!poly.length || poly[0].length < 3) continue;
+    const a = Math.abs(ringSignedArea(poly[0]));
+    if (a > bestArea){ bestArea = a; best = poly; }
+  }
+  return best ? poleOfInaccessibility(best) : null;
+}
+/* An arc used twice is an inter-region border.  One-owner arcs are the coast,
+   lakes, or other outside perimeter and must keep matching the fixed base-map
+   artwork when the deep LOD gains border texture. */
+function sharedRegionArcs(topology){
+  const uses = new Uint16Array(topology.arcs.length);
+  const count = arcs => {
+    for (const item of arcs){
+      if (typeof item === 'number') uses[item < 0 ? ~item : item]++;
+      else count(item);
+    }
+  };
+  for (const geom of topology.objects.regions.geometries) count(geom.arcs);
+  return uses;
+}
+
+/* ---- deterministic fractal displacement (roadmap step 4) ----
+   Midpoint displacement along a shared ARC (never the assembled region
+   polygon), seeded per (arc index, sub-segment id, recursion depth), no
+   Math.random() anywhere in this file, so the exact same jitter comes back
+   on every frame, every reload, every session. Because the displacement is
+   computed once per arc and both neighbouring regions read the identical
+   displaced points back (one is just the reverse of the other's point
+   order: reversal cannot change the perpendicular offset chosen for a
+   given segment), roughening a border can never open a gap between the
+   two regions that share it. mulberry32 is a tiny, public-domain PRNG
+   (32-bit state, deterministic from its seed), not cryptographic, just
+   stable, which is all this needs. */
+function hashSeed32(a, b, c){
+  let h = 0x811c9dc5;
+  for (const n of [a, b, c]){ h ^= (n >>> 0); h = Math.imul(h, 0x01000193); }
+  return h >>> 0;
+}
+function mulberry32(seed){
+  let a = seed >>> 0;
+  return function(){
+    a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const DISPLACE_DEPTH = 3;        /* recursive subdivisions per original arc segment (max 8x points) */
+const DISPLACE_FALLOFF = 0.55;   /* roughness shrinks each level, like real coastline detail */
+const DISPLACE_MAX_PX = 5;       /* hard clamp, source-pixel units: subtle, never garish */
+function displaceSegment(a, b, arcIndex, segId, depth, amp){
+  if (depth >= DISPLACE_DEPTH || amp < 0.02) return [a, b];
+  const dx = b[0] - a[0], dy = b[1] - a[1];
+  const len = Math.hypot(dx, dy);
+  if (len < 1e-3) return [a, b];
+  const nx = -dy / len, ny = dx / len; /* unit normal to a->b */
+  const rnd = mulberry32(hashSeed32(arcIndex, segId, depth))();
+  let off = (rnd * 2 - 1) * amp * len;
+  if (off > DISPLACE_MAX_PX) off = DISPLACE_MAX_PX;
+  if (off < -DISPLACE_MAX_PX) off = -DISPLACE_MAX_PX;
+  const mid = [(a[0] + b[0]) / 2 + nx * off, (a[1] + b[1]) / 2 + ny * off];
+  const left = displaceSegment(a, mid, arcIndex, segId * 2, depth + 1, amp * DISPLACE_FALLOFF);
+  const right = displaceSegment(mid, b, arcIndex, segId * 2 + 1, depth + 1, amp * DISPLACE_FALLOFF);
+  return left.concat(right.slice(1));
+}
+function displaceArcPoints(pts, arcIndex, amp){
+  if (amp <= 0 || pts.length < 2) return pts;
+  let out = [pts[0]];
+  for (let i = 0; i < pts.length - 1; i++) out = out.concat(displaceSegment(pts[i], pts[i + 1], arcIndex, i, 0, amp).slice(1));
+  return out;
+}
+/* amp is a FRACTION of each segment's own length (clamped in absolute px
+   above), applied only to two-owner region borders in LOD0. */
+function getDisplacedArcs(decodedArcs, arcUses, amp){
+  if (amp <= 0) return decodedArcs;
+  return decodedArcs.map((pts, idx) => arcUses[idx] === 2 ? displaceArcPoints(pts, idx, amp) : pts);
+}
+/* ---- zoom -> tier/bucket mapping (recommended thresholds from
+   docs/changes/map-timeline/trace/README.md's LOD section, keyed off the
+   same view.w this module already uses for the .zoomed macro-layer
+   crossfade) ---- */
+function tierForWidth(w){ return w < 700 ? 'lod0' : (w < 1300 ? 'lod1' : 'lod2'); }
+/* Region-name label LOD gating: mirrors the pin priority tiers (see
+   candidatesForTier further down) but keyed off atlas-region-meta.json's
+   `scale` field instead of a hand-authored priority: a region's recorded
+   political scale is a reasonable proxy for "how prominent should its name
+   be", a continental power earns a label at every zoom, a merely
+   district-scale (or unclaimed) region only at the deepest one. Regions with
+   no `scale` in the data (the majority: point-in-polygon resolves SOME name
+   for nearly every region, but standing/scale are set only when a
+   2290-territories.json territory actually claims it) default to the
+   deepest tier, same as an unrecognised value: never assume prominence. */
+const REGION_SCALE_TIER = { continental: 1, regional: 2, district: 3, local: 3 };
+function regionLabelTier(scale){ return REGION_SCALE_TIER[scale] || 3; }
+const FRACTAL_BUCKETS = 4;   /* discrete steps between the LOD0 threshold and the zoom floor, cached, not per-frame */
+const FRACTAL_AMP_MAX = 0.35;
+function fractalBucketForWidth(w){
+  const t = Math.min(1, Math.max(0, (700 - w) / (700 - 300)));
+  return Math.min(FRACTAL_BUCKETS - 1, Math.floor(t * FRACTAL_BUCKETS));
+}
+function fractalAmpForBucket(bucket){ return FRACTAL_AMP_MAX * (bucket + 1) / FRACTAL_BUCKETS; }
+
+function el(tag, attrs, parent){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+/* ---- faction sigils: tiny CRT emblems drawn in a 12x12 box centred on 0,0 ---- */
+function starPath(cx, cy, R){
+  const r = R * .4; let d = '';
+  for (let i = 0; i < 10; i++){
+    const a = -Math.PI/2 + i*Math.PI/5, rad = i%2 ? r : R;
+    d += (i?'L':'M') + (cx+rad*Math.cos(a)).toFixed(2) + ' ' + (cy+rad*Math.sin(a)).toFixed(2);
+  }
+  return d + 'Z';
+}
+function gearPath(R){
+  let d = ''; const r = R * .74;
+  for (let i = 0; i < 16; i++){
+    const a0 = i/16*2*Math.PI, a1 = (i+1)/16*2*Math.PI, rad = i%2 ? r : R;
+    d += (i?'L':'M') + (rad*Math.cos(a0)).toFixed(2) + ' ' + (rad*Math.sin(a0)).toFixed(2)
+       + 'L' + (rad*Math.cos(a1)).toFixed(2) + ' ' + (rad*Math.sin(a1)).toFixed(2);
+  }
+  return d + 'Z';
+}
+const SIGILS = {
+  ncr(g){        /* star over a flag stripe */
+    el('path', {d:starPath(0,-.8,3.4), fill:'currentColor'}, g);
+    el('line', {x1:-3.8, y1:3.4, x2:3.8, y2:3.4, stroke:'currentColor', 'stroke-width':1.4}, g);
+  },
+  legion(g){     /* vexillum standard */
+    el('line', {x1:0, y1:-5, x2:0, y2:5, stroke:'currentColor', 'stroke-width':1.2}, g);
+    el('line', {x1:-3.4, y1:-3.6, x2:3.4, y2:-3.6, stroke:'currentColor', 'stroke-width':1.2}, g);
+    el('rect', {x:-2.5, y:-3, width:5, height:4, fill:'none', stroke:'currentColor', 'stroke-width':1.1}, g);
+    el('line', {x1:-2.5, y1:-1, x2:2.5, y2:-1, stroke:'currentColor', 'stroke-width':.8}, g);
+  },
+  brotherhood(g){ /* gear with a sword core */
+    el('path', {d:gearPath(4.6), fill:'none', stroke:'currentColor', 'stroke-width':1.1}, g);
+    el('circle', {r:1.4, fill:'none', stroke:'currentColor', 'stroke-width':1}, g);
+    el('line', {x1:0, y1:-2.2, x2:0, y2:2.2, stroke:'currentColor', 'stroke-width':1}, g);
+  },
+  enclave(g){    /* eagle: body + tiered spread wings */
+    el('circle', {r:1.15, fill:'currentColor'}, g);
+    for (const s of [-1, 1]) for (let i = 0; i < 3; i++){
+      const y = -.6 + i*1.5, x0 = s*1.7, x1 = s*(1.7 + (3-i)*1.15);
+      el('line', {x1:x0, y1:y, x2:x1, y2:y+.55, stroke:'currentColor',
+                  'stroke-width':1, 'stroke-linecap':'square'}, g);
+    }
+  },
+  texas(g){      /* the lone star, ringed */
+    el('circle', {r:4.7, fill:'none', stroke:'currentColor', 'stroke-width':1}, g);
+    el('path', {d:starPath(0,0,3), fill:'currentColor'}, g);
+  },
+  other(g){      /* unaffiliated: open diamond */
+    el('rect', {x:-2.6, y:-2.6, width:5.2, height:5.2, fill:'none', stroke:'currentColor',
+                'stroke-width':1.1, transform:'rotate(45)'}, g);
+  },
+};
+
+/* ---- per-type pin glyphs: tiny CRT marks drawn in currentColor (the pin's
+   faction colour), one per pin.type, in a ~12px box centred on 0,0 ---- */
+const GLYPHS = {
+  vault(g){         /* gear ring with a dot core */
+    el('path', {d:gearPath(5.2), fill:'none', stroke:'currentColor', 'stroke-width':1.2}, g);
+    el('circle', {r:1.6, fill:'currentColor'}, g);
+  },
+  city(g){          /* stacked skyline bars */
+    el('rect', {x:-4.2, y:-1,   width:2.2, height:5,   fill:'currentColor'}, g);
+    el('rect', {x:-1,   y:-4,   width:2.2, height:8,   fill:'currentColor'}, g);
+    el('rect', {x:2.2,  y:-2.4, width:2.2, height:6.4, fill:'currentColor'}, g);
+  },
+  settlement(g){    /* small house: roof + walls + sill */
+    el('path', {d:'M-4.6 1 L0 -4.6 L4.6 1', fill:'none', stroke:'currentColor', 'stroke-width':1.2}, g);
+    el('path', {d:'M-3.2 1 L-3.2 4 L3.2 4 L3.2 1', fill:'none', stroke:'currentColor', 'stroke-width':1.2}, g);
+  },
+  military(g){      /* double chevron */
+    el('path', {d:'M-4 -1 L0 -4.4 L4 -1 M-4 2.4 L0 -1 L4 2.4', fill:'none',
+                stroke:'currentColor', 'stroke-width':1.3, 'stroke-linecap':'round',
+                'stroke-linejoin':'round'}, g);
+  },
+  facility(g){      /* flask */
+    el('path', {d:'M-1.3 -4.6 L-1.3 -1.2 L-4 3.6 A1 1 0 0 0 -3.1 4.6 L3.1 4.6 A1 1 0 0 0 4 3.6 ' +
+                   'L1.3 -1.2 L1.3 -4.6', fill:'none', stroke:'currentColor', 'stroke-width':1.1,
+                'stroke-linejoin':'round'}, g);
+    el('line', {x1:-2.2, y1:-4.6, x2:2.2, y2:-4.6, stroke:'currentColor', 'stroke-width':1.1}, g);
+  },
+  landmark(g){      /* diamond / obelisk */
+    el('path', {d:'M0 -5 L3 0 L0 5 L-3 0 Z', fill:'none', stroke:'currentColor', 'stroke-width':1.3}, g);
+  },
+  infrastructure(g){ /* dam: deck bar over support piers */
+    el('rect', {x:-4.6, y:-1.4, width:9.2, height:2.8, fill:'currentColor'}, g);
+    el('line', {x1:-3.4, y1:1.4, x2:-3.4, y2:4.2, stroke:'currentColor', 'stroke-width':1.2}, g);
+    el('line', {x1:0,    y1:1.4, x2:0,    y2:4.2, stroke:'currentColor', 'stroke-width':1.2}, g);
+    el('line', {x1:3.4,  y1:1.4, x2:3.4,  y2:4.2, stroke:'currentColor', 'stroke-width':1.2}, g);
+  },
+  special(g){       /* small tree: The New Master */
+    el('path', {d:'M0 -4.8 L2.8 -0.6 L-2.8 -0.6 Z', fill:'currentColor'}, g);
+    el('path', {d:'M0 -1.8 L3.6 2.6 L-3.6 2.6 Z', fill:'currentColor'}, g);
+    el('line', {x1:0, y1:2.6, x2:0, y2:4.8, stroke:'currentColor', 'stroke-width':1.3}, g);
+  },
+};
+
+const MARKUP = `
+<div class="atl">
+  <div class="hd">
+    <h1 class="title">WASTELAND ATLAS</h1>
+    <p class="sub">POST-WAR UNITED STATES &middot; TACTICAL EVENT CARTOGRAPHY &middot; <b>PRESENT DAY 2302</b></p>
+    <p class="hints" aria-hidden="true">TAB panels &nbsp;&middot;&nbsp; &larr; &rarr; scrub &nbsp;&middot;&nbsp; ENTER select &nbsp;&middot;&nbsp; ESC clear &nbsp;&middot;&nbsp; + &minus; zoom</p>
+    <div class="scopectl" id="scopectl" role="group" aria-label="Map scope">
+      <button class="atl-btn" id="scope-us"     type="button" aria-pressed="true">US</button>
+      <button class="atl-btn" id="scope-region" type="button" aria-pressed="false">REGION</button>
+      <button class="atl-btn" id="scope-local"  type="button" aria-pressed="false">LOCAL</button>
+    </div>
+    <div class="fsctl">
+      <button class="atl-btn" id="atl-fs" type="button" aria-pressed="false">&#9974; Fullscreen</button>
+    </div>
+  </div>
+
+  <section class="mapwrap" aria-label="Map of the post-war United States">
+    <p class="sr-only">Faction territories shown on the map: New California Republic &mdash;
+      California and the Mojave frontier east to Hoover Dam. Caesar's Legion &mdash; a wedge east
+      of the Colorado River across Arizona and New Mexico. Texas &mdash; the south-central states.</p>
+    <div class="maplegend" id="legend" aria-label="Faction legend"></div>
+    <div class="mapctl">
+      <div class="gamefilter" id="gamefilter" role="group" aria-label="Filter markers by source"></div>
+      <div class="layerctl" id="layerctl" role="group" aria-label="Map layers">
+        <button class="atl-btn" id="layer-fields" type="button" aria-pressed="false">Territories</button>
+      </div>
+    </div>
+    <p class="scopenote" id="scopenote" aria-hidden="true" hidden></p>
+    <div class="zoomctl">
+      <button class="atl-btn" id="zin"  aria-label="Zoom in">+</button>
+      <button class="atl-btn" id="zout" aria-label="Zoom out">&minus;</button>
+      <button class="atl-btn" id="zres" aria-label="Reset view">&#8962;</button>
+    </div>
+  </section>
+
+  <aside class="atl-card" id="card" aria-label="Detail" hidden></aside>
+
+  <section class="tl" aria-label="Event timeline, 2000 to 2308">
+    <div class="tlhead">
+      <h2 class="atl-kicker atl-rule">Timeline <em>2000&#8229;2308</em></h2>
+      <div class="threadbox">
+        <label for="thread">THREAD</label>
+        <span class="selwrap"><select id="thread"></select></span>
+      </div>
+      <div class="atl-stepper">
+        <button class="atl-btn" id="prev" aria-label="Previous event">&#9668; Prev</button>
+        <button class="atl-btn" id="next" aria-label="Next event">Next &#9658;</button>
+      </div>
+      <div class="tlzoomctl" role="group" aria-label="Timeline zoom">
+        <button class="atl-btn" id="tlzin"  aria-label="Zoom timeline in">+</button>
+        <button class="atl-btn" id="tlzout" aria-label="Zoom timeline out">&minus;</button>
+        <button class="atl-btn" id="tlzfit" aria-label="Zoom timeline to fit the full span">&#8962;</button>
+      </div>
+    </div>
+    <div class="tlscroll">
+      <div class="tlbody" id="tlbody">
+        <div class="lanes" id="lanes" role="group" aria-label="Timeline events by thread"></div>
+        <div class="axis" id="axis"></div>
+        <div class="over" id="over" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="tlov" id="tlov">
+      <div class="tlov-track" id="tlovtrack">
+        <div class="tlov-density" id="tlovdensity" aria-hidden="true"></div>
+        <div class="tlov-window" id="tlovwindow" tabindex="0" role="slider"
+             aria-label="Visible time range" aria-orientation="horizontal"
+             aria-valuemin="2000" aria-valuemax="2308"></div>
+      </div>
+    </div>
+  </section>
+
+  <p id="status" class="sr-only" role="status"></p>
+</div>
+`;
+
+/* ---- the atlas's own stylesheet, injected once per page ----
+   A <link> rather than an inlined <style>: it stays a real .css file (so it
+   is editable, greppable and cached), and resolving it against import.meta.url
+   means it is found from every host, apps/misfits/index.html and
+   docs/changes/map-timeline/atlas.html mount this module from two different
+   page locations, exactly as loadTier() already does for the LOD topojson.
+   Appended to <head> so it lands after the host's own stylesheet and wins
+   the ties (a host `.chip` rule and an atlas `.atl .atl-chip` rule are not
+   even close, but `.atl *{margin:0}` vs a host utility can be). */
+const STYLE_ID = 'wasteland-atlas-css';
+function injectStyles(){
+  if (document.getElementById(STYLE_ID)) return;
+  const link = document.createElement('link');
+  link.id = STYLE_ID;
+  link.rel = 'stylesheet';
+  link.href = new URL('./atlas.css', import.meta.url).href;
+  /* A link that 404s (a build or a mirror that dropped atlas.css) still satisfies
+     the getElementById guard above, so every later mount reuses the broken element
+     and the atlas renders unstyled with nothing in the console, the exact original
+     bug, silently. Say so instead. */
+  link.addEventListener('error', () => {
+    console.error('atlas.mjs: could not load ' + link.href +
+      '; the atlas will render unstyled. Is lib/atlas.css deployed alongside lib/atlas.mjs?');
+  });
+  document.head.appendChild(link);
+}
+
+/**
+ * Mount the Wasteland Atlas (map + timeline) into `container`.
+ *
+ * @param {HTMLElement} container - element the atlas renders into. Its
+ *   existing attributes/children are left alone; the atlas markup is
+ *   inserted via innerHTML (so any prior content in `container` is
+ *   replaced, matching how the original page owned <body> below <header>).
+ * @param {object} data
+ * @param {Array}  data.pins        - PINS records (verbatim from atlas-pins.json)
+ * @param {Array}  data.events      - EVENTS records (verbatim from atlas-events.json)
+ * @param {object} data.threads     - THREADS map, keyed by thread id
+ * @param {Array}  data.threadOrder - THREAD_ORDER, the lane display order
+ * @param {string} data.basemapSvg  - raw text of the standalone base-map SVG
+ * @param {object} [opts]
+ * @param {boolean} [opts.autoSelectLast=true] - select the final (present-day)
+ *   event on boot, matching the original page's behaviour. Ignored if
+ *   `opts.hashRouting` is on and the page loaded with a route already in
+ *   `location.hash`: the URL wins over this default.
+ * @param {boolean} [opts.hashRouting=false] - own `location.hash` as a
+ *   deep-link route (`#map`, `#map/us/<pinSlug>`, `#map/event/<eventSlug>`,
+ *   `#map/region`, `#map/local`); parses it on boot, updates it (via
+ *   replaceState, never pushState) on every selection/scope change, and
+ *   listens for 'hashchange' (back/forward, or a pasted link). Off by
+ *   default so embedding this inside the app's own router later (Phase 5)
+ *   doesn't fight it.
+ * @param {string} [opts.mapId='map'] - id given to the imported base-map SVG
+ *   element. Defaults to 'map' (unchanged; this is what atlas.html's own
+ *   <style> block still targets by id). A host page that already owns
+ *   `id="map"` on an ancestor (apps/misfits/index.html's `<section id="map">`)
+ *   MUST override this, or `document.getElementById('map')` /
+ *   `document.querySelector('#map')` anywhere on that page silently resolves
+ *   to whichever element is first in document order instead of this SVG,
+ *   found by an integration test asserting on the mounted viewBox.
+ * @returns {{selectEvent:Function, selectLoc:Function, clearSel:Function,
+ *   destroy:Function, on:Function, setFilter:Function, setScope:Function}}
+ *   `setFilter(sourceValue)`, '' shows all pins; otherwise a value from
+ *   PINS[].source (see the gamefilter chips built in mount() for the set
+ *   actually present in the data).
+ *   `setScope(name, animate=true, silent=false)`, 'us' | 'region' | 'local'.
+ */
+export function mount(container, data, opts = {}){
+  const { pins: PINS, events: EVENTS, threads: THREADS, threadOrder: THREAD_ORDER, basemapSvg } = data;
+
+  injectStyles();
+  container.innerHTML = MARKUP;
+  const $ = s => container.querySelector(s);
+  const root = $('.atl');
+
+  /* ---- import the fetched base-map SVG as the live #map element ---- */
+  const parser = new DOMParser();
+  const svgDoc = parser.parseFromString(basemapSvg, 'image/svg+xml');
+  const parserError = svgDoc.querySelector('parsererror');
+  if (parserError) throw new Error('atlas.mjs: failed to parse basemapSvg: ' + parserError.textContent);
+  const svg = document.importNode(svgDoc.documentElement, true);
+  svg.setAttribute('id', opts.mapId || 'map');
+  /* CSS reaches the map through this class, never the id, opts.mapId varies
+     per host (see the note atop this file), and a stylesheet cannot follow it. */
+  svg.classList.add('atl-map');
+  svg.setAttribute('tabindex', svg.getAttribute('tabindex') || '-1');
+  $('.mapwrap').prepend(svg);
+
+  const rm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- LOD region geometry (roadmap-border-topology.md steps 3/4) ----
+     `.terr` paths import with an empty `d=""` (see the note atop
+     data/atlas-basemap.svg): document order i IS region id i (verified;
+     see buildRegionPaths()'s comment above), so this array can be indexed
+     straight from a TopoJSON `properties.id` with no lookup table. */
+  const regionEls = Array.from(svg.querySelectorAll('.terr'));
+  const macroEls = new Map();
+  for (const el of svg.querySelectorAll('.macro')){
+    el.setAttribute('d', ''); /* never retain the independently traced import */
+    const name = Array.from(el.classList).find(c => c.startsWith('m-'))?.slice(2);
+    if (name && !macroEls.has(name)) macroEls.set(name, el);
+  }
+  const LOD_FILES = { lod2:'atlas-regions.lod2.topojson', lod1:'atlas-regions.lod1.topojson', lod0:'atlas-regions.lod0.topojson' };
+  const topoState = {};      /* tier -> {promise, topology, decodedArcs, baseMap} */
+  const fractalCache = new Map(); /* lod0 zoom-bucket -> {regions, macros}: precomputed once, never per frame */
+  let currentTier = null, currentBucket = null;
+  const pendingTimeouts = [];
+  /* ---- region-name labels (stage 2) ----
+     Fetched independently of the LOD tiers above and never awaited by
+     anything: a missing or malformed atlas-region-meta.json must not affect
+     territory geometry or the rest of the map, so failure here is caught
+     and logged, never thrown, and just leaves regionMeta null (no labels
+     drawn, map otherwise unchanged; see renderRegionLabels()'s own guard). */
+  let regionMeta = null;
+  const regionLabelEls = {};        /* region id -> <text>, built lazily */
+  const regionLabelPointCache = {}; /* tier -> Map(id -> [x,y]), computed once per tier */
+  const terrLabelsG = el('g', {class:'terrlabels', 'aria-hidden':'true'}, svg);
+  fetch(new URL('../data/atlas-region-meta.json', import.meta.url))
+    .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+    .then(json => {
+      if (!json || typeof json.regions !== 'object' || json.regions === null){
+        throw new Error('malformed atlas-region-meta.json: missing "regions"');
+      }
+      regionMeta = json.regions;
+      /* a slow LOD fetch can resolve before this one; if tier geometry is
+         already up, label it now instead of waiting for the next zoom. */
+      if (currentTier) renderRegionLabels(currentTier);
+    })
+    .catch(err => {
+      console.error('atlas.mjs: region metadata failed to load; region-name labels disabled', err);
+    });
+  /* Applies the (possibly cached) pole-of-inaccessibility placement for
+     `tier` to the DOM. Cheap to call on every tier change: the point cache
+     below means the actual geometry work (buildRegionLabelRings +
+     poleOfInaccessibility per id) only ever runs once per tier. Reuses the
+     tier's UNDISPLACED decodedArcs even at lod0 (never the fractally
+     jittered arcs): displacement is a <=5px cosmetic border wobble, nowhere
+     near enough to justify recomputing a label point per zoom bucket. */
+  function renderRegionLabels(tier){
+    if (!regionMeta) return;
+    const state = topoState[tier];
+    if (!state) return;
+    let points = regionLabelPointCache[tier];
+    if (!points){
+      const idsNeeded = new Set();
+      for (const idStr in regionMeta){
+        const meta = regionMeta[idStr];
+        if (meta && meta.primary) idsNeeded.add(Number(idStr));
+      }
+      const rings = buildRegionLabelRings(state.topology, state.decodedArcs, idsNeeded);
+      points = new Map();
+      for (const [id, polys] of rings){
+        const pt = regionLabelPoint(polys);
+        if (!pt) continue;
+        let area = 0;
+        for (const poly of polys){ if (poly[0] && poly[0].length >= 3){ const a = Math.abs(ringSignedArea(poly[0])); if (a > area) area = a; } }
+        points.set(id, {pt, area});
+      }
+      regionLabelPointCache[tier] = points;
+    }
+    for (const idStr in regionMeta){
+      const meta = regionMeta[idStr];
+      if (!meta || !meta.primary) continue;
+      const id = Number(idStr);
+      const rec = points.get(id);
+      let wrap = regionLabelEls[id];
+      if (!rec){
+        if (wrap) wrap.g.setAttribute('display', 'none');
+        continue; /* degenerate geometry (e.g. a sliver with <3 vertices): no safe point to label */
+      }
+      if (!wrap){
+        /* same idiom as a pin's .lblwrap: the text sits at local (0,0) inside
+           a wrapper whose transform carries BOTH the world position and a
+           counter-scale (kept updated every applyView() frame, see below),
+           so on-screen label size stays roughly constant across the zoom
+           range instead of ballooning at deep zoom the way a plain
+           world-unit font-size on an unwrapped <text> would. */
+        const g = el('g', {class:'terrlblwrap'}, terrLabelsG);
+        const text = el('text', {class:'terrlbl', 'text-anchor':'middle',
+          'data-tier': String(regionLabelTier(meta.scale)), 'aria-hidden':'true'}, g);
+        text.textContent = meta.primary;
+        wrap = regionLabelEls[id] = {g, text, x:0, y:0, tier:regionLabelTier(meta.scale), area:rec.area};
+      }
+      wrap.area = rec.area;
+      wrap.g.removeAttribute('display');
+      wrap.x = rec.pt[0]; wrap.y = rec.pt[1];
+      wrap.g.setAttribute('transform', `translate(${wrap.x.toFixed(1)} ${wrap.y.toFixed(1)}) scale(${labelCounterScale(view.w).toFixed(4)})`);
+    }
+    regionLabelKey = null;          /* label set/positions changed: force a declutter recompute */
+    updateRegionLabelDeclutter();
+  }
+  /* fetch+decode+cache a tier, resolved relative to THIS MODULE's own file
+     (not the host page's URL: atlas.mjs is imported from both
+     docs/changes/map-timeline/atlas.html and apps/misfits/app.js, at two
+     different page locations, and this is the one path expression that is
+     correct from both without either caller needing to know about tiers). */
+  function loadTier(tier){
+    if (topoState[tier]) return topoState[tier].promise;
+    const entry = {};
+    topoState[tier] = entry;
+    entry.promise = fetch(new URL('../data/' + LOD_FILES[tier], import.meta.url))
+      .then(res => { if (!res.ok) throw new Error('atlas.mjs: failed to fetch ' + LOD_FILES[tier] + ': HTTP ' + res.status); return res.json(); })
+      .then(topology => {
+        const regions = topology.objects.regions?.geometries;
+        if (!Array.isArray(regions) || regions.length !== 188 || regionEls.length !== 188 || regions.length !== regionEls.length){
+          throw new Error(`atlas.mjs: ${LOD_FILES[tier]} has ${regions?.length ?? 0} regions; SVG has ${regionEls.length}; both must be 188`);
+        }
+        const ids = new Set(regions.map(geom => geom.properties?.id));
+        if (ids.size !== regionEls.length || !Array.from(ids).every(id => Number.isInteger(id) && id >= 0 && id < regionEls.length)){
+          throw new Error(`atlas.mjs: ${LOD_FILES[tier]} region ids must be unique and contiguous 0..${regionEls.length - 1}`);
+        }
+        entry.topology = topology;
+        entry.decodedArcs = decodeTopoArcs(topology);
+        entry.arcUses = sharedRegionArcs(topology);
+        entry.baseMap = buildRegionPaths(topology, entry.decodedArcs); /* undisplaced: used as-is by lod1/lod2, and by lod0 at zero amplitude */
+        entry.baseMacros = buildMacroPaths(topology, entry.decodedArcs);
+        return entry;
+      });
+    return entry.promise;
+  }
+  function applyRegionGeometry(map){
+    for (const [id, d] of map){ const p = regionEls[id]; if (p && d) p.setAttribute('d', d); }
+  }
+  function applyMacroGeometry(map){
+    for (const [id, d] of map){ const p = macroEls.get(id); if (p && d) p.setAttribute('d', d); }
+  }
+  function applyGeometry(geometry){
+    applyRegionGeometry(geometry.regions);
+    applyMacroGeometry(geometry.macros);
+  }
+  /* tier boundary crossing only (not every fractal-bucket recompute inside
+     lod0, those differ by a few px of jitter and don't need masking): a
+     quick opacity fade so a genuine detail-level change (more/fewer
+     vertices at the same border) never reads as a jump. Timeouts are
+     tracked so destroy() can cancel them if the map is torn down mid-fade. */
+  function crossfadeApply(geometry){
+    if (rm()){ applyGeometry(geometry); return; }
+    const dur = 110;
+    for (const p of regionEls) p.style.transition = `opacity ${dur}ms linear`;
+    requestAnimationFrame(() => {
+      for (const p of regionEls) p.style.opacity = '0';
+      pendingTimeouts.push(setTimeout(() => {
+        applyGeometry(geometry);
+        requestAnimationFrame(() => { for (const p of regionEls) p.style.opacity = ''; });
+      }, dur));
+    });
+  }
+  /* called on every applyView() (so also on every animated zoom frame) but
+     bails immediately unless the tier or fractal bucket actually changed,
+     the fetch/decode/displace work only ever runs once per tier and once
+     per (tier, bucket) pair, then reads from cache. */
+  async function updateRegionTier(w){
+    const tier = tierForWidth(w);
+    const bucket = tier === 'lod0' ? fractalBucketForWidth(w) : null;
+    if (tier === currentTier && bucket === currentBucket) return;
+    let state;
+    try { state = await loadTier(tier); }
+    catch (err){ console.error('atlas.mjs: LOD tier load failed', err); return; }
+    if (tierForWidth(view.w) !== tier) return; /* view moved on while this fetch was in flight */
+    let geometry;
+    if (tier === 'lod0'){
+      geometry = fractalCache.get(bucket);
+      if (!geometry){
+        const amp = fractalAmpForBucket(bucket);
+        const arcs = amp > 0 ? getDisplacedArcs(state.decodedArcs, state.arcUses, amp) : state.decodedArcs;
+        geometry = { regions: amp > 0 ? buildRegionPaths(state.topology, arcs) : state.baseMap,
+                     macros: amp > 0 ? buildMacroPaths(state.topology, arcs) : state.baseMacros };
+        fractalCache.set(bucket, geometry);
+      }
+    } else {
+      geometry = { regions: state.baseMap, macros: state.baseMacros };
+    }
+    /* the very first tier a fresh mount ever applies has nothing on screen
+       yet to crossfade FROM (regions boot with d="", see the base-map
+       note), so skip the fade only for that one case; every later tier
+       change is a real swap of visible geometry and gets the fade. */
+    const isFirstApply = currentTier === null;
+    const tierChanged = tier !== currentTier;
+    currentTier = tier; currentBucket = bucket;
+    if (tierChanged && !isFirstApply) crossfadeApply(geometry); else applyGeometry(geometry);
+    if (tierChanged) renderRegionLabels(tier); /* label points don't vary with the fractal bucket, only the tier */
+  }
+
+  /* ---- derived lookups (mirrors the original script's boot-time setup) ---- */
+  const LOC = {};
+  PINS.forEach(p => LOC[p.name] = {name:p.name, f:p.faction, lat:p.lat, lon:p.lon, x:p.x, y:p.y, type:p.type, chapter:p.chapter, source:p.source});
+  const LOC_EVENTS = {};
+  EVENTS.forEach((e,i)=>e.loc.forEach(n=>{(LOC_EVENTS[n]=LOC_EVENTS[n]||[]).push(i);}));
+  /* ---- data/taxonomy integrity ----
+     A merge once added events tagged with a thread id THREADS didn't have;
+     lane construction did `THREADS[k].label`, threw at the top level, and
+     silently killed every pin and timeline click before interaction was even
+     wired (see docs/LEARNINGS.md's `th` ∈ `THREADS` entry). `node --check`
+     passed cleanly that time: only a real browser caught it. Fail loudly and
+     early here instead, for both directions of that same class of gap. */
+  EVENTS.forEach((e, i) => {
+    e.th.forEach(k => { if (!THREADS[k]) throw new Error(
+      `atlas.mjs: event ${i} ("${e.t}") references unknown thread "${k}"`); });
+    e.loc.forEach(n => { if (!LOC[n]) throw new Error(
+      `atlas.mjs: event ${i} ("${e.t}") references unknown location "${n}"`); });
+  });
+  /* home-pin anchor for the Region/Local scope stubs (SCOPES above), the
+     509th's own marker, not a hard-coded coordinate, so it tracks the data
+     if the home pin ever moves. */
+  const homePin = PINS.find(p => p.home) || PINS[0];
+  const homeX = homePin.x, homeY = homePin.y;
+
+  /* ---- stable slugs for hash routing (Phase 3.1) ----
+     Pins/events carry no `id` field, only display text, so slugs are
+     derived and de-duplicated here. A slug is preferred over an array
+     index for events because indices shift when EVENTS gains entries. */
+  function slugify(s){
+    return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'x';
+  }
+  const PIN_SLUG = {}, SLUG_PIN = {};
+  {
+    const used = new Set();
+    for (const p of PINS){
+      const base = slugify(p.name);
+      let s = base, n = 2;
+      while (used.has(s)) s = base + '-' + (n++);
+      used.add(s);
+      PIN_SLUG[p.name] = s; SLUG_PIN[s] = p.name;
+    }
+  }
+  const EVENT_SLUG = [], SLUG_EVENT = {};
+  {
+    const used = new Set();
+    EVENTS.forEach((e, i) => {
+      const base = e.y + '-' + slugify(e.t);
+      let s = base, n = 2;
+      while (used.has(s)) s = base + '-' + (n++);
+      used.add(s);
+      EVENT_SLUG[i] = s; SLUG_EVENT[s] = i;
+    });
+  }
+
+  /* ========================= PROJECTION / SVG ========================= */
+  const W = 2778, H = 3323;
+  /* Initial framing: continental US only. The full traced canvas also covers
+     Alaska, Greenland and part of South America, which the pin set (and this
+     stage) never needs to show. */
+  const CONUS = {x:300, y:1250, w:2350, h:1500};
+  /* ASPECT tracks the real viewport's aspect ratio (not a fixed constant) so the
+     zoom floor below can be a true COVER fit on any viewport, portrait included.
+     floorW/floorH are the zoom-out floor in viewBox units: the largest viewBox
+     that still never shows more than the 2778×3323 canvas on either axis,
+     `floorW = min(W, H*ASPECT)` on desktop that is full canvas width (2778);
+     on a tall/portrait viewport it becomes full canvas height instead. */
+  let ASPECT = CONUS.w / CONUS.h;
+  let floorW = CONUS.w, floorH = CONUS.h;
+  /* mapRectW: the map viewport's on-screen width in CSS px, cached here (not
+     re-read per pin/frame) for the label-placement estimate below, see
+     "LABEL PLACEMENT"'s derivation of K = mapRectW / W, the constant
+     px-per-world-unit ratio that makes label font size and offsets read as
+     screen-constant regardless of view.w. */
+  let mapRectW = 1200; /* sane fallback until the first real measurement */
+  function computeAspect(){
+    const r = svg.getBoundingClientRect();
+    if (r.width > 0 && r.height > 0) ASPECT = r.width / r.height;
+    if (r.width > 0) mapRectW = r.width;
+    floorW = Math.min(W, H * ASPECT);
+    floorH = floorW / ASPECT;
+  }
+
+  /* ---- static layers ----
+     The land silhouette + faction territories are static markup imported
+     above from data.basemapSvg (the baked base-layer SVG's own .terr rule,
+     alongside the --fac-* tokens, travels with it). Nothing to build here
+     at runtime. */
+  /* =====================================================================
+     TERRITORY PRESENCE FIELDS (tribes, gangs, minor factions)
+     ---------------------------------------------------------------------
+     A scalar density field per group, NOT polygons, see
+     docs/changes/map-timeline/roadmap-tribal-territories.md. Tribes hold
+     range, not border: presence fades with distance from camps and water,
+     two groups can hold the same ground in different measure, and drawing
+     that as a partition would state something false. The data
+     (data/atlas-tribes.json) is a list of anchors [x, y, radius, weight]
+     per group, built by trace/kml_tribes.py.
+
+     Rendering: one circle per anchor, `fill:currentColor` with the falloff
+     supplied by a single objectBoundingBox-relative mask, so ONE mask
+     serves every radius and the colour comes from CSS per group. The
+     dither that keeps it phosphor rather than airbrushed is a CSS mask on
+     the layer. `kind` decides treatment, because how a group is drawn
+     should encode what kind of control it has: a tribe gets the soft wash,
+     a gang additionally gets a hard dashed rim, grip rather than reach.
+
+     Lazily fetched on first toggle (the same idiom as loadTier), so a
+     default view that never turns the layer on pays nothing for it,
+     roadmap-kml-import.md's volume rule.
+     ===================================================================== */
+  const fieldDefs = el('defs', {}, svg);
+  fieldDefs.innerHTML =
+    '<radialGradient id="atl-fieldfade" gradientUnits="objectBoundingBox" cx=".5" cy=".5" r=".5">'
+    + '<stop offset="0" stop-color="#fff" stop-opacity="1"/>'
+    + '<stop offset=".5" stop-color="#fff" stop-opacity=".4"/>'
+    + '<stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>'
+    + '<mask id="atl-fieldmask" maskContentUnits="objectBoundingBox">'
+    + '<rect width="1" height="1" fill="url(#atl-fieldfade)"/></mask>'
+    /* The stipple. A CSS mask-image was tried first and silently did the wrong
+       thing: on an SVG group its tile size is interpreted in the local user
+       space, and with a layer bbox ~1500 units across a 5px tile came out
+       sub-pixel; so it read as uniform dimming rather than dots. An SVG
+       pattern in userSpaceOnUse puts the frequency in OUR units: 9 units is
+       about 5 screen px at the default framing, and it coarsens as you zoom
+       in, which suits a phosphor screen. */
+    + '<pattern id="atl-ditherpat" patternUnits="userSpaceOnUse" width="9" height="9">'
+    + '<circle cx="4.5" cy="4.5" r="2.6" fill="#fff"/></pattern>'
+    + '<mask id="atl-dither" maskUnits="userSpaceOnUse" x="0" y="0" width="' + W + '" height="' + H + '">'
+    + '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="url(#atl-ditherpat)"/></mask>';
+  const fieldsG = el('g', {class:'fieldlayer', 'aria-hidden':'true',
+                           mask:'url(#atl-dither)'}, svg);
+  let fieldData = null, fieldLoad = null, fieldsBuilt = false;
+  function loadFields(){
+    if (fieldLoad) return fieldLoad;
+    fieldLoad = fetch(new URL('../data/atlas-tribes.json', import.meta.url))
+      .then(r => { if (!r.ok) throw new Error('atlas-tribes.json: HTTP ' + r.status); return r.json(); })
+      .then(d => { fieldData = d; return d; });
+    return fieldLoad;
+  }
+  function buildFields(){
+    if (fieldsBuilt || !fieldData) return;
+    fieldsBuilt = true;
+    for (const g of fieldData.tribes){
+      const grp = el('g', {class:'field', 'data-group':g.key, 'data-kind':g.kind,
+                           'data-status':g.status}, fieldsG);
+      for (const [x, y, r, w] of g.anchors){
+        el('circle', {class:'fwash', cx:x, cy:y, r:r, opacity:w,
+                      mask:'url(#atl-fieldmask)'}, grp);
+        if (g.kind !== 'tribe'){
+          /* a gang's hold is a grip on a place, so it gets an edge a tribe
+             never gets, the one visual difference that carries meaning. */
+          el('circle', {class:'frim', cx:x, cy:y, r:(r * 0.42).toFixed(1), opacity:w}, grp);
+        }
+      }
+    }
+  }
+  /* Which groups are present at a map point, strongest first. Quadratic
+     falloff, matching the mask's visual centre-weighting closely enough that
+     the number and the picture agree. Used to restate the layer IN TEXT on a
+     selected location, because a wash is invisible to a screen reader, the
+     same rule the map's selection glow already follows. */
+  function fieldsAt(x, y){
+    if (!fieldData) return [];
+    const out = [];
+    for (const g of fieldData.tribes){
+      let v = 0;
+      for (const [ax, ay, r, w] of g.anchors){
+        const d = Math.hypot(ax - x, ay - y);
+        if (d < r) v += w * (1 - d / r) ** 2;
+      }
+      if (v > 0.02) out.push({label:g.label, kind:g.kind, status:g.status, v});
+    }
+    return out.sort((a, b) => b.v - a.v);
+  }
+  let fieldsOn = false;
+  async function toggleFields(force){
+    const want = force === undefined ? !fieldsOn : !!force;
+    if (want){
+      try { await loadFields(); }
+      catch (err){
+        console.error('atlas.mjs: territory layer failed to load', err);
+        announce('Territory layer unavailable.');
+        return;
+      }
+      buildFields();
+    }
+    fieldsOn = want;
+    svg.classList.toggle('fields-on', fieldsOn);
+    const btn = $('#layer-fields');
+    btn.setAttribute('aria-pressed', String(fieldsOn));
+    announce(fieldsOn
+      ? `Territory layer on. ${fieldData.tribes.length} groups shown as presence, not borders.`
+      : 'Territory layer off.');
+    if (fieldsOn && state.loc) selectLoc(state.loc);   /* re-render the card with its groups */
+  }
+
+  /* crosshair */
+  const xhair = el('g', {class:'xhair', 'aria-hidden':'true'}, svg);
+  const xh = el('line', {x1:0, y1:0, x2:W, y2:0}, xhair);
+  const xv = el('line', {x1:0, y1:0, x2:0, y2:H}, xhair);
+  /* pins */
+  const pinsG = el('g', {role:'group',
+    'aria-label':'Mapped locations. Tab in, then use arrow keys to move between locations; Enter opens; Escape clears.'}, svg);
+  const pinEls = {};
+  /* labelEls[name] = {text, wrap}: `wrap` is the counter-scaled <g> the
+     label text lives in (see "LABEL PLACEMENT" below); `text` is the label
+     itself, repositioned per-anchor by the collision placer. */
+  const labelEls = {};
+  const PIN_ORDER = [...PINS].sort((a,b) => a.lon-b.lon || a.lat-b.lat).map(p => p.name);
+  for (const pin of PINS){
+    const {name, faction:f, lat, lon, x, y} = pin;
+    const isHome = !!pin.home;
+    const priority = pin.priority === 1 || pin.priority === 2 ? pin.priority : 3;
+    const g = el('g', {class:'pin pin--p' + priority + (isHome ? ' is-home' : ''), tabindex:'-1', role:'button',
+      'aria-label': name + ', ' + FACTIONS[f].label + '. ' +
+        (LOC_EVENTS[name] ? LOC_EVENTS[name].length + ' logged event' + (LOC_EVENTS[name].length>1?'s':'') : 'No logged events') +
+        (isHome ? ' Home chapter: 509th, Wendover.' : ''),
+    }, pinsG);
+    const c = FACTIONS[f].c;
+    g._x = x; g._y = y; g._priority = priority;
+    g.dataset.name = name;
+    /* radii/offsets below are the prototype's pin geometry scaled ×2.778
+       (2778/1000) to match this coordinate system's density: see the
+       counter-scale formula in applyView(), which keeps on-screen pin size
+       constant across zoom regardless of the absolute local unit size. */
+    el('circle', {class:'halo', r:22, stroke:c}, g);
+    el('circle', {class:'hit',  r:36}, g);
+    el('circle', {class:'ring', r:14,  stroke:c, fill:'none'}, g);
+    const coreAttrs = {class:'core', style:`color:${c}`};
+    if (isHome) coreAttrs.transform = 'scale(1.3)'; /* slightly larger glyph: the map's anchor */
+    const core = el('g', coreAttrs, g);
+    (GLYPHS[pin.type] || GLYPHS.settlement)(core);
+    if (name === 'The New Master') el('circle', {class:'ring', r:23.6, stroke:c, fill:'none',
+      'stroke-dasharray':'8 8'}, g);
+    /* label(s) live inside a dedicated counter-scaled wrapper, see
+       labelCounterScale()/applyView() below. Text is a decorative duplicate
+       of the `g`'s own aria-label above, so both texts are aria-hidden: a
+       screen reader gets the name once (from the pin group), never twice,
+       and dropping/hiding a label (priority tiering, collision) never
+       touches that one accessible name. Built detached and appended to `g`
+       only at the very end of this block (after .fring) so labels still
+       paint on top of every other pin part, matching the original z-order. */
+    const lblWrap = el('g', {class:'lblwrap'});
+    if (isHome){
+      /* persistent home-chapter marker: concentric double ring + always-on
+         label, so it reads as the map's anchor at every zoom level (the 509th
+         is the server's home chapter but its real territory is far too small
+, ~25km, to earn a territory polygon like NCR/Legion/Brotherhood-macro). */
+      el('circle', {class:'home-ring inner', r:19,   stroke:c}, g);
+      el('circle', {class:'home-ring outer', r:25.5, stroke:c}, g);
+      el('text', {class:'home-lbl', x:0, y:-33, 'text-anchor':'middle', 'aria-hidden':'true'}, lblWrap).textContent = '509TH: WENDOVER';
+    }
+    el('circle', {class:'fring', r:29}, g);
+    /* default/first-choice anchor: the one durable idea kept from the old
+       static declutter (alternate which side of the pin the label starts
+       on); the collision placer below tries this first, then above/below,
+       before dropping the label. lon > -69.5 (far NE coast) still keeps the
+       first try inland rather than off the traced landmass. */
+    const defaultAnchor = lon > -69.5 ? 'end' : 'start';
+    const text = el('text', {class:'lbl', x: defaultAnchor==='end' ? -22.2 : 22.2, y: 8.9,
+                'text-anchor':defaultAnchor, 'aria-hidden':'true'}, lblWrap);
+    text.textContent = name.toUpperCase();
+    g.appendChild(lblWrap);
+    /* computeLabelPlacement() below recomputes the start/end first choice
+       itself from each candidate's own `lon` (it works off PINS, not these
+       DOM-side closures), so only {text, wrap} need to be kept here. */
+    labelEls[name] = {text, wrap: lblWrap};
+    g.addEventListener('click', ev => { ev.stopPropagation(); if (!panMoved) selectLoc(name); });
+    g.addEventListener('keydown', ev => {
+      if (ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); selectLoc(name); }
+    });
+    pinEls[name] = g;
+  }
+  /* map legend */
+  {
+    const lg = $('#legend');
+    for (const k in FACTIONS){
+      const s = document.createElement('span');
+      s.style.setProperty('--c', FACTIONS[k].c);
+      const ic = document.createElementNS(SVGNS, 'svg');
+      ic.setAttribute('viewBox', '-6 -6 12 12');
+      /* atl-sigil, not sigil: apps/misfits/styles.css owns a bare `.sigil`
+         (the roster's portrait placeholder) which is position:absolute and
+         display:none, in the app that hid these emblems outright, and
+         standalone, where no such rule exists, they drew at their natural
+         size and buried the map under a column of them. */
+      ic.setAttribute('class', 'atl-sigil');
+      ic.setAttribute('aria-hidden', 'true');
+      (SIGILS[k] || SIGILS.other)(el('g', {}, ic));
+      s.appendChild(ic);
+      s.appendChild(document.createTextNode(FACTIONS[k].label.toUpperCase()));
+      lg.appendChild(s);
+    }
+  }
+  /* game/source filter chips (Phase 3.2): built from whatever the data
+     actually carries rather than a hard-coded FO1..FO76 list: most pins
+     (mainline-canon locations) have no `source` field at all, and those
+     degrade gracefully by only ever showing under "All", matching the old
+     map's treatment of its game-less "Wasteland"/"Present day" pins. Pins
+     that DO carry `source` are adaptations/fan-canon (the TV show, Sonora,
+     Nevada, Resurrection, Frontier, New California) or a mainline location
+     the migration wanted to flag explicitly (FO2). */
+  const SOURCE_COUNTS = new Map();
+  PINS.forEach(p => { const k = p.source || ''; SOURCE_COUNTS.set(k, (SOURCE_COUNTS.get(k)||0)+1); });
+  const FILTERS = [{value:'', label:'All', count:PINS.length}].concat(
+    [...SOURCE_COUNTS.keys()].filter(k => k !== '').sort()
+      .map(k => ({value:k, label:k, count:SOURCE_COUNTS.get(k)}))
+  );
+  {
+    const gf = $('#gamefilter');
+    FILTERS.forEach(f => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'fchip' + (f.value === '' ? ' active' : '');
+      b.dataset.source = f.value;
+      b.setAttribute('aria-pressed', f.value === '' ? 'true' : 'false');
+      b.textContent = `${f.label.toUpperCase()} (${f.count})`;
+      b.addEventListener('click', () => setFilter(f.value));
+      gf.appendChild(b);
+    });
+  }
+  function setFilter(value){
+    state.filter = value;
+    $('#gamefilter').querySelectorAll('.fchip').forEach(b => {
+      const on = b.dataset.source === value;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    for (const n in pinEls){
+      const src = LOC[n].source || '';
+      pinEls[n].classList.toggle('filtered', value !== '' && src !== value);
+    }
+    const count = value === '' ? PINS.length : SOURCE_COUNTS.get(value);
+    announce(value === '' ? `Filter: All. ${count} markers shown.`
+                           : `Filter: ${value}. ${count} marker${count===1?'':'s'} shown.`);
+    emit('filter', {value});
+  }
+
+  /* ========================= VIEW (zoom / pan) ========================= */
+  let view = {x:CONUS.x, y:CONUS.y, w:CONUS.w, h:CONUS.h};
+  let animId = null;
+  function clampView(v){
+    /* zoom floor is COVER (floorW/floorH), not the raw canvas size, firm clamp,
+       no rubber-band slack, so the viewBox can never leave the canvas. */
+    v.w = Math.min(Math.max(v.w, 300), floorW); v.h = v.w / ASPECT;
+    v.x = Math.min(Math.max(v.x, 0), W - v.w);
+    v.y = Math.min(Math.max(v.y, 0), H - v.h);
+    return v;
+  }
+  /* =====================================================================
+     LABEL PLACEMENT, priority-tiered, collision-avoiding pin labels
+     ---------------------------------------------------------------------
+     Reuses two ideas already in this file instead of inventing a third:
+     the pin label declutter's old "alternate anchor" spirit (start/end,
+     now generalised to 4 anchors incl. above/below), and the timeline's
+     computeClustersFor() idiom: decide once per VIEW (not per frame),
+     cache it, greedily resolve overlaps in priority order, leave the loser
+     visible-but-unlabelled rather than removing it. `tierForWidth()` (LOD
+     tiers, above) is reused as-is for the label tier boundaries too, so
+     "when do labels change" and "when does border detail change" share one
+     zoom scale instead of drifting apart.
+
+     Font size: the pin group's own `scale(s)` (below) is clamped at .34 so
+     glyphs read as MORE prominent at extreme zoom-in, deliberate. Labels
+     must NOT inherit that growth (that was the reported bug: text ballooning
+     and colliding at deep zoom), so each label lives in its own `.lblwrap`
+     <g> with an independent counter-scale that stays proportional to
+     view.w all the way down to the true zoom floor (300), not just to the
+     .34 clamp point: see labelCounterScale()'s comment. */
+  const LBL_FONT_WORLD = 26.4;      /* world-unit font-size, matches .pin .lbl in the CRT stylesheet */
+  const LBL_CHAR_W = 0.6;           /* IBM Plex Mono average advance width, in ems, an estimate, not a measured getBBox() (137 pins × every view would thrash layout) */
+  const LBL_PAD_WORLD = 10;         /* padding/stroke-halo margin around each estimated box, world units */
+  const REGION_FONT_WORLD = 34;     /* matches .atl .terrlbl font-size in atlas.css */
+  let regionLabelKey = null;        /* declutter cache key: recompute per tier + zoom bucket, not per frame */
+  const LBL_ANCHORS = {
+    start: {dx:22.2,  dy:8.9,  anchor:'start'},
+    end:   {dx:-22.2, dy:8.9,  anchor:'end'},
+    above: {dx:0,     dy:-20,  anchor:'middle'},
+    below: {dx:0,     dy:34,   anchor:'middle'},
+  };
+  /* the safety clamp the roadmap asks for ("never absurd at either
+     extreme"): generous enough (0.1..1.05) to never actually engage
+     across the legal view.w range (300..floorW, i.e. ratios ~0.108..1);
+     the CONSTANT on-screen size comes from the direct proportionality
+     below, not from this clamp. */
+  const LBL_CS_MIN = 0.1, LBL_CS_MAX = 1.05;
+  function labelCounterScale(w){ return Math.min(LBL_CS_MAX, Math.max(LBL_CS_MIN, w / W)); }
+
+  let labelCache = null;          /* {key, placements: Map(name -> anchorKey|null)} */
+  let lastAppliedLabelKey = null; /* skip re-applying DOM/classes when nothing changed since last frame */
+
+  function candidatesForTier(tier, selectedNames){
+    const list = [];
+    for (const pin of PINS){
+      const name = pin.name;
+      const forced = selectedNames.includes(name);
+      const pr = pinEls[name]._priority;
+      const eligible = forced || pr === 1 || (pr === 2 && tier !== 'lod2') || (pr === 3 && tier === 'lod0');
+      if (!eligible) continue;
+      if (!forced){
+        /* off-view culling: same -12%/112% viewport cushion computeClustersFor()
+           already uses for timeline dots, applied here to pin world coordinates.
+           Without this, a deep LOD0 zoom still runs the placer over all ~137
+           pins nationwide; two pins thousands of miles apart can only ever
+           "collide" in the screen-px math by extrapolating way outside the
+           visible canvas, which would spend a real on-screen pin's collision
+           check against an invisible off-screen ghost and could drop it for
+           no visible reason. Forced (selected) candidates skip this check:
+           selection always reframes the view onto them anyway, so this is
+           belt-and-suspenders, not the common path. */
+        const fx = (pin.x - view.x) / view.w, fy = (pin.y - view.y) / view.h;
+        if (fx < -0.12 || fx > 1.12 || fy < -0.12 || fy > 1.12) continue;
+      }
+      const rank = forced ? 0 : pr; /* selection always outranks every priority tier */
+      list.push({name, x:pin.x, y:pin.y, lon:pin.lon, rank, evCount:(LOC_EVENTS[name] || []).length});
+    }
+    list.sort((a, b) => a.rank - b.rank || b.evCount - a.evCount || a.name.localeCompare(b.name));
+    return list;
+  }
+  /* greedy priority-ordered placement, in SCREEN px (so the box-size
+     estimate below can be a plain constant instead of redoing the
+     view.w-dependent counter-scale math per label: see the K derivation
+     in the comment above LBL_FONT_WORLD). Recomputed only when the cache
+     key (tier + current selection) actually changes. */
+  function computeLabelPlacement(tier, selectedNames, key){
+    if (labelCache && labelCache.key === key) return labelCache.placements;
+    const K = mapRectW / W;             /* constant screen-px per world-unit (see applyView()'s derivation) */
+    const fontPx = LBL_FONT_WORLD * K;
+    const posScale = mapRectW / view.w; /* view-dependent: current screen-px per world-unit, for pin centres */
+    const candidates = candidatesForTier(tier, selectedNames);
+    const placed = [];
+    const result = new Map();
+    for (const cand of candidates){
+      const sx = (cand.x - view.x) * posScale, sy = (cand.y - view.y) * posScale;
+      /* Box width from a ONE-TIME measured getBBox (cached per label, never
+         per view), falling back to the char-count estimate if layout isn't
+         ready. The estimate under-sized long/punctuated names ("KEARNY
+         AIRFIELD (WENDOVER FIELD)"), so real overlaps in dense clusters (the
+         California coast) went undetected and rendered stacked; a measured
+         width lets the greedy placer drop the loser instead. On-screen width
+         is world-width x K because the label is counter-scaled to a roughly
+         constant screen size (see labelCounterScale()). */
+      const boxW = cand.name.length * fontPx * LBL_CHAR_W + LBL_PAD_WORLD * K;
+      const boxH = fontPx * 1.35;
+      const first = cand.lon > -69.5 ? 'end' : 'start';
+      const order = first === 'start' ? ['start','end','above','below'] : ['end','start','above','below'];
+      let chosen = null;
+      for (const ak of order){
+        const a = LBL_ANCHORS[ak];
+        const ox = a.dx * K, oy = a.dy * K;
+        let bx0, bx1;
+        if (a.anchor === 'start'){ bx0 = sx + ox; bx1 = bx0 + boxW; }
+        else if (a.anchor === 'end'){ bx1 = sx + ox; bx0 = bx1 - boxW; }
+        else { bx0 = sx + ox - boxW / 2; bx1 = sx + ox + boxW / 2; }
+        const by0 = sy + oy - boxH / 2, by1 = sy + oy + boxH / 2;
+        const collides = placed.some(b => bx0 < b.x1 && bx1 > b.x0 && by0 < b.y1 && by1 > b.y0);
+        if (!collides){ chosen = ak; placed.push({x0:bx0, x1:bx1, y0:by0, y1:by1}); break; }
+      }
+      result.set(cand.name, chosen); /* null = every anchor collided: dropped, pin stays visible as a marker */
+    }
+    labelCache = {key, placements: result};
+    return result;
+  }
+  /* apply the (possibly cached) placement to the DOM. Cheap even when
+     called every animation frame: the key check below makes it a no-op
+     string comparison on every frame except the one where the tier or
+     selection actually changed. */
+  function updateLabels(){
+    const tier = tierForWidth(view.w);
+    const selectedNames = state.loc ? [state.loc] : (state.ev !== null ? EVENTS[state.ev].loc : []);
+    const key = tier + '|' + selectedNames.join(',');
+    if (key === lastAppliedLabelKey) return;
+    lastAppliedLabelKey = key;
+    const placements = computeLabelPlacement(tier, selectedNames, key);
+    for (const pin of PINS){
+      const name = pin.name;
+      const g = pinEls[name];
+      const anchorKey = placements.get(name);
+      if (anchorKey == null){ g.classList.add('lbl-dropped'); continue; }
+      g.classList.remove('lbl-dropped');
+      const a = LBL_ANCHORS[anchorKey];
+      const { text } = labelEls[name];
+      text.setAttribute('x', a.dx);
+      text.setAttribute('y', a.dy);
+      text.setAttribute('text-anchor', a.anchor);
+    }
+  }
+
+  /* Region-name label declutter. Unlike pins there is no per-anchor search
+     (a region name sits centred on its pole of inaccessibility), but names
+     still collide with each other at deeper zoom, so hide the lower-priority
+     of any overlapping pair: bigger political scale first, then bigger region.
+     Screen-px AABBs, decided once per (tier, zoom bucket) and cached, never per
+     frame. Pins are not in the contest: they sit above region labels in
+     z-order with an opaque halo, so a pin already wins any visual overlap. */
+  function updateRegionLabelDeclutter(){
+    const tier = tierForWidth(view.w);
+    const key = tier + '|' + Math.round(view.w / 100);
+    if (key === regionLabelKey) return;
+    regionLabelKey = key;
+    const maxTier = tier === 'lod2' ? 1 : (tier === 'lod1' ? 2 : 3);
+    const posScale = mapRectW / view.w;
+    const K = mapRectW / W;
+    const fontPx = REGION_FONT_WORLD * K;
+    const cands = [];
+    for (const id in regionLabelEls){
+      const w = regionLabelEls[id];
+      w.g.classList.remove('is-decluttered');
+      if (w.tier > maxTier) continue;                 /* not shown at this tier (CSS keeps it at opacity 0) */
+      if (w.g.getAttribute('display') === 'none') continue;
+      const fx = (w.x - view.x) / view.w, fy = (w.y - view.y) / view.h;
+      if (fx < -0.12 || fx > 1.12 || fy < -0.12 || fy > 1.12) continue; /* off-view cull, same cushion as pins */
+      cands.push(w);
+    }
+    cands.sort((a, b) => a.tier - b.tier || b.area - a.area);
+    const placed = [];
+    for (const w of cands){
+      const sx = (w.x - view.x) * posScale, sy = (w.y - view.y) * posScale;
+      const boxW = w.text.textContent.length * fontPx * LBL_CHAR_W + LBL_PAD_WORLD * K;
+      const boxH = fontPx * 1.35;
+      const bx0 = sx - boxW / 2, bx1 = sx + boxW / 2, by0 = sy - boxH / 2, by1 = sy + boxH / 2;
+      if (placed.some(b => bx0 < b.x1 && bx1 > b.x0 && by0 < b.y1 && by1 > b.y0)){
+        w.g.classList.add('is-decluttered'); /* loses to an already-placed higher-priority name */
+      } else {
+        placed.push({x0:bx0, x1:bx1, y0:by0, y1:by1});
+      }
+    }
+  }
+
+  function applyView(){
+    svg.setAttribute('viewBox', `${view.x} ${view.y} ${view.w} ${view.h}`);
+    const s = Math.max(.34, Math.min(1, view.w / W));
+    /* label counter-scale: divides out the group's own (possibly-clamped)
+       `s` and reapplies the true, unclamped view.w/W ratio, so on-screen
+       label size stays constant across the WHOLE zoom range instead of
+       ballooning past the .34 clamp point. One value per frame, not one
+       computation per pin. */
+    const lblCS = labelCounterScale(view.w) / s;
+    for (const n in pinEls){
+      const p = pinEls[n];
+      p.setAttribute('transform', `translate(${p._x} ${p._y}) scale(${s})`);
+      labelEls[n].wrap.setAttribute('transform', `scale(${lblCS.toFixed(4)})`);
+    }
+    /* region-name labels: same counter-scale idea, but the translate carries
+       the wrapper's fixed world position too (unlike a pin's wrap, which
+       lives inside an already-translated pin `g`), see renderRegionLabels(). */
+    const rlCS = labelCounterScale(view.w);
+    for (const id in regionLabelEls){
+      const wrap = regionLabelEls[id];
+      wrap.g.setAttribute('transform', `translate(${wrap.x.toFixed(1)} ${wrap.y.toFixed(1)}) scale(${rlCS.toFixed(4)})`);
+    }
+    svg.classList.toggle('zoomed', view.w < 1300);
+    const tier = tierForWidth(view.w);
+    svg.classList.remove('lod0', 'lod1', 'lod2');
+    svg.classList.add(tier);
+    updateLabels();
+    updateRegionLabelDeclutter();
+    updateRegionTier(view.w);
+  }
+  function setView(t, animate = true){
+    cancelAnimationFrame(animId);
+    const tgt = clampView({x:t.x, y:t.y, w:t.w, h:t.w / ASPECT});
+    if (!animate || rm()){ view = tgt; applyView(); return; }
+    const from = {...view}, t0 = performance.now(), D = 380;
+    const step = now => {
+      const p = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - p, 3);
+      view = { x: from.x + (tgt.x - from.x) * e, y: from.y + (tgt.y - from.y) * e,
+               w: from.w + (tgt.w - from.w) * e, h: from.h + (tgt.h - from.h) * e };
+      applyView();
+      if (p < 1) animId = requestAnimationFrame(step);
+    };
+    animId = requestAnimationFrame(step);
+  }
+  function zoomToLocs(names){
+    const xs = names.map(n => LOC[n].x);
+    const ys = names.map(n => LOC[n].y);
+    const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+    const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+    let w = Math.max((Math.max(...xs) - Math.min(...xs)) * 2.2, 720);
+    const needH = (Math.max(...ys) - Math.min(...ys)) * 2.2;
+    if (needH > w / ASPECT) w = needH * ASPECT;
+    setView({x: cx - w/2, y: cy - (w / ASPECT) / 2, w});
+  }
+  /* Frame CONUS by its CENTRE, not its top-left corner. The corner form only
+     framed the US when the viewport's aspect happened to match CONUS's own
+     1.57; on a wide, short map box: which is what a host with its own chrome
+     above and a ten-lane timeline below actually leaves, clampView derives
+     h = w/ASPECT and the window ends up a band across the TOP of the frame,
+     which is southern Canada. Centring costs nothing at the design aspect and
+     keeps the US centred at every other one. */
+  const resetView = (animate = true) =>
+    setView(scopeView(CONUS.x + CONUS.w/2, CONUS.y + CONUS.h/2, CONUS.w), animate);
+  /* frame a `w`-wide viewBox window centred on (cx,cy), used by the
+     Region/Local scope stubs to reuse the same clamp/animate machinery as
+     everything else, rather than inventing a second camera path. */
+  function scopeView(cx, cy, w){
+    return {x: cx - w/2, y: cy - (w/ASPECT)/2, w};
+  }
+  /* scope switch (Phase 3.3): US is the real map; Region/Local reframe to a
+     bbox around the home pin and surface a "stub" badge: see SCOPES above
+     for what each note says. Deliberately does not touch pin/event
+     selection: switching scope is a camera move, not a clear(). */
+  function applyScope(name, animate = true, silent = false){
+    if (name !== 'region' && name !== 'local') name = 'us';
+    state.scope = name;
+    ['us','region','local'].forEach(k => { const b = $('#scope-'+k); if (b) b.setAttribute('aria-pressed', String(k === name)); });
+    const note = $('#scopenote');
+    if (name === 'us'){
+      if (note) note.hidden = true;
+      resetView(animate);
+      if (!silent) announce('Scope: US.');
+    } else {
+      const sc = SCOPES[name];
+      if (note){ note.hidden = false; note.textContent = sc.badge; }
+      setView(scopeView(homeX, homeY, sc.w), animate);
+      if (!silent) announce(sc.announce);
+    }
+    emit('scope', {scope:name});
+    writeHash();
+  }
+  /* re-frame on the CURRENT scope (used by clearSel/Escape/reset, those
+     mean "go back to this scope's home view", not always CONUS). */
+  function reframe(animate = true){
+    if (state.scope === 'us') resetView(animate);
+    else setView(scopeView(homeX, homeY, SCOPES[state.scope].w), animate);
+  }
+  /* Region/Local are camera stubs on the SAME map, pins and timeline dots
+     stay clickable there. Selecting one only makes sense under 'us' (that's
+     the only scope buildHash() encodes a pin/event against), so pull the
+     scope back silently first; selectEvent/selectLoc's own zoomToLocs then
+     owns the camera move, so this must not animate a view of its own. */
+  function ensureUsScope(){
+    if (state.scope === 'us') return;
+    state.scope = 'us';
+    ['us','region','local'].forEach(k => { const b = $('#scope-'+k); if (b) b.setAttribute('aria-pressed', String(k === 'us')); });
+    const note = $('#scopenote');
+    if (note) note.hidden = true;
+    emit('scope', {scope:'us'});
+  }
+
+  function zoomAt(fx, fy, k){ /* fx,fy in viewBox coords */
+    const w = view.w * k;
+    setView({x: fx - (fx - view.x) * k, y: fy - (fy - view.y) * k, w}, false);
+  }
+  function clientToVb(ev){
+    const r = svg.getBoundingClientRect();
+    /* account for preserveAspectRatio letterboxing */
+    const scale = Math.min(r.width / view.w, r.height / view.h);
+    const ox = (r.width  - view.w * scale) / 2, oy = (r.height - view.h * scale) / 2;
+    return [ view.x + (ev.clientX - r.left - ox) / scale,
+             view.y + (ev.clientY - r.top  - oy) / scale, scale ];
+  }
+
+  /* ---- listener bookkeeping so destroy() can undo global attachments ---- */
+  const cleanups = [];
+  function on_(target, type, fn, opts2){ target.addEventListener(type, fn, opts2); cleanups.push(() => target.removeEventListener(type, fn, opts2)); }
+
+  $('#zin') .addEventListener('click', () => zoomAt(view.x+view.w/2, view.y+view.h/2, 1/1.5));
+  $('#zout').addEventListener('click', () => zoomAt(view.x+view.w/2, view.y+view.h/2, 1.5));
+  $('#zres').addEventListener('click', () => reframe());
+  ['us','region','local'].forEach(k => $('#scope-'+k)?.addEventListener('click', () => applyScope(k)));
+  /* Wheel ZOOMS and never scrolls, and does it proportionally to how far the wheel
+     actually moved.
+     The old handler applied a fixed 1.18x per event. A mouse wheel sends one event per
+     detent so that felt right; a trackpad sends a stream of small ones, so a single
+     two-finger swipe stacked dozens of 1.18x steps and the map shot to full zoom. The
+     fix is to read the delta rather than only its sign.
+     deltaMode matters too: browsers report pixels (0), lines (1) or pages (2) depending
+     on the device, and treating a line count as a pixel count is a 16x error. */
+  svg.addEventListener('wheel', ev => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const unit = ev.deltaMode === 1 ? 16 : ev.deltaMode === 2 ? 400 : 1;
+    /* Clamp before scaling so one violent flick cannot jump the whole range, and keep
+       the per-event factor gentle. The divisor was calibrated by MEASUREMENT, not by
+       arithmetic: at 500 a 144px trackpad swipe took the viewBox from 2350 to 1257, about
+       three times stronger than the formula alone predicts, because zoomAt reclamps
+       against the cover floor and the aspect on every step. 1500 puts a 144px swipe at
+       about 0.94x, which reads as a deliberate nudge rather than a lurch. */
+    const px = Math.max(-160, Math.min(160, ev.deltaY * unit));
+    if (!px) return;
+    /* Destructure, do NOT spread: clientToVb returns [x, y, scale], so
+       zoomAt(...clientToVb(ev), factor) silently passes the letterboxing SCALE as the
+       zoom factor and drops the real one off the end of the argument list. It zoomed,
+       which is why it looked fine, but the amount had nothing to do with the wheel. */
+    const [fx, fy] = clientToVb(ev);
+    zoomAt(fx, fy, Math.pow(2, px / 1500));
+  }, {passive:false});
+  /* recompute the cover floor for the map's CURRENT box, then reclamp the
+     current view through the same clampView path (no separate resize-specific
+     logic). */
+  function remeasure(){
+    computeAspect();
+    /* mapRectW just changed, which the label placement cache's key doesn't
+       track (it only keys on tier + selection), force a fresh placement
+       pass rather than reapplying box estimates sized for the old width. */
+    labelCache = null; lastAppliedLabelKey = null;
+    /* keep the CENTRE, not the corner: the new aspect gives the window a
+       different height, and re-anchoring at the old top-left would slide the
+       view off whatever the user was looking at (the same corner-vs-centre
+       error resetView() used to make). */
+    setView(scopeView(view.x + view.w/2, view.y + view.h/2, view.w), false);
+    layoutTimeline(); /* lane-track widths changed: recluster + reposition against the new width */
+  }
+  on_(window, 'resize', remeasure);
+  /* The map's box changes for three reasons a window resize never reports, and
+     all three were live: this module injects its stylesheet as a <link>, which
+     lands a tick or two AFTER mount() has already measured (so the boot
+     framing was computed against an unstyled container and the map stayed
+     letterboxed inside a box it should have been filling); a host can show or
+     hide the section around it; and fullscreen resizes the element, not the
+     window. One observer covers all three.
+
+     The size guard is a cheap defence, not a proof: it compares against the
+     immediately previous box, so it stops a repeat of the same size but would not
+     stop a two-state oscillation. Reviewed 2026-07-26: layoutTimeline() does NOT
+     change the timeline's height (lanes are a fixed 21px and clusters are
+     absolutely positioned), so there is no known feedback path to oscillate on,
+     and none was reproducible across boot, selection, scope change, six viewport
+     steps and a fullscreen round trip. Accepted as-is rather than reworked on
+     speculation; if a loop ever does appear, this is the place. */
+  if (typeof ResizeObserver === 'function'){
+    let lastBox = '';
+    const ro = new ResizeObserver(() => {
+      const r = svg.getBoundingClientRect();
+      if (!(r.width > 0 && r.height > 0)) return;
+      const box = Math.round(r.width) + 'x' + Math.round(r.height);
+      if (box === lastBox) return;
+      lastBox = box;
+      remeasure();
+    });
+    ro.observe(svg);
+    cleanups.push(() => ro.disconnect());
+  }
+  /* drag to pan; a sub-5px drag still counts as a click */
+  let panMoved = false;
+  svg.addEventListener('pointerdown', ev => {
+    if (ev.button !== 0) return;
+    const start = [ev.clientX, ev.clientY], v0 = {...view};
+    panMoved = false;
+    const move = e => {
+      const dx = e.clientX - start[0], dy = e.clientY - start[1];
+      if (Math.abs(dx) + Math.abs(dy) > 5) panMoved = true;
+      if (!panMoved) return;
+      svg.classList.add('grabbing');
+      const scale = clientToVb(e)[2];
+      setView({x: v0.x - dx / scale, y: v0.y - dy / scale, w: v0.w}, false);
+    };
+    const up = () => {
+      svg.classList.remove('grabbing');
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      setTimeout(() => panMoved = false, 0);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  });
+  /* background tap: snap to the nearest pin within thumb range (small screens) */
+  svg.addEventListener('click', ev => {
+    if (panMoved || ev.target.closest('.pin')) return;
+    const [fx, fy, scale] = clientToVb(ev);
+    let best = null, bd = 20 / scale; /* 20 screen px */
+    for (const n in pinEls){
+      const p = pinEls[n], d = Math.hypot(p._x - fx, p._y - fy);
+      if (d < bd){ bd = d; best = n; }
+    }
+    if (best) selectLoc(best);
+  });
+
+  /* ============================ TIMELINE ============================
+     Video-editor-style zoomable track (docs/changes/map-timeline/stage2-plan.md
+     § "TIMELINE: make it a video-editor-style zoomable track"), replacing the
+     earlier fixed linear axis + native horizontal scrollbar. `tlView` is the
+     timeline's own viewBox-equivalent: {y0,y1}, a visible year window; and
+     `xPct` (below) is still the ONE function every dot/tick/connector/
+     playhead/overview position flows through; it just now reads `tlView`
+     instead of the fixed Y0/Y1 span. Mirrors the map's view/clampView/setView
+     idiom deliberately, so the two surfaces feel like one instrument. */
+  /* Y0 pulled back to 2000 (was 2068) in the 2026-07-26 consolidation merge,
+     the vault-institution research (ZAX 1.0, West Tek, Vault-Tec University)
+     pushed the earliest event back to 2002, off the left edge of the old range. */
+  const Y0 = 2000, Y1 = 2308, TL_FULL_SPAN = Y1 - Y0;
+  const TL_MIN_SPAN = 5;    /* zoom-in floor, in years: tight enough that the jitter
+                                below (see EVENT_JITTER) fully separates same-year events */
+  const TL_FOCUS_SPAN = 8;  /* "zoom to selection" neighbourhood width */
+  const CLUSTER_PX = 18;    /* collision threshold for the 1-axis declutter below */
+  /* deterministic per-event time jitter, the ONE place decluttering lives now
+     (replaces the old fixed-pixel nudge, which never changed with zoom and so
+     could never be zoomed past). Events sharing an exact year get a tiny,
+     stable fractional-year offset, invisible at the full 308-year span, but
+     wide enough to pull apart once the user zooms in far enough. This nudges
+     individual DOT positions only; the axis scale itself stays perfectly
+     linear (never distorted) and every announced/rendered year stays the
+     real one, see renderEventCard/aria-label, which always use `e.y`. */
+  const JITTER_YEARS = 0.5;
+  const EVENT_JITTER = (() => {
+    const tally = {};
+    return EVENTS.map(e => (tally[e.y] = (tally[e.y] || 0) + 1) - 1)
+      .map(n => n * JITTER_YEARS);
+  })();
+  const effectiveY = i => EVENTS[i].y + EVENT_JITTER[i];
+  let tlView = {y0: Y0, y1: Y1};
+  const xPct = y => (y - tlView.y0) / (tlView.y1 - tlView.y0) * 100;
+  function clampTlView(v){
+    const span = Math.min(Math.max(v.y1 - v.y0, TL_MIN_SPAN), TL_FULL_SPAN);
+    const y0 = Math.min(Math.max(v.y0, Y0), Y1 - span);
+    return {y0, y1: y0 + span};
+  }
+  const lanesEl = $('#lanes'), axisEl = $('#axis'), overEl = $('#over');
+  const tlovTrack = $('#tlovtrack'), tlovWindow = $('#tlovwindow'), tlovDensity = $('#tlovdensity');
+  const LANE_H = 21;
+  const evDots = EVENTS.map(() => []);
+  const laneEls = {}, dotByLane = {};
+  let routedDot = null;
+  THREAD_ORDER.forEach((th, li) => {
+    const lane = document.createElement('div');
+    lane.className = 'lane'; lane.dataset.th = th;
+    lane.style.setProperty('--lc', THREADS[th].c);
+    const lbl = document.createElement('span');
+    lbl.className = 'lane-lbl'; lbl.textContent = THREADS[th].short;
+    const track = document.createElement('div');
+    track.className = 'lane-track';
+    /* overlapping 24px hit-boxes: route presses to the nearest dot centre.
+       Clustered dots are visibility:hidden (see computeClustersFor) and are
+       already excluded by the getComputedStyle filter below, same as a
+       thread-filtered-off lane always was. */
+    track.addEventListener('pointerdown', e => {
+      const ds = [...track.querySelectorAll('.dot')]
+        .filter(d => getComputedStyle(d).visibility !== 'hidden');
+      let best = null, bd = 15;
+      for (const d of ds){
+        const r = d.getBoundingClientRect();
+        const dx = Math.abs(e.clientX - (r.left + r.width / 2));
+        if (dx < bd){ bd = dx; best = d; }
+      }
+      if (best){ e.preventDefault(); routedDot = best; best.focus(); }
+    });
+    lane.append(lbl, track); lanesEl.appendChild(lane);
+    laneEls[th] = lane; dotByLane[th] = {};
+    EVENTS.forEach((e, i) => {
+      if (!e.th.includes(th)) return;
+      const b = document.createElement('button');
+      b.className = 'dot'; b.dataset.ev = i; b.tabIndex = -1;
+      b.style.setProperty('--c', THREADS[th].c);
+      b.setAttribute('aria-label',
+        `${e.y}: ${e.t} (${e.th.map(k => THREADS[k].label).join(', ')}): ${e.loc.join(', ')}`);
+      b.addEventListener('focus', () => selectEvent(i));
+      b.addEventListener('click', () => {
+        const t = routedDot ? +routedDot.dataset.ev : i;
+        routedDot = null;
+        selectEvent(t);
+      });
+      track.appendChild(b);
+      evDots[i].push(b);
+      dotByLane[th][i] = b;
+    });
+  });
+  /* integrity: every event must land on at least one rendered lane. An
+     event whose `th` is empty (or names a thread outside THREAD_ORDER) gets
+     no dot anywhere and can never be selected, the exact gap that made The
+     Great War and 17 other events unreachable until the `world` thread was
+     introduced to hold genuinely faction-less events. Fails loudly at mount
+     time so a future merge can't silently reintroduce an orphaned event. */
+  EVENTS.forEach((e, i) => {
+    if (evDots[i].length === 0) throw new Error(
+      `atlas.mjs: event ${i} ("${e.t}") has no thread lane, th=${JSON.stringify(e.th)} ` +
+      `matches none of THREAD_ORDER; it would be unreachable in the UI`);
+  });
+  /* epoch rule: a purely decorative marker at 2077 (The Great War), kept
+     independent of thread/lane rendering; the war itself is a normal `world`
+     lane dot like any other event, built by the loop above. Position is
+     refreshed on every layout pass (see reposition()). */
+  const epoch = document.createElement('div');
+  epoch.className = 'epoch';
+  overEl.appendChild(epoch);
+  /* connectors between the two lane-dots of a multi-thread event. `left` uses
+     effectiveY (not the raw year) so the line always lines up with both of
+     that event's (identically-jittered) dots. */
+  const connEls = EVENTS.map(() => null);
+  EVENTS.forEach((e, i) => {
+    if (e.th.length < 2) return;
+    const a = THREAD_ORDER.indexOf(e.th[0]), b = THREAD_ORDER.indexOf(e.th[1]);
+    const c = document.createElement('div');
+    c.className = 'conn';
+    c.style.top = (Math.min(a,b) * LANE_H + LANE_H/2) + 'px';
+    c.style.height = (Math.abs(a-b) * LANE_H) + 'px';
+    overEl.appendChild(c); connEls[i] = c;
+  });
+  /* playhead */
+  const ph = document.createElement('div'); ph.className = 'ph';
+  ph.innerHTML = '<span class="chipy"></span><i></i>';
+  overEl.appendChild(ph);
+  const phChip = ph.querySelector('.chipy');
+
+  /* ---------- collision clustering (one axis; reuses the map pin-label
+     declutter's spirit: a distance test, an alternative rendering when
+     things collide) ----------
+     Runs once per setTlView() CALL (not per animation frame, see setTlView
+     below), against whatever view it is ultimately headed for, so a dot's
+     visibility/cluster membership is already correct the instant selection
+     code needs to find and focus it, even mid-transition. */
+  const eventClusterMarker = new Map(); /* event index -> its current cluster marker, only while clustered */
+  let clusterEls = [];
+  function focusTargetFor(i){
+    const d = primaryDot(i);
+    if (d && getComputedStyle(d).visibility !== 'hidden') return d;
+    return eventClusterMarker.get(i) || d;
+  }
+  function computeClustersFor(v){
+    /* preserve keyboard focus across a rebuild: if the focused element is
+       about to be removed (a cluster that's splitting) or hidden (a dot
+       that's newly colliding), land focus on whatever now represents the
+       same event, instead of silently dropping to <body>. */
+    const prevActive = document.activeElement;
+    let prevEventIdx = null;
+    if (prevActive && prevActive.classList){
+      if (prevActive.classList.contains('tlcluster')) prevEventIdx = prevActive._members[0];
+      else if (prevActive.classList.contains('dot')) prevEventIdx = +prevActive.dataset.ev;
+    }
+
+    clusterEls.forEach(m => m.remove());
+    clusterEls = [];
+    eventClusterMarker.clear();
+    Object.values(evDots).flat().forEach(d => d.classList.remove('in-cluster'));
+
+    const span = v.y1 - v.y0;
+    const pctOf = y => (y - v.y0) / span * 100;
+    THREAD_ORDER.forEach(th => {
+      const lane = laneEls[th];
+      if (lane.classList.contains('off')) return; /* thread-filtered lanes stay fully hidden; nothing to cluster */
+      const track = lane.querySelector('.lane-track');
+      const trackW = track.clientWidth || 1;
+      const items = [];
+      EVENTS.forEach((e, i) => {
+        if (!e.th.includes(th)) return;
+        const pct = pctOf(effectiveY(i));
+        if (pct < -12 || pct > 112) return; /* off-view: not part of the visible picture */
+        items.push({i, pct, px: pct / 100 * trackW});
+      });
+      items.sort((a, b) => a.px - b.px);
+      const groups = []; let cur = [];
+      items.forEach(it => {
+        if (cur.length && it.px - cur[cur.length - 1].px > CLUSTER_PX){ groups.push(cur); cur = []; }
+        cur.push(it);
+      });
+      if (cur.length) groups.push(cur);
+      groups.filter(g => g.length > 1).forEach(g => {
+        g.forEach(it => dotByLane[th][it.i].classList.add('in-cluster'));
+        const avgPct = g.reduce((s, it) => s + it.pct, 0) / g.length;
+        const years = g.map(it => EVENTS[it.i].y);
+        const yMin = Math.min(...years), yMax = Math.max(...years);
+        const yLabel = yMin === yMax ? String(yMin) : `${yMin}–${yMax}`;
+        const marker = document.createElement('button');
+        marker.type = 'button';
+        marker.className = 'tlcluster';
+        marker.tabIndex = -1;
+        marker.style.setProperty('--x', avgPct.toFixed(3) + '%');
+        marker.style.setProperty('--c', THREADS[th].c);
+        marker.textContent = String(g.length);
+        marker._members = g.map(it => it.i);
+        marker.setAttribute('aria-label',
+          `${g.length} ${THREADS[th].label} events near ${yLabel}. Activate to zoom in.`);
+        marker.addEventListener('click', () => zoomIntoCluster(marker._members));
+        track.appendChild(marker);
+        clusterEls.push(marker);
+        g.forEach(it => eventClusterMarker.set(it.i, marker));
+      });
+    });
+
+    if (prevEventIdx !== null){
+      const stillFocused = document.body.contains(prevActive) && document.activeElement === prevActive &&
+        getComputedStyle(prevActive).visibility !== 'hidden';
+      if (!stillFocused){
+        const target = focusTargetFor(prevEventIdx);
+        if (target) target.focus({preventScroll: true});
+      }
+    }
+  }
+  function zoomIntoCluster(members){
+    const ys = members.map(effectiveY);
+    const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+    const span = Math.max(TL_MIN_SPAN, (tlView.y1 - tlView.y0) / 3);
+    setTlView({y0: cy - span / 2, y1: cy + span / 2});
+    announce(`Zoomed to ${members.length} events near ${Math.round(cy)}.`);
+  }
+
+  /* ---------- per-frame layout: ticks, dot/connector/playhead/overview
+     positions. Cheap and safe to call every animation frame: unlike
+     computeClustersFor, it never adds/removes DOM nodes (only tick spans,
+     rebuilt solely when the visible tick YEARS change, not every frame). */
+  let axisTickYears = [];
+  function niceStep(span){
+    const target = 7, steps = [1, 2, 5, 10, 25, 50, 100, 200];
+    const raw = span / target;
+    for (const s of steps) if (s >= raw) return s;
+    return steps[steps.length - 1];
+  }
+  function rebuildAxisIfNeeded(){
+    const step = niceStep(tlView.y1 - tlView.y0);
+    const start = Math.ceil(Math.max(tlView.y0, Y0) / step) * step;
+    const years = [];
+    for (let y = start; y <= Math.min(tlView.y1, Y1); y += step) years.push(y);
+    const changed = years.length !== axisTickYears.length || years.some((y, i) => y !== axisTickYears[i]);
+    if (changed){
+      axisTickYears = years;
+      axisEl.innerHTML = '';
+      years.forEach(y => {
+        const t = document.createElement('span');
+        t.className = 'tick'; t.dataset.y = y; t.textContent = y;
+        t.setAttribute('aria-hidden', 'true');
+        axisEl.appendChild(t);
+      });
+    }
+    axisEl.querySelectorAll('.tick').forEach(t => { t.style.left = xPct(+t.dataset.y) + '%'; });
+  }
+  function updateOverviewWindow(){
+    const left = (tlView.y0 - Y0) / TL_FULL_SPAN * 100;
+    const width = Math.max((tlView.y1 - tlView.y0) / TL_FULL_SPAN * 100, 1.2);
+    tlovWindow.style.left = left + '%';
+    tlovWindow.style.width = width + '%';
+    tlovWindow.setAttribute('aria-valuenow', String(Math.round((tlView.y0 + tlView.y1) / 2)));
+    tlovWindow.setAttribute('aria-valuetext',
+      `${Math.round(tlView.y0)}–${Math.round(tlView.y1)} (${Math.round(tlView.y1 - tlView.y0)} years)`);
+  }
+  function reposition(){
+    rebuildAxisIfNeeded();
+    epoch.style.left = xPct(2077) + '%';
+    EVENTS.forEach((e, i) => {
+      const x = xPct(effectiveY(i));
+      evDots[i].forEach(d => d.style.setProperty('--x', x.toFixed(3) + '%'));
+      if (connEls[i]) connEls[i].style.left = x + '%';
+    });
+    if (state.ev !== null) setPlayhead(EVENTS[state.ev]);
+    updateOverviewWindow();
+  }
+  function layoutTimeline(){
+    computeClustersFor(tlView);
+    reposition();
+  }
+
+  /* ---------- zoom / pan (mirrors the map's setView/zoomAt/clampView) ---------- */
+  let tlAnimId = null;
+  function setTlView(t, animate = true){
+    cancelAnimationFrame(tlAnimId);
+    const tgt = clampTlView(t);
+    computeClustersFor(tgt); /* decided once, against the FINAL view: see the comment above */
+    if (!animate || rm()){ tlView = tgt; reposition(); return; }
+    const from = {...tlView}, t0 = performance.now(), D = 320;
+    const step = now => {
+      const p = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - p, 3);
+      tlView = p < 1
+        ? {y0: from.y0 + (tgt.y0 - from.y0) * e, y1: from.y1 + (tgt.y1 - from.y1) * e}
+        : tgt;
+      reposition();
+      if (p < 1) tlAnimId = requestAnimationFrame(step);
+    };
+    tlAnimId = requestAnimationFrame(step);
+  }
+  function resetTlView(animate = true){ setTlView({y0: Y0, y1: Y1}, animate); }
+  function tlZoomAt(centerYear, k){
+    const span = (tlView.y1 - tlView.y0) * k;
+    const y0 = centerYear - (centerYear - tlView.y0) * k;
+    setTlView({y0, y1: y0 + span}, false);
+  }
+  /* "zoom to selection": the timeline analogue of the map's zoomToLocs.
+     Reframes to a fixed neighbourhood width around the event, exactly like
+     the map reframes to a fresh bbox around the selected pin(s) (see
+     highlightMap's `if (zoom) zoomToLocs(names)`). `doZoom` mirrors
+     sopts.zoom from selectEvent the same way: false SKIPS reframing
+     entirely (not just its animation), used only by boot's auto-select, so
+     the initial view is the full span, matching the map staying at full
+     CONUS on load. */
+  function frameTimelineOn(i, doZoom = true){
+    if (!doZoom) return;
+    const y = effectiveY(i);
+    setTlView({y0: y - TL_FOCUS_SPAN / 2, y1: y + TL_FOCUS_SPAN / 2});
+  }
+  function yearAtClientX(clientX){
+    const r = axisEl.getBoundingClientRect();
+    const pct = Math.min(1, Math.max(0, (clientX - r.left) / (r.width || 1)));
+    return tlView.y0 + pct * (tlView.y1 - tlView.y0);
+  }
+
+  /* wheel routing: wheel over the TIMELINE zooms the timeline (never the
+     map), see the matching guard on the map's own wheel listener, and
+     stage2-plan.md's "they must not fight" requirement. `.tl` already sits
+     outside `.mapwrap` in the DOM, so no capture/bubble conflict is possible;
+     this is purely "which surface is the pointer over." */
+  $('.tl').addEventListener('wheel', ev => {
+    if (ev.target.closest('select')) return; /* let native select-scroll behave normally */
+    ev.preventDefault();
+    let cy;
+    if (ev.target.closest('#tlov')){
+      const r = tlovTrack.getBoundingClientRect();
+      const pct = Math.min(1, Math.max(0, (ev.clientX - r.left) / (r.width || 1)));
+      cy = Y0 + pct * TL_FULL_SPAN;
+    } else {
+      cy = yearAtClientX(ev.clientX);
+    }
+    tlZoomAt(cy, ev.deltaY > 0 ? 1.18 : 1 / 1.18);
+  }, {passive: false});
+  /* drag-to-pan along the axis: background only; dots/clusters own their
+     own press (routing above, click handlers below). Mirrors the map's
+     pointerdown/pointermove/pointerup pan with a 5px-move threshold. */
+  let tlPanMoved = false;
+  lanesEl.addEventListener('pointerdown', ev => {
+    if (ev.button !== 0) return;
+    if (ev.target.closest('.dot, .tlcluster')) return;
+    const startX = ev.clientX, v0 = {...tlView};
+    tlPanMoved = false;
+    const r = axisEl.getBoundingClientRect();
+    const move = e => {
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 5) tlPanMoved = true;
+      if (!tlPanMoved) return;
+      const dYears = -dx / (r.width || 1) * (v0.y1 - v0.y0);
+      setTlView({y0: v0.y0 + dYears, y1: v0.y1 + dYears}, false);
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      setTimeout(() => { tlPanMoved = false; }, 0);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  });
+
+  /* ---------- overview strip: full-span minimap + draggable viewport ---------- */
+  {
+    const years = new Set(EVENTS.map(e => e.y));
+    years.forEach(y => {
+      const m = document.createElement('span');
+      m.className = 'tlov-mark';
+      m.style.left = ((y - Y0) / TL_FULL_SPAN * 100) + '%';
+      tlovDensity.appendChild(m);
+    });
+  }
+  tlovWindow.addEventListener('pointerdown', ev => {
+    if (ev.button !== 0) return;
+    const startX = ev.clientX, v0 = {...tlView};
+    const r = tlovTrack.getBoundingClientRect();
+    const move = e => {
+      const dYears = (e.clientX - startX) / (r.width || 1) * TL_FULL_SPAN;
+      setTlView({y0: v0.y0 + dYears, y1: v0.y1 + dYears}, false);
+    };
+    const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  });
+  tlovTrack.addEventListener('pointerdown', ev => {
+    if (ev.target === tlovWindow) return;
+    const r = tlovTrack.getBoundingClientRect();
+    const pct = (ev.clientX - r.left) / (r.width || 1);
+    const cy = Y0 + pct * TL_FULL_SPAN;
+    const span = tlView.y1 - tlView.y0;
+    setTlView({y0: cy - span / 2, y1: cy + span / 2});
+  });
+  function announceTlView(){
+    announce(`Timeline: ${Math.round(tlView.y0)}–${Math.round(tlView.y1)}.`);
+  }
+  tlovWindow.addEventListener('keydown', ev => {
+    const span = tlView.y1 - tlView.y0, step = span * 0.2;
+    if (ev.key === 'ArrowLeft'){ ev.preventDefault(); setTlView({y0: tlView.y0 - step, y1: tlView.y1 - step}); announceTlView(); }
+    else if (ev.key === 'ArrowRight'){ ev.preventDefault(); setTlView({y0: tlView.y0 + step, y1: tlView.y1 + step}); announceTlView(); }
+    else if (ev.key === 'ArrowUp' || ev.key === '+' || ev.key === '='){ ev.preventDefault(); tlZoomAt((tlView.y0 + tlView.y1) / 2, 1 / 1.4); announceTlView(); }
+    else if (ev.key === 'ArrowDown' || ev.key === '-'){ ev.preventDefault(); tlZoomAt((tlView.y0 + tlView.y1) / 2, 1.4); announceTlView(); }
+    else if (ev.key === 'Home'){ ev.preventDefault(); resetTlView(); announceTlView(); }
+    else if (ev.key === 'End'){ ev.preventDefault(); setTlView({y0: Y1 - span, y1: Y1}); announceTlView(); }
+  });
+  $('#tlzin').addEventListener('click', () => tlZoomAt((tlView.y0 + tlView.y1) / 2, 1 / 1.5));
+  $('#tlzout').addEventListener('click', () => tlZoomAt((tlView.y0 + tlView.y1) / 2, 1.5));
+  $('#tlzfit').addEventListener('click', () => resetTlView());
+
+  /* ============================ STATE ============================ */
+  const state = {ev:null, loc:null, thread:'all', scope:'us', filter:''};
+  const statusEl = $('#status'), card = $('#card');
+  const announce = t => statusEl.textContent = t;
+  const esc = s => s.replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+
+  /* ---------- fullscreen: the map and timeline as one instrument ----------
+     The Fullscreen API on the atlas root, with a CSS fallback (.atl--fs, a
+     fixed inset-0 layer) for a host that refuses it, an embed, a sandboxed
+     iframe, or a browser where the promise rejects. The three-row grid needs
+     no special-casing at the new size; that it doesn't is the test that the
+     layout is right rather than tuned to one viewport. */
+  const fsBtn = $('#atl-fs');
+  let fsFallback = false;
+  let fsAnnounced = null;
+  /* Safari below 16.4 and every iOS Safari have only the webkit-prefixed API, so
+     without these they never get real element fullscreen and ALWAYS take the CSS
+     fallback below, which made the fallback's correctness load-bearing on a
+     whole browser family rather than an edge case. */
+  const nativeEl = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+  const request = root.requestFullscreen || root.webkitRequestFullscreen;
+  const exit = document.exitFullscreen || document.webkitExitFullscreen;
+  const fsOn = () => nativeEl() === root || fsFallback;
+  /* ONE owner for the fallback's flag AND its class. They were separate, and the
+     fullscreenchange handler below cleared only the flag: any other element
+     entering fullscreen (a video, an embed) left the atlas fixed at z-index 9999
+     over the whole app while its own button reported "not pressed" and Escape:
+     gated on the flag: did nothing. Nothing short of a reload recovered. Found
+     by adversarial review of ec3e725; the lesson is that a state machine with two
+     representations has two states that can disagree. */
+  function setFallback(on){
+    fsFallback = on;
+    root.classList.toggle('atl--fs', on);
+  }
+  function syncFs(){
+    const on = fsOn();
+    fsBtn.setAttribute('aria-pressed', String(on));
+    fsBtn.innerHTML = on ? '&#10005; Exit fullscreen' : '&#9974; Fullscreen';
+    /* Announce TRANSITIONS only. `fullscreenchange` fires before
+       requestFullscreen()'s promise settles, so this used to run twice per toggle
+       and a live region re-announces even an identical string (announce()
+       replaces the text node). It also spoke "Fullscreen off." when some
+       unrelated element left fullscreen, wiping whatever the region was saying. */
+    if (on !== fsAnnounced){
+      fsAnnounced = on;
+      announce(on ? 'Fullscreen on. Press Escape to exit.' : 'Fullscreen off.');
+    }
+  }
+  async function toggleFs(){
+    if (fsOn()){
+      if (nativeEl() === root){
+        /* a rejected exit still falls through to syncFs(), so the button
+           reports what is actually on screen rather than what was asked for */
+        try { await exit.call(document); } catch (e) { /* reported by syncFs */ }
+      } else {
+        setFallback(false);
+      }
+    } else if (request){
+      try { await request.call(root); }
+      catch (e) { setFallback(true); }
+    } else {
+      setFallback(true);
+    }
+    syncFs();
+  }
+  on_($('#layer-fields'), 'click', () => toggleFields());
+  on_(fsBtn, 'click', toggleFs);
+  /* fullscreen can also be left without the button, Escape, F11, the browser's
+     own control; so the button's state follows the API, never a flag of our own. */
+  const onFsChange = () => {
+    if (nativeEl() !== root) setFallback(false);
+    syncFs();
+  };
+  on_(document, 'fullscreenchange', onFsChange);
+  on_(document, 'webkitfullscreenchange', onFsChange);
+
+  /* minimal pub/sub for the returned handle's `on()` */
+  const listeners = {};
+  function emit(type, detail){
+    (listeners[type] || []).forEach(fn => fn(detail));
+  }
+  function on(type, fn){
+    (listeners[type] = listeners[type] || []).push(fn);
+    return () => { listeners[type] = (listeners[type] || []).filter(f => f !== fn); };
+  }
+
+  const visibleEvents = () => EVENTS.map((e,i) => i).filter(i =>
+    state.thread === 'all' || EVENTS[i].th.includes(state.thread));
+  const primaryDot = i => evDots[i].find(d =>
+    d.offsetParent !== null && getComputedStyle(d).visibility !== 'hidden') || evDots[i][0];
+
+  function syncTabstops(){
+    Object.values(evDots).flat().forEach(d => d.tabIndex = -1);
+    const vis = visibleEvents();
+    const entry = (state.ev !== null && vis.includes(state.ev)) ? state.ev : vis[0];
+    if (entry !== undefined) focusTargetFor(entry).tabIndex = 0;
+    PIN_ORDER.forEach(n => pinEls[n].setAttribute('tabindex', '-1'));
+    const pinEntry = state.loc || (state.ev !== null ? EVENTS[state.ev].loc[0] : PIN_ORDER[0]);
+    pinEls[pinEntry].setAttribute('tabindex', '0');
+  }
+
+  function highlightMap(names, zoom){
+    for (const n in pinEls) pinEls[n].classList.toggle('active', names.includes(n));
+    for (const n in pinEls) pinEls[n].setAttribute('aria-pressed', String(names.includes(n)));
+    svg.classList.toggle('has-sel', names.length > 0);
+    if (names.length){
+      const p = LOC[names[0]];
+      xh.setAttribute('y1', p.y); xh.setAttribute('y2', p.y);
+      xv.setAttribute('x1', p.x); xv.setAttribute('x2', p.x);
+      if (zoom) zoomToLocs(names);
+    }
+  }
+  function setPlayhead(ev){
+    if (!ev){ ph.classList.remove('on'); return; }
+    const x = xPct(ev.y);
+    ph.style.left = x + '%';
+    ph.classList.add('on');
+    ph.classList.toggle('edge-l', x < 10);
+    ph.classList.toggle('edge-r', x > 88);
+    phChip.innerHTML = '<b>' + ev.y + '</b> ▸ ' + esc(ev.t.toUpperCase());
+  }
+  function markCurrent(i){
+    Object.values(evDots).flat().forEach(d => d.removeAttribute('aria-current'));
+    connEls.forEach(c => c && c.classList.remove('cur'));
+    if (i !== null){
+      evDots[i].forEach(d => d.setAttribute('aria-current', 'true'));
+      if (connEls[i]) connEls[i].classList.add('cur');
+    }
+  }
+
+  /* ---------- card renderers ---------- */
+  function factionChip(f){
+    return `<b style="--fc:${FACTIONS[f].c}">${esc(FACTIONS[f].label)}</b>`;
+  }
+  function renderEventCard(i){
+    const e = EVENTS[i];
+    const chips = e.th.map(k =>
+      `<button class="atl-chip" data-th="${k}" style="--c:${THREADS[k].c}">${esc(THREADS[k].label)}</button>`
+    ).join('');
+    const locs = e.loc.map(n =>
+      `<li><button class="linkbtn" data-loc="${esc(n)}">${esc(n)}<span class="fill" aria-hidden="true"></span><span class="meta">${esc(FACTIONS[LOC[n].f].label)}</span></button></li>`
+    ).join('');
+    card.innerHTML = `
+      <div class="cardtop"><h2 class="atl-kicker atl-rule">Event file</h2>
+        <button class="atl-btn xbtn" id="xclose" aria-label="Close and reset map">✕</button></div>
+      <p class="year">${e.y}</p>
+      <h3 class="evtitle">${esc(e.t)}</h3>
+      <div class="chips">${chips}</div>
+      <p class="note">${esc(e.n)}</p>
+      <h4 class="atl-kicker atl-rule">Signal origin</h4>
+      <ul class="loclist">${locs}</ul>
+      <div class="pager">
+        <button class="atl-btn" data-step="-1">◂ Prev</button>
+        <button class="atl-btn" data-step="1">Next ▸</button>
+      </div>`;
+    card.hidden = false;
+    wireCard();
+  }
+  function renderLocCard(name){
+    const l = LOC[name];
+    const evs = (LOC_EVENTS[name] || []).map(i => {
+      const e = EVENTS[i];
+      return `<li><button class="linkbtn" data-ev="${i}"><span class="yr">${e.y}</span>${esc(e.t)}</button></li>`;
+    }).join('');
+    card.innerHTML = `
+      <div class="cardtop"><h2 class="atl-kicker atl-rule">Location file</h2>
+        <button class="atl-btn xbtn" id="xclose" aria-label="Close and reset map">✕</button></div>
+      <h3 class="evtitle">${esc(name)}</h3>
+      <p class="locsub">${factionChip(l.f)} &nbsp;·&nbsp; GRID ${Math.abs(l.lat).toFixed(2)}N ${Math.abs(l.lon).toFixed(2)}W${name==='The New Master' ? ' &nbsp;·&nbsp; WENDOVER: PRESENT DAY' : ''}</p>
+      ${l.chapter ? `<p class="locsub">CHAPTER · ${esc(l.chapter)}</p>` : ''}
+      ${fieldsOn ? (() => {
+        const here = fieldsAt(l.x, l.y);
+        if (!here.length) return '<p class="locsub">TERRITORY · no group holds this ground</p>';
+        /* RELATIVE wording, not absolute thresholds. The absolute version read
+           "Willowers dominant · the 80s dominant" at Wendover, which flattens
+           exactly the hierarchy the field was built to express, the point of a
+           contested place is who holds MORE of it, so each group is described
+           against the strongest one present. */
+        const top = here[0].v;
+        const word = v => v === top ? 'dominant'
+          : v >= top * 0.6 ? 'contested'
+          : v >= top * 0.3 ? 'present' : 'thin';
+        return '<p class="locsub">TERRITORY · ' + here.map(h =>
+          `${esc(h.label.toUpperCase())} <b style="--fc:none">${word(h.v)}</b>`
+        ).join(' &nbsp;·&nbsp; ') + '</p>';
+      })() : ''}
+      <h4 class="atl-kicker atl-rule">Logged events</h4>
+      ${evs ? `<ul class="evlist">${evs}</ul>` : '<p class="note">No logged events. The record is silent, for now.</p>'}`;
+    card.hidden = false;
+    wireCard();
+  }
+  function wireCard(){
+    card.querySelector('#xclose').addEventListener('click', () => clearSel());
+    card.querySelectorAll('[data-loc]').forEach(b =>
+      b.addEventListener('click', () => selectLoc(b.dataset.loc)));
+    card.querySelectorAll('[data-ev]').forEach(b =>
+      b.addEventListener('click', () => {
+        const i = +b.dataset.ev;
+        if (!visibleEvents().includes(i)){ $('#thread').value = 'all'; applyThread('all', true); }
+        selectEvent(i);
+      }));
+    card.querySelectorAll('[data-step]').forEach(b =>
+      b.addEventListener('click', () => stepEvent(+b.dataset.step)));
+    card.querySelectorAll('.atl-chip[data-th]').forEach(b =>
+      b.addEventListener('click', () => { $('#thread').value = b.dataset.th; applyThread(b.dataset.th); }));
+  }
+
+  /* ---------- selection (the single source of truth) ---------- */
+  function selectEvent(i, sopts = {}){
+    if (state.ev === i && state.loc === null && state.scope === 'us') return;
+    ensureUsScope();
+    state.ev = i; state.loc = null;
+    const e = EVENTS[i];
+    markCurrent(i);
+    setPlayhead(e);
+    highlightMap(e.loc, sopts.zoom !== false);
+    frameTimelineOn(i, sopts.zoom !== false); /* zoom-to-selection: the timeline's zoomToLocs analogue;
+                                                  also guarantees this event's own dot is unclustered
+                                                  before syncTabstops()/focus below need it */
+    /* highlightMap only reframes (and so only recomputes labels) when the
+       zoom option is on; a `sopts.zoom:false` caller (boot's autoSelectLast)
+       still needs this event's location(s) forced into the label placement
+       pass, so call it directly rather than relying on the view changing. */
+    updateLabels();
+    renderEventCard(i);
+    syncTabstops();
+    announce(`${e.y}: ${e.t}. Map highlighting: ${e.loc.join(', ')}.`);
+    emit('select', {type:'event', index:i});
+    writeHash();
+  }
+  function selectLoc(name){
+    ensureUsScope();
+    state.loc = name; state.ev = null;
+    markCurrent(null);
+    setPlayhead(null);
+    highlightMap([name], true);
+    updateLabels();
+    renderLocCard(name);
+    syncTabstops();
+    const n = (LOC_EVENTS[name] || []).length;
+    announce(`${name}: ${FACTIONS[LOC[name].f].label}. ${n} logged event${n===1?'':'s'}.`);
+    emit('select', {type:'loc', name});
+    writeHash();
+  }
+  function clearSel(){
+    state.ev = null; state.loc = null;
+    markCurrent(null); setPlayhead(null);
+    highlightMap([], false);
+    card.hidden = true;
+    reframe();
+    resetTlView();
+    syncTabstops();
+    announce('Selection cleared. Map reset.');
+    emit('select', {type:'clear'});
+    writeHash();
+  }
+  function stepEvent(dir){
+    const vis = visibleEvents();
+    if (!vis.length) return;
+    let idx = state.ev === null ? (dir > 0 ? -1 : vis.length)
+                                : vis.indexOf(state.ev);
+    if (idx === -1) idx = 0;
+    idx = Math.min(vis.length - 1, Math.max(0, idx + dir));
+    selectEvent(vis[idx]);
+  }
+
+  /* ---------- thread filter ---------- */
+  function applyThread(t, silent){
+    state.thread = t;
+    for (const th in laneEls) laneEls[th].classList.toggle('off', t !== 'all' && th !== t);
+    EVENTS.forEach((e, i) => {
+      if (!connEls[i]) return;
+      connEls[i].style.visibility =
+        (t === 'all' || e.th.includes(t)) ? 'visible' : 'hidden';
+    });
+    if (state.ev !== null && !visibleEvents().includes(state.ev)) clearSel();
+    layoutTimeline(); /* lane visibility changed: reclustering may add/remove markers */
+    syncTabstops();
+    if (!silent) announce(t === 'all'
+      ? `All threads: ${EVENTS.length} events.`
+      : `Thread ${THREADS[t].label}: ${visibleEvents().length} events.`);
+  }
+  {
+    const sel = $('#thread');
+    sel.innerHTML = '<option value="all">ALL THREADS</option>' + THREAD_ORDER.map(k =>
+      `<option value="${k}">${THREADS[k].label.toUpperCase()}</option>`).join('');
+    sel.addEventListener('change', () => applyThread(sel.value));
+  }
+  $('#prev').addEventListener('click', () => stepEvent(-1));
+  $('#next').addEventListener('click', () => stepEvent(1));
+
+  /* ---------- keyboard: roving scrub on the timeline ---------- */
+  $('#tlbody').addEventListener('keydown', ev => {
+    const keys = ['ArrowLeft','ArrowRight','Home','End'];
+    if (!keys.includes(ev.key)) return;
+    ev.preventDefault();
+    const vis = visibleEvents();
+    if (!vis.length) return;
+    let idx = state.ev !== null ? vis.indexOf(state.ev) : -1;
+    if (ev.key === 'ArrowRight') idx = Math.min(vis.length - 1, idx + 1);
+    if (ev.key === 'ArrowLeft')  idx = idx === -1 ? vis.length - 1 : Math.max(0, idx - 1);
+    if (ev.key === 'Home') idx = 0;
+    if (ev.key === 'End')  idx = vis.length - 1;
+    /* select FIRST (which reframes/unclusters the target via frameTimelineOn),
+       then focus it, the other order would risk focusing a dot still hidden
+       behind a cluster marker at the pre-scrub zoom level. */
+    const i = vis[idx];
+    selectEvent(i);
+    focusTargetFor(i).focus({preventScroll: true});
+  });
+  /* keyboard: roving over map pins */
+  pinsG.addEventListener('keydown', ev => {
+    const keys = ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'];
+    if (!keys.includes(ev.key)) return;
+    ev.preventDefault();
+    const cur = document.activeElement.closest && document.activeElement.closest('.pin');
+    let idx = cur ? PIN_ORDER.indexOf(cur.dataset.name) : 0;
+    if (ev.key === 'ArrowRight' || ev.key === 'ArrowDown') idx = Math.min(PIN_ORDER.length - 1, idx + 1);
+    if (ev.key === 'ArrowLeft'  || ev.key === 'ArrowUp')   idx = Math.max(0, idx - 1);
+    if (ev.key === 'Home') idx = 0;
+    if (ev.key === 'End')  idx = PIN_ORDER.length - 1;
+    const g = pinEls[PIN_ORDER[idx]];
+    PIN_ORDER.forEach(n => pinEls[n].setAttribute('tabindex', '-1'));
+    g.setAttribute('tabindex', '0');
+    g.focus();
+  });
+  on_(document, 'keydown', ev => {
+    if (ev.key === 'Escape'){
+      /* native fullscreen gets Escape from the browser and never reaches
+         here; the CSS fallback has to claim it, and claim it FIRST, leaving
+         a fake-fullscreen atlas with no way out but the button would be the
+         worse failure than losing one selection-clear. */
+      if (fsFallback){ toggleFs(); return; }
+      if (state.ev !== null || state.loc !== null) clearSel();
+      else { reframe(); resetTlView(); }
+    }
+    if (ev.target.closest && ev.target.closest('input,select,textarea')) return;
+    /* +/- zoom whichever surface currently has focus inside it (mirrors the
+       wheel-routing disambiguation above, just driven by focus rather than
+       hover since keyboard has no pointer position), defaults to the map. */
+    const inTimeline = ev.target.closest && ev.target.closest('.tl');
+    if (ev.key === '+' || ev.key === '='){
+      if (inTimeline) tlZoomAt((tlView.y0+tlView.y1)/2, 1/1.5);
+      else zoomAt(view.x+view.w/2, view.y+view.h/2, 1/1.5);
+    }
+    if (ev.key === '-'){
+      if (inTimeline) tlZoomAt((tlView.y0+tlView.y1)/2, 1.5);
+      else zoomAt(view.x+view.w/2, view.y+view.h/2, 1.5);
+    }
+  });
+
+  /* ============================ HASH ROUTING ============================
+     Phase 3.1 of integration-plan.md. Scheme (extends the old map's
+     `#map/us/<id>` convention: see mapRoute()/parseRoute() in app.js):
+       #map: US scope, no selection (the base route)
+       #map/us/<pinSlug>, US scope, pin selected
+       #map/event/<eventSlug>, US scope, event selected (new: the old
+                                  map had no timeline, so no prior art here)
+       #map/region, Region scope stub
+       #map/local, Local scope stub
+     Writes exclusively via history.replaceState (never pushState), so
+     scrubbing the timeline or tabbing across pins does not flood browser
+     history, only an actual back/forward or a pasted link changes it.
+     opts.hashRouting gates all of this off by default; only atlas.html
+     (or another future host) opts in. */
+  let hashApplying = false;
+  function parseHash(hash){
+    const raw = (hash || '').replace(/^#\/?/, '');
+    if (!raw) return null; /* no hash at all: caller decides the default boot */
+    if (raw === 'map') return {scope:'us'};
+    const m = raw.match(/^map\/(.+)$/);
+    if (!m) return null; /* not ours: leave whatever else owns this hash alone */
+    const parts = m[1].split('/').filter(Boolean).map(s => { try{ return decodeURIComponent(s); }catch(e){ return s; } });
+    if (SCOPES[parts[0]]) return {scope:parts[0]};
+    if (parts[0] === 'us') return parts[1] ? {scope:'us', pinSlug:parts[1]} : {scope:'us'};
+    if (parts[0] === 'event' && parts[1]) return {scope:'us', eventSlug:parts[1]};
+    return {scope:'us', invalid:true};
+  }
+  function buildHash(){
+    if (state.scope !== 'us') return '#map/' + state.scope;
+    if (state.ev !== null) return '#map/event/' + EVENT_SLUG[state.ev];
+    if (state.loc !== null) return '#map/us/' + PIN_SLUG[state.loc];
+    return '#map';
+  }
+  function writeHash(){
+    if (!opts.hashRouting || hashApplying) return;
+    const h = buildHash();
+    if (location.hash !== h){ try{ history.replaceState(null, '', h); }catch(e){} }
+  }
+  /* apply a (possibly pre-parsed) route to the live map; called at boot for
+     an initial deep link and on every 'hashchange' after. An unresolvable
+     pin/event slug "repairs" the URL back to whatever actually applied,
+     mirroring app.js's applyRoute() repairRoute behaviour. */
+  function applyHash(pre){
+    if (!opts.hashRouting) return;
+    const r = pre || parseHash(location.hash);
+    if (!r) return;
+    hashApplying = true;
+    let repair = r.invalid === true;
+    try{
+      applyScope(r.scope, false, true);
+      if (r.scope === 'us'){
+        let resolved = false;
+        if (r.pinSlug){
+          const name = SLUG_PIN[r.pinSlug];
+          if (name){ selectLoc(name); resolved = true; } else repair = true;
+        } else if (r.eventSlug){
+          const idx = SLUG_EVENT[r.eventSlug];
+          if (idx != null){ selectEvent(idx); resolved = true; } else repair = true;
+        }
+        /* the hash named no selection, or named one that doesn't resolve
+           (unknown/removed slug): either way a stale prior selection must
+           be cleared to match it, not left on screen. Mirrors app.js's
+           applyRoute(): an unmatched #map/us/<id> calls clearMapDetail(). */
+        if (!resolved && (state.ev !== null || state.loc !== null)) clearSel();
+      }
+    } finally {
+      hashApplying = false;
+      if (repair) writeHash();
+    }
+  }
+
+  /* ---------- boot: present day, continental-US framing ---------- */
+  computeAspect();
+  applyThread('all', true);
+  const initialRoute = opts.hashRouting && location.hash ? parseHash(location.hash) : null;
+  if (initialRoute){
+    applyHash(initialRoute); /* deep link: frame + select whatever the URL names */
+  } else {
+    applyScope('us', false, true);
+    if (opts.autoSelectLast !== false){
+      selectEvent(EVENTS.length - 1, {zoom:false}); /* 2302: A new Master takes root */
+    }
+  }
+  if (opts.hashRouting){
+    on_(window, 'hashchange', () => { if (!hashApplying) applyHash(); });
+  }
+
+  function destroy(){
+    /* leaving the section (or the whole app) while fullscreen is ours would
+       otherwise strand the browser in fullscreen on a container that no
+       longer has any content in it. */
+    if (nativeEl() === root) exit.call(document).catch(() => {});
+    cleanups.forEach(fn => fn());
+    cleanups.length = 0;
+    pendingTimeouts.forEach(clearTimeout);
+    pendingTimeouts.length = 0;
+    cancelAnimationFrame(animId);
+    cancelAnimationFrame(tlAnimId);
+    container.innerHTML = '';
+  }
+
+  return { selectEvent, selectLoc, clearSel, destroy, on, setFilter, setScope: applyScope };
+}
+
+/* Test seam for the geometry layer, which the header above already calls pure for
+   exactly this reason: it can decode, displace and be checked with no DOM and no fetch.
+   Exported so tools/border-detail-gate.mjs can hold the one rule that has broken twice
+   and was, until now, guarded only by a comment. Nothing in the app imports it. */
+export const __geometry = { decodeTopoArcs, sharedRegionArcs, getDisplacedArcs, buildRegionPaths,
+  poleOfInaccessibility, buildRegionLabelRings, regionLabelPoint };

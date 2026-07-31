@@ -1,0 +1,1819 @@
+[
+ {
+  "y": 2002,
+  "t": "West Tek founded",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "The Glow"
+  ],
+  "n": "A private Pentagon contractor opens weapons and biomedical divisions, the institution that will run the FEV project seven decades later."
+ },
+ {
+  "y": 2031,
+  "t": "Vault-Tec University opens",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault-Tec University (Morgantown)"
+  ],
+  "n": "Vault-Tec rebrands a Morgantown, WV college into its own training school for overseers and vault engineers."
+ },
+ {
+  "y": 2053,
+  "t": "ZAX 1.0 comes online",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 0"
+  ],
+  "n": "Vault-Tec's prototype vault-governance computer is handed to the Department of Energy, a quarter-century before the war, and the direct technical ancestor of the Calculator that will one day run Vault 0."
+ },
+ {
+  "y": 2054,
+  "t": "Project Safehouse breaks ground",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 13"
+  ],
+  "n": "Vault-Tec and the government quietly begin building the 122-vault network, a nationwide social experiment sold to the public as shelter."
+ },
+ {
+  "y": 2063,
+  "t": "Vault 13's construction begins",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 13"
+  ],
+  "n": "Ground breaks on the vault that anchors our map; completed March 2069, eight years before it is ever sealed."
+ },
+ {
+  "y": 2069,
+  "t": "Vault 13's construction completes",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 13"
+  ],
+  "n": "Eight years of building ends; the vault will not open for another 92, assuming the water chip holds."
+ },
+ {
+  "y": 2071,
+  "t": "Vault 87 finishes construction",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 87"
+  ],
+  "n": "Five years under Dr. Wayne Merrick's Evolutionary Experimentation Program; its purpose is stated plainly on the build order: study Forced Evolutionary Virus on live humans."
+ },
+ {
+  "y": 2072,
+  "t": "Vault-Tec's own guards rob the gold vault",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 79"
+  ],
+  "n": "Soldiers assigned to guard America's gold reserve steal millions and flee to a Las Vegas shootout; investigator Flavia Stabo traces the theft and is buried near the vault's entrance for her trouble."
+ },
+ {
+  "y": 2073,
+  "t": "FEV research begins",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "The Glow"
+  ],
+  "n": "West Tek's Pan-Immunity Project seeds the Forced Evolutionary Virus."
+ },
+ {
+  "y": 2073,
+  "t": "The oil rig that starts a war",
+  "th": [
+   "enclave"
+  ],
+  "loc": [
+   "Enclave Oil Rig"
+  ],
+  "n": "The US wins the race to drill the world's last reachable deep-sea oil deposit off the California coast; China's sabotage accusation over it ignites the war that ends the world four years later. Poseidon Energy's drilling platform is already earmarked as a shadow-government fallback."
+ },
+ {
+  "y": 2076,
+  "t": "Vault 76 seals over a year early",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 76"
+  ],
+  "n": "July 4, 2076 (the tricentennial, over fifteen months before the Great War: Vault-Tec dedicates and seals its true control vault as a publicity event, stocked with Vault-Tec University alumni, military, and \"high level government employees\") the one population actually meant to walk back out."
+ },
+ {
+  "y": 2077,
+  "t": "FEV moved to Mariposa",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Mariposa"
+  ],
+  "n": "The vats are hidden months before the bombs fall."
+ },
+ {
+  "y": 2077,
+  "t": "The Great War",
+  "th": [
+   "world"
+  ],
+  "loc": [
+   "The Glow",
+   "Necropolis"
+  ],
+  "n": "Atomic fire remakes the continent in two hours."
+ },
+ {
+  "y": 2077,
+  "t": "The Skyfire: the tribe's name for the Great War",
+  "th": [
+   "tribe"
+  ],
+  "loc": [
+   "Wendover"
+  ],
+  "n": "The tribe's own oral term for 2077; the Tree of Life's three coexisting origin stories all tie to \"right after the Skyfire.\""
+ },
+ {
+  "y": 2077,
+  "t": "Maxson's mutiny at Mariposa",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Mariposa"
+  ],
+  "n": "Discovering FEV tests on live soldiers, Captain Roger Maxson executes the researchers and radios his unit's secession from the Army: three days before the bombs fall."
+ },
+ {
+  "y": 2077,
+  "t": "Vault 12's door fails",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Necropolis"
+  ],
+  "n": "Built with a door engineered never to seal, Vault 12 floods with panicked Bakersfield refugees and slow radiation on the day of the Great War, the first ghouls."
+ },
+ {
+  "y": 2077,
+  "t": "Exodus to Lost Hills",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Mariposa",
+   "Lost Hills"
+  ],
+  "n": "Maxson leads his mutinous soldiers and their families out of the ruined base toward a government bunker to the south, the root the Brotherhood grows from."
+ },
+ {
+  "y": 2077,
+  "t": "Vault 111 freezes its dwellers",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 111"
+  ],
+  "n": "Told the cryo-pods are for decontamination, the last residents of Sanctuary Hills are sealed away as unwitting subjects in a 210-year suspended-animation study."
+ },
+ {
+  "y": 2077,
+  "t": "The Enclave retreats to the Oil Rig",
+  "th": [
+   "enclave"
+  ],
+  "loc": [
+   "Enclave Oil Rig"
+  ],
+  "n": "As the bombs fall, the President and the shadow government proper relocate to the platform, the seed of everything Navarro and Control Station ENCLAVE become."
+ },
+ {
+  "y": 2077,
+  "t": "Vault 77 seals with one man and a crate of puppets",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 77"
+  ],
+  "n": "October 23, 2077, Vault-Tec's cruellest one-line joke: a single occupant, alone, for the isolation experiment to end all isolation experiments."
+ },
+ {
+  "y": 2077,
+  "t": "Vault 92 seals; the White Noise trial begins",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 92"
+  ],
+  "n": "Overseer Richard Rubin starts the White Noise Mind Suggestion Combat Experiment on hand-picked musicians the same day the door closes."
+ },
+ {
+  "y": 2077,
+  "t": "Vault 88 is caught mid-construction",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 88"
+  ],
+  "n": "Overseer Barstow is scheduled to arrive October 22; the bombs fall the next day with the vault still unfinished, its entrance buried under its own rubble before a single resident moves in."
+ },
+ {
+  "y": 2077,
+  "t": "Vault 96 seals over a cover story",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 96"
+  ],
+  "n": "Publicly built to monitor post-war wildlife and restore ecological balance; its real, hidden mandate is breeding and cataloguing mutation itself."
+ },
+ {
+  "y": 2077,
+  "t": "Vault 94 seals; a second bus is left outside",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 94"
+  ],
+  "n": "Pastor Gabriella Salavar's pacifist congregation is sealed in on schedule; a second busload of latecomers arrives just after the failsafe triggers and is locked out on the surface."
+ },
+ {
+  "y": 2077,
+  "t": "Vault 118 seals over a fortune",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 118"
+  ],
+  "n": "Four ultra-wealthy investors buy their way into a private vault built around a single pitch: transfer the rich into Robobrains and let the money survive the war even if the body does not."
+ },
+ {
+  "y": 2077,
+  "t": "Vaults 31, 32 and 33 seal outside Los Angeles",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vaults 33/32/31"
+  ],
+  "n": "Vault-Tec's own executives go into cryo-storage in Vault 31 as future \"overseers\"; 32 and 33 are sealed alongside them as the breeding stock for a programme nobody inside has been told about."
+ },
+ {
+  "y": 2078,
+  "t": "Vault 87 begins mass-producing Super Mutants",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 87"
+  ],
+  "n": "The FEV chambers activate; dwellers are converted first, then the survivors begin a two-century cycle of dragging captured wastelanders back down to be infected in turn."
+ },
+ {
+  "y": 2078,
+  "t": "Vault 94's pacifists reopen the door",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 94"
+  ],
+  "n": "One year sealed, as planned: unarmed ambassadors go out carrying access codes to invite wasteland survivors in. One reaches Harpers Ferry; the group that follows him home grows suspicious, massacres the Community Council, then puts a minigun through the G.E.C.K. itself, detonating a level-6 nuclear blast that erases everyone."
+ },
+ {
+  "y": 2079,
+  "t": "Puppet Man's break",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 77"
+  ],
+  "n": "Fifteen months alone: on February 4 he finds a crate of puppets; by March 30 he believes the Vault Boy puppet is talking to him. Days later he tears the king puppet apart and accuses Vault Boy of the murder, then walks out. His jumpsuit and holotape resurface in Paradise Falls two centuries later."
+ },
+ {
+  "y": 2082,
+  "t": "The Brotherhood is born",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Lost Hills"
+  ],
+  "n": "Maxson's mutinous soldiers, arrived from Mariposa five years earlier, formalize their creed at Lost Hills, the Fallout Bible's own founding date, corrected from this map's previous, unsourced 2134."
+ },
+ {
+  "y": 2082,
+  "t": "Vault 95 seals with recovering addicts",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 95"
+  ],
+  "n": "Overseer Jane Myers runs a genuine rehabilitation programme, for five years it visibly works."
+ },
+ {
+  "y": 2082,
+  "t": "The stash reopens; Vault 95 turns on itself",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 95"
+  ],
+  "n": "October 23, 2082, five years to the day after sealing: a Vault-Tec plant waits until the vault sleeps, then reopens the drug stockpile he was seeded with from the start. The reveal that it was deliberate destroys every family-like bond the vault built."
+ },
+ {
+  "y": 2083,
+  "t": "Necropolis rises; Set seizes it",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Necropolis"
+  ],
+  "n": "Survivors found a city in the ghoul-haunted vault; within a year a figure called Set deposes the original overseer and rules for the next 73 years."
+ },
+ {
+  "y": 2085,
+  "t": "Vault 96's mainframe kills its own residents",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 96"
+  ],
+  "n": "DATE INFERRED: the source gives \"week 148\" after sealing (≈2.8 years). A failed escape attempt trips Superseding Protocol Omega; every original resident dies and the vault freezes over, left for a rogue researcher to repurpose for FEV work decades later."
+ },
+ {
+  "y": 2089,
+  "t": "Vault 108's Gary Project turns on its makers",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 108"
+  ],
+  "n": "DATE INFERRED; the reactor is built to fail \"about 20 years\" into operation. No calendar year is ever given for when the escalating Gary clones finally took the vault; ~20 years after the c.2069 seal is the only anchor the source offers."
+ },
+ {
+  "y": 2090,
+  "t": "Vault 29 opens; Harold walks out human",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 29"
+  ],
+  "n": "No one over fifteen was ever allowed inside; the door opens on schedule and releases a generation raised without a single adult. Harold, not yet a ghoul, sets out to make his fortune trading between survivalist communities."
+ },
+ {
+  "y": 2090,
+  "t": "Vault 27 collapses under its own numbers",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 27"
+  ],
+  "n": "DATE INFERRED: no source dates this vault at all. Sealed at double its sustainable population (2,000 against a design capacity of 1,000), overcrowding was the entire experiment; no account of its resolution survives beyond the bare setup."
+ },
+ {
+  "y": 2091,
+  "t": "Vault 8 opens; Vault City is founded",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault City",
+   "Vault 13",
+   "Vault 8 (Nevada)"
+  ],
+  "n": "A pre-war shipping error swaps Vault 13's spare water chips for Vault 8's second GECK; Vault 8 uses its own GECK to terraform the land and found Vault City, the walled city that spends the next 150 years refusing ghouls, mutants, and, in 2241, the NCR."
+ },
+ {
+  "y": 2093,
+  "t": "Angus founds the Hub",
+  "th": [
+   "town"
+  ],
+  "loc": [
+   "The Hub"
+  ],
+  "n": "A trader pitches camp at a desert oasis and starts moving goods between settlements, the seed of New California's trade capital."
+ },
+ {
+  "y": 2095,
+  "t": "Fort Defiance and Thunder Mountain fall",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Fort Defiance",
+   "Thunder Mountain"
+  ],
+  "n": "The Scorched plague overwhelms the Appalachian chapter; both strongholds fall a day apart, ending it for good."
+ },
+ {
+  "y": 2096,
+  "t": "Vault 22's \"Coughers\" sack Zion Canyon",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Zion Canyon"
+  ],
+  "n": "118 armed Vault 22 dwellers arrive fleeing a respiratory plague of their own making, are nicknamed for their hacking cough by the man watching them, then attack, capture and cannibalize the canyon's inhabitants. Randall Clark answers with a guerrilla campaign that kills two-thirds of them inside two weeks."
+ },
+ {
+  "y": 2102,
+  "t": "Birth of the Master",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Mariposa"
+  ],
+  "n": "Richard Grey falls into a raw FEV vat and fuses with flesh, beasts, and machines into one gestalt mind."
+ },
+ {
+  "y": 2102,
+  "t": "Unity's first convert",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Mariposa"
+  ],
+  "n": "Months into his own transformation, the newly-minded Richard Grey absorbs his first willing human subject into the vats."
+ },
+ {
+  "y": 2130,
+  "t": "Vault 11's sacrifice experiment breaks",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 11"
+  ],
+  "n": "DATE INFERRED: no date is given anywhere in canon for this vault. Decades of an annual vote-to-kill end when the last five dwellers refuse to choose and the door opens on its own; four of the five take their own lives from guilt."
+ },
+ {
+  "y": 2137,
+  "t": "The super mutant army begins",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Mariposa"
+  ],
+  "n": "The Master starts mass-dipping captives in FEV; roughly one in five survives the vats, and about half of those join him."
+ },
+ {
+  "y": 2140,
+  "t": "Amnesiac wakes near Vault 8",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 8 (Nevada)"
+  ],
+  "n": "Player hunts equipment stolen from the vault."
+ },
+ {
+  "y": 2140,
+  "t": "Vault 8 on the road to Vault City",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 8 (Nevada)"
+  ],
+  "n": "Prelude to the GECK-founded Vault City of FO2."
+ },
+ {
+  "y": 2141,
+  "t": "Vault 15 splits",
+  "th": [
+   "vault",
+   "ncr"
+  ],
+  "loc": [
+   "Vault 15",
+   "Shady Sands"
+  ],
+  "n": "Overcrowding and clashing factions fracture the vault; the departing majority found Shady Sands on their GECK, while the rest scatter into the Khans, Vipers, and Jackals."
+ },
+ {
+  "y": 2152,
+  "t": "Morpheus's cult joins the Master",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Mariposa"
+  ],
+  "n": "A doomsday preacher and his followers are folded into Unity, becoming the nucleus of the future Children of the Cathedral."
+ },
+ {
+  "y": 2155,
+  "t": "The Lost Hills expedition splits east",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Lost Hills"
+  ],
+  "n": "The pure-blood faction wins the \"no tribals\" doctrinal fight; the inclusive dissenters are exiled by airship, a storm scatters the fleet toward Chicago. (date approximate)"
+ },
+ {
+  "y": 2156,
+  "t": "The Cathedral rises",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "The Cathedral",
+   "Boneyard"
+  ],
+  "n": "The Children of the Cathedral become Unity's missionary face."
+ },
+ {
+  "y": 2157,
+  "t": "The mutant army garrisons Necropolis",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Mariposa",
+   "Necropolis"
+  ],
+  "n": "Unity forces attack and garrison Vault 12, tightening the Master's grip on the ghoul city: mass-dipping is already well underway at Mariposa (2137)."
+ },
+ {
+  "y": 2159,
+  "t": "Vault 13's water chip begins to fail; the vault draws straws",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 13"
+  ],
+  "n": "DATE INFERRED; the crisis began well before the commonly-cited 2161 date, and searchers were sent out over an extended period, chosen by straw lottery rather than an Overseer's order or exile."
+ },
+ {
+  "y": 2159,
+  "t": "Orac's straw is drawn; among the first sent out",
+  "th": [
+   "vault",
+   "unity"
+  ],
+  "loc": [
+   "Vault 13"
+  ],
+  "n": "DATE INFERRED (Orac, still small, unimposing and idealistic, and a lover of the vault's band society, draws his straw at the early end of the search window) years before the canonical Vault Dweller draws theirs near the end of the vault's patience. Counterpart to \"The Vault Dweller sets out\": same vault, same crisis, same lottery, run years apart."
+ },
+ {
+  "y": 2160,
+  "t": "Captured early by super mutants, barely clear of Vault 13",
+  "th": [
+   "unity",
+   "vault"
+  ],
+  "loc": [
+   "Vault 13"
+  ],
+  "n": "DATE INFERRED: not a deliberate ambush; he is taken early in his search, having barely left the vault's home territory, and only afterward recognized as a valuable specimen, a low-radiation vault physician. Held for a time before the Mariposa dipping."
+ },
+ {
+  "y": 2161,
+  "t": "The Vault Dweller sets out",
+  "th": [
+   "unity",
+   "vault"
+  ],
+  "loc": [
+   "Vault 13"
+  ],
+  "n": "A water-chip crisis puts one wanderer on Unity's trail."
+ },
+ {
+  "y": 2161,
+  "t": "Orac dipped at Mariposa",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Vault 13",
+   "Mariposa"
+  ],
+  "n": "Captured by super mutants early in his search for a water chip, before he got far from Vault 13, held for a time, then dipped and prized as a low-radiation vault physician worth transforming rather than killing. The clean FEV expression grants enhanced cognition and towering, dark-blue skin; he serves as clinical advisor to the Master's program before its fall."
+ },
+ {
+  "y": 2161,
+  "t": "The Vault Dweller settles Junktown",
+  "th": [
+   "town"
+  ],
+  "loc": [
+   "The Hub",
+   "Junktown"
+  ],
+  "n": "Passing through on the water-chip errand, the Vault Dweller tips Junktown's power struggle (Killian Darkwater vs. crime boss Gizmo) and exposes the Hub's criminal Underground."
+ },
+ {
+  "y": 2162,
+  "t": "Unity's doom exposed",
+  "th": [
+   "unity",
+   "brotherhood"
+  ],
+  "loc": [
+   "Lost Hills"
+  ],
+  "n": "Vree proves the super mutants are sterile, Unity can only die out."
+ },
+ {
+  "y": 2162,
+  "t": "Fall of the Master",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "The Cathedral",
+   "Mariposa"
+  ],
+  "n": "The Vault Dweller ends the Master and blows the vats."
+ },
+ {
+  "y": 2162,
+  "t": "Orac, forced into command, is cut off from Unity",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "The Cathedral",
+   "Mariposa"
+  ],
+  "n": "Out hunting vault dwellers when Mariposa falls, Orac is forced into command of a cut-off column as its ranking survivor, severed from the rest of Unity, the survivors are hunted by the Brotherhood for years before finding refuge."
+ },
+ {
+  "y": 2162,
+  "t": "The Vault Dweller is exiled",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 13"
+  ],
+  "n": "Overseer Jacoren casts out the wastes' new hero, fearing his example will empty the vault of anyone else tempted to leave. Two months later he turns north with a small band of dwellers and wastelanders."
+ },
+ {
+  "y": 2163,
+  "t": "The mutant armies scatter",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "The Cathedral",
+   "Mariposa"
+  ],
+  "n": "Freed of the Master's will, Unity's war-bands fragment: some turn raider, the Nightkin are handed Stealth Boys and vanish toward what will become the Mojave, and one large column marches into the mountains far to the east, the same host the Midwestern Brotherhood chapter spends the next three decades fighting alongside the Calculator's robots."
+ },
+ {
+  "y": 2165,
+  "t": "Arroyo founded",
+  "th": [
+   "vault",
+   "tribe"
+  ],
+  "loc": [
+   "Arroyo"
+  ],
+  "n": "The Vault Dweller leads his exiled band to the \"great canyons\" of southern Oregon and founds the village that becomes his grandchild's home in Fallout 2."
+ },
+ {
+  "y": 2167,
+  "t": "Slave raid on the Villa",
+  "th": [
+   "town"
+  ],
+  "loc": [
+   "Villa"
+  ],
+  "n": "Raiders enslave the village; the player sets out in pursuit."
+ },
+ {
+  "y": 2167,
+  "t": "Flagstaff's uranium economy",
+  "th": [
+   "town"
+  ],
+  "loc": [
+   "Flagstaff"
+  ],
+  "n": "A slaver-state powered by its mine and captive labor."
+ },
+ {
+  "y": 2167,
+  "t": "Followers schism in the desert",
+  "th": [
+   "town"
+  ],
+  "loc": [
+   "Two-Sun",
+   "Cathedral of the Fire (Phoenix)"
+  ],
+  "n": "Rational Followers vs. the Fire death-cult."
+ },
+ {
+  "y": 2170,
+  "t": "Left for dead, amnesiac rises",
+  "th": [
+   "town"
+  ],
+  "loc": [
+   "Sedit"
+  ],
+  "n": "Player wakes in a rad-scorpion cave, seeking their past."
+ },
+ {
+  "y": 2170,
+  "t": "Imperial City's iron order",
+  "th": [
+   "town"
+  ],
+  "loc": [
+   "Imperial City"
+  ],
+  "n": "An authoritarian walled enclave dominates the wastes."
+ },
+ {
+  "y": 2172,
+  "t": "The Remnant Church is founded in hiding",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "The Cathedral"
+  ],
+  "n": "DATE INFERRED: roughly forty first-generation survivors of Orac's cut-off column found the Church after the long hunt ends, not simultaneous with the Master's fall."
+ },
+ {
+  "y": 2185,
+  "t": "Marcus and Jacob found Broken Hills",
+  "th": [
+   "unity",
+   "ncr"
+  ],
+  "loc": [
+   "Broken Hills"
+  ],
+  "n": "A super mutant and a Brotherhood knight, having fought each other to an exhausted draw, make peace instead; then lead a column of human, ghoul, and mutant refugees to a uranium mine and settle it: the diaspora's single peaceful landing point."
+ },
+ {
+  "y": 2186,
+  "t": "Founding of the NCR",
+  "th": [
+   "ncr"
+  ],
+  "loc": [
+   "Shady Sands"
+  ],
+  "n": "Shady Sands becomes the capital of the New California Republic."
+ },
+ {
+  "y": 2186,
+  "t": "Jacob moves on; Marcus stays",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Broken Hills"
+  ],
+  "n": "Once the new town survives its first winter, Jacob says goodbye and leaves; Marcus stays on as both mayor and sheriff, and will later name Jacobstown after him."
+ },
+ {
+  "y": 2189,
+  "t": "The council federates into statehood",
+  "th": [
+   "ncr"
+  ],
+  "loc": [
+   "Shady Sands",
+   "The Hub",
+   "Boneyard"
+  ],
+  "n": "Shady Sands, the Hub, the Boneyard, Maxson, and Dayglow ratify a founding constitution as five states, the actual birth of a republic, three years after the 2186 trial council."
+ },
+ {
+  "y": 2196,
+  "t": "Tandi elected NCR President",
+  "th": [
+   "ncr"
+  ],
+  "loc": [
+   "Shady Sands"
+  ],
+  "n": "The council unanimously elects the same girl the Vault Dweller met at Shady Sands in 2161; she will serve an unbroken 52-year presidency."
+ },
+ {
+  "y": 2197,
+  "t": "The Midwestern Brotherhood defeats the Calculator",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Chicago"
+  ],
+  "n": "The exiled chapter's war against the rogue AI ends; its empire spans Colorado Springs to Lake Michigan, the most inclusive Brotherhood doctrine in the wasteland."
+ },
+ {
+  "y": 2200,
+  "t": "The Shi entrench as the Steel Palace",
+  "th": [
+   "town"
+  ],
+  "loc": [
+   "San Francisco"
+  ],
+  "n": "The stranded submarine Shi-huang-ti's crew, sheltering in Chinatown's ruins since 2077, finish stripping their hull into the reinforced Steel Palace, an isolationist enclave that stays out of wasteland politics."
+ },
+ {
+  "y": 2204,
+  "t": "Curie perfects Vault 81's universal cure",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 81"
+  ],
+  "n": "Decades of solitary research after every human scientist dies pays off: the Vault's actual, hidden objective is finally completed, by a robot, not a person."
+ },
+ {
+  "y": 2205,
+  "t": "The West Coast Brotherhood turns inward",
+  "th": [
+   "brotherhood",
+   "ncr"
+  ],
+  "loc": [
+   "Lost Hills"
+  ],
+  "n": "Watching the NCR grow from township to federation, the Elders double down on hoarding energy weapons and refusing outside recruits, the same doctrine that will grind the chapter down decades later."
+ },
+ {
+  "y": 2220,
+  "t": "Navarro becomes the mainland Vertibird base",
+  "th": [
+   "enclave"
+  ],
+  "loc": [
+   "Navarro"
+  ],
+  "n": "The old Poseidon Oil refinery is converted into a refueling/maintenance post, extending the Oil Rig's limited-range Vertibirds onto the coast: the arrangement the Chosen One finds intact in 2242."
+ },
+ {
+  "y": 2227,
+  "t": "The Institute takes Vault 111's last resident",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 111"
+  ],
+  "n": "210 years into a cryogenic-suspension experiment its occupants believed was decontamination, an Institute agent finds the vault, kills the Sole Survivor's spouse, and takes their infant son, the frozen sleeper goes back under, alone, for decades more."
+ },
+ {
+  "y": 2230,
+  "t": "Redding's gold becomes the NCR's currency backbone",
+  "th": [
+   "ncr",
+   "town"
+  ],
+  "loc": [
+   "Redding"
+  ],
+  "n": "When the Republic switches to gold-backed dollars, Redding's two mines become the chokepoint every faction needs, the seed of the three-way NCR/New Reno/Vault City tug-of-war that peaks in 2241."
+ },
+ {
+  "y": 2231,
+  "t": "The Boomers occupy Nellis Air Force Base",
+  "th": [
+   "ncr"
+  ],
+  "loc": [
+   "Nellis Air Force Base"
+  ],
+  "n": "DATE INFERRED: New Vegas (2281) describes this as \"a little over 50 years ago,\" the only anchor given. Vault 34's survivors of the flooded, over-armed vault below finally leave for the walled airfield they still hold."
+ },
+ {
+  "y": 2235,
+  "t": "Gecko founded on the old reactor",
+  "th": [
+   "town"
+  ],
+  "loc": [
+   "Gecko"
+  ],
+  "n": "Ghouls resettle the derelict Poseidon Atomic Powerplant northeast of Vault City; scavenged know-how brings the reactor back online the same year, and Vault City's contempt for its new neighbors begins immediately."
+ },
+ {
+  "y": 2238,
+  "t": "Harold arrives at Gecko",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Gecko"
+  ],
+  "n": "The wandering, half-mutated-tree survivor, already a wasteland legend by this point, settles in to help run Gecko's powerplant."
+ },
+ {
+  "y": 2238,
+  "t": "The Slags break the Seal near Modoc",
+  "th": [
+   "town"
+  ],
+  "loc": [
+   "Modoc"
+  ],
+  "n": "Descendants of a militia family that sealed itself underground during the Great War resurface and quietly farm beside the town; it takes Modoc years to realize its \"Ghost Farm\" neighbors are pale, wide-eyed kin rather than raiders."
+ },
+ {
+  "y": 2241,
+  "t": "The NCR spreads",
+  "th": [
+   "ncr"
+  ],
+  "loc": [
+   "New Reno",
+   "Vault City"
+  ],
+  "n": "The young Republic pushes north and east (Fallout 2)."
+ },
+ {
+  "y": 2241,
+  "t": "Jet reaches Redding's miners",
+  "th": [
+   "town"
+  ],
+  "loc": [
+   "Redding"
+  ],
+  "n": "Myron's cheaper, faster Mordino-family remanufacture of the drug hits the gold camps in January and starts a mass addiction epidemic, the opening move in the New Reno/Redding/Vault City power triangle Fallout 2 is built on."
+ },
+ {
+  "y": 2241,
+  "t": "Vault City spurns the NCR and the Bishops alike",
+  "th": [
+   "vault",
+   "ncr",
+   "town"
+  ],
+  "loc": [
+   "Vault City",
+   "New Reno"
+  ],
+  "n": "In February the council rejects both an NCR alliance and a Bishop-family pact, choosing isolation; the NCR responds by hiring Bishop mercenaries to raid the city into compliance and planting the agent Thomas Moore inside its walls to agitate for \"democratic reform.\""
+ },
+ {
+  "y": 2241,
+  "t": "New Reno's Four Families",
+  "th": [
+   "town"
+  ],
+  "loc": [
+   "New Reno"
+  ],
+  "n": "Salvatore, Mordino, Bishop, and Wright split the gambling city between them, the Wrights alone bound by actual blood, the rest by turf and habit."
+ },
+ {
+  "y": 2241,
+  "t": "Drought drives the search for a new GECK",
+  "th": [
+   "tribe",
+   "vault"
+  ],
+  "loc": [
+   "Arroyo",
+   "Vault 13"
+  ],
+  "n": "Arroyo's crops fail; the Chosen One is sent to find a replacement GECK and instead finds Vault 13, the Vault Dweller's old home, emptied of people and full of intelligent deathclaws."
+ },
+ {
+  "y": 2242,
+  "t": "Navarro falls",
+  "th": [
+   "enclave"
+  ],
+  "loc": [
+   "Navarro"
+  ],
+  "n": "The Chosen One breaks the Enclave's mainland base."
+ },
+ {
+  "y": 2242,
+  "t": "Fall of the Enclave Oil Rig",
+  "th": [
+   "enclave"
+  ],
+  "loc": [
+   "Enclave Oil Rig"
+  ],
+  "n": "The Chosen One destroys Control Station Enclave, the Enclave's offshore HQ."
+ },
+ {
+  "y": 2247,
+  "t": "Edward Sallow crowned Caesar",
+  "th": [
+   "legion"
+  ],
+  "loc": [
+   "Grand Canyon"
+  ],
+  "n": "A captured NCR frumentarius impresses the Blackfoot tribe with old-world war doctrine and takes the name Caesar within a year."
+ },
+ {
+  "y": 2250,
+  "t": "Father Elijah secures HELIOS One",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "HELIOS One"
+  ],
+  "n": "Mojave chapter anchors to a fixed solar-plant site, diverting from mobile recovery doctrine."
+ },
+ {
+  "y": 2250,
+  "t": "The Brotherhood hunts the Remnant Church to near-extinction",
+  "th": [
+   "unity",
+   "brotherhood"
+  ],
+  "loc": [
+   "The Cathedral"
+  ],
+  "n": "DATE INFERRED, positioned to leave a plausible runway to 2295's \"only three remain.\" The Church is pursued ruthlessly until it too must be abandoned."
+ },
+ {
+  "y": 2255,
+  "t": "Caesar's Legion annexes Flagstaff as its capital",
+  "th": [
+   "legion"
+  ],
+  "loc": [
+   "Flagstaff"
+  ],
+  "n": "Between 2248 and 2255 the Legion christens the Flagstaff ruins its first capital, before Caesar ever sets his sights on Vegas."
+ },
+ {
+  "y": 2258,
+  "t": "The Brotherhood Outcasts break from the Citadel",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Fort Independence"
+  ],
+  "n": "Casdin and dissenting scribes/knights abandon Lyons over his refusal to strip Fort Independence for tech, taking a stockpile of gear with them. (date approximate)"
+ },
+ {
+  "y": 2260,
+  "t": "Vault 18 breaks open",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 18"
+  ],
+  "n": "A fateful Vault-Ball night forces the player out."
+ },
+ {
+  "y": 2260,
+  "t": "Tail of the NCR-Enclave War",
+  "th": [
+   "ncr",
+   "enclave"
+  ],
+  "loc": [
+   "Union City",
+   "Fort Daggerpoint"
+  ],
+  "n": "A 20-year factional war winds down in SoCal."
+ },
+ {
+  "y": 2271,
+  "t": "The NCR launches the Mojave Campaign",
+  "th": [
+   "ncr"
+  ],
+  "loc": [
+   "The Strip",
+   "Camp McCarran"
+  ],
+  "n": "Formal NCR expansion east of the Colorado begins, years before the Legion becomes an existential threat."
+ },
+ {
+  "y": 2274,
+  "t": "Hoover Dam restarted, the NCR opens an embassy on the Strip",
+  "th": [
+   "ncr"
+  ],
+  "loc": [
+   "Hoover Dam",
+   "The Strip",
+   "Boulder City",
+   "Camp McCarran"
+  ],
+  "n": "Power returns to Vegas under NCR engineers; Boulder City and McCarran are garrisoned as forward posts, the infrastructure Caesar goes to war over three years later."
+ },
+ {
+  "y": 2276,
+  "t": "Operation Sunburst",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "HELIOS One"
+  ],
+  "n": "NCR assault outnumbers the Brotherhood 15-to-1 despite T-51b power armor; catastrophic defeat, Father Elijah disappears."
+ },
+ {
+  "y": 2276,
+  "t": "509th detachment dispatched to the salt flats",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Kearny Airfield (Wendover Field)"
+  ],
+  "n": "A small \"disposable\" detachment (leader redacted in-source) is sent toward the Northeast salt flats as Hidden Valley locks down; this is the chapter's founding arrival at Wendover."
+ },
+ {
+  "y": 2276,
+  "t": "The NCR occupies HELIOS One after the Brotherhood's defeat",
+  "th": [
+   "ncr",
+   "brotherhood"
+  ],
+  "loc": [
+   "HELIOS One"
+  ],
+  "n": "Operation Sunburst's winner inherits the solar plant Father Elijah bled his chapter defending."
+ },
+ {
+  "y": 2277,
+  "t": "First Battle of Hoover Dam",
+  "th": [
+   "ncr",
+   "legion"
+  ],
+  "loc": [
+   "Hoover Dam",
+   "The Fort"
+  ],
+  "n": "The NCR throws Caesar's Legion back across the Colorado."
+ },
+ {
+  "y": 2277,
+  "t": "Fall of Raven Rock",
+  "th": [
+   "enclave"
+  ],
+  "loc": [
+   "Raven Rock"
+  ],
+  "n": "The Enclave's Capital campaign is broken (Fallout 3)."
+ },
+ {
+  "y": 2277,
+  "t": "The Citadel secured",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "The Citadel"
+  ],
+  "n": "Lyons' Brotherhood anchors the Capital Wasteland."
+ },
+ {
+  "y": 2277,
+  "t": "Lyons' Pride breaks the Enclave at the Purifier",
+  "th": [
+   "brotherhood",
+   "enclave"
+  ],
+  "loc": [
+   "The Citadel"
+  ],
+  "n": "The Capital Wasteland chapter secures Project Purity; Sarah Lyons dies in the final battle."
+ },
+ {
+  "y": 2277,
+  "t": "Fall of Shady Sands",
+  "th": [
+   "ncr",
+   "vault"
+  ],
+  "loc": [
+   "Ruins of Shady Sands"
+  ],
+  "n": "Chalkboard-dated nuking of the NCR capital; debated vs New Vegas (2281): creators say the blast is \"just after\" NV."
+ },
+ {
+  "y": 2277,
+  "t": "The Legion fortifies Fortification Hill opposite the Dam",
+  "th": [
+   "legion"
+  ],
+  "loc": [
+   "The Fort"
+  ],
+  "n": "Caesar's new capital-in-the-field, built the same year as the First Battle it stages."
+ },
+ {
+  "y": 2277,
+  "t": "The Legion enslaves Cottonwood Cove as its river crossing",
+  "th": [
+   "legion"
+  ],
+  "loc": [
+   "Cottonwood Cove"
+  ],
+  "n": "The Legion's only reliable way across the Colorado into NCR territory; garrisoned throughout the war that follows."
+ },
+ {
+  "y": 2277,
+  "t": "The Legate is burned alive for the Dam's defeat",
+  "th": [
+   "legion"
+  ],
+  "loc": [
+   "Grand Canyon"
+  ],
+  "n": "Caesar has the Malpais Legate coated in pitch, set alight, and thrown into the canyon by his own Praetorian Guard, the price of losing Hoover Dam."
+ },
+ {
+  "y": 2277,
+  "t": "Project Purity is activated, flooding the Capital Wasteland with clean water",
+  "th": [
+   "brotherhood",
+   "enclave"
+  ],
+  "loc": [
+   "The Citadel"
+  ],
+  "n": "The Lone Wanderer completes James's life work at the cost of the Enclave's war footing: distinct from the Purifier battle already on our map, this is the water itself going out."
+ },
+ {
+  "y": 2277,
+  "t": "The Divide catastrophe: Hopeville and Ashton wiped out",
+  "th": [
+   "world"
+  ],
+  "loc": [
+   "The Divide"
+  ],
+  "n": "DATE INFERRED: sources disagree (2277 vs. the Courier's own 2281 present); either way it predates New Vegas's opening."
+ },
+ {
+  "y": 2277,
+  "t": "Vault 81 opens its door for the first time",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 81"
+  ],
+  "n": "Overseer McNamara allows contact and trade with the outside world after two centuries sealed, the disease vault finally lets anyone in or out."
+ },
+ {
+  "y": 2278,
+  "t": "Bitter Springs Massacre",
+  "th": [
+   "ncr"
+  ],
+  "loc": [
+   "Bitter Springs"
+  ],
+  "n": "NCR's 1st Recon Battalion, the same unit that broke the Legion at the First Battle the year before, guns down a Great Khans caravan of mostly noncombatants; the stain follows First Recon for the rest of the war."
+ },
+ {
+  "y": 2278,
+  "t": "Broken Steel epilogue: the Enclave's remnant is annihilated",
+  "th": [
+   "enclave",
+   "brotherhood"
+  ],
+  "loc": [
+   "Adams Air Force Base"
+  ],
+  "n": "Lyons' Brotherhood, now backed by NCR-adjacent tech recovery, finishes what the Purifier battle started, the last organized East Coast Enclave force goes down at the airfield where the Prydwen will later be built."
+ },
+ {
+  "y": 2281,
+  "t": "The remnants endure",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Jacobstown"
+  ],
+  "n": "Marcus's mutants outlive their maker; Jacobstown seeks a cure."
+ },
+ {
+  "y": 2281,
+  "t": "The Legion's Mojave hold",
+  "th": [
+   "legion"
+  ],
+  "loc": [
+   "Nelson",
+   "Cottonwood Cove"
+  ],
+  "n": "Caesar seizes footholds west of the river."
+ },
+ {
+  "y": 2281,
+  "t": "Second Battle of Hoover Dam",
+  "th": [
+   "ncr",
+   "legion"
+  ],
+  "loc": [
+   "Hoover Dam",
+   "The Fort"
+  ],
+  "n": "NCR and Legion collide again for the Mojave (New Vegas)."
+ },
+ {
+  "y": 2281,
+  "t": "NCR Exiles flee north",
+  "th": [
+   "ncr"
+  ],
+  "loc": [
+   "Camp Phoenix"
+  ],
+  "n": "Disillusioned NCR soldiers found a new home in Portland."
+ },
+ {
+  "y": 2281,
+  "t": "Northern Legion strikes",
+  "th": [
+   "legion"
+  ],
+  "loc": [
+   "Ostia"
+  ],
+  "n": "A Legion branch moves to seize Portland's resources."
+ },
+ {
+  "y": 2281,
+  "t": "Crusaders of Steel arrive",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Camp Phoenix"
+  ],
+  "n": "A Mormon-influenced Brotherhood splinter seeks revenge."
+ },
+ {
+  "y": 2281,
+  "t": "White Legs broken at Zion; tribal kin scattered",
+  "th": [
+   "tribe",
+   "legion"
+  ],
+  "loc": [
+   "Zion Canyon"
+  ],
+  "n": "Honest Hearts. The White Legs, kin who \"chained themselves to the Legion\" per tribal reckoning, are shattered and scattered by the Eighties; the tribe's own doc anchors its present to roughly fifteen years after this event."
+ },
+ {
+  "y": 2281,
+  "t": "The Courier is shot and left for dead outside Goodsprings",
+  "th": [
+   "world"
+  ],
+  "loc": [
+   "Goodsprings"
+  ],
+  "n": "Fallout: New Vegas opens; Doc Mitchell revives a courier robbed of the platinum chip by Benny's crew."
+ },
+ {
+  "y": 2281,
+  "t": "Caesar's Legion burns Nipton to the ground",
+  "th": [
+   "legion"
+  ],
+  "loc": [
+   "Nipton"
+  ],
+  "n": "A one-town object lesson in Legion occupation (staged \"trials,\" mass crucifixion, the settlement torched) discovered freshly smoking by the Courier en route to Vegas."
+ },
+ {
+  "y": 2281,
+  "t": "Ulysses confronts the Courier at the Divide",
+  "th": [
+   "world"
+  ],
+  "loc": [
+   "The Divide"
+  ],
+  "n": "Lonesome Road's climax: the Courier learns they themselves triggered the catastrophe here, years before becoming \"the Courier\" of the main game."
+ },
+ {
+  "y": 2281,
+  "t": "Mr. House preserves the Strip's neutrality through the NCR-Legion war",
+  "th": [
+   "ncr",
+   "legion"
+  ],
+  "loc": [
+   "The Strip"
+  ],
+  "n": "New Vegas's standing condition throughout 2281: connective tissue between the Mojave Campaign and the Second Battle already on our map."
+ },
+ {
+  "y": 2282,
+  "t": "The Silent Years begin",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Kearny Airfield (Wendover Field)"
+  ],
+  "n": "Hidden Valley in lockdown under Elder McNamara, Lost Hills preoccupied with the NCR, the Wendover detachment gets fewer than five transmissions in twelve years and survives on salvage and discipline."
+ },
+ {
+  "y": 2287,
+  "t": "The Prydwen reaches the Commonwealth",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Boston Airport"
+  ],
+  "n": "Elder Maxson leads the East Coast chapter to Boston to confront the Institute, mooring the Prydwen and staging out of Cambridge Police Station."
+ },
+ {
+  "y": 2287,
+  "t": "The Sole Survivor emerges from Vault 111",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 111"
+  ],
+  "n": "Two hundred and ten years frozen; Fallout 4 begins with a search for an infant son who is, by the time the vault opens, an old man."
+ },
+ {
+  "y": 2287,
+  "t": "Nick Valentine is freed from Vault 114",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 114"
+  ],
+  "n": "The Sole Survivor's synth-detective ally is broken out of raider captivity, first concrete step of the Institute investigation."
+ },
+ {
+  "y": 2287,
+  "t": "Battle of Bunker Hill",
+  "th": [
+   "world"
+  ],
+  "loc": [
+   "Bunker Hill"
+  ],
+  "n": "A Railroad operation to extract captured synths collapses into open firefight with Institute Coursers, the war the Prydwen arrives into."
+ },
+ {
+  "y": 2287,
+  "t": "Diamond City's mayor exposed as an Institute synth",
+  "th": [
+   "world"
+  ],
+  "loc": [
+   "Diamond City"
+  ],
+  "n": "Mayor McDonough is unmasked as a Gen-3 infiltrator, proof the Institute has been inside the Commonwealth's biggest settlement for years before anyone noticed."
+ },
+ {
+  "y": 2287,
+  "t": "The Prydwen was built at Adams Air Force Base",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Adams Air Force Base"
+  ],
+  "n": "The airship that mothballed the East Coast Enclave in 2278 is where the Commonwealth expedition's flagship is constructed nine years later, one site, two Brotherhood chapters."
+ },
+ {
+  "y": 2287,
+  "t": "The Commonwealth's fate forks on the Sole Survivor's final choice",
+  "th": [
+   "world"
+  ],
+  "loc": [
+   "The Institute"
+  ],
+  "n": "Three mutually exclusive endings (Institute purged by the Railroad, Institute purged by the Brotherhood, or Institute survives under the Sole Survivor) Bethesda has never named one canon."
+ },
+ {
+  "y": 2295,
+  "t": "Only three of the Remnant Church remain",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "The Cathedral"
+  ],
+  "n": "A century of attrition under Brotherhood patrols and NCR Rangers reduces some forty survivors to three."
+ },
+ {
+  "y": 2296,
+  "t": "Lucy leaves Vault 33",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vaults 33/32/31",
+   "Filly"
+  ],
+  "n": "Moldaver's raiders sack the vault and take Hank; Lucy goes topside to recover him."
+ },
+ {
+  "y": 2296,
+  "t": "The Ghoul and the bounty",
+  "th": [
+   "brotherhood",
+   "enclave"
+  ],
+  "loc": [
+   "Super Duper Mart"
+  ],
+  "n": "Cooper Howard hunts Wilzig's head/diode; BoS squire Maximus races for the same prize."
+ },
+ {
+  "y": 2296,
+  "t": "Moldaver seizes the cold fusion",
+  "th": [
+   "ncr",
+   "enclave",
+   "brotherhood"
+  ],
+  "loc": [
+   "Griffith Observatory"
+  ],
+  "n": "Moldaver powers the reactor from the Enclave diode, then, dying, warns Maximus what the Brotherhood will do with it; NCR and Brotherhood forces collide at the Observatory, the Brotherhood takes it anyway, and Maximus is dubbed Knight for his part in the battle."
+ },
+ {
+  "y": 2296,
+  "t": "Vault-Tec/Enclave conspiracy",
+  "th": [
+   "vault",
+   "enclave"
+  ],
+  "loc": [
+   "Vaults 33/32/31",
+   "Enclave Research Base"
+  ],
+  "n": "Norm MacLean uncovers the truth behind Vaults 32/33's rotating \"overseer\" system: Vault-Tec's own board, frozen in Vault 31 and periodically thawed to run a breeding programme pairing 32 and 33's dwellers with revived executives, engineering a class of \"super managers\" for the post-war surface. Vault-Tec's role in the bombs and its Enclave ties exposed alongside it."
+ },
+ {
+  "y": 2296,
+  "t": "Quintus convenes the chapter elders against the Commonwealth",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Grand Canyon",
+   "Coronado",
+   "Yosemite"
+  ],
+  "n": "San Fernando, Grand Canyon, Coronado and Yosemite elders meet to plot revolt; Commonwealth liaison Paladin Harkness arrives uninvited and ends it."
+ },
+ {
+  "y": 2296,
+  "t": "The Resurgence",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Kearny Airfield (Wendover Field)"
+  ],
+  "n": "A renewed Enclave threat ends the isolation policy; the 509th deploys \"Surgical Teams\" and transitions from Hidden Watcher to Active Vanguard."
+ },
+ {
+  "y": 2296,
+  "t": "The tribe's present era: salt-flat sovereignty amid three armies",
+  "th": [
+   "tribe",
+   "ncr",
+   "legion",
+   "brotherhood"
+  ],
+  "loc": [
+   "Wendover",
+   "Bonneville Salt Flats"
+  ],
+  "n": "Both the Bear and the Bull still reach to control the region, but no single power rules; survival favours those who can fight when they must and talk when they can."
+ },
+ {
+  "y": 2296,
+  "t": "Vault 4 shelters Shady Sands's survivors",
+  "th": [
+   "ncr",
+   "vault"
+  ],
+  "loc": [
+   "Vault 4"
+  ],
+  "n": "Survivors of the blast venerate Lee Moldaver as their \"Flame Mother,\" keeping Shady Sands's memory and a grudge alive underground."
+ },
+ {
+  "y": 2296,
+  "t": "Scientist Wilzig defects from the Enclave with a cold-fusion prototype",
+  "th": [
+   "enclave"
+  ],
+  "loc": [
+   "Enclave Research Base"
+  ],
+  "n": "The theft that starts the season's three-way chase: distinct from the chase itself and the reactor being seized, both already on our map."
+ },
+ {
+  "y": 2296,
+  "t": "Hank MacLean revealed as Shady Sands's bomber",
+  "th": [
+   "ncr",
+   "vault"
+  ],
+  "loc": [
+   "Griffith Observatory"
+  ],
+  "n": "Moldaver tells Lucy the truth at gunpoint: Hank set off the device himself, after discovering his wife had taken their children to live in the NCR capital."
+ },
+ {
+  "y": 2296,
+  "t": "RobCo's implant chip exposed as the bombing's mechanism",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Ruins of Shady Sands"
+  ],
+  "n": "A Brain-Computer-Interface chip, Robert House's tech, turns an unwitting carrier into a walking, mumbling delivery system; how Hank himself accessed a working nuclear device is still not shown on-screen."
+ },
+ {
+  "y": 2296,
+  "t": "Maximus kills Paladin Harkness",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Brotherhood Outpost"
+  ],
+  "n": "The Commonwealth chapter's liaison threatens Ghoul children; Maximus shoots him despite Quintus's explicit warning: a killing Maximus himself calls grounds for civil war between San Fernando and the Commonwealth."
+ },
+ {
+  "y": 2296,
+  "t": "Arthur Maxson confirmed as the Commonwealth's living Elder",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Boston Airport"
+  ],
+  "n": "A Coronado elder's on-screen line names Maxson directly, confirming Fallout 4's East Coast chapter, not a soft reboot, still runs the Commonwealth nine years later."
+ },
+ {
+  "y": 2296,
+  "t": "Lucy and the Ghoul reach New Vegas; the show reintroduces Mr. House",
+  "th": [
+   "world"
+  ],
+  "loc": [
+   "The Strip"
+  ],
+  "n": "Season 1's closing beat becomes Season 2's premise: the show relocates its center of gravity from LA to the Mojave, and Robert House becomes a season-long antagonist, its first direct engagement with New Vegas's cast rather than by reference."
+ },
+ {
+  "y": 2296,
+  "t": "The Church's final collapse; Orac makes his way to Wendover",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Wendover"
+  ],
+  "n": "DATE INFERRED, placed directly after \"only three remain.\" What remains of the Remnant Church cannot hold; Orac arrives at the Bazaar with nothing left of the institution he led for over a century."
+ },
+ {
+  "y": 2297,
+  "t": "Orac busks in the Bazaar; funds care for Unity veterans",
+  "th": [
+   "unity",
+   "town"
+  ],
+  "loc": [
+   "Wendover"
+  ],
+  "n": "DATE INFERRED: he plays music in the town, the vault band-lover's one surviving pleasure, and raises money for the physically and mentally infirm veterans of the Army of the Unity. This is where the town's wary trust in him begins."
+ },
+ {
+  "y": 2298,
+  "t": "Orac earns the town's trust; becomes Wendover's guardian",
+  "th": [
+   "unity",
+   "town"
+  ],
+  "loc": [
+   "Wendover"
+  ],
+  "n": "DATE INFERRED, directly preceding \"the blue wizard comes to the Tree\" (2299). Orac becomes the town's impromptu guardian when Wendover comes under threat; the Tree of Life studies that follow begin from here, as a continuation of veteran medicine, not ideology arriving first."
+ },
+ {
+  "y": 2299,
+  "t": "The blue wizard comes to the Tree",
+  "th": [
+   "unity",
+   "tribe"
+  ],
+  "loc": [
+   "Wendover"
+  ],
+  "n": "A willing volunteer is absorbed into the Tree of Life, \"much like the master once absorbed beings into itself\", his face remains visible in the bark. (Identifying the tribe's unnamed \"strange blue wizard\" with Orac is this atlas's own reading, not the source doc's.)"
+ },
+ {
+  "y": 2300,
+  "t": "Orac assembles \"the Gardeners\"",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Wendover"
+  ],
+  "n": "Recruitment phase: Brotherhood scribes approached via a defected Head Scribe, the Tribe's guardianship negotiated, NCR floated as an alternative research partner."
+ },
+ {
+  "y": 2301,
+  "t": "The Tree's absorption accelerates",
+  "th": [
+   "unity",
+   "tribe"
+  ],
+  "loc": [
+   "Wendover"
+  ],
+  "n": "What began as one willing volunteer becomes a pattern; Orac's private \"gentler, rooted alternative to the original Unity\" starts to look less gentle."
+ },
+ {
+  "y": 2302,
+  "t": "A new Master takes root",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "The New Master"
+  ],
+  "n": "Near Wendover, in the present, a new Master rises, a tree that drinks the living into itself."
+ }
+]
