@@ -1,0 +1,13 @@
+{
+  "width": 2000,
+  "drawnPaths": 16,
+  "landPx": 1935915,
+  "regionPx": 1970137,
+  "fringePx": 23928,
+  "offArtworkPx": 13519,
+  "offArtworkRegions": 10,
+  "shortfallPx": 3225,
+  "fringePctOfLand": 1.236,
+  "offArtworkPctOfLand": 0.698,
+  "shortfallPctOfLand": 0.167
+}

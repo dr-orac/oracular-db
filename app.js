@@ -417,7 +417,7 @@ const BGS = {
   warm:    { name:"Warm Dark", bg:"#0a0704", panel:"#15100a", panel2:"#1f1810" },
   cool:    { name:"Cool Dark", bg:"#04060a", panel:"#0b1018", panel2:"#131c28" },
   black:   { name:"Black",     bg:"#050505", panel:"#101010", panel2:"#1a1a1a" },
-  slate:   { name:"Slate",     bg:"#15171c", panel:"#1c1f26", panel2:"#262a33" },
+  slate:   { name:"Slate",     bg:"#15171c", panel:"#0c0f14", panel2:"#262a33" },
 };
 const BG_ORDER = ["phosphor","warm","cool","black","slate"];
 /* Typeface catalogue. Headings and body text are picked SEPARATELY (two radio groups
@@ -1184,7 +1184,7 @@ function addLocalShot(slug, src){
 /* ------------------------ rendering ------------------------ */
 const $ = sel => document.querySelector(sel);
 const $$ = sel => document.querySelectorAll(sel);
-const esc = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const esc = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 
 /* transient status toast + global error surfacing (never fail silently) */
 let _toastTimer=null;

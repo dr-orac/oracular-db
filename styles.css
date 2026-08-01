@@ -1439,7 +1439,7 @@
     text-transform:uppercase; margin-top:1.15em; margin-bottom:.1em; }
   .doctoc a.tl2{ font-size:16px; color:var(--fg); font-weight:600; padding-left:39px; margin-top:.5em; }
   .doctoc a.tl3{ font-size:15px; color:var(--fg-dim); padding-left:55px; }
-  .doctoc a.tl4{ font-size:15px; color:var(--fg-faint); font-style:italic; padding-left:70px; }
+  .doctoc a.tl4{ font-size:15px; color:var(--fg-dim); font-style:italic; padding-left:70px; }
   .doctoc .sectionhdr + a{ margin-top:0; }   /* the first entry sits snug under the header */
 
   /* the re-rendered document, long-form reading: characterful display headings, a
@@ -1478,7 +1478,7 @@
   /* "PART ONE/TWO …" read as centered chapter breaks, the most space of all */
   .docreader h1.part{ font-size:2.5em; text-align:center; border:0; margin:3em 0 1.1em; letter-spacing:3px;
     text-shadow:0 0 16px rgba(var(--fg-rgb),.45); }
-  .docreader h1.part::before, .docreader h1.part::after{ content:"⸻"; display:block; color:var(--fg-faint);
+  .docreader h1.part::before, .docreader h1.part::after{ content:"⸻"; display:block; color:var(--fg-dim);
     font-size:.4em; letter-spacing:0; margin:.3em 0; }
   .docreader h2{ font-family:var(--doc-font-head, var(--font-head)); font-size:1.5em; color:var(--fg); margin:2.2em 0 .5em; }
   .docreader h2::before{ content:"» "; color:var(--fg-dim); }

@@ -15,7 +15,7 @@
       public repo.) Writes are REJECTED until one is configured — the script
       fails closed, never open.
    5. Deploy -> New deployment -> type "Web app".
-        - Description:        yuma-roster
+        - Description:        mdb-roster
         - Execute as:         Me
         - Who has access:     Anyone            <-- required for the page to call it
       Deploy, authorise when prompted (it'll warn it's "unverified" — that's your
@@ -103,7 +103,7 @@ var SUBMIT_FIELDS = ["Discord Name", "Use-Name", "Honorific / Brave-Name", "Role
 // OPTIONAL Discord webhook: posts a one-line note to a channel after each successful
 // edit/upload. Prefer the Script Property DISCORD_WEBHOOK_URL (keeps it out of the repo).
 // Leave empty to disable. To make the note link straight to the dossier, also add a
-// Script Property PUBLIC_URL = the deployed page URL (e.g. https://you.github.io/yuma/).
+// Script Property PUBLIC_URL = the deployed page URL (e.g. https://you.github.io/misfits/).
 var DISCORD_WEBHOOK_URL = "";
 
 function doGet() {

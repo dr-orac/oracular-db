@@ -51,6 +51,7 @@
   --bg3: var(--bg-panel-2, hsl(var(--p) 28% 9%));
   --btn-shadow: hsl(var(--p) calc(55% * var(--psat)) 16%);
   --lbl: 118px;                               /* timeline lane-label gutter */
+  --sel-fs: 11px;                             /* thread listbox trigger + popup text */
 
   /* ---- layout: the whole point of this file ----
      The atlas is a three-row grid that FILLS its host box: controls,
@@ -243,6 +244,10 @@
 .atl .atl-map.lod1 .terrlbl[data-tier="1"],
 .atl .atl-map.lod1 .terrlbl[data-tier="2"]{opacity:.85}
 .atl .atl-map.lod0 .terrlbl{opacity:.85}
+/* per-view collision declutter (atlas.mjs updateRegionLabelDeclutter): a region
+   name that would overlap a higher-priority one is hidden outright, so display
+   wins over the opacity tier rules above regardless of specificity */
+.atl .terrlblwrap.is-decluttered{display:none}
 
 /* ================= territory presence fields ================= */
 /* Off unless the layer is toggled on, so it can never compete with faction
@@ -308,6 +313,9 @@
 .atl .pin .hit{fill:rgb(0 0 0 / 0)}                /* invisible ≥24px hit disc */
 .atl .pin .ring{fill:none;stroke-width:2.8;opacity:.55}
 .atl .pin .core{transition:opacity .2s,transform .2s}
+/* capital/stronghold emphasis: lift top-priority (pin--p1) and home pins so a territory's anchor reads at a glance */
+.atl .pin--p1 .core{filter:brightness(1.5) saturate(1.15)}
+.atl .pin--p1 .ring,.atl .pin.is-home .ring{opacity:.9;stroke-width:3.4}
 /* priority 3 ("just a trace" until you zoom past LOD1) */
 .atl .atl-map.lod2 .pin--p3 .core,.atl .atl-map.lod1 .pin--p3 .core{opacity:.5;transform:scale(.68)}
 .atl .atl-map.lod2 .pin--p3 .ring,.atl .atl-map.lod1 .pin--p3 .ring{opacity:.22}
@@ -351,7 +359,7 @@
 .atl .pin.is-home .home-ring{fill:none;opacity:.85}
 .atl .pin.is-home .home-ring.inner{stroke-width:2.2}
 .atl .pin.is-home .home-ring.outer{stroke-width:1.6;stroke-dasharray:5.2 4.4}
-.atl .pin.is-home .core{filter:drop-shadow(0 0 4px var(--fac-brotherhood))}
+.atl .pin.is-home .core{filter:drop-shadow(0 0 4px var(--fac-brotherhood)) brightness(1.75) saturate(1.2)}
 .atl .pin .home-lbl{
   pointer-events:auto;
   font-size:22.4px;letter-spacing:1.6px;font-weight:600;fill:var(--fg-bright);opacity:.95;
@@ -476,7 +484,7 @@
   font:inherit;font-size:12px;color:var(--fg);background:none;border:0;
   padding:3px 2px;cursor:pointer;
 }
-.atl .linkbtn::before{content:"▸";color:var(--fg-faint);flex:0 0 auto}
+.atl .linkbtn::before{content:"▸";color:var(--fg-dim);flex:0 0 auto}
 .atl .linkbtn:hover,.atl .linkbtn:focus-visible{color:var(--fg-bright)}
 .atl .linkbtn:hover::before,.atl .linkbtn:focus-visible::before{color:var(--fg-bright)}
 .atl .linkbtn .fill{flex:1;align-self:center;height:3px;margin:0 .35ch;
@@ -500,11 +508,34 @@
 .atl .selwrap{position:relative}
 .atl .selwrap::after{content:"";position:absolute;right:8px;top:50%;margin-top:-2px;pointer-events:none;
   border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--fg)}
-.atl select{
-  font:inherit;font-size:11px;letter-spacing:1px;
+/* the trigger: styled identically to the old native <select> it replaces
+   (same box, same offset shadow, same arrow via .selwrap::after above) */
+.atl .atl-select-trigger{
+  display:inline-block;font:inherit;font-size:var(--sel-fs);letter-spacing:1px;
   color:var(--fg-bright);background:var(--bg3);border:1px solid var(--fg-dim);
-  padding:4px 26px 4px 8px;appearance:none;cursor:pointer;border-radius:0;
+  padding:4px 26px 4px 8px;cursor:pointer;min-width:118px;
   box-shadow:3px 3px 0 var(--btn-shadow);
+}
+.atl .atl-select-trigger:hover{border-color:var(--fg)}
+/* the popup: mountListSelect() (lib/atlas.mjs) reparents this onto the atlas
+   root and positions it with `position:fixed` computed from the trigger's own
+   rect; see the comment there for why (`.atl{overflow:hidden}` clips anything
+   whose containing block is `.atl` itself, and the control sits at the bottom
+   of that box). z-index:100 clears the fullscreen vignette's 80 below. */
+.atl .atl-select-list{
+  position:fixed;z-index:100;list-style:none;margin:0;padding:4px 0;
+  max-height:min(60vh,320px);overflow-y:auto;
+  font:inherit;font-size:var(--sel-fs);letter-spacing:1px;color:var(--fg-bright);
+  background:var(--bg3);border:1px solid var(--fg-dim);box-shadow:3px 3px 0 var(--btn-shadow);
+  transition:opacity .12s ease,transform .12s ease;
+}
+.atl .atl-select-list[hidden]{display:none}
+.atl .atl-select-list li{padding:4px 8px 4px 24px;position:relative;cursor:pointer;white-space:nowrap}
+.atl .atl-select-list li.act{background:var(--bg2);color:var(--fg-bright)}
+.atl .atl-select-list li[aria-selected="true"]::before{
+  content:"\25B8";position:absolute;left:8px;color:var(--fg)}
+@media (prefers-reduced-motion: reduce){
+  .atl .atl-select-list{transition:none}
 }
 .atl .atl-stepper{display:flex;gap:8px}
 /* video-editor-style zoom control: same offset-shadow .atl-btn idiom as the
