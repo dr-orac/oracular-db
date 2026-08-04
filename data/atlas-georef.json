@@ -1,0 +1,260 @@
+{
+  "description": "lat/lon -> source-image pixel transform for north-america-political.png. The map is a DRAWING, not a projection (Canada fans, Greenland bloats), so a six-term quadratic is fitted to 13 control cities. Since 2026-08-02 that quadratic sits on a MERCATOR base rather than on raw lon/lat: see `model`. Pixel space is identical to the traced SVG viewBox (0 0 2778 3323), so projected pins drop straight onto north-america-political.traced.svg / north-america-recolored.svg.",
+  "image": {
+    "file": "north-america-political.png",
+    "w": 2778,
+    "h": 3323
+  },
+  "model": "mercator+poly2+tps",
+  "model_note": "The quadratic is applied to base coordinates X, Y, and `model` says how those come from lon/lat AND what else is applied. 'mercator+poly2+tps': X = lon*pi/180, Y = ln(tan(pi/4 + lat*pi/360)), the quadratic below, then the `blend` block hands over to a thin-plate spline outside the control hull. 'mercator+poly2' was the same without that handover and shipped 2026-08-02 to 2026-08-03; 'poly2' used X = lon and Y = lat directly and shipped until 2026-08-02. The coefficients differ by three orders of magnitude between the poly2 and mercator forms, so a reader that assumes the wrong one gets a confidently wrong answer rather than an obvious one. Both readers refuse an unknown model rather than guessing.",
+  "features": [
+    "1",
+    "X",
+    "Y",
+    "X*X",
+    "Y*Y",
+    "X*Y"
+  ],
+  "px_coeffs": [
+    6067.698383,
+    2495.893942,
+    -2220.086112,
+    26.167052,
+    723.7286,
+    -692.563613
+  ],
+  "py_coeffs": [
+    1666.613533,
+    -2530.660732,
+    -3109.524689,
+    -710.971819,
+    1006.746789,
+    155.23787
+  ],
+  "usage": "X = lon*pi/180; Y = ln(tan(pi/4 + lat*pi/360)); f = [1, X, Y, X*X, Y*Y, X*Y]; px = dot(px_coeffs, f); py = dot(py_coeffs, f)",
+  "fit": {
+    "rms_px": 26.96,
+    "max_px": 48.5,
+    "n_control": 13,
+    "note": "Fitted to the same 13 control cities as the poly2 model it replaced, which scored 27.3 / 49.1: the two are equally accurate ON the control points and the change is not about accuracy. It is about what happens off them. All 13 cities are in the lower 48 while 47% of the corpus is not, and inverse Mercator (lat = 2*atan(exp(Y)) - pi/2) is bounded by +-90 degrees for every finite Y, so a latitude that does not exist cannot come out however far the model is extrapolated. The raw quadratic had no such guarantee and 951 of the topology's 30,112 points were where it lost it. Largest residuals are still on fiction-placed labels (New York 48.5, New Vegas 43.2) whose map position follows game geography rather than real coordinates."
+  },
+  "control_points": [
+    {
+      "name": "Seattle",
+      "px": 805,
+      "py": 1472,
+      "lat": 47.6,
+      "lon": -122.33
+    },
+    {
+      "name": "Portland",
+      "px": 770,
+      "py": 1552,
+      "lat": 45.52,
+      "lon": -122.68
+    },
+    {
+      "name": "New Vegas",
+      "px": 890,
+      "py": 2005,
+      "lat": 36.17,
+      "lon": -115.14
+    },
+    {
+      "name": "Boneyard/LA",
+      "px": 850,
+      "py": 2110,
+      "lat": 34.05,
+      "lon": -118.24
+    },
+    {
+      "name": "El Paso",
+      "px": 1220,
+      "py": 2255,
+      "lat": 31.76,
+      "lon": -106.49
+    },
+    {
+      "name": "Santa Fe",
+      "px": 1220,
+      "py": 2120,
+      "lat": 35.69,
+      "lon": -105.94
+    },
+    {
+      "name": "Chicago",
+      "px": 1845,
+      "py": 1835,
+      "lat": 41.85,
+      "lon": -87.65
+    },
+    {
+      "name": "New York",
+      "px": 2340,
+      "py": 1765,
+      "lat": 40.71,
+      "lon": -74.0
+    },
+    {
+      "name": "Far Harbour",
+      "px": 2445,
+      "py": 1580,
+      "lat": 44.39,
+      "lon": -68.2
+    },
+    {
+      "name": "Miami",
+      "px": 2190,
+      "py": 2488,
+      "lat": 25.76,
+      "lon": -80.19
+    },
+    {
+      "name": "Houston",
+      "px": 1615,
+      "py": 2360,
+      "lat": 29.76,
+      "lon": -95.37
+    },
+    {
+      "name": "Wilmington",
+      "px": 2180,
+      "py": 2100,
+      "lat": 34.0,
+      "lon": -77.9
+    },
+    {
+      "name": "New Orleans",
+      "px": 1840,
+      "py": 2360,
+      "lat": 30.0,
+      "lon": -90.07
+    }
+  ],
+  "_doc": "SHIPPED 2026-08-01. Real geographic coordinates for this map. Every pin in atlas-pins.json carries lat/lon AND x/y, and the x/y are PRODUCED by the transform below \u2014 all 137 reproduce to a median 0.055px, max 0.87px, which is the rounding in their stored one-decimal x/y. So this is not an approximation bolted on afterwards; it is where the pin positions came from. It lived only in docs/changes/map-timeline/source-maps/ until today, which meant the running app could not place a geographic coordinate, could not report a clicked point as lat/lon, and would have lost every x/y with no way to regenerate them if the artwork were ever re-traced. Gated by tools/georef-gate.mjs, which round-trips all 137 pins in both directions.",
+  "blend": {
+    "why": "Outside the control hull the quadratic extrapolates and eventually folds; the thin-plate spline's far field tends to affine and cannot. This weights between them by distance from the hull, so the control band keeps the quadratic exactly and the north gets a model that stays a map. Regenerate with docs/changes/map-timeline/trace/fit_georef_blend.py --write; do not hand-edit.",
+    "usage": "d = distance from `hull` (0 inside it) with X,Y in the base coordinates `model` declares; w = exp(-(d/half_width)^2); tps = sum_i w_i * r_i^2*ln(r_i) + a0 + a1*X + a2*Y over `centres`; px = w*quadratic + (1-w)*tps, and the same for py.",
+    "half_width": 0.3281127561,
+    "hull": [
+      [
+        -1.3995795272,
+        0.4655569725
+      ],
+      [
+        -2.0636773076,
+        0.6327110537
+      ],
+      [
+        -2.1411699263,
+        0.8942673586
+      ],
+      [
+        -2.135061274,
+        0.9470736061
+      ],
+      [
+        -1.1903145499,
+        0.8663964546
+      ],
+      [
+        -1.3995795272,
+        0.4655569725
+      ]
+    ],
+    "centres": [
+      [
+        -2.135061274,
+        0.9470736061
+      ],
+      [
+        -2.1411699263,
+        0.8942673586
+      ],
+      [
+        -2.0095721007,
+        0.6779469292
+      ],
+      [
+        -2.0636773076,
+        0.6327110537
+      ],
+      [
+        -1.8586011204,
+        0.5851000008
+      ],
+      [
+        -1.8490018096,
+        0.6676007842
+      ],
+      [
+        -1.5297810894,
+        0.8056485126
+      ],
+      [
+        -1.2915436465,
+        0.7791711553
+      ],
+      [
+        -1.1903145499,
+        0.8663964546
+      ],
+      [
+        -1.3995795272,
+        0.4655569725
+      ],
+      [
+        -1.6645205076,
+        0.5444751712
+      ],
+      [
+        -1.3596114873,
+        0.6316581199
+      ],
+      [
+        -1.5720180573,
+        0.5493061443
+      ]
+    ],
+    "wx": [
+      1242.0345765661,
+      -995.194969387,
+      119.7623239957,
+      -363.6105358357,
+      125.9098378833,
+      -173.5558226577,
+      1.9601651065,
+      61.6048823932,
+      -154.721582225,
+      684.1467341315,
+      115.6877273368,
+      -334.4148764037,
+      -329.6084609041
+    ],
+    "ax": [
+      4710.4812111754,
+      1851.0363818997,
+      -7.5493392748
+    ],
+    "wy": [
+      1429.6966484091,
+      -1607.9095624547,
+      362.7638636042,
+      -385.9435919717,
+      442.0805163201,
+      -394.8249085508,
+      537.2381576302,
+      73.4305332338,
+      -164.5973762223,
+      431.6364207884,
+      175.0194694788,
+      -765.3025588891,
+      -133.287611376
+    ],
+    "ay": [
+      3370.2994356113,
+      -30.6946611271,
+      -2020.2163707751
+    ]
+  }
+}

@@ -1,0 +1,121 @@
+{
+ "_doc": "DERIVED. Hypsometric tint images built by tools/build-tint.py from USGS 3DEP elevation (rasterFunction None, public domain). The top of every ramp is BONE, not white: there is no permanent snow in these boxes, and white would be a claim this map has not earned. Regenerate rather than hand-edit.",
+ "us": {
+  "scope": "us",
+  "bounds": [
+   -125.0,
+   24.0,
+   -66.0,
+   50.0
+  ],
+  "image_bounds": [
+   -135.0,
+   21.943046,
+   -56.25,
+   55.776573
+  ],
+  "size": [
+   512,
+   293
+  ],
+  "elevation_m": [
+   -71,
+   3696
+  ],
+  "coverage": 0.6143,
+  "spikes_rejected": 20,
+  "offshore_rejected": 54080,
+  "ceiling_m": 4500,
+  "stops": [
+   [
+    0,
+    "#5a5340"
+   ],
+   [
+    250,
+    "#675f4d"
+   ],
+   [
+    800,
+    "#7a7053"
+   ],
+   [
+    1500,
+    "#8f8463"
+   ],
+   [
+    2400,
+    "#a99d7e"
+   ],
+   [
+    3200,
+    "#c1b28d"
+   ],
+   [
+    4000,
+    "#ddd4bd"
+   ],
+   [
+    4400,
+    "#efe9dc"
+   ]
+  ]
+ },
+ "region": {
+  "scope": "region",
+  "bounds": [
+   -114.9,
+   39.4,
+   -112.4,
+   41.6
+  ],
+  "image_bounds": [
+   -115.3125,
+   39.368279,
+   -111.796875,
+   42.032974
+  ],
+  "size": [
+   512,
+   512
+  ],
+  "elevation_m": [
+   1278,
+   3481
+  ],
+  "coverage": 1.0,
+  "spikes_rejected": 0,
+  "offshore_rejected": 0,
+  "ceiling_m": 4000,
+  "stops": [
+   [
+    1250,
+    "#4b4335"
+   ],
+   [
+    1600,
+    "#5c5340"
+   ],
+   [
+    2100,
+    "#726749"
+   ],
+   [
+    2600,
+    "#8f8360"
+   ],
+   [
+    3050,
+    "#b9ae91"
+   ],
+   [
+    3400,
+    "#d5cbb0"
+   ],
+   [
+    3700,
+    "#e9e3d2"
+   ]
+  ]
+ }
+}

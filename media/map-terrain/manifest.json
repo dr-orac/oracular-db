@@ -36,7 +36,7 @@
       "maxzoom": 5,
       "tile_count": 42,
       "tile_template": "media/map-terrain/us/{z}/{x}/{y}.webp",
-      "combined_tile_sha256": "3f3304f8ebdd14a2a2d66ad4518a39838e0677fd7eeced921c73bcab2adfe88c"
+      "combined_tile_sha256": "d358cc422455ed523070da36bbeeb9bad38903196650a5043cacb9474ee5cef8"
     },
     "region": {
       "bounds": [
@@ -49,8 +49,8 @@
       "maxzoom": 9,
       "tile_count": 42,
       "tile_template": "media/map-terrain/region/{z}/{x}/{y}.webp",
-      "combined_tile_sha256": "a9476eb5fe0d76feb7a5b6c7bbf6281768f86ae565e28eaf2623bb4a11a0ed5e"
+      "combined_tile_sha256": "e8b1787b733b6f6b64ad8491c120e09b0dac175b548fcd69e256b7cd1d1c7bdf"
     }
   },
-  "total_tile_bytes": 231114
+  "total_tile_bytes": 230286
 }

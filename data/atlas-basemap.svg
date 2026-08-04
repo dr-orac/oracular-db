@@ -103,7 +103,7 @@
 <path class="terr" fill="#893944" fill-opacity="0.34" stroke="#893944" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#893944" fill-opacity="0.34" stroke="#893944" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#a34447" fill-opacity="0.34" stroke="#a34447" stroke-opacity="0.55" d=""/>
-<path class="terr" fill="#59617b" fill-opacity="0.34" stroke="#59617b" stroke-opacity="0.55" d=""/>
+<path class="terr fac-legion" fill-opacity="0.34" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#59617b" fill-opacity="0.34" stroke="#59617b" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#4c7d5a" fill-opacity="0.34" stroke="#4c7d5a" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#59617b" fill-opacity="0.34" stroke="#59617b" stroke-opacity="0.55" d=""/>
@@ -125,7 +125,7 @@
 <path class="terr" fill="#893944" fill-opacity="0.34" stroke="#893944" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#836d82" fill-opacity="0.34" stroke="#836d82" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#59617b" fill-opacity="0.34" stroke="#59617b" stroke-opacity="0.55" d=""/>
-<path class="terr" fill="#50c36e" fill-opacity="0.34" stroke="#50c36e" stroke-opacity="0.55" d=""/>
+<path class="terr fac-ncr" fill-opacity="0.34" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#59617b" fill-opacity="0.34" stroke="#59617b" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#a2a83c" fill-opacity="0.34" stroke="#a2a83c" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#59617b" fill-opacity="0.34" stroke="#59617b" stroke-opacity="0.55" d=""/>
@@ -137,7 +137,7 @@
 <path class="terr" fill="#59617b" fill-opacity="0.34" stroke="#59617b" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#a34447" fill-opacity="0.34" stroke="#a34447" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#a2a83c" fill-opacity="0.34" stroke="#a2a83c" stroke-opacity="0.55" d=""/>
-<path class="terr" fill="#b1913b" fill-opacity="0.34" stroke="#b1913b" stroke-opacity="0.55" d=""/>
+<path class="terr fac-brotherhood" fill-opacity="0.34" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#a34447" fill-opacity="0.34" stroke="#a34447" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#893944" fill-opacity="0.34" stroke="#893944" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#59617b" fill-opacity="0.34" stroke="#59617b" stroke-opacity="0.55" d=""/>
@@ -151,11 +151,11 @@
 <path class="terr" fill="#b1913b" fill-opacity="0.34" stroke="#b1913b" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#694b64" fill-opacity="0.34" stroke="#694b64" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#48adbb" fill-opacity="0.34" stroke="#48adbb" stroke-opacity="0.55" d=""/>
-<path class="terr" fill="#4c7d5a" fill-opacity="0.34" stroke="#4c7d5a" stroke-opacity="0.55" d=""/>
+<path class="terr fac-brotherhood" fill-opacity="0.34" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#9d6054" fill-opacity="0.34" stroke="#9d6054" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#893944" fill-opacity="0.34" stroke="#893944" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#a34447" fill-opacity="0.34" stroke="#a34447" stroke-opacity="0.55" d=""/>
-<path class="terr" fill="#4c7d5a" fill-opacity="0.34" stroke="#4c7d5a" stroke-opacity="0.55" d=""/>
+<path class="terr fac-brotherhood" fill-opacity="0.34" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#50c36e" fill-opacity="0.34" stroke="#50c36e" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#59617b" fill-opacity="0.34" stroke="#59617b" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#893944" fill-opacity="0.34" stroke="#893944" stroke-opacity="0.55" d=""/>
@@ -174,7 +174,7 @@
 <path class="terr" fill="#694b64" fill-opacity="0.34" stroke="#694b64" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#893944" fill-opacity="0.34" stroke="#893944" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#893944" fill-opacity="0.34" stroke="#893944" stroke-opacity="0.55" d=""/>
-<path class="terr" fill="#a34447" fill-opacity="0.34" stroke="#a34447" stroke-opacity="0.55" d=""/>
+<path class="terr fac-brotherhood" fill-opacity="0.34" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#893944" fill-opacity="0.34" stroke="#893944" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#815753" fill-opacity="0.34" stroke="#815753" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#a2a83c" fill-opacity="0.34" stroke="#a2a83c" stroke-opacity="0.55" d=""/>
@@ -190,7 +190,7 @@
 <path class="terr" fill="#a2a83c" fill-opacity="0.34" stroke="#a2a83c" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#815753" fill-opacity="0.34" stroke="#815753" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#9d6054" fill-opacity="0.34" stroke="#9d6054" stroke-opacity="0.55" d=""/>
-<path class="terr" fill="#4c7d5a" fill-opacity="0.34" stroke="#4c7d5a" stroke-opacity="0.55" d=""/>
+<path class="terr fac-ncr" fill-opacity="0.34" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#4c7d5a" fill-opacity="0.34" stroke="#4c7d5a" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#59617b" fill-opacity="0.34" stroke="#59617b" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#4c7d5a" fill-opacity="0.34" stroke="#4c7d5a" stroke-opacity="0.55" d=""/>
@@ -200,9 +200,9 @@
 <path class="terr" fill="#893944" fill-opacity="0.34" stroke="#893944" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#4c7d5a" fill-opacity="0.34" stroke="#4c7d5a" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#815753" fill-opacity="0.34" stroke="#815753" stroke-opacity="0.55" d=""/>
-<path class="terr" fill="#9d6054" fill-opacity="0.34" stroke="#9d6054" stroke-opacity="0.55" d=""/>
+<path class="terr fac-legion" fill-opacity="0.34" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#815753" fill-opacity="0.34" stroke="#815753" stroke-opacity="0.55" d=""/>
-<path class="terr" fill="#b1913b" fill-opacity="0.34" stroke="#b1913b" stroke-opacity="0.55" d=""/>
+<path class="terr fac-legion" fill-opacity="0.34" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#a4466c" fill-opacity="0.34" stroke="#a4466c" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#694b64" fill-opacity="0.34" stroke="#694b64" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#59617b" fill-opacity="0.34" stroke="#59617b" stroke-opacity="0.55" d=""/>
@@ -214,7 +214,7 @@
 <path class="terr" fill="#b1913b" fill-opacity="0.34" stroke="#b1913b" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#4c7d5a" fill-opacity="0.34" stroke="#4c7d5a" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#b4627c" fill-opacity="0.34" stroke="#b4627c" stroke-opacity="0.55" d=""/>
-<path class="terr" fill="#815753" fill-opacity="0.34" stroke="#815753" stroke-opacity="0.55" d=""/>
+<path class="terr fac-ncr" fill-opacity="0.34" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#694b64" fill-opacity="0.34" stroke="#694b64" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#694b64" fill-opacity="0.34" stroke="#694b64" stroke-opacity="0.55" d=""/>
 <path class="terr" fill="#836d82" fill-opacity="0.34" stroke="#836d82" stroke-opacity="0.55" d=""/>

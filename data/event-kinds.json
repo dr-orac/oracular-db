@@ -1,0 +1,1481 @@
+{
+ "_doc": "DERIVED, not authored. Event kind read from the event TITLE by tools/classify-events.mjs; regenerate rather than hand-edit. This reads what each record says about itself, unlike date extraction from the canon prose, which was attempted and abandoned because the year on a line usually belongs to a different event. Conservative on purpose: a title too vague to classify becomes \"unclassified\" rather than a guess, because a mislabelled event draws crossed swords over a peace treaty while an unclassified one simply does not appear on a themed layer.",
+ "source": "apps/misfits-react/web/public/data/atlas-events.json",
+ "generated_by": "tools/classify-events.mjs",
+ "counts": {
+  "founding": 9,
+  "opening": 9,
+  "unclassified": 118,
+  "construction": 6,
+  "sealing": 8,
+  "treaty": 2,
+  "battle": 4,
+  "destruction": 2,
+  "discovery": 1
+ },
+ "kinds": {
+  "0": {
+   "kind": "founding",
+   "basis": "title matched the founding rule: \"founded\"",
+   "year": 2002,
+   "title": "West Tek founded",
+   "loc": [
+    "The Glow"
+   ]
+  },
+  "1": {
+   "kind": "opening",
+   "basis": "title matched the opening rule: \"opens\"",
+   "year": 2031,
+   "title": "Vault-Tec University opens",
+   "loc": [
+    "Vault-Tec University (Morgantown)"
+   ]
+  },
+  "2": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2053,
+   "title": "ZAX 1.0 comes online",
+   "loc": [
+    "Vault 0"
+   ]
+  },
+  "3": {
+   "kind": "construction",
+   "basis": "title matched the construction rule: \"breaks ground\"",
+   "year": 2054,
+   "title": "Project Safehouse breaks ground",
+   "loc": [
+    "Vault 13"
+   ]
+  },
+  "4": {
+   "kind": "construction",
+   "basis": "title matched the construction rule: \"construction\"",
+   "year": 2063,
+   "title": "Vault 13's construction begins",
+   "loc": [
+    "Vault 13"
+   ]
+  },
+  "5": {
+   "kind": "construction",
+   "basis": "title matched the construction rule: \"construction\"",
+   "year": 2069,
+   "title": "Vault 13's construction completes",
+   "loc": [
+    "Vault 13"
+   ]
+  },
+  "6": {
+   "kind": "construction",
+   "basis": "title matched the construction rule: \"construction\"",
+   "year": 2071,
+   "title": "Vault 87 finishes construction",
+   "loc": [
+    "Vault 87"
+   ]
+  },
+  "7": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2072,
+   "title": "Vault-Tec's own guards rob the gold vault",
+   "loc": [
+    "Vault 79"
+   ]
+  },
+  "8": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2073,
+   "title": "FEV research begins",
+   "loc": [
+    "The Glow"
+   ]
+  },
+  "9": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2073,
+   "title": "The oil rig that starts a war",
+   "loc": [
+    "Enclave Oil Rig"
+   ]
+  },
+  "10": {
+   "kind": "sealing",
+   "basis": "title matched the sealing rule: \"seals\"",
+   "year": 2076,
+   "title": "Vault 76 seals over a year early",
+   "loc": [
+    "Vault 76"
+   ]
+  },
+  "11": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2077,
+   "title": "FEV moved to Mariposa",
+   "loc": [
+    "Mariposa"
+   ]
+  },
+  "12": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2077,
+   "title": "The Great War",
+   "loc": [
+    "The Glow",
+    "Necropolis"
+   ]
+  },
+  "13": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2077,
+   "title": "The Skyfire: the tribe's name for the Great War",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "14": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2077,
+   "title": "Maxson's mutiny at Mariposa",
+   "loc": [
+    "Mariposa"
+   ]
+  },
+  "15": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2077,
+   "title": "Vault 12's door fails",
+   "loc": [
+    "Necropolis"
+   ]
+  },
+  "16": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2077,
+   "title": "Exodus to Lost Hills",
+   "loc": [
+    "Mariposa",
+    "Lost Hills"
+   ]
+  },
+  "17": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2077,
+   "title": "Vault 111 freezes its dwellers",
+   "loc": [
+    "Vault 111"
+   ]
+  },
+  "18": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2077,
+   "title": "The Enclave retreats to the Oil Rig",
+   "loc": [
+    "Enclave Oil Rig"
+   ]
+  },
+  "19": {
+   "kind": "sealing",
+   "basis": "title matched the sealing rule: \"seals\"",
+   "year": 2077,
+   "title": "Vault 77 seals with one man and a crate of puppets",
+   "loc": [
+    "Vault 77"
+   ]
+  },
+  "20": {
+   "kind": "sealing",
+   "basis": "title matched the sealing rule: \"seals\"",
+   "year": 2077,
+   "title": "Vault 92 seals; the White Noise trial begins",
+   "loc": [
+    "Vault 92"
+   ]
+  },
+  "21": {
+   "kind": "construction",
+   "basis": "title matched the construction rule: \"construction\"",
+   "year": 2077,
+   "title": "Vault 88 is caught mid-construction",
+   "loc": [
+    "Vault 88"
+   ]
+  },
+  "22": {
+   "kind": "sealing",
+   "basis": "title matched the sealing rule: \"seals\"",
+   "year": 2077,
+   "title": "Vault 96 seals over a cover story",
+   "loc": [
+    "Vault 96"
+   ]
+  },
+  "23": {
+   "kind": "sealing",
+   "basis": "title matched the sealing rule: \"seals\"",
+   "year": 2077,
+   "title": "Vault 94 seals; a second bus is left outside",
+   "loc": [
+    "Vault 94"
+   ]
+  },
+  "24": {
+   "kind": "sealing",
+   "basis": "title matched the sealing rule: \"seals\"",
+   "year": 2077,
+   "title": "Vault 118 seals over a fortune",
+   "loc": [
+    "Vault 118"
+   ]
+  },
+  "25": {
+   "kind": "sealing",
+   "basis": "title matched the sealing rule: \"seal\"",
+   "year": 2077,
+   "title": "Vaults 31, 32 and 33 seal outside Los Angeles",
+   "loc": [
+    "Vaults 33/32/31"
+   ]
+  },
+  "26": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2078,
+   "title": "Vault 87 begins mass-producing Super Mutants",
+   "loc": [
+    "Vault 87"
+   ]
+  },
+  "27": {
+   "kind": "opening",
+   "basis": "title matched the opening rule: \"reopen\"",
+   "year": 2078,
+   "title": "Vault 94's pacifists reopen the door",
+   "loc": [
+    "Vault 94"
+   ]
+  },
+  "28": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2079,
+   "title": "Puppet Man's break",
+   "loc": [
+    "Vault 77"
+   ]
+  },
+  "29": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2082,
+   "title": "The Brotherhood is born",
+   "loc": [
+    "Lost Hills"
+   ]
+  },
+  "30": {
+   "kind": "sealing",
+   "basis": "title matched the sealing rule: \"seals\"",
+   "year": 2082,
+   "title": "Vault 95 seals with recovering addicts",
+   "loc": [
+    "Vault 95"
+   ]
+  },
+  "31": {
+   "kind": "opening",
+   "basis": "title matched the opening rule: \"reopens\"",
+   "year": 2082,
+   "title": "The stash reopens; Vault 95 turns on itself",
+   "loc": [
+    "Vault 95"
+   ]
+  },
+  "32": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2083,
+   "title": "Necropolis rises; Set seizes it",
+   "loc": [
+    "Necropolis"
+   ]
+  },
+  "33": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2085,
+   "title": "Vault 96's mainframe kills its own residents",
+   "loc": [
+    "Vault 96"
+   ]
+  },
+  "34": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2089,
+   "title": "Vault 108's Gary Project turns on its makers",
+   "loc": [
+    "Vault 108"
+   ]
+  },
+  "35": {
+   "kind": "opening",
+   "basis": "title matched the opening rule: \"opens\"",
+   "year": 2090,
+   "title": "Vault 29 opens; Harold walks out human",
+   "loc": [
+    "Vault 29"
+   ]
+  },
+  "36": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2090,
+   "title": "Vault 27 collapses under its own numbers",
+   "loc": [
+    "Vault 27"
+   ]
+  },
+  "37": {
+   "kind": "founding",
+   "basis": "title matched the founding rule: \"founded\"",
+   "year": 2091,
+   "title": "Vault 8 opens; Vault City is founded",
+   "loc": [
+    "Vault City",
+    "Vault 13",
+    "Vault 8 (Nevada)"
+   ]
+  },
+  "38": {
+   "kind": "founding",
+   "basis": "title matched the founding rule: \"founds\"",
+   "year": 2093,
+   "title": "Angus founds the Hub",
+   "loc": [
+    "The Hub"
+   ]
+  },
+  "39": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2095,
+   "title": "Fort Defiance and Thunder Mountain fall",
+   "loc": [
+    "Fort Defiance",
+    "Thunder Mountain"
+   ]
+  },
+  "40": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2096,
+   "title": "Vault 22's \"Coughers\" sack Zion Canyon",
+   "loc": [
+    "Zion Canyon"
+   ]
+  },
+  "41": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2102,
+   "title": "Birth of the Master",
+   "loc": [
+    "Mariposa"
+   ]
+  },
+  "42": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2102,
+   "title": "Unity's first convert",
+   "loc": [
+    "Mariposa"
+   ]
+  },
+  "43": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2130,
+   "title": "Vault 11's sacrifice experiment breaks",
+   "loc": [
+    "Vault 11"
+   ]
+  },
+  "44": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2137,
+   "title": "The super mutant army begins",
+   "loc": [
+    "Mariposa"
+   ]
+  },
+  "45": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2140,
+   "title": "Amnesiac wakes near Vault 8",
+   "loc": [
+    "Vault 8 (Nevada)"
+   ]
+  },
+  "46": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2140,
+   "title": "Vault 8 on the road to Vault City",
+   "loc": [
+    "Vault 8 (Nevada)"
+   ]
+  },
+  "47": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2141,
+   "title": "Vault 15 splits",
+   "loc": [
+    "Vault 15",
+    "Shady Sands"
+   ]
+  },
+  "48": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2152,
+   "title": "Morpheus's cult joins the Master",
+   "loc": [
+    "Mariposa"
+   ]
+  },
+  "49": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2155,
+   "title": "The Lost Hills expedition splits east",
+   "loc": [
+    "Lost Hills"
+   ]
+  },
+  "50": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2156,
+   "title": "The Cathedral rises",
+   "loc": [
+    "The Cathedral",
+    "Boneyard"
+   ]
+  },
+  "51": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2157,
+   "title": "The mutant army garrisons Necropolis",
+   "loc": [
+    "Mariposa",
+    "Necropolis"
+   ]
+  },
+  "52": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2159,
+   "title": "Vault 13's water chip begins to fail; the vault draws straws",
+   "loc": [
+    "Vault 13"
+   ]
+  },
+  "53": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2159,
+   "title": "Orac's straw is drawn; among the first sent out",
+   "loc": [
+    "Vault 13"
+   ]
+  },
+  "54": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2160,
+   "title": "Captured early by super mutants, barely clear of Vault 13",
+   "loc": [
+    "Vault 13"
+   ]
+  },
+  "55": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2161,
+   "title": "The Vault Dweller sets out",
+   "loc": [
+    "Vault 13"
+   ]
+  },
+  "56": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2161,
+   "title": "Orac dipped at Mariposa",
+   "loc": [
+    "Vault 13",
+    "Mariposa"
+   ]
+  },
+  "57": {
+   "kind": "founding",
+   "basis": "title matched the founding rule: \"settles\"",
+   "year": 2161,
+   "title": "The Vault Dweller settles Junktown",
+   "loc": [
+    "The Hub",
+    "Junktown"
+   ]
+  },
+  "58": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2162,
+   "title": "Unity's doom exposed",
+   "loc": [
+    "Lost Hills"
+   ]
+  },
+  "59": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2162,
+   "title": "Fall of the Master",
+   "loc": [
+    "The Cathedral",
+    "Mariposa"
+   ]
+  },
+  "60": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2162,
+   "title": "Orac, forced into command, is cut off from Unity",
+   "loc": [
+    "The Cathedral",
+    "Mariposa"
+   ]
+  },
+  "61": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2162,
+   "title": "The Vault Dweller is exiled",
+   "loc": [
+    "Vault 13"
+   ]
+  },
+  "62": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2163,
+   "title": "The mutant armies scatter",
+   "loc": [
+    "The Cathedral",
+    "Mariposa"
+   ]
+  },
+  "63": {
+   "kind": "founding",
+   "basis": "title matched the founding rule: \"founded\"",
+   "year": 2165,
+   "title": "Arroyo founded",
+   "loc": [
+    "Arroyo"
+   ]
+  },
+  "64": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2167,
+   "title": "Slave raid on the Villa",
+   "loc": [
+    "Villa"
+   ]
+  },
+  "65": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2167,
+   "title": "Flagstaff's uranium economy",
+   "loc": [
+    "Flagstaff"
+   ]
+  },
+  "66": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2167,
+   "title": "Followers schism in the desert",
+   "loc": [
+    "Two-Sun",
+    "Cathedral of the Fire (Phoenix)"
+   ]
+  },
+  "67": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2170,
+   "title": "Left for dead, amnesiac rises",
+   "loc": [
+    "Sedit"
+   ]
+  },
+  "68": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2170,
+   "title": "Imperial City's iron order",
+   "loc": [
+    "Imperial City"
+   ]
+  },
+  "69": {
+   "kind": "founding",
+   "basis": "title matched the founding rule: \"founded\"",
+   "year": 2172,
+   "title": "The Remnant Church is founded in hiding",
+   "loc": [
+    "The Cathedral"
+   ]
+  },
+  "70": {
+   "kind": "founding",
+   "basis": "title matched the founding rule: \"found\"",
+   "year": 2185,
+   "title": "Marcus and Jacob found Broken Hills",
+   "loc": [
+    "Broken Hills"
+   ]
+  },
+  "71": {
+   "kind": "founding",
+   "basis": "title matched the founding rule: \"Founding\"",
+   "year": 2186,
+   "title": "Founding of the NCR",
+   "loc": [
+    "Shady Sands"
+   ]
+  },
+  "72": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2186,
+   "title": "Jacob moves on; Marcus stays",
+   "loc": [
+    "Broken Hills"
+   ]
+  },
+  "73": {
+   "kind": "treaty",
+   "basis": "title matched the treaty rule: \"federates\"",
+   "year": 2189,
+   "title": "The council federates into statehood",
+   "loc": [
+    "Shady Sands",
+    "The Hub",
+    "Boneyard"
+   ]
+  },
+  "74": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2196,
+   "title": "Tandi elected NCR President",
+   "loc": [
+    "Shady Sands"
+   ]
+  },
+  "75": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2197,
+   "title": "The Midwestern Brotherhood defeats the Calculator",
+   "loc": [
+    "Chicago"
+   ]
+  },
+  "76": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2200,
+   "title": "The Shi entrench as the Steel Palace",
+   "loc": [
+    "San Francisco"
+   ]
+  },
+  "77": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2204,
+   "title": "Curie perfects Vault 81's universal cure",
+   "loc": [
+    "Vault 81"
+   ]
+  },
+  "78": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2205,
+   "title": "The West Coast Brotherhood turns inward",
+   "loc": [
+    "Lost Hills"
+   ]
+  },
+  "79": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2220,
+   "title": "Navarro becomes the mainland Vertibird base",
+   "loc": [
+    "Navarro"
+   ]
+  },
+  "80": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2227,
+   "title": "The Institute takes Vault 111's last resident",
+   "loc": [
+    "Vault 111"
+   ]
+  },
+  "81": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2230,
+   "title": "Redding's gold becomes the NCR's currency backbone",
+   "loc": [
+    "Redding"
+   ]
+  },
+  "82": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2231,
+   "title": "The Boomers occupy Nellis Air Force Base",
+   "loc": [
+    "Nellis Air Force Base"
+   ]
+  },
+  "83": {
+   "kind": "founding",
+   "basis": "title matched the founding rule: \"founded\"",
+   "year": 2235,
+   "title": "Gecko founded on the old reactor",
+   "loc": [
+    "Gecko"
+   ]
+  },
+  "84": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2238,
+   "title": "Harold arrives at Gecko",
+   "loc": [
+    "Gecko"
+   ]
+  },
+  "85": {
+   "kind": "opening",
+   "basis": "title matched the opening rule: \"break the Seal\"",
+   "year": 2238,
+   "title": "The Slags break the Seal near Modoc",
+   "loc": [
+    "Modoc"
+   ]
+  },
+  "86": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2241,
+   "title": "The NCR spreads",
+   "loc": [
+    "New Reno",
+    "Vault City"
+   ]
+  },
+  "87": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2241,
+   "title": "Jet reaches Redding's miners",
+   "loc": [
+    "Redding"
+   ]
+  },
+  "88": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2241,
+   "title": "Vault City spurns the NCR and the Bishops alike",
+   "loc": [
+    "Vault City",
+    "New Reno"
+   ]
+  },
+  "89": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2241,
+   "title": "New Reno's Four Families",
+   "loc": [
+    "New Reno"
+   ]
+  },
+  "90": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2241,
+   "title": "Drought drives the search for a new GECK",
+   "loc": [
+    "Arroyo",
+    "Vault 13"
+   ]
+  },
+  "91": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2242,
+   "title": "Navarro falls",
+   "loc": [
+    "Navarro"
+   ]
+  },
+  "92": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2242,
+   "title": "Fall of the Enclave Oil Rig",
+   "loc": [
+    "Enclave Oil Rig"
+   ]
+  },
+  "93": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2247,
+   "title": "Edward Sallow crowned Caesar",
+   "loc": [
+    "Grand Canyon"
+   ]
+  },
+  "94": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2250,
+   "title": "Father Elijah secures HELIOS One",
+   "loc": [
+    "HELIOS One"
+   ]
+  },
+  "95": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2250,
+   "title": "The Brotherhood hunts the Remnant Church to near-extinction",
+   "loc": [
+    "The Cathedral"
+   ]
+  },
+  "96": {
+   "kind": "treaty",
+   "basis": "title matched the treaty rule: \"annexes\"",
+   "year": 2255,
+   "title": "Caesar's Legion annexes Flagstaff as its capital",
+   "loc": [
+    "Flagstaff"
+   ]
+  },
+  "97": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2258,
+   "title": "The Brotherhood Outcasts break from the Citadel",
+   "loc": [
+    "Fort Independence"
+   ]
+  },
+  "98": {
+   "kind": "opening",
+   "basis": "title matched the opening rule: \"open\"",
+   "year": 2260,
+   "title": "Vault 18 breaks open",
+   "loc": [
+    "Vault 18"
+   ]
+  },
+  "99": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2260,
+   "title": "Tail of the NCR-Enclave War",
+   "loc": [
+    "Union City",
+    "Fort Daggerpoint"
+   ]
+  },
+  "100": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2271,
+   "title": "The NCR launches the Mojave Campaign",
+   "loc": [
+    "The Strip",
+    "Camp McCarran"
+   ]
+  },
+  "101": {
+   "kind": "opening",
+   "basis": "title matched the opening rule: \"opens\"",
+   "year": 2274,
+   "title": "Hoover Dam restarted, the NCR opens an embassy on the Strip",
+   "loc": [
+    "Hoover Dam",
+    "The Strip",
+    "Boulder City",
+    "Camp McCarran"
+   ]
+  },
+  "102": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2276,
+   "title": "Operation Sunburst",
+   "loc": [
+    "HELIOS One"
+   ]
+  },
+  "103": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2276,
+   "title": "509th detachment dispatched to the salt flats",
+   "loc": [
+    "Kearny Airfield (Wendover Field)"
+   ]
+  },
+  "104": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2276,
+   "title": "The NCR occupies HELIOS One after the Brotherhood's defeat",
+   "loc": [
+    "HELIOS One"
+   ]
+  },
+  "105": {
+   "kind": "battle",
+   "basis": "title matched the battle rule: \"Battle\"",
+   "year": 2277,
+   "title": "First Battle of Hoover Dam",
+   "loc": [
+    "Hoover Dam",
+    "The Fort"
+   ]
+  },
+  "106": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2277,
+   "title": "Fall of Raven Rock",
+   "loc": [
+    "Raven Rock"
+   ]
+  },
+  "107": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2277,
+   "title": "The Citadel secured",
+   "loc": [
+    "The Citadel"
+   ]
+  },
+  "108": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2277,
+   "title": "Lyons' Pride breaks the Enclave at the Purifier",
+   "loc": [
+    "The Citadel"
+   ]
+  },
+  "109": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2277,
+   "title": "Fall of Shady Sands",
+   "loc": [
+    "Ruins of Shady Sands"
+   ]
+  },
+  "110": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2277,
+   "title": "The Legion fortifies Fortification Hill opposite the Dam",
+   "loc": [
+    "The Fort"
+   ]
+  },
+  "111": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2277,
+   "title": "The Legion enslaves Cottonwood Cove as its river crossing",
+   "loc": [
+    "Cottonwood Cove"
+   ]
+  },
+  "112": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2277,
+   "title": "The Legate is burned alive for the Dam's defeat",
+   "loc": [
+    "Grand Canyon"
+   ]
+  },
+  "113": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2277,
+   "title": "Project Purity is activated, flooding the Capital Wasteland with clean water",
+   "loc": [
+    "The Citadel"
+   ]
+  },
+  "114": {
+   "kind": "destruction",
+   "basis": "title matched the destruction rule: \"wiped out\"",
+   "year": 2277,
+   "title": "The Divide catastrophe: Hopeville and Ashton wiped out",
+   "loc": [
+    "The Divide"
+   ]
+  },
+  "115": {
+   "kind": "opening",
+   "basis": "title matched the opening rule: \"opens\"",
+   "year": 2277,
+   "title": "Vault 81 opens its door for the first time",
+   "loc": [
+    "Vault 81"
+   ]
+  },
+  "116": {
+   "kind": "battle",
+   "basis": "title matched the battle rule: \"Massacre\"",
+   "year": 2278,
+   "title": "Bitter Springs Massacre",
+   "loc": [
+    "Bitter Springs"
+   ]
+  },
+  "117": {
+   "kind": "destruction",
+   "basis": "title matched the destruction rule: \"annihilated\"",
+   "year": 2278,
+   "title": "Broken Steel epilogue: the Enclave's remnant is annihilated",
+   "loc": [
+    "Adams Air Force Base"
+   ]
+  },
+  "118": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2281,
+   "title": "The remnants endure",
+   "loc": [
+    "Jacobstown"
+   ]
+  },
+  "119": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2281,
+   "title": "The Legion's Mojave hold",
+   "loc": [
+    "Nelson",
+    "Cottonwood Cove"
+   ]
+  },
+  "120": {
+   "kind": "battle",
+   "basis": "title matched the battle rule: \"Battle\"",
+   "year": 2281,
+   "title": "Second Battle of Hoover Dam",
+   "loc": [
+    "Hoover Dam",
+    "The Fort"
+   ]
+  },
+  "121": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2281,
+   "title": "NCR Exiles flee north",
+   "loc": [
+    "Camp Phoenix"
+   ]
+  },
+  "122": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2281,
+   "title": "Northern Legion strikes",
+   "loc": [
+    "Ostia"
+   ]
+  },
+  "123": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2281,
+   "title": "Crusaders of Steel arrive",
+   "loc": [
+    "Camp Phoenix"
+   ]
+  },
+  "124": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2281,
+   "title": "White Legs broken at Zion; tribal kin scattered",
+   "loc": [
+    "Zion Canyon"
+   ]
+  },
+  "125": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2281,
+   "title": "The Courier is shot and left for dead outside Goodsprings",
+   "loc": [
+    "Goodsprings"
+   ]
+  },
+  "126": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2281,
+   "title": "Caesar's Legion burns Nipton to the ground",
+   "loc": [
+    "Nipton"
+   ]
+  },
+  "127": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2281,
+   "title": "Ulysses confronts the Courier at the Divide",
+   "loc": [
+    "The Divide"
+   ]
+  },
+  "128": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2281,
+   "title": "Mr. House preserves the Strip's neutrality through the NCR-Legion war",
+   "loc": [
+    "The Strip"
+   ]
+  },
+  "129": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2282,
+   "title": "The Silent Years begin",
+   "loc": [
+    "Kearny Airfield (Wendover Field)"
+   ]
+  },
+  "130": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2287,
+   "title": "The Prydwen reaches the Commonwealth",
+   "loc": [
+    "Boston Airport"
+   ]
+  },
+  "131": {
+   "kind": "opening",
+   "basis": "title matched the opening rule: \"emerges\"",
+   "year": 2287,
+   "title": "The Sole Survivor emerges from Vault 111",
+   "loc": [
+    "Vault 111"
+   ]
+  },
+  "132": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2287,
+   "title": "Nick Valentine is freed from Vault 114",
+   "loc": [
+    "Vault 114"
+   ]
+  },
+  "133": {
+   "kind": "battle",
+   "basis": "title matched the battle rule: \"Battle\"",
+   "year": 2287,
+   "title": "Battle of Bunker Hill",
+   "loc": [
+    "Bunker Hill"
+   ]
+  },
+  "134": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2287,
+   "title": "Diamond City's mayor exposed as an Institute synth",
+   "loc": [
+    "Diamond City"
+   ]
+  },
+  "135": {
+   "kind": "construction",
+   "basis": "title matched the construction rule: \"built\"",
+   "year": 2287,
+   "title": "The Prydwen was built at Adams Air Force Base",
+   "loc": [
+    "Adams Air Force Base"
+   ]
+  },
+  "136": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2287,
+   "title": "The Commonwealth's fate forks on the Sole Survivor's final choice",
+   "loc": [
+    "The Institute"
+   ]
+  },
+  "137": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2295,
+   "title": "Only three of the Remnant Church remain",
+   "loc": [
+    "The Cathedral"
+   ]
+  },
+  "138": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "Lucy leaves Vault 33",
+   "loc": [
+    "Vaults 33/32/31",
+    "Filly"
+   ]
+  },
+  "139": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "The Ghoul and the bounty",
+   "loc": [
+    "Super Duper Mart"
+   ]
+  },
+  "140": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "Moldaver seizes the cold fusion",
+   "loc": [
+    "Griffith Observatory"
+   ]
+  },
+  "141": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "Vault-Tec/Enclave conspiracy",
+   "loc": [
+    "Vaults 33/32/31",
+    "Enclave Research Base"
+   ]
+  },
+  "142": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "Quintus convenes the chapter elders against the Commonwealth",
+   "loc": [
+    "Grand Canyon",
+    "Coronado",
+    "Yosemite"
+   ]
+  },
+  "143": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "The Resurgence",
+   "loc": [
+    "Kearny Airfield (Wendover Field)"
+   ]
+  },
+  "144": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "The tribe's present era: salt-flat sovereignty amid three armies",
+   "loc": [
+    "Wendover",
+    "Bonneville Salt Flats"
+   ]
+  },
+  "145": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "Vault 4 shelters Shady Sands's survivors",
+   "loc": [
+    "Vault 4"
+   ]
+  },
+  "146": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "Scientist Wilzig defects from the Enclave with a cold-fusion prototype",
+   "loc": [
+    "Enclave Research Base"
+   ]
+  },
+  "147": {
+   "kind": "discovery",
+   "basis": "title matched the discovery rule: \"revealed\"",
+   "year": 2296,
+   "title": "Hank MacLean revealed as Shady Sands's bomber",
+   "loc": [
+    "Griffith Observatory"
+   ]
+  },
+  "148": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "RobCo's implant chip exposed as the bombing's mechanism",
+   "loc": [
+    "Ruins of Shady Sands"
+   ]
+  },
+  "149": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "Maximus kills Paladin Harkness",
+   "loc": [
+    "Brotherhood Outpost"
+   ]
+  },
+  "150": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "Arthur Maxson confirmed as the Commonwealth's living Elder",
+   "loc": [
+    "Boston Airport"
+   ]
+  },
+  "151": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "Lucy and the Ghoul reach New Vegas; the show reintroduces Mr. House",
+   "loc": [
+    "The Strip"
+   ]
+  },
+  "152": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "The Church's final collapse; Orac makes his way to Wendover",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "153": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2297,
+   "title": "Orac busks in the Bazaar; funds care for Unity veterans",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "154": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2298,
+   "title": "Orac earns the town's trust; becomes Wendover's guardian",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "155": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2299,
+   "title": "The blue wizard comes to the Tree",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "156": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2300,
+   "title": "Orac assembles \"the Gardeners\"",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "157": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2301,
+   "title": "The Tree's absorption accelerates",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "158": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2302,
+   "title": "A new Master takes root",
+   "loc": [
+    "The New Master"
+   ]
+  }
+ }
+}

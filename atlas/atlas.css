@@ -213,6 +213,19 @@
    when zoomed out, the detailed regions dominate once zoomed in. Subtle,
    no hard pop: opacity only, eased, honouring reduced-motion globally. */
 .atl .macrolayer{opacity:.8;transition:opacity .3s ease}
+/* THE TERRITORY EDGE IS DRAWN INWARD, not straddling the border.
+   The base map's own style gives .macro a 3px stroke CENTRED on its outline, so where two
+   territories share a border each spills 1.5px across it and the one painted later covers the
+   other. Reported by the owner from the rendered map: "the blue has overpowered the surrounding
+   lines - they should look equal sharing the edges 50 50".
+   Dropping the stroke to zero and inking the edge with a filter built from the shape's OWN alpha
+   fixes it by construction rather than by choosing a width: the glow cannot leave the shape, so
+   two neighbours meet exactly on the shared line and each owns its own side. Fifty-fifty is not
+   arranged here, it is the only thing the filter can produce.
+   It is also the look asked for. A wash that deepens toward its boundary is how an inked or
+   painted map reads, and on a phosphor screen an edge glowing inward reads as bloom rather than
+   as a drawn line. The filter itself is atl-macro-ink, built in atlas.mjs beside the field defs. */
+.atl .macro{stroke-width:0;filter:url(#atl-macro-ink)}
 .atl .atl-map.zoomed .macrolayer{opacity:.05}
 
 /* region-name labels (stage 2): one <text> per region with a `primary` name
@@ -678,3 +691,154 @@
     radial-gradient(ellipse 120% 100% at 50% 40%,transparent 55%,hsl(var(--p) 60% 2% / .55) 100%),
     repeating-linear-gradient(0deg,hsl(0 0% 0% / .13) 0 1px,transparent 1px 3px);
 }
+
+/* ===================== MONOCHROME MAP =====================
+   One phosphor colour for the whole map, with identity carried by fill pattern instead of hue.
+
+   WHY IT EXISTS. In colour the map spends its hue budget on faction identity, and the sigil fill
+   patterns are a SECOND channel saying the same thing: redundant, and busy enough at any usable
+   zoom to be worth removing. That is why patterns were narrowed to the twelve macro territories,
+   and why in colour they are hidden entirely below. Monochrome spends the hue budget on the
+   terminal's own phosphor instead, so nothing is left to separate two neighbours except
+   lightness, the region-name labels, and the patterns. This is the mode the pattern work exists
+   for.
+
+   WHY A FILTER RATHER THAN RECOLOURING THE REGIONS. 182 of the 188 territories carry a literal
+   `fill="#hex"` attribute; only 6 use the basemap's .fac-* classes. So redefining the seven
+   --fac-* variables reached six regions and left the rest in full colour, which is what the
+   first attempt did. Overriding every fill in CSS would work and would flatten all 188 to one
+   tone, losing the only ordering monochrome has left.
+   grayscale() collapses hue while KEEPING each region's luminance, so the tonal separation the
+   artist drew survives; the sepia/saturate/hue-rotate that follows is the same treatment
+   index.css already applies to document images, reusing --img-hue and --img-sat so the map
+   tracks the theme rather than carrying a second opinion about what the phosphor is.
+
+   BOTH LAYERS, and that is the whole point. .macrolayer holds the five great powers drawn over
+   the territory fills, and it is a SIBLING of .baselayer rather than a child, so tinting only
+   the base left NCR gold, Legion red and Vault blue burning through a monochrome map. Hue would
+   still have been carrying faction identity, which is exactly the thing this mode gives up in
+   order to make the patterns mean something. */
+.atl.mono .baselayer,
+.atl.mono .macrolayer{
+  filter:
+    grayscale(1)
+    sepia(0.92)
+    saturate(calc(var(--img-sat, 2.1) * 0.55))
+    hue-rotate(var(--img-hue, 0deg))
+    brightness(1.04) contrast(1.03);
+}
+
+/* Patterns are information in mono and decoration in colour, so they render in exactly one of
+   the two. The layer is built and kept current either way, and hiding it costs nothing and means
+   toggling the mode needs no rebuild of the overlay. It sits OUTSIDE .baselayer, so the tint
+   above never touches it and the textures stay crisp. */
+.atl .atl-patterns{ display:none; }
+.atl.mono .atl-patterns{ display:block; }
+
+/* Faction pins keep their own hues: they are POINTS on a field, so they never had to compete
+   with the territory fills for separability, and desaturating them would lose the one cue that
+   still works at this size. */
+
+/* ===================== SUB-TERRITORIES =====================
+   Powers the base trace is too coarse to draw: the Republic of the Shi and the Founding BoS both
+   sit inside region 6, which IS the New California Republic's polygon and roughly fifty times
+   their size. Drawn OVER the base rather than carved out of it, because the abutment and
+   pattern-adjacency gates rely on the topology's shared-arc property and subdividing a region
+   would change what adjacent means underneath them.
+
+   Read as an inset rather than a territory in its own right: a heavier stroke than the base
+   regions carries the boundary, and the fill stays light so the parent's colour still shows
+   through and the nesting is legible. They inherit the .fac-* classes, so they follow the theme
+   and the monochrome tint exactly as everything else does. */
+.atl .sublayer{ pointer-events:none; }
+.atl .subterr{
+  fill-opacity:.30;
+  stroke-width:1.6; vector-effect:non-scaling-stroke; stroke-opacity:.95;
+  stroke-dasharray:3 2;
+}
+
+/* ===================== GREAT WAR DETONATION SITES =====================
+   61 craters, shown only while the Great War is the selected event. The bombs belong to the
+   timeline rather than to the map: they are one moment, not a standing feature of 2302, and
+   drawing them permanently would turn a map of the present day into a map of the day it ended.
+
+   Two circles per site, not a glyph: a wave that expands once on reveal and a core that stays.
+   Drawn in the phosphor's own hot end rather than in a faction colour, because this predates
+   every faction on the map by two centuries and belongs to none of them. */
+.atl .blastlayer{ pointer-events:none; opacity:0; transition:opacity .45s ease; }
+.atl.show-blast .blastlayer{ opacity:1; }
+
+.atl .blast-core{
+  fill:hsl(var(--p) calc(90% * var(--psat)) 72%);
+  stroke:hsl(var(--p) calc(100% * var(--psat)) 88%); stroke-width:1.5;
+  vector-effect:non-scaling-stroke;
+}
+.atl .blast-wave{
+  fill:hsl(var(--p) calc(85% * var(--psat)) 60% / .10);
+  stroke:hsl(var(--p) calc(95% * var(--psat)) 70% / .55); stroke-width:1.2;
+  vector-effect:non-scaling-stroke;
+  transform-origin:center; transform-box:fill-box;
+}
+/* The expansion runs once when the layer is revealed, then rests. A permanent pulse across 61
+   sites would be 61 things moving whenever the reader is trying to read something else. */
+.atl.show-blast .blast-wave{ animation:atl-blast .9s ease-out 1 both; }
+@keyframes atl-blast{
+  from{ transform:scale(.2); opacity:0; }
+  60% { opacity:1; }
+  to  { transform:scale(1);  opacity:.85; }
+}
+@media (prefers-reduced-motion: reduce){
+  .atl.show-blast .blast-wave{ animation:none; }
+}
+
+/* ===================== TERRITORY WEIGHT =====================
+   Every one of the 188 territories used to be drawn at the same fill and the same stroke, so a
+   continental power read exactly as loud as an unnamed 1,800px sliver next to it. The map had
+   colour but no HIERARCHY, and colour without hierarchy is 188 things all shouting.
+
+   The ladder below is the region's own recorded scale, stamped onto each path by atlas.mjs. A
+   region with no scale is drawn as `minor`, which is the honest default: 79 of the 129 named
+   regions have none, and "unknown, so draw it quietly" keeps the map readable while anything
+   promoted later gets louder by GAINING data rather than by being special-cased.
+
+   THE BORDER IS THE SUBTLE PART. Every region strokes its own outline, so a shared border is two
+   strokes stacked on the same line. Where a major meets a minor that used to double to an
+   arbitrary weight; now the ladder makes the major side dominate, so the line reads as belonging
+   to the more important of the two and the halo stays even instead of pooling wherever two
+   neighbours happened to both be drawn strongly. Between two majors both are strong and the
+   border is deliberately crisp, which is where a reader wants the most definition. */
+.atl .terr[data-scale="continental"]{ fill-opacity:.44; stroke-opacity:.88; stroke-width:1.6; }
+.atl .terr[data-scale="regional"]   { fill-opacity:.38; stroke-opacity:.74; stroke-width:1.35; }
+.atl .terr[data-scale="district"]   { fill-opacity:.29; stroke-opacity:.48; stroke-width:1.0; }
+.atl .terr[data-scale="local"]      { fill-opacity:.22; stroke-opacity:.33; stroke-width:.85; }
+.atl .terr[data-scale="minor"]      { fill-opacity:.18; stroke-opacity:.24; stroke-width:.75; }
+
+/* In monochrome the hue channel is spent on the phosphor, so the ladder has to do more work:
+   with no colour to separate neighbours, weight and pattern are what is left. Spread further
+   apart than in colour for exactly that reason. */
+.atl.mono .terr[data-scale="continental"]{ fill-opacity:.50; stroke-opacity:.95; }
+.atl.mono .terr[data-scale="regional"]   { fill-opacity:.42; stroke-opacity:.80; }
+.atl.mono .terr[data-scale="district"]   { fill-opacity:.28; stroke-opacity:.46; }
+.atl.mono .terr[data-scale="local"]      { fill-opacity:.19; stroke-opacity:.28; }
+.atl.mono .terr[data-scale="minor"]      { fill-opacity:.14; stroke-opacity:.20; }
+
+/* ===================== TIMELINE, COLLAPSED BY DEFAULT =====================
+   Measured at a 1102px viewport: the atlas is 949px, of which the map is 601 and the timeline
+   304. The lanes are 234 of that 304 and the overview strip another 14. Hiding those two returns
+   248px to the map, 41% more map, for a surface the reader has not asked for yet.
+
+   The HEAD stays, and that is the design rather than a compromise. It already carries the thread
+   picker and Prev/Next, so while collapsed every event is still reachable and still filterable
+   by faction. Collapsing the whole section would have removed the map's main navigation, which
+   is the thing worth not doing.
+
+   The lane zoom controls are hidden when collapsed: they act on a surface that is not visible,
+   and a control that does nothing you can see is worse than one that is absent. */
+.atl .tl-toggle{ margin-right:8px; }
+.atl:not(.tl-open) .tlscroll,
+.atl:not(.tl-open) .tlov{ display:none; }
+.atl:not(.tl-open) #tlzin,
+.atl:not(.tl-open) #tlzout,
+.atl:not(.tl-open) #tlzfit{ display:none; }
+/* Collapsed, the section is its own header and should not reserve lane height. */
+.atl:not(.tl-open) .tl{ min-height:0; flex:0 0 auto; }

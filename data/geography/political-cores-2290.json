@@ -1,0 +1,383 @@
+{
+ "_doc": "Atlas regions that the 2290 sheet draws as a STRONGHOLD - a deeper shade of a power's own hue, enclosed by that power's wider claim. Derived from source-maps/2290-components-classified.json by containment: 2290 pixels are projected through 2290-georef.json and its east correction into atlas pixel space, and tallied against the rasterised region topology. NO new geometry is created; a core is a SET of existing atlas regions, which is why this survives a registration good enough for containment and not for boundaries.",
+ "era": 2290,
+ "eraNote": "The present day is about 2302, so this is a dated claim and not current state. It must never overwrite present-day geometry.",
+ "model": "One extent plus zero or more cores, decided by the owner 2026-08-03. Most territories have no core and that is a normal answer, not a missing value.",
+ "confidence": "Containment only. Region membership is robust to the registration's residual because it needs the answer inside the right polygon, not on the right line. Components with a high offMapFrac in the source extraction are the eastern ones the east correction only partly resolves.",
+ "regionIds": [
+  7,
+  10,
+  15,
+  24,
+  30,
+  39,
+  40,
+  44,
+  46,
+  59,
+  62,
+  65,
+  69,
+  72,
+  73,
+  76,
+  80,
+  90,
+  93,
+  100,
+  115,
+  118,
+  119,
+  123,
+  134,
+  143,
+  149,
+  171,
+  178
+ ],
+ "detail": {
+  "7": {
+   "share": 0.475,
+   "sources": [
+    {
+     "component": 71,
+     "colour": "#fbb575",
+     "areaPx": 9463,
+     "share": 0.475
+    }
+   ]
+  },
+  "10": {
+   "share": 1.0,
+   "sources": [
+    {
+     "component": 63,
+     "colour": "#e74138",
+     "areaPx": 5712,
+     "share": 0.889
+    },
+    {
+     "component": 64,
+     "colour": "#e74138",
+     "areaPx": 240,
+     "share": 1.0
+    }
+   ]
+  },
+  "15": {
+   "share": 0.185,
+   "sources": [
+    {
+     "component": 3,
+     "colour": "#1c6241",
+     "areaPx": 22086,
+     "share": 0.185
+    }
+   ]
+  },
+  "24": {
+   "share": 0.73,
+   "sources": [
+    {
+     "component": 3,
+     "colour": "#1c6241",
+     "areaPx": 22086,
+     "share": 0.73
+    }
+   ]
+  },
+  "30": {
+   "share": 0.333,
+   "sources": [
+    {
+     "component": 39,
+     "colour": "#b39a24",
+     "areaPx": 631,
+     "share": 0.333
+    }
+   ]
+  },
+  "39": {
+   "share": 0.475,
+   "sources": [
+    {
+     "component": 75,
+     "colour": "#ff8b3e",
+     "areaPx": 9609,
+     "share": 0.475
+    }
+   ]
+  },
+  "40": {
+   "share": 0.263,
+   "sources": [
+    {
+     "component": 75,
+     "colour": "#ff8b3e",
+     "areaPx": 9609,
+     "share": 0.263
+    }
+   ]
+  },
+  "44": {
+   "share": 1.0,
+   "sources": [
+    {
+     "component": 10,
+     "colour": "#23a380",
+     "areaPx": 229,
+     "share": 1.0
+    }
+   ]
+  },
+  "46": {
+   "share": 0.072,
+   "sources": [
+    {
+     "component": 72,
+     "colour": "#fbb575",
+     "areaPx": 9665,
+     "share": 0.072
+    }
+   ]
+  },
+  "59": {
+   "share": 0.844,
+   "sources": [
+    {
+     "component": 34,
+     "colour": "#a32914",
+     "areaPx": 816,
+     "share": 0.662
+    },
+    {
+     "component": 51,
+     "colour": "#cd3418",
+     "areaPx": 1144,
+     "share": 0.844
+    }
+   ]
+  },
+  "62": {
+   "share": 0.075,
+   "sources": [
+    {
+     "component": 3,
+     "colour": "#1c6241",
+     "areaPx": 22086,
+     "share": 0.075
+    }
+   ]
+  },
+  "65": {
+   "share": 0.12,
+   "sources": [
+    {
+     "component": 72,
+     "colour": "#fbb575",
+     "areaPx": 9665,
+     "share": 0.12
+    }
+   ]
+  },
+  "69": {
+   "share": 1.0,
+   "sources": [
+    {
+     "component": 58,
+     "colour": "#e2241b",
+     "areaPx": 390,
+     "share": 1.0
+    },
+    {
+     "component": 34,
+     "colour": "#a32914",
+     "areaPx": 816,
+     "share": 0.072
+    }
+   ]
+  },
+  "72": {
+   "share": 1.0,
+   "sources": [
+    {
+     "component": 57,
+     "colour": "#e1ae00",
+     "areaPx": 261,
+     "share": 1.0
+    }
+   ]
+  },
+  "73": {
+   "share": 0.438,
+   "sources": [
+    {
+     "component": 47,
+     "colour": "#c63d0f",
+     "areaPx": 656,
+     "share": 0.438
+    }
+   ]
+  },
+  "76": {
+   "share": 0.056,
+   "sources": [
+    {
+     "component": 72,
+     "colour": "#fbb575",
+     "areaPx": 9665,
+     "share": 0.056
+    }
+   ]
+  },
+  "80": {
+   "share": 0.148,
+   "sources": [
+    {
+     "component": 72,
+     "colour": "#fbb575",
+     "areaPx": 9665,
+     "share": 0.148
+    }
+   ]
+  },
+  "90": {
+   "share": 0.066,
+   "sources": [
+    {
+     "component": 19,
+     "colour": "#3f48cc",
+     "areaPx": 4582,
+     "share": 0.066
+    }
+   ]
+  },
+  "93": {
+   "share": 1.0,
+   "sources": [
+    {
+     "component": 39,
+     "colour": "#b39a24",
+     "areaPx": 631,
+     "share": 0.667
+    },
+    {
+     "component": 30,
+     "colour": "#9ecb16",
+     "areaPx": 573,
+     "share": 1.0
+    }
+   ]
+  },
+  "100": {
+   "share": 0.111,
+   "sources": [
+    {
+     "component": 63,
+     "colour": "#e74138",
+     "areaPx": 5712,
+     "share": 0.111
+    }
+   ]
+  },
+  "115": {
+   "share": 0.107,
+   "sources": [
+    {
+     "component": 72,
+     "colour": "#fbb575",
+     "areaPx": 9665,
+     "share": 0.107
+    }
+   ]
+  },
+  "118": {
+   "share": 0.171,
+   "sources": [
+    {
+     "component": 47,
+     "colour": "#c63d0f",
+     "areaPx": 656,
+     "share": 0.171
+    }
+   ]
+  },
+  "119": {
+   "share": 0.258,
+   "sources": [
+    {
+     "component": 75,
+     "colour": "#ff8b3e",
+     "areaPx": 9609,
+     "share": 0.258
+    }
+   ]
+  },
+  "123": {
+   "share": 0.451,
+   "sources": [
+    {
+     "component": 19,
+     "colour": "#3f48cc",
+     "areaPx": 4582,
+     "share": 0.451
+    }
+   ]
+  },
+  "134": {
+   "share": 0.052,
+   "sources": [
+    {
+     "component": 72,
+     "colour": "#fbb575",
+     "areaPx": 9665,
+     "share": 0.052
+    }
+   ]
+  },
+  "143": {
+   "share": 0.134,
+   "sources": [
+    {
+     "component": 19,
+     "colour": "#3f48cc",
+     "areaPx": 4582,
+     "share": 0.134
+    }
+   ]
+  },
+  "149": {
+   "share": 0.247,
+   "sources": [
+    {
+     "component": 47,
+     "colour": "#c63d0f",
+     "areaPx": 656,
+     "share": 0.247
+    }
+   ]
+  },
+  "171": {
+   "share": 0.13,
+   "sources": [
+    {
+     "component": 72,
+     "colour": "#fbb575",
+     "areaPx": 9665,
+     "share": 0.13
+    }
+   ]
+  },
+  "178": {
+   "share": 0.321,
+   "sources": [
+    {
+     "component": 19,
+     "colour": "#3f48cc",
+     "areaPx": 4582,
+     "share": 0.321
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,496 @@
+{
+  "_doc": "Great War detonation and crater sites, imported from the Fallout Universe KML (source-maps/fallout-universe-map.kml, snapshot 2026-07-26) by docs/changes/map-timeline/trace/kml_blast_sites.py. Coordinates are the KML's own lon/lat, which the owner made canonical for site geography; x/y is that coordinate through the shipped atlas-georef.json, so these sit in the same frame as the pins and regions. NOT the whole 'Great War' folder: that holds 245 placemarks, most of them checkpoints, crashes, ruins and looting rather than detonations.",
+  "sourceFolder": "Great War and immediate aftermath",
+  "folderTotal": 245,
+  "count": 61,
+  "sites": [
+    {
+      "name": "Visible crater",
+      "lon": -121.832207,
+      "lat": 37.268601,
+      "x": 710.7,
+      "y": 1914.9,
+      "note": "** A visible crater can be seen on the world map in Fallout 2. **"
+    },
+    {
+      "name": "Altered coastline",
+      "lon": -121.306167,
+      "lat": 35.784205,
+      "x": 720.5,
+      "y": 1986.7,
+      "note": "** A notably altered coastline, implying nuclear destruction, can be seen on Fallout 1's world map. **"
+    },
+    {
+      "name": "Giant crater",
+      "lon": -120.235822,
+      "lat": 34.512379,
+      "x": 751.4,
+      "y": 2054.8,
+      "note": "** A giant crater can be seen on Fallout 1's world map. **"
+    },
+    {
+      "name": "Giant crater",
+      "lon": -118.699154,
+      "lat": 34.051055,
+      "x": 802.1,
+      "y": 2090.0,
+      "note": "** A giant crater can be seen on Fallout 1's world map. **"
+    },
+    {
+      "name": "Giant crater",
+      "lon": -117.688302,
+      "lat": 33.569436,
+      "x": 835.4,
+      "y": 2120.7,
+      "note": "** A giant crater can be seen on Fallout 1's world map. **"
+    },
+    {
+      "name": "North of Searchlight",
+      "lon": -114.831358,
+      "lat": 35.576054,
+      "x": 937.3,
+      "y": 2052.9,
+      "note": "** As evidenced by several small craters and the presence of radiation. **"
+    },
+    {
+      "name": "Cottonwood Crater",
+      "lon": -114.709159,
+      "lat": 35.324841,
+      "x": 940.8,
+      "y": 2065.0,
+      "note": null
+    },
+    {
+      "name": "The One",
+      "lon": -114.156562,
+      "lat": 36.433092,
+      "x": 962.6,
+      "y": 2019.6,
+      "note": "** The One is likely one of the warheads deactivated by Mr. House. It appears via the Wild Wasteland perk. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -103.877572,
+      "lat": 43.267185,
+      "x": 1329.0,
+      "y": 1781.0,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -103.53663,
+      "lat": 43.288651,
+      "x": 1339.9,
+      "y": 1781.2,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -103.506427,
+      "lat": 43.569451,
+      "x": 1342.6,
+      "y": 1769.8,
+      "note": null
+    },
+    {
+      "name": "Visible crater",
+      "lon": -102.211263,
+      "lat": 43.337406,
+      "x": 1382.3,
+      "y": 1782.7,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -97.641,
+      "lat": 44.625974,
+      "x": 1533.9,
+      "y": 1737.5,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -97.374103,
+      "lat": 44.360903,
+      "x": 1540.9,
+      "y": 1748.2,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -96.931939,
+      "lat": 40.108231,
+      "x": 1541.6,
+      "y": 1921.8,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -96.843794,
+      "lat": 42.414467,
+      "x": 1549.7,
+      "y": 1826.7,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -96.706812,
+      "lat": 40.816327,
+      "x": 1550.1,
+      "y": 1892.3,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -97.0616,
+      "lat": 44.413072,
+      "x": 1551.0,
+      "y": 1746.2,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -96.779692,
+      "lat": 43.080645,
+      "x": 1554.1,
+      "y": 1799.6,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -96.91157,
+      "lat": 44.576829,
+      "x": 1556.6,
+      "y": 1739.7,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -96.382797,
+      "lat": 40.517753,
+      "x": 1560.2,
+      "y": 1904.6,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -96.310157,
+      "lat": 40.232519,
+      "x": 1562.1,
+      "y": 1916.5,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -96.406059,
+      "lat": 42.491269,
+      "x": 1564.0,
+      "y": 1823.5,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -96.455567,
+      "lat": 43.131009,
+      "x": 1564.6,
+      "y": 1797.6,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -96.252433,
+      "lat": 42.007478,
+      "x": 1567.5,
+      "y": 1843.2,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -96.314758,
+      "lat": 42.793495,
+      "x": 1567.9,
+      "y": 1811.2,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -96.159796,
+      "lat": 41.863555,
+      "x": 1570.1,
+      "y": 1849.0,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -95.79374,
+      "lat": 42.16564,
+      "x": 1582.7,
+      "y": 1836.6,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -95.543401,
+      "lat": 42.488401,
+      "x": 1591.7,
+      "y": 1823.3,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -94.784594,
+      "lat": 39.372385,
+      "x": 1611.6,
+      "y": 1951.4,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater (Kansas City)",
+      "lon": -94.650494,
+      "lat": 39.069695,
+      "x": 1616.1,
+      "y": 1963.9,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -94.356974,
+      "lat": 38.649037,
+      "x": 1625.9,
+      "y": 1981.3,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -89.984631,
+      "lat": 42.06363,
+      "x": 1770.0,
+      "y": 1830.6,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -89.826137,
+      "lat": 41.852465,
+      "x": 1774.9,
+      "y": 1838.7,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -89.690214,
+      "lat": 41.659296,
+      "x": 1779.2,
+      "y": 1846.1,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -89.689999,
+      "lat": 41.718066,
+      "x": 1779.3,
+      "y": 1843.7,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater",
+      "lon": -89.687068,
+      "lat": 41.838551,
+      "x": 1779.4,
+      "y": 1838.8,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater (Chicago)",
+      "lon": -87.888522,
+      "lat": 42.089247,
+      "x": 1837.8,
+      "y": 1822.4,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater (Chicago)",
+      "lon": -87.844464,
+      "lat": 42.221592,
+      "x": 1839.3,
+      "y": 1816.9,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater (Chicago)",
+      "lon": -87.766763,
+      "lat": 41.945143,
+      "x": 1841.7,
+      "y": 1827.7,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater (Chicago)",
+      "lon": -87.710505,
+      "lat": 41.825264,
+      "x": 1843.5,
+      "y": 1832.3,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "Visible crater (Chicago)",
+      "lon": -87.618499,
+      "lat": 41.753692,
+      "x": 1846.5,
+      "y": 1834.8,
+      "note": "** A visible crater can be seen on the world map in Fallout Tactics. **"
+    },
+    {
+      "name": "South mountain nuke crater",
+      "lon": -79.326353,
+      "lat": 38.702309,
+      "x": 2126.5,
+      "y": 1910.4,
+      "note": null
+    },
+    {
+      "name": "Recorded audio 2",
+      "lon": -77.961336,
+      "lat": 38.758883,
+      "x": 2171.9,
+      "y": 1897.0,
+      "note": "Auto-dictation of two presumed airbursts can be seen on a terminal in the Dunwich Building.<br><br>** This one was likely farther away, as there appears to be the distinct sound of a shockwave following the detonation. **"
+    },
+    {
+      "name": "Recorded audio 1",
+      "lon": -77.883595,
+      "lat": 38.831581,
+      "x": 2174.2,
+      "y": 1893.4,
+      "note": "Auto-dictation of two presumed airbursts can be seen on a terminal in the Dunwich building. <br><br>** This one was likely extremely close by, as the sound of the bomb physically falling through the air before it detonated was captured. It explains why the road leading to the Dunwich building is com"
+    },
+    {
+      "name": "South of Warrington",
+      "lon": -77.785768,
+      "lat": 38.566404,
+      "x": 2178.7,
+      "y": 1903.5,
+      "note": "** A crater is located due south from Warrington. It is visible on both the pip-boy map and from the top of Tenpenny Tower. **"
+    },
+    {
+      "name": "Bannister crater (small) 5",
+      "lon": -77.432646,
+      "lat": 39.034651,
+      "x": 2188.2,
+      "y": 1881.2,
+      "note": null
+    },
+    {
+      "name": "Bannister crater (small) 7",
+      "lon": -77.428616,
+      "lat": 39.042669,
+      "x": 2188.3,
+      "y": 1880.8,
+      "note": null
+    },
+    {
+      "name": "Bannister crater (small) 6",
+      "lon": -77.430329,
+      "lat": 39.039984,
+      "x": 2188.3,
+      "y": 1881.0,
+      "note": null
+    },
+    {
+      "name": "Bannister crater (small) 1",
+      "lon": -77.430157,
+      "lat": 39.03085,
+      "x": 2188.3,
+      "y": 1881.3,
+      "note": null
+    },
+    {
+      "name": "Bannister crater (small) 4",
+      "lon": -77.427926,
+      "lat": 39.035917,
+      "x": 2188.4,
+      "y": 1881.1,
+      "note": null
+    },
+    {
+      "name": "Bannister crater (small) 8",
+      "lon": -77.423338,
+      "lat": 39.044103,
+      "x": 2188.5,
+      "y": 1880.7,
+      "note": null
+    },
+    {
+      "name": "Bannister crater (small) 2",
+      "lon": -77.424407,
+      "lat": 39.030317,
+      "x": 2188.5,
+      "y": 1881.3,
+      "note": null
+    },
+    {
+      "name": "Bannister crater (small) 9",
+      "lon": -77.420635,
+      "lat": 39.043399,
+      "x": 2188.6,
+      "y": 1880.7,
+      "note": null
+    },
+    {
+      "name": "Bannister crater (large)",
+      "lon": -77.420389,
+      "lat": 39.036379,
+      "x": 2188.6,
+      "y": 1881.0,
+      "note": null
+    },
+    {
+      "name": "Bannister crater (small) 3",
+      "lon": -77.423462,
+      "lat": 39.033651,
+      "x": 2188.6,
+      "y": 1881.2,
+      "note": null
+    },
+    {
+      "name": "Bannister crater (small) 10",
+      "lon": -77.418052,
+      "lat": 39.040993,
+      "x": 2188.7,
+      "y": 1880.8,
+      "note": null
+    },
+    {
+      "name": "Bannister crater (small) 11",
+      "lon": -77.415156,
+      "lat": 39.035671,
+      "x": 2188.8,
+      "y": 1881.0,
+      "note": null
+    },
+    {
+      "name": "Bannister crater (small) 12",
+      "lon": -77.417544,
+      "lat": 39.032462,
+      "x": 2188.8,
+      "y": 1881.1,
+      "note": null
+    },
+    {
+      "name": "Cratered hamlet",
+      "lon": -77.20314,
+      "lat": 39.032436,
+      "x": 2195.9,
+      "y": 1879.3,
+      "note": null
+    },
+    {
+      "name": "Crater of Atom",
+      "lon": -71.475946,
+      "lat": 42.100603,
+      "x": 2370.9,
+      "y": 1699.5,
+      "note": null
+    }
+  ]
+}

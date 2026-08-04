@@ -56,6 +56,7 @@
    it never computes them. See tools/pattern-adjacency-gate.mjs for the rule
    that makes them worth having. */
 import { SIGIL_INK_OPACITY, SIGIL_PATTERN_SET, SIGIL_PATTERNS } from '../vendor/sigil-patterns.mjs';
+import { SIGIL_MARKER_SCALE, SIGIL_MARKERS } from '../vendor/sigil-markers.mjs';
 
 const SVGNS = 'http://www.w3.org/2000/svg';
 
@@ -537,11 +538,24 @@ const SIGILS = {
 
 /* ---- per-type pin glyphs: tiny CRT marks drawn in currentColor (the pin's
    faction colour), one per pin.type, in a ~12px box centred on 0,0 ---- */
+/* A pin glyph drawn from the sigil marker bundle rather than by hand here.
+   The bundle ships path data in the emblem's own 360-unit box centred on the origin, so one
+   scale lands it in this ~12-unit box with no translation. Colour is inherited: nothing names a
+   fill but `currentColor`, which is the pin's faction colour.
+   Sigil's markers are built for exactly this problem: its construction header says the app
+   "tells them apart by COLOUR ONLY; they must read apart by SHAPE at 16px", and its reduction
+   ratchet asserts the narrowest kept feature survives as a whole pixel. Hand-drawn glyphs below
+   have no such check. */
+const sigilGlyph = (name) => (g) => {
+  const inner = el('g', {transform:`scale(${SIGIL_MARKER_SCALE})`}, g);
+  for (const d of SIGIL_MARKERS[name]) el('path', {d, fill:'currentColor'}, inner);
+};
+
 const GLYPHS = {
-  vault(g){         /* gear ring with a dot core */
-    el('path', {d:gearPath(5.2), fill:'none', stroke:'currentColor', 'stroke-width':1.2}, g);
-    el('circle', {r:1.6, fill:'currentColor'}, g);
-  },
+  /* The first type moved onto sigil, deliberately one rather than all: the delivery path is what
+     failed silently last time, so it is proven end to end on a single glyph before the rest
+     follow. The hand-drawn gear ring it replaces is in git if the shape is preferred. */
+  vault: sigilGlyph('vault'),
   city(g){          /* stacked skyline bars */
     el('rect', {x:-4.2, y:-1,   width:2.2, height:5,   fill:'currentColor'}, g);
     el('rect', {x:-1,   y:-4,   width:2.2, height:8,   fill:'currentColor'}, g);
@@ -590,6 +604,8 @@ const MARKUP = `
       <button class="atl-btn" id="scope-local"  type="button" aria-pressed="false">LOCAL</button>
     </div>
     <div class="fsctl">
+      <button class="atl-btn" id="atl-mono" type="button" aria-pressed="false"
+              title="Draw the map in one phosphor colour. Territories are then told apart by fill pattern rather than by hue.">&#9673; Mono</button>
       <button class="atl-btn" id="atl-fs" type="button" aria-pressed="false">&#9974; Fullscreen</button>
     </div>
   </div>
@@ -617,6 +633,8 @@ const MARKUP = `
 
   <section class="tl" aria-label="Event timeline, 2000 to 2308">
     <div class="tlhead">
+      <button class="atl-btn tl-toggle" id="tl-toggle" type="button" aria-expanded="false"
+              aria-controls="lanes tlov" title="Show or hide the event lanes">&#9662; Lanes</button>
       <h2 class="atl-kicker atl-rule">Timeline <em>2000&#8229;2308</em></h2>
       <div class="threadbox">
         <label id="thread-lbl">THREAD</label>
@@ -881,6 +899,69 @@ export function mount(container, data, opts = {}){
   let regionMeta = null;
   const regionLabelEls = {};        /* region id -> <text>, built lazily */
   const regionLabelPointCache = {}; /* tier -> Map(id -> [x,y]), computed once per tier */
+  /* ---- sub-territories: powers the base map is too coarse to draw ----
+     The live regions are coarser than the 2290 map's territories in places. Region 6 is ONE
+     polygon carrying the New California Republic, and the 2290 drawing puts three polities on
+     that same ground: the NCR, the Republic of the Shi and the Founding BoS. Joining their names
+     onto region 6 made them searchable, not visible, because a region draws one label.
+     So they are drawn OVER the base rather than carved out of it. The topology is never
+     subdivided: the abutment and pattern-adjacency gates both rely on its shared-arc property,
+     and splitting a region would change what adjacent means underneath them.
+     Geometry is the 2290 cartographer's own traced polygon projected into this pixel space, so
+     the boundary is read rather than invented. See
+     docs/changes/map-timeline/trace/build_subterritories.py.
+     Fail-safe like every other data layer here: a missing or malformed file leaves the map
+     working with no sub-territories, never a broken mount. */
+  /* NOT CLIPPED AT RUNTIME, and that was tried. Founding BoS used to float a lobe of territory
+     in the open Pacific, and the first fix clipped this layer to the drawn coastline with an SVG
+     clipPath. It worked and it cost more than it was worth: tests/browser/map-patterns.spec.js
+     went red because the sigil fill patterns stopped surviving the mount whenever that clipPath
+     was present. Isolated by removing the clip alone and watching the test pass, twice.
+     The mechanism was never identified, which is the point. The clip was a SAFETY NET over data
+     that is wrong, and the data is not wrong any more: the placement is corrected at build time
+     by an anchor-justified offset (subterritories-authored.json) and tools/subterritory-anchor-gate.mjs
+     fails if any vertex lands in the sea or a territory stops containing the place it is named
+     for. Fixing the data and gating it beats hiding the symptom at render time and paying for a
+     side effect nobody could explain. */
+  const subLayer = el('g', {class:'sublayer', 'aria-hidden':'true'}, svg);
+  fetch(new URL('../data/atlas-subterritories.json', import.meta.url))
+    .then(res => res.ok ? res.json() : null)
+    .then(json => {
+      const subs = json && Array.isArray(json.subterritories) ? json.subterritories : [];
+      for (const s of subs){
+        if (!s || typeof s.d !== 'string' || !s.d) continue;
+        el('path', {
+          class: 'subterr' + (s.faction ? ' fac-' + s.faction : ''),
+          d: s.d,
+          'data-sub': s.id || '',
+        }, subLayer);
+      }
+    })
+    .catch(err => console.error('atlas.mjs: sub-territories failed to load; none drawn', err));
+
+  /* ---- Great War detonation sites ----
+     61 crater and detonation records imported from the Fallout Universe KML, shown only while
+     the Great War is the selected event. The bombs belong to the TIMELINE: they are one moment,
+     not a standing feature of 2302, and drawing them permanently would make a map of the present
+     day into a map of the day it ended. Bound to the event, the whole continent lights up at
+     once for as long as that event is selected, which is the fact worth feeling.
+     Positions are the KML's own lon/lat through the shipped georeference, so they sit in the
+     same frame as the pins; the Chicago craters land within 3px of the Chicago control point.
+     Fail-safe like every other data layer: a missing file leaves the map working without them. */
+  const blastLayer = el('g', {class:'blastlayer', 'aria-hidden':'true'}, svg);
+  fetch(new URL('../data/atlas-blast-sites.json', import.meta.url))
+    .then(res => res.ok ? res.json() : null)
+    .then(json => {
+      const sites = json && Array.isArray(json.sites) ? json.sites : [];
+      for (const s of sites){
+        if (typeof s.x !== 'number' || typeof s.y !== 'number') continue;
+        const g = el('g', {class:'blast', transform:`translate(${s.x} ${s.y})`}, blastLayer);
+        el('circle', {class:'blast-wave', r:'26'}, g);
+        el('circle', {class:'blast-core', r:'5'}, g);
+      }
+    })
+    .catch(err => console.error('atlas.mjs: blast sites failed to load; none drawn', err));
+
   const terrLabelsG = el('g', {class:'terrlabels', 'aria-hidden':'true'}, svg);
   fetch(new URL('../data/atlas-region-meta.json', import.meta.url))
     .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
@@ -889,6 +970,21 @@ export function mount(container, data, opts = {}){
         throw new Error('malformed atlas-region-meta.json: missing "regions"');
       }
       regionMeta = json.regions;
+      /* Stamp each territory with its own weight, so the STYLESHEET can say what a major power
+         looks like against a district. Until now the renderer knew a region's scale and the DOM
+         did not, so every one of the 188 was drawn at the same fill and the same stroke: the map
+         had no visual hierarchy at all, and a continental power read exactly as loud as an
+         unnamed 1,800px sliver beside it.
+         Iterate the ELEMENTS, not the metadata. 59 of the 188 regions have no metadata entry at
+         all, and a first version looped over regionMeta and left exactly those unstamped, so
+         they kept the basemap's default 0.34 fill and 0.55 stroke and ended up LOUDER than the
+         districts. The regions the map knows least about were shouting the most.
+         Absence is drawn as `minor`, which is the honest reading: "unknown, so draw it quietly".
+         Anything promoted later gets louder by GAINING data rather than by being special-cased. */
+      for (let id = 0; id < regionEls.length; id++){
+        const p = regionEls[id];
+        if (p) p.setAttribute('data-scale', (regionMeta[id] && regionMeta[id].scale) || 'minor');
+      }
       /* a slow LOD fetch can resolve before this one; if tier geometry is
          already up, label it now instead of waiting for the next zoom. */
       if (currentTier) renderRegionLabels(currentTier);
@@ -1178,7 +1274,44 @@ export function mount(container, data, opts = {}){
     + '<pattern id="atl-ditherpat" patternUnits="userSpaceOnUse" width="9" height="9">'
     + '<circle cx="4.5" cy="4.5" r="2.6" fill="#fff"/></pattern>'
     + '<mask id="atl-dither" maskUnits="userSpaceOnUse" x="0" y="0" width="' + W + '" height="' + H + '">'
-    + '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="url(#atl-ditherpat)"/></mask>';
+    + '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="url(#atl-ditherpat)"/></mask>'
+    /* INKED TERRITORY EDGES, drawn INWARD.
+       A macro territory used to carry a 3px stroke CENTRED on its outline, so where two of them
+       share a border each spilled 1.5px across it and whichever painted last covered the other.
+       The owner saw it exactly: "the blue has overpowered the surrounding lines - they should look
+       equal sharing the edges 50 50".
+       An inner glow fixes the overlap by construction rather than by tuning a width. It is
+       generated from the shape's OWN alpha, so it cannot extend past the shape: two neighbours'
+       edges meet on the shared line and each owns its own side. Fifty-fifty is not arranged, it is
+       the only thing the filter can produce.
+       It also happens to be the look that was asked for. A wash that darkens toward its boundary
+       is how an inked or painted map reads, and on a phosphor screen an edge that glows inward
+       reads as CRT bloom rather than as a drawn line.
+       Built here, in the defs that already exists. Adding a SECOND defs to this SVG silently broke
+       the sigil fill patterns earlier today and the cause was never identified. */
+    + '<filter id="atl-macro-ink" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">'
+    /* Invert the alpha so everything OUTSIDE the territory is opaque... */
+    + '<feComponentTransfer in="SourceAlpha" result="outside">'
+    + '<feFuncA type="table" tableValues="1 0"/></feComponentTransfer>'
+    /* ...blur that, so the outside bleeds a soft ramp across the boundary... */
+    /* ...blurred TWICE, at two scales, because the owner asked for lines that glow inward rather
+       than for the line to be replaced by a glow. The tight pass is the drawn edge; the wide one
+       is the bloom behind it. One blur alone gives either a hard line with no light or a soft
+       wash with no line, and an inked map has both. */
+    + '<feGaussianBlur in="outside" stdDeviation="0.7" result="rimBleed"/>'
+    + '<feGaussianBlur in="outside" stdDeviation="3.2" result="glowBleed"/>'
+    /* Keep only what lies INSIDE the shape. Each survives as a band hugging the inside of the
+       outline, so neither can cross into a neighbour and the shared edge is halved exactly. */
+    + '<feComposite in="rimBleed" in2="SourceAlpha" operator="in" result="rimBand"/>'
+    + '<feComposite in="glowBleed" in2="SourceAlpha" operator="in" result="glowBand"/>'
+    /* Painted in the territory's OWN colour rather than a fixed ink, so each faction keeps its
+       identity hue and the monochrome mode still tints everything at once. */
+    + '<feComposite in="SourceGraphic" in2="rimBand" operator="in" result="rim"/>'
+    + '<feComposite in="SourceGraphic" in2="glowBand" operator="in" result="glow"/>'
+    /* Wash, then bloom, then the edge itself twice over: unchanged inland, luminous approaching
+       the border, and definite at it. */
+    + '<feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="glow"/>'
+    + '<feMergeNode in="rim"/><feMergeNode in="rim"/><feMergeNode in="rim"/></feMerge></filter>';
   const fieldsG = el('g', {class:'fieldlayer', 'aria-hidden':'true',
                            mask:'url(#atl-dither)'}, svg);
   let fieldData = null, fieldLoad = null, fieldsBuilt = false;
@@ -1391,10 +1524,21 @@ export function mount(container, data, opts = {}){
   /* ========================= VIEW (zoom / pan) ========================= */
   let view = {x:CONUS.x, y:CONUS.y, w:CONUS.w, h:CONUS.h};
   let animId = null;
+  /* The deepest zoom-in, as a viewBox width in world units. Was a bare 300 in two places, which
+     is about 9x on a 2778-wide canvas, and the owner reported the map "stops scrolling in at a
+     certain point": that point. 150 doubles it to roughly 18x. Nothing downstream breaks at the
+     new depth because everything that reads view.w CLAMPS rather than assuming a range:
+     labelCounterScale() bottoms out at LBL_CS_MIN and the pin group's own scale at .34, both
+     deliberate so that glyphs read as more prominent the further in you go.
+     Named rather than repeated, because the two copies are a clamp and a step and they have to
+     agree; when they did not, the step could ask for a width the clamp would not grant and the
+     wheel simply stopped responding with no other symptom. */
+  const ZOOM_FLOOR_W = 150;
+
   function clampView(v){
     /* zoom floor is COVER (floorW/floorH), not the raw canvas size, firm clamp,
        no rubber-band slack, so the viewBox can never leave the canvas. */
-    v.w = Math.min(Math.max(v.w, 300), floorW); v.h = v.w / ASPECT;
+    v.w = Math.min(Math.max(v.w, ZOOM_FLOOR_W), floorW); v.h = v.w / ASPECT;
     v.x = Math.min(Math.max(v.x, 0), W - v.w);
     v.y = Math.min(Math.max(v.y, 0), H - v.h);
     return v;
@@ -1422,7 +1566,23 @@ export function mount(container, data, opts = {}){
   const LBL_FONT_WORLD = 26.4;      /* world-unit font-size, matches .pin .lbl in the CRT stylesheet */
   const LBL_CHAR_W = 0.6;           /* IBM Plex Mono average advance width, in ems, an estimate, not a measured getBBox() (137 pins × every view would thrash layout) */
   const LBL_PAD_WORLD = 10;         /* padding/stroke-halo margin around each estimated box, world units */
+  /* MINIMUM GAP BETWEEN PLACED LABELS, in screen px.
+     Collision alone only guarantees that two names do not TOUCH, which is a much weaker promise
+     than that a map is readable: 22 place names were measured in one view around Wendover with
+     just 2 overlapping pairs, so nothing was broken and the map still read as a wall of text.
+     Density, not collisions.
+     A gap is the lever general-purpose maps use for this, and it is preferable to a flat "show at
+     most N labels" budget for the same reason the fit test is preferable to a zoom threshold: it
+     is expressed in the units of the problem. Screen px, not world units, because what matters is
+     how far apart the names look, and the labels are already counter-scaled to a constant screen
+     size. Tuned by measuring how many labels survive around Wendover, not by eye. */
+  const LBL_GAP_PX = 7;
   const REGION_FONT_WORLD = 34;     /* matches .atl .terrlbl font-size in atlas.css */
+  /* How much wider than its region's characteristic width a name may run before it is hidden.
+     1.0 would mean "never wider than the region"; a little slack is allowed because sqrt(area)
+     understates long thin shapes and because a name overhanging its border slightly still reads
+     as belonging to it. Tuned against the measurement, not guessed: see the fit test below. */
+  const REGION_LABEL_FIT = 1.35;
   let regionLabelKey = null;        /* declutter cache key: recompute per tier + zoom bucket, not per frame */
   const LBL_ANCHORS = {
     start: {dx:22.2,  dy:8.9,  anchor:'start'},
@@ -1505,8 +1665,13 @@ export function mount(container, data, opts = {}){
         else if (a.anchor === 'end'){ bx1 = sx + ox; bx0 = bx1 - boxW; }
         else { bx0 = sx + ox - boxW / 2; bx1 = sx + ox + boxW / 2; }
         const by0 = sy + oy - boxH / 2, by1 = sy + oy + boxH / 2;
-        const collides = placed.some(b => bx0 < b.x1 && bx1 > b.x0 && by0 < b.y1 && by1 > b.y0);
-        if (!collides){ chosen = ak; placed.push({x0:bx0, x1:bx1, y0:by0, y1:by1}); break; }
+        /* Inflate by half the gap on every side, for the TEST and for what is stored. Two
+           inflated boxes failing to overlap is exactly two real boxes sitting at least
+           LBL_GAP_PX apart, so the rule stays symmetric however the labels are ordered. */
+        const g = LBL_GAP_PX / 2;
+        const collides = placed.some(b =>
+          bx0 - g < b.x1 && bx1 + g > b.x0 && by0 - g < b.y1 && by1 + g > b.y0);
+        if (!collides){ chosen = ak; placed.push({x0:bx0 - g, x1:bx1 + g, y0:by0 - g, y1:by1 + g}); break; }
       }
       result.set(cand.name, chosen); /* null = every anchor collided: dropped, pin stays visible as a marker */
     }
@@ -1570,6 +1735,27 @@ export function mount(container, data, opts = {}){
       const sx = (w.x - view.x) * posScale, sy = (w.y - view.y) * posScale;
       const boxW = w.text.textContent.length * fontPx * LBL_CHAR_W + LBL_PAD_WORLD * K;
       const boxH = fontPx * 1.35;
+
+      /* DOES THE NAME FIT THE THING IT NAMES?
+         A region label is drawn at its region's label point whether or not the shape underneath
+         is big enough to hold the text. At lod0, where every tier is shown, that puts names on
+         territories they visibly overflow: "Vulpes/Lanius/Caesar Legion" needs 186px across a
+         region 104px wide. The collision pass has no opinion about it, because overflowing your
+         own border is not a collision with anyone else.
+         This is the rule every general-purpose map uses for polygon labels, and the reason it is
+         worth preferring to a zoom threshold is that it needs no tuning per zoom level: it
+         compares two on-screen lengths, so it stays correct at every scale by construction. Zoom
+         in and the territory grows past its name, which is exactly when the name becomes useful.
+         sqrt(area) is the characteristic width of the region, which is an approximation: a long
+         thin coastal strip is wider than its square root suggests. It is the measure already
+         cached here, and erring toward hiding a label on an awkward shape is the cheaper mistake
+         while zooming in still reveals it. */
+      const regionW = Math.sqrt(Math.max(w.area, 0)) * posScale;
+      if (boxW > regionW * REGION_LABEL_FIT){
+        w.g.classList.add('is-decluttered');
+        continue;
+      }
+
       const bx0 = sx - boxW / 2, bx1 = sx + boxW / 2, by0 = sy - boxH / 2, by1 = sy + boxH / 2;
       if (placed.some(b => bx0 < b.x1 && bx1 > b.x0 && by0 < b.y1 && by1 > b.y0)){
         w.g.classList.add('is-decluttered'); /* loses to an already-placed higher-priority name */
@@ -1700,7 +1886,7 @@ export function mount(container, data, opts = {}){
        clamp and the map crept north at full zoom-out.
        Deriving the effective factor from the clamped width fixes both ends at once,
        because at either stop it is exactly 1 and nothing moves. */
-    const w = Math.min(Math.max(view.w * k, 300), floorW);
+    const w = Math.min(Math.max(view.w * k, ZOOM_FLOOR_W), floorW);
     const kEff = w / view.w;
     if (kEff === 1) return;
     setView({x: fx - (fx - view.x) * kEff, y: fy - (fy - view.y) * kEff, w}, false);
@@ -1735,11 +1921,15 @@ export function mount(container, data, opts = {}){
     ev.stopPropagation();
     const unit = ev.deltaMode === 1 ? 16 : ev.deltaMode === 2 ? 400 : 1;
     /* Clamp before scaling so one violent flick cannot jump the whole range, and keep
-       the per-event factor gentle. The divisor was calibrated by MEASUREMENT, not by
+       the per-event factor gentle. The divisor is calibrated by MEASUREMENT, not by
        arithmetic: at 500 a 144px trackpad swipe took the viewBox from 2350 to 1257, about
-       three times stronger than the formula alone predicts, because zoomAt reclamps
-       against the cover floor and the aspect on every step. 1500 puts a 144px swipe at
-       about 0.94x, which reads as a deliberate nudge rather than a lurch. */
+       three times stronger than the formula alone predicts, because zoomAt reclamps against
+       the cover floor and the aspect on every step.
+       1500 put a 144px swipe at 0.94x. That was chosen to stop a trackpad flick shooting to
+       full zoom, and it overshot in the other direction: the owner reported the wheel felt
+       under-responsive. 900 puts the same swipe at about 0.89x, a little under twice the
+       travel per swipe, which is still far from the 1257-in-one-gesture the original bug
+       produced. */
     const px = Math.max(-160, Math.min(160, ev.deltaY * unit));
     if (!px) return;
     /* Destructure, do NOT spread: clientToVb returns [x, y, scale], so
@@ -1747,7 +1937,7 @@ export function mount(container, data, opts = {}){
        zoom factor and drops the real one off the end of the argument list. It zoomed,
        which is why it looked fine, but the amount had nothing to do with the wheel. */
     const [fx, fy] = clientToVb(ev);
-    zoomAt(fx, fy, Math.pow(2, px / 1500));
+    zoomAt(fx, fy, Math.pow(2, px / 900));
   }, {passive:false});
   /* recompute the cover floor for the map's CURRENT box, then reclamp the
      current view through the same clampView path (no separate resize-specific
@@ -2248,6 +2438,55 @@ export function mount(container, data, opts = {}){
      iframe, or a browser where the promise rejects. The three-row grid needs
      no special-casing at the new size; that it doesn't is the test that the
      layout is right rather than tuned to one viewport. */
+  /* ---------- monochrome: one phosphor colour, identity carried by pattern ----------
+     The map's normal state spends its hue budget on faction identity, and the fill patterns are
+     a SECOND channel saying the same thing, which is why they were narrowed to the macro
+     territories and why, in colour, they are decoration rather than information.
+     Monochrome spends the entire hue budget on the terminal's own phosphor instead. Nothing is
+     left to tell two neighbours apart except lightness, the region-name labels, and the
+     patterns, so this is the mode the pattern work exists for, and the only one that renders
+     them. See tools/pattern-adjacency-gate.mjs for the rule they must satisfy.
+     Implemented by overriding the --fac-* custom properties rather than by touching the
+     basemap: data/atlas-basemap.svg styles every territory as fill:var(--fac-NAME, #hex), so
+     redefining those variables on an ancestor recolours all 188 regions with no DOM work and no
+     second copy of the artwork. */
+  /* ---------- timeline: collapsed by default ----------
+     The lanes are 234px of a 304px timeline, and the timeline is 32% of the atlas. Measured at
+     1102px tall: map 601, timeline 304. Collapsing the lanes and the overview strip returns 248px
+     to the map, which is 41% more map, and it costs nothing the reader needs immediately.
+     The HEAD stays, and that is the whole design: it already carries the thread picker and Prev
+     and Next, so every event remains reachable and filterable while collapsed. Collapsing the
+     timeline entirely would have removed the map's main navigation, which is why this hides the
+     lanes rather than the section.
+     Default collapsed, because the map is what a reader came for; the lanes are for scrubbing,
+     which is a deliberate act. The choice persists per browser. */
+  const tlToggle = $('#tl-toggle');
+  if (tlToggle) {
+    const applyTl = (open) => {
+      root.classList.toggle('tl-open', open);
+      tlToggle.setAttribute('aria-expanded', String(open));
+      tlToggle.innerHTML = (open ? '&#9652;' : '&#9662;') + ' Lanes';
+      try { localStorage.setItem('atl-tl-open', open ? '1' : '0'); } catch { /* private mode */ }
+    };
+    let open = false;
+    try { open = localStorage.getItem('atl-tl-open') === '1'; } catch { /* private mode */ }
+    applyTl(open);
+    tlToggle.addEventListener('click', () => applyTl(!root.classList.contains('tl-open')));
+  }
+
+  const monoBtn = $('#atl-mono');
+  if (monoBtn) {
+    const applyMono = (on) => {
+      root.classList.toggle('mono', on);
+      monoBtn.setAttribute('aria-pressed', String(on));
+      try { localStorage.setItem('atl-mono', on ? '1' : '0'); } catch { /* private mode */ }
+    };
+    let monoOn = false;
+    try { monoOn = localStorage.getItem('atl-mono') === '1'; } catch { /* private mode */ }
+    applyMono(monoOn);
+    monoBtn.addEventListener('click', () => applyMono(!root.classList.contains('mono')));
+  }
+
   const fsBtn = $('#atl-fs');
   let fsFallback = false;
   let fsAnnounced = null;
@@ -2449,6 +2688,10 @@ export function mount(container, data, opts = {}){
     ensureUsScope();
     state.ev = i; state.loc = null;
     const e = EVENTS[i];
+    /* Matched on the event's own title rather than a hardcoded index: the timeline is edited
+       often and an index would silently point at a different event the next time one is
+       inserted above it. */
+    root.classList.toggle('show-blast', /^the great war$/i.test((e.t || '').trim()));
     markCurrent(i);
     setPlayhead(e);
     highlightMap(e.loc, sopts.zoom !== false);
