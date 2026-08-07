@@ -1,0 +1,171 @@
+{
+  "_doc": "DERIVED. The historical sheets published as SELECTABLE overlays, per the owner's ruling of 2026-08-06: an era is its own switchable layer, never merged into present-day geometry, so the present can be enriched from it later without either having overwritten the other. `toleranceKm` is per LAYER and the three layers of one sheet differ by more than ten times - a boundary drawn from the physiographic tier would be wrong by a county. `creator: null` is an open credit gap, not a licence. `bounds` is measured from the geometry as [west, south, east, north] and is what a camera flies to when the reader asks to see that era's ground. Rebuild with tools/publish-era-layers.py.",
+  "eras": [
+    {
+      "id": "ncr-2253-newwest",
+      "era": 2253,
+      "title": "Political map of NEW CALIFORNIA REPUBLIC and the NEW WEST, in the year 2253",
+      "region": "California, Nevada, Baja, the Pacific north-west",
+      "bounds": [
+        -124.4147,
+        29.6431,
+        -112.5059,
+        43.5962
+      ],
+      "creator": "u/Polakp",
+      "creditStatus": "credited",
+      "licence": "none printed - STILL BLOCKS PUBLICATION of anything derived. A name is not a licence. But the author is now identified and reachable, so the question moves from unanswerable to ASKABLE, and asking is the owner's step.",
+      "registration": "equidistant conic fitted to its printed graticule, 0.78 km median against Natural Earth's coastline",
+      "layers": [
+        {
+          "file": "ncr-2253-administrative-2253.geojson",
+          "role": "administrative",
+          "label": "Administrative divisions",
+          "note": "The sheet's own inset, registered separately and less precisely than the main map.",
+          "features": 19,
+          "toleranceKm": 2.42,
+          "bounds": [
+            -124.4147,
+            31.6515,
+            -114.2716,
+            41.9125
+          ]
+        },
+        {
+          "file": "ncr-2253-control-2253.geojson",
+          "role": "control",
+          "label": "Territorial control",
+          "note": "Who holds the ground, as the sheet draws it.",
+          "features": 32,
+          "toleranceKm": 0.78,
+          "bounds": [
+            -124.3596,
+            29.6431,
+            -112.5059,
+            43.5125
+          ]
+        },
+        {
+          "file": "ncr-2253-physiographic-2253.geojson",
+          "role": "physiographic",
+          "label": "Physical features",
+          "note": "Named ranges, valleys and basins. These are LABEL ANCHORS: where the name sits.",
+          "features": 6,
+          "toleranceKm": 10.99,
+          "bounds": [
+            -122.5675,
+            33.1901,
+            -113.5131,
+            43.5962
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mexico-2292",
+      "era": 2292,
+      "title": "Fallout Mexico \u2014 the Mexican Wastes",
+      "region": "Mexico",
+      "bounds": [
+        -115.6285,
+        14.3631,
+        -86.8721,
+        33.363
+      ],
+      "creator": "u/omega-lf",
+      "creditStatus": "credited",
+      "licence": "none stated by the author - still gated",
+      "registration": "EQUIRECTANGULAR with a standard parallel near 24N, rotated 1.26 degrees. NOT plate carree and - against the expectation carried in from the Savannah sheet - NOT Mercator either. Mercator does beat plate carree by 28%, but only because its sec(phi) ratio happens to be near the ratio the sheet wants; freeing x and y scales on a plain equirectangular beats Mercator, and the two become indistinguishable. The test that separates them: fit on one latitude half and score on the other. Equirectangular generalises across latitude and Mercator does not, by up to 2.2x, in both directions.",
+      "layers": [
+        {
+          "file": "mexico-2292-areas-2292.geojson",
+          "role": "areas",
+          "label": "Polity and tribe names",
+          "note": "Where a NAME sits, never where the thing is, and never where its border runs. An anchor says the faction is here; a sheet in this residual band cannot say more.",
+          "features": 37,
+          "toleranceKm": 29.7,
+          "bounds": [
+            -114.3679,
+            14.3631,
+            -87.6688,
+            33.0823
+          ]
+        },
+        {
+          "file": "mexico-2292-sites-2292.geojson",
+          "role": "sites",
+          "label": "Settlements",
+          "note": "Point sites the sheet prints a marker for. Positions are the marker centroid, found mechanically; only the names were read by eye. Features with positional: false carry NO usable position - the sheet draws that ground wrong - and the reason is on the feature. toleranceKm below is the worst among the features that DO have a position.",
+          "features": 58,
+          "toleranceKm": 10.0,
+          "bounds": [
+            -115.6285,
+            14.792,
+            -86.8721,
+            33.363
+          ]
+        }
+      ]
+    },
+    {
+      "id": "savannah-2313",
+      "era": 2313,
+      "title": "Map of The States of Savannah",
+      "region": "American south-east: Alabama, Georgia, Florida, the Carolinas, Piedmont",
+      "bounds": [
+        -93.3879,
+        27.9924,
+        -75.7178,
+        36.9456
+      ],
+      "creator": "u/Tortoise-For-Sale",
+      "creditStatus": "credited",
+      "licence": "none printed - STILL BLOCKS PUBLICATION of anything derived. A name is not a licence, but the question is now askable. Owner's step.",
+      "registration": null,
+      "layers": [
+        {
+          "file": "savannah-2313-control-2313.geojson",
+          "role": "control",
+          "label": "Territorial control",
+          "note": "Who holds the ground, as the sheet draws it.",
+          "features": 9,
+          "toleranceKm": 0.74,
+          "bounds": [
+            -93.3879,
+            27.9924,
+            -75.7178,
+            36.9456
+          ]
+        },
+        {
+          "file": "savannah-2313-influence-2313.geojson",
+          "role": "influence",
+          "label": "Spheres of influence",
+          "note": "Reach rather than sovereignty: ground a power's writ runs over without that ground being a state of its own. FOUR sheets reach for this independently - West Coast Civilizations and NCR & Legion 2281 draw it as soft gradients around hard control, north-america-2290's author states 'lighter colors surrounding national borders implies influence in a given area', and Savannah 2313's author calls his internal divisions 'trading spheres of influence'. Savannah's are the first extracted, and they are the inward-facing case: one state's own trade divisions, which are NOT provinces and NOT polities. Never read a feature here as a sovereign border.",
+          "features": 5,
+          "toleranceKm": 0.74,
+          "bounds": [
+            -88.877,
+            29.696,
+            -79.1079,
+            36.0845
+          ]
+        },
+        {
+          "file": "savannah-2313-sites-2313.geojson",
+          "role": "sites",
+          "label": "Settlements",
+          "note": "Point sites the sheet prints a marker for. Positions are the marker centroid, found mechanically; only the names were read by eye. Features with positional: false carry NO usable position - the sheet draws that ground wrong - and the reason is on the feature. toleranceKm below is the worst among the features that DO have a position.",
+          "features": 7,
+          "toleranceKm": 0.74,
+          "bounds": [
+            -89.3558,
+            30.3913,
+            -83.6573,
+            35.0269
+          ]
+        }
+      ]
+    }
+  ]
+}

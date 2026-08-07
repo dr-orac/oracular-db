@@ -1,0 +1,3301 @@
+{
+  "_doc": "Canon placemarks from the two Great-War-era folders of the Fallout Universe KML (source-maps/fallout-universe-map.kml, snapshot 2026-07-26), imported by docs/changes/map-timeline/trace/kml_canon_placemarks.py and sorted into typed channels. Coordinates are the KML's own lon/lat - which the owner made canonical for site geography - through the shipped atlas-georef.json, so these sit in the same frame as the pins, the regions and the blast sites. The 61 crater and detonation records are NOT here: they ship separately as atlas-blast-sites.json, and the expression that excludes them is the same one that selects them there. Points only; the tool cannot emit a polygon.",
+  "sourceFolders": [
+    "Great War and immediate aftermath",
+    "Pre-Great War conflicts, major events, and military-related locations"
+  ],
+  "counts": {
+    "folderTotal": 506,
+    "notPoint": 55,
+    "alreadyBlast": 65,
+    "outside": 24
+  },
+  "shipped": 362,
+  "channelOrder": [
+    "crash",
+    "checkpoint",
+    "unrest",
+    "shelter",
+    "ruin",
+    "garrison",
+    "battle",
+    "person",
+    "site"
+  ],
+  "channels": {
+    "battle": [
+      {
+        "name": "Operation Red Harvest",
+        "lon": -149.898128,
+        "lat": 61.195384,
+        "x": 8.8,
+        "y": 620.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Chinese artillery",
+        "lon": -148.970811,
+        "lat": 60.503327,
+        "x": 39.2,
+        "y": 668.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Alaskan Pipeline sabotage",
+        "lon": -137.863864,
+        "lat": 60.61743,
+        "x": 432.3,
+        "y": 702.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Yukon battle",
+        "lon": -136.576568,
+        "lat": 62.822807,
+        "x": 468.7,
+        "y": 551.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Janey Howard",
+        "lon": -118.342702,
+        "lat": 34.116799,
+        "x": 814.4,
+        "y": 2090.2,
+        "folder": "greatwar",
+        "note": "Janey Howard's\u00a0approximate location when the Great War occurred."
+      },
+      {
+        "name": "Cooper Howard",
+        "lon": -118.342794,
+        "lat": 34.116838,
+        "x": 814.4,
+        "y": 2090.2,
+        "folder": "greatwar",
+        "note": "Cooper Howard's\u00a0approximate location when the Great War occurred."
+      },
+      {
+        "name": "Hoover Sabotage",
+        "lon": -114.737386,
+        "lat": 36.016244,
+        "x": 941.8,
+        "y": 2033.9,
+        "folder": "prewar",
+        "note": "Two suits of Chinese stealth armor were found by the NCR when they took control of the dam."
+      },
+      {
+        "name": "Randall Clark",
+        "lon": -111.69582,
+        "lat": 40.158434,
+        "x": 1059.9,
+        "y": 1874.1,
+        "folder": "greatwar",
+        "note": "Randall Clark's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Aaron Bradie",
+        "lon": -80.717482,
+        "lat": 39.648621,
+        "x": 2076.5,
+        "y": 1881.9,
+        "folder": "greatwar",
+        "note": "Aaron Bradie's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Jameson Grillo",
+        "lon": -80.717565,
+        "lat": 39.648646,
+        "x": 2076.5,
+        "y": 1881.9,
+        "folder": "greatwar",
+        "note": "Jameson Grillo's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Operation Piercing Viper",
+        "lon": -80.578129,
+        "lat": 38.303702,
+        "x": 2086.4,
+        "y": 1936.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Chinese infiltration",
+        "lon": -79.987362,
+        "lat": 40.443885,
+        "x": 2098.0,
+        "y": 1844.2,
+        "folder": "prewar",
+        "note": "Within an apartment complex."
+      },
+      {
+        "name": "Niagara Sabotage",
+        "lon": -79.067673,
+        "lat": 43.090194,
+        "x": 2122.1,
+        "y": 1731.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Carrie Delaney",
+        "lon": -78.485069,
+        "lat": 38.664806,
+        "x": 2154.8,
+        "y": 1905.3,
+        "folder": "greatwar",
+        "note": "Carrie Delaney's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Jason Grant",
+        "lon": -78.485152,
+        "lat": 38.664713,
+        "x": 2154.8,
+        "y": 1905.3,
+        "folder": "greatwar",
+        "note": "Carrie Delaney's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Operation Sleeping Giant",
+        "lon": -78.32509,
+        "lat": 38.584049,
+        "x": 2160.6,
+        "y": 1907.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Chinese infiltration",
+        "lon": -77.610618,
+        "lat": 39.237936,
+        "x": 2181.4,
+        "y": 1874.4,
+        "folder": "prewar",
+        "note": "Underneath\u00a0broadcast tower KT8."
+      },
+      {
+        "name": "Chinese infiltration",
+        "lon": -77.162983,
+        "lat": 38.886426,
+        "x": 2198.0,
+        "y": 1884.9,
+        "folder": "prewar",
+        "note": "L.O.B. Enterprises was a pre-war weapons manufacturer secretly working for China."
+      },
+      {
+        "name": "Chinese infiltration",
+        "lon": -77.067243,
+        "lat": 38.866959,
+        "x": 2201.3,
+        "y": 1884.9,
+        "folder": "prewar",
+        "note": "Within Mama Dolce's."
+      },
+      {
+        "name": "The Sole Survivor",
+        "lon": -71.367056,
+        "lat": 42.469455,
+        "x": 2372.9,
+        "y": 1683.9,
+        "folder": "greatwar",
+        "note": "The Sole Survivor's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Megan Hayes",
+        "lon": -71.348764,
+        "lat": 42.461428,
+        "x": 2373.6,
+        "y": 1684.0,
+        "folder": "greatwar",
+        "note": "Megan Hayes'\u00a0approximate location when the Great War occurred."
+      },
+      {
+        "name": "N. Stokes",
+        "lon": -71.104557,
+        "lat": 42.354857,
+        "x": 2381.9,
+        "y": 1685.5,
+        "folder": "greatwar",
+        "note": "N. Stokes' approximate location when the Great War occurred."
+      },
+      {
+        "name": "L. Reed",
+        "lon": -71.104669,
+        "lat": 42.354942,
+        "x": 2381.9,
+        "y": 1685.5,
+        "folder": "greatwar",
+        "note": "L. Reed's approximate location when the Great War occurred."
+      },
+      {
+        "name": "J. Harvey",
+        "lon": -71.104683,
+        "lat": 42.354742,
+        "x": 2381.9,
+        "y": 1685.5,
+        "folder": "greatwar",
+        "note": "J. Harvey's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Jon Elwood",
+        "lon": -71.104494,
+        "lat": 42.354535,
+        "x": 2381.9,
+        "y": 1685.5,
+        "folder": "greatwar",
+        "note": "Jon Elwood's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Tom Franklin",
+        "lon": -71.104707,
+        "lat": 42.355085,
+        "x": 2381.9,
+        "y": 1685.5,
+        "folder": "greatwar",
+        "note": "Tom Franklin's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Wilfred Bergman",
+        "lon": -71.104446,
+        "lat": 42.354764,
+        "x": 2381.9,
+        "y": 1685.5,
+        "folder": "greatwar",
+        "note": "Wilfred Bergman's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Ericka Elwood-Woolum",
+        "lon": -71.104537,
+        "lat": 42.354785,
+        "x": 2381.9,
+        "y": 1685.5,
+        "folder": "greatwar",
+        "note": "Ericka Elwood-Woolum's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Mary Goodman",
+        "lon": -71.104738,
+        "lat": 42.354763,
+        "x": 2381.9,
+        "y": 1685.5,
+        "folder": "greatwar",
+        "note": "Mary Goodman's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Nathan Broadhurst",
+        "lon": -71.097774,
+        "lat": 42.346246,
+        "x": 2382.2,
+        "y": 1685.7,
+        "folder": "greatwar",
+        "note": "Nathan Broadhurst's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Matt Murtagh",
+        "lon": -71.097618,
+        "lat": 42.346361,
+        "x": 2382.2,
+        "y": 1685.7,
+        "folder": "greatwar",
+        "note": "Matt Murtagh's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Jim Walker",
+        "lon": -71.097674,
+        "lat": 42.34621,
+        "x": 2382.2,
+        "y": 1685.7,
+        "folder": "greatwar",
+        "note": "Jim Walker's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Cheryl Glass",
+        "lon": -71.085109,
+        "lat": 42.369761,
+        "x": 2382.5,
+        "y": 1684.7,
+        "folder": "greatwar",
+        "note": "Cheryl Glass's approximate death location during the Great War."
+      },
+      {
+        "name": "Marlene Glass",
+        "lon": -71.085059,
+        "lat": 42.369726,
+        "x": 2382.5,
+        "y": 1684.7,
+        "folder": "greatwar",
+        "note": "Marlene Glass' approximate death location during the Great War."
+      },
+      {
+        "name": "David Tournquist",
+        "lon": -71.064402,
+        "lat": 42.409836,
+        "x": 2383.0,
+        "y": 1682.9,
+        "folder": "greatwar",
+        "note": "David Tournquist's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Michael Tournquist",
+        "lon": -71.064465,
+        "lat": 42.409854,
+        "x": 2383.0,
+        "y": 1682.9,
+        "folder": "greatwar",
+        "note": "Michael Tournquist's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Wayne Tournquist",
+        "lon": -71.064404,
+        "lat": 42.409891,
+        "x": 2383.0,
+        "y": 1682.9,
+        "folder": "greatwar",
+        "note": "Wayne Tournquist's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Dave Mallory",
+        "lon": -71.067655,
+        "lat": 42.384991,
+        "x": 2383.0,
+        "y": 1683.9,
+        "folder": "greatwar",
+        "note": "Dave Mallory.'s approximate death location during the Great War."
+      },
+      {
+        "name": "Bonnie Tournquist",
+        "lon": -71.062661,
+        "lat": 42.350031,
+        "x": 2383.3,
+        "y": 1685.2,
+        "folder": "greatwar",
+        "note": "Bonnie Tournquist's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Emery Briggs",
+        "lon": -71.050241,
+        "lat": 42.431337,
+        "x": 2383.4,
+        "y": 1681.9,
+        "folder": "greatwar",
+        "note": "Emery Briggs' approximate location when the Great War occurred."
+      },
+      {
+        "name": "Steven McClintock",
+        "lon": -71.050188,
+        "lat": 42.431579,
+        "x": 2383.4,
+        "y": 1681.9,
+        "folder": "greatwar",
+        "note": "Steven McClintock's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Ashley Morgan",
+        "lon": -71.050354,
+        "lat": 42.431468,
+        "x": 2383.4,
+        "y": 1681.9,
+        "folder": "greatwar",
+        "note": "Ashley Morgan's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Elliot Briggs",
+        "lon": -71.050166,
+        "lat": 42.431143,
+        "x": 2383.4,
+        "y": 1681.9,
+        "folder": "greatwar",
+        "note": "Elliot Briggs' approximate location when the Great War occurred."
+      },
+      {
+        "name": "Caleb Truman",
+        "lon": -71.050043,
+        "lat": 42.431314,
+        "x": 2383.4,
+        "y": 1681.9,
+        "folder": "greatwar",
+        "note": "Caleb Truman's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Joey Clay",
+        "lon": -71.050783,
+        "lat": 42.431444,
+        "x": 2383.4,
+        "y": 1681.9,
+        "folder": "greatwar",
+        "note": "Joey Clay's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Sergeant Rivera",
+        "lon": -71.039765,
+        "lat": 42.31366,
+        "x": 2384.2,
+        "y": 1686.3,
+        "folder": "greatwar",
+        "note": "Sergeant Rivera's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Curtis Marsh",
+        "lon": -71.039756,
+        "lat": 42.313698,
+        "x": 2384.2,
+        "y": 1686.3,
+        "folder": "greatwar",
+        "note": "Curtis Marsh's approximate location when the Great War occurred."
+      },
+      {
+        "name": "Leslie Mathews",
+        "lon": -71.039697,
+        "lat": 42.313666,
+        "x": 2384.2,
+        "y": 1686.3,
+        "folder": "greatwar",
+        "note": "Leslie Mathews' approximate location when the Great War occurred."
+      },
+      {
+        "name": "Charles Dieter Jr.",
+        "lon": -71.040761,
+        "lat": 42.285211,
+        "x": 2384.3,
+        "y": 1687.5,
+        "folder": "greatwar",
+        "note": "Charles Dieter Jr.'s approximate death location during the Great War."
+      }
+    ],
+    "crash": [
+      {
+        "name": "Cargo plane crash",
+        "lon": -115.381697,
+        "lat": 35.397726,
+        "x": 918.3,
+        "y": 2056.7,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Jet plane crash",
+        "lon": -114.913894,
+        "lat": 35.447691,
+        "x": 934.2,
+        "y": 2058.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Cargo plane crash",
+        "lon": -112.995341,
+        "lat": 37.242062,
+        "x": 1004.1,
+        "y": 1992.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Crashed PT-00D",
+        "lon": -81.860683,
+        "lat": 37.743223,
+        "x": 2045.8,
+        "y": 1968.8,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Vertibird crash",
+        "lon": -81.596761,
+        "lat": 38.370806,
+        "x": 2052.0,
+        "y": 1940.8,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Skylanes Air crash",
+        "lon": -81.587834,
+        "lat": 38.379261,
+        "x": 2052.2,
+        "y": 1940.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Plane crash",
+        "lon": -81.38845,
+        "lat": 39.118224,
+        "x": 2056.1,
+        "y": 1908.5,
+        "folder": "greatwar",
+        "note": "** Mentioned in the Settlers guidebook for the Fallout tabletop RPG. **"
+      },
+      {
+        "name": "Vertibird crash",
+        "lon": -80.769297,
+        "lat": 38.865613,
+        "x": 2077.6,
+        "y": 1914.5,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Crashed PT-00D",
+        "lon": -80.68788,
+        "lat": 38.816395,
+        "x": 2080.6,
+        "y": 1916.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Vertibird crash",
+        "lon": -80.458275,
+        "lat": 39.668423,
+        "x": 2085.0,
+        "y": 1879.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Crashed biplane",
+        "lon": -80.212211,
+        "lat": 39.461321,
+        "x": 2093.9,
+        "y": 1885.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Vertibird crash",
+        "lon": -79.919972,
+        "lat": 39.643778,
+        "x": 2102.9,
+        "y": 1876.3,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "USN 350 crash",
+        "lon": -76.357616,
+        "lat": 38.073976,
+        "x": 2229.3,
+        "y": 1911.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Container ship crash",
+        "lon": -74.429682,
+        "lat": 39.355324,
+        "x": 2286.8,
+        "y": 1840.3,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Vertibird crash",
+        "lon": -72.612954,
+        "lat": 42.057339,
+        "x": 2334.0,
+        "y": 1713.5,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Crashed Stingray Deluxe",
+        "lon": -71.466449,
+        "lat": 42.049817,
+        "x": 2371.4,
+        "y": 1701.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Vertibird crash",
+        "lon": -71.348814,
+        "lat": 42.461305,
+        "x": 2373.6,
+        "y": 1684.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Plane crash",
+        "lon": -71.353054,
+        "lat": 42.358936,
+        "x": 2373.8,
+        "y": 1688.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Vertibird crash",
+        "lon": -71.262596,
+        "lat": 42.388166,
+        "x": 2376.7,
+        "y": 1685.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Skylanes Air Flight 1665 crash",
+        "lon": -71.22933,
+        "lat": 42.043623,
+        "x": 2379.2,
+        "y": 1699.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Skylines Air Flight 1981 crash",
+        "lon": -71.149587,
+        "lat": 42.497942,
+        "x": 2379.9,
+        "y": 1680.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Crashed Stingray Deluxe",
+        "lon": -71.146101,
+        "lat": 42.398951,
+        "x": 2380.4,
+        "y": 1684.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "USS Riptide crash",
+        "lon": -71.091141,
+        "lat": 42.354725,
+        "x": 2382.4,
+        "y": 1685.3,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Crashed Stingray Deluxe",
+        "lon": -71.064437,
+        "lat": 42.405779,
+        "x": 2383.0,
+        "y": 1683.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "MV Western Bell crash",
+        "lon": -71.032217,
+        "lat": 42.485686,
+        "x": 2383.8,
+        "y": 1679.5,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Plane crash",
+        "lon": -71.034963,
+        "lat": 42.380988,
+        "x": 2384.1,
+        "y": 1683.7,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Crashed Stingray Deluxe",
+        "lon": -70.978233,
+        "lat": 42.358774,
+        "x": 2386.0,
+        "y": 1683.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Crashed Stingray Deluxe",
+        "lon": -70.99002,
+        "lat": 42.252647,
+        "x": 2386.1,
+        "y": 1688.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Crashed plane",
+        "lon": -70.978981,
+        "lat": 42.315357,
+        "x": 2386.2,
+        "y": 1685.6,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Crashed Stingray Deluxe",
+        "lon": -70.968065,
+        "lat": 42.370242,
+        "x": 2386.3,
+        "y": 1683.3,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "FMS Northern Star crash",
+        "lon": -70.947465,
+        "lat": 42.262997,
+        "x": 2387.4,
+        "y": 1687.3,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Plane crash",
+        "lon": -70.887687,
+        "lat": 42.471167,
+        "x": 2388.5,
+        "y": 1678.5,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Crashed Stingray Deluxe",
+        "lon": -70.837013,
+        "lat": 42.528877,
+        "x": 2389.9,
+        "y": 1675.7,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Horizon Airlines Flight 1207 crash",
+        "lon": -68.278531,
+        "lat": 44.370412,
+        "x": 2465.4,
+        "y": 1574.8,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "MS Azalea crash",
+        "lon": -68.189318,
+        "lat": 44.306808,
+        "x": 2468.5,
+        "y": 1576.1,
+        "folder": "greatwar",
+        "note": null
+      }
+    ],
+    "site": [
+      {
+        "name": "Control Station ENCLAVE",
+        "lon": -124.389888,
+        "lat": 37.300184,
+        "x": 627.0,
+        "y": 1887.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Shih-huang-ti",
+        "lon": -122.543816,
+        "lat": 37.79361,
+        "x": 690.6,
+        "y": 1884.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "San Francisco 1",
+        "lon": -122.457838,
+        "lat": 37.74303,
+        "x": 693.1,
+        "y": 1887.6,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "San Francisco 2",
+        "lon": -122.445478,
+        "lat": 37.776902,
+        "x": 693.7,
+        "y": 1886.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Lost Hills",
+        "lon": -119.693512,
+        "lat": 35.621311,
+        "x": 773.9,
+        "y": 2009.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Mariposa Rebellion",
+        "lon": -119.939,
+        "lat": 37.503461,
+        "x": 774.8,
+        "y": 1923.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Bakersfield 2",
+        "lon": -119.053586,
+        "lat": 35.3694,
+        "x": 794.4,
+        "y": 2027.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Bakersfield 1",
+        "lon": -118.98854,
+        "lat": 35.364831,
+        "x": 796.6,
+        "y": 2028.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Silver Springs Airport",
+        "lon": -119.252394,
+        "lat": 39.402851,
+        "x": 809.2,
+        "y": 1846.9,
+        "folder": "prewar",
+        "note": "** Silver Springs Airport is mentioned in the Royal Flush sourcebook for the Fallout tabletop RPG. **"
+      },
+      {
+        "name": "Near Super Duper Mart",
+        "lon": -118.443443,
+        "lat": 34.025126,
+        "x": 810.8,
+        "y": 2093.5,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Mid-City",
+        "lon": -118.371799,
+        "lat": 34.038828,
+        "x": 813.2,
+        "y": 2093.5,
+        "folder": "greatwar",
+        "note": "** Stated in the Fallout Show's script. **"
+      },
+      {
+        "name": "Hollywood",
+        "lon": -118.328719,
+        "lat": 34.08904,
+        "x": 814.8,
+        "y": 2091.6,
+        "folder": "greatwar",
+        "note": "** Stated in the Fallout Show's script. **"
+      },
+      {
+        "name": "Koreatown",
+        "lon": -118.308348,
+        "lat": 34.055915,
+        "x": 815.4,
+        "y": 2093.2,
+        "folder": "greatwar",
+        "note": "** Stated in the Fallout Show's script. **"
+      },
+      {
+        "name": "Downtown",
+        "lon": -118.251615,
+        "lat": 34.050082,
+        "x": 817.4,
+        "y": 2094.0,
+        "folder": "greatwar",
+        "note": "** Stated in the Fallout Show's script. **"
+      },
+      {
+        "name": "Walker Lake 2",
+        "lon": -118.73739,
+        "lat": 38.701465,
+        "x": 821.4,
+        "y": 1882.3,
+        "folder": "greatwar",
+        "note": "** Mentioned in the Royal Flush sourcebook for the Fallout tabletop RPG. **"
+      },
+      {
+        "name": "Walker Lake 3",
+        "lon": -118.711298,
+        "lat": 38.654293,
+        "x": 822.0,
+        "y": 1884.6,
+        "folder": "greatwar",
+        "note": "** Mentioned in the Royal Flush sourcebook for the Fallout tabletop RPG. **"
+      },
+      {
+        "name": "Walker Lake 1",
+        "lon": -118.716791,
+        "lat": 38.738965,
+        "x": 822.3,
+        "y": 1880.9,
+        "folder": "greatwar",
+        "note": "** Mentioned in the Royal Flush sourcebook for the Fallout tabletop RPG. **"
+      },
+      {
+        "name": "The Glow",
+        "lon": -116.854313,
+        "lat": 32.587727,
+        "x": 862.3,
+        "y": 2172.5,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "West Tek research facility",
+        "lon": -116.854606,
+        "lat": 32.58774,
+        "x": 862.3,
+        "y": 2172.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Hopeville Ballistic Defense Station",
+        "lon": -117.013273,
+        "lat": 36.593767,
+        "x": 867.7,
+        "y": 1990.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Ashton Ballistic Defense Station",
+        "lon": -116.711109,
+        "lat": 36.587313,
+        "x": 877.7,
+        "y": 1993.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Yucca Mountain",
+        "lon": -116.452594,
+        "lat": 36.939896,
+        "x": 887.8,
+        "y": 1979.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Little Yangtze",
+        "lon": -115.932192,
+        "lat": 35.761771,
+        "x": 900.8,
+        "y": 2036.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Big Mountain Research and Development Center",
+        "lon": -115.911263,
+        "lat": 35.744786,
+        "x": 901.5,
+        "y": 2037.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Area 51",
+        "lon": -115.812595,
+        "lat": 37.242479,
+        "x": 910.4,
+        "y": 1971.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Mesquite Mountain",
+        "lon": -115.625079,
+        "lat": 35.632682,
+        "x": 910.8,
+        "y": 2044.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Area 2",
+        "lon": -115.532913,
+        "lat": 36.579971,
+        "x": 917.0,
+        "y": 2002.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Highway 95",
+        "lon": -115.425993,
+        "lat": 36.428367,
+        "x": 920.1,
+        "y": 2010.5,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Deserter shootout",
+        "lon": -115.161138,
+        "lat": 36.134478,
+        "x": 927.9,
+        "y": 2025.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "\"Shanghai Sally\" escape",
+        "lon": -115.154384,
+        "lat": 36.146855,
+        "x": 928.2,
+        "y": 2025.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Black Mountain",
+        "lon": -115.052245,
+        "lat": 35.937857,
+        "x": 931.0,
+        "y": 2035.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Centaur Pit",
+        "lon": -115.046363,
+        "lat": 35.919104,
+        "x": 931.1,
+        "y": 2036.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Black Mountain",
+        "lon": -115.042908,
+        "lat": 35.931411,
+        "x": 931.3,
+        "y": 2035.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "HELIOS One (ARCHIMEDES development)",
+        "lon": -114.993854,
+        "lat": 35.788542,
+        "x": 932.5,
+        "y": 2042.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Clark Field",
+        "lon": -114.934223,
+        "lat": 35.666154,
+        "x": 934.1,
+        "y": 2048.1,
+        "folder": "greatwar",
+        "note": "** The official game guide claims Clark Field was \"bombed long ago\". **"
+      },
+      {
+        "name": "Near Nellis",
+        "lon": -114.974308,
+        "lat": 36.229282,
+        "x": 934.5,
+        "y": 2022.7,
+        "folder": "greatwar",
+        "note": "** Evidenced by massive scorch mark. **"
+      },
+      {
+        "name": "Yuma Proving Ground",
+        "lon": -114.255409,
+        "lat": 33.01874,
+        "x": 952.2,
+        "y": 2172.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Near Lake Mead",
+        "lon": -114.315172,
+        "lat": 36.177959,
+        "x": 956.5,
+        "y": 2029.8,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Iron Mountain Complex",
+        "lon": -113.374429,
+        "lat": 37.643682,
+        "x": 993.0,
+        "y": 1971.8,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "\"Shanghai Sally\" carjacking",
+        "lon": -111.658505,
+        "lat": 35.188429,
+        "x": 1043.6,
+        "y": 2091.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "SLC 3",
+        "lon": -112.101932,
+        "lat": 40.711641,
+        "x": 1049.9,
+        "y": 1847.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SLC 7",
+        "lon": -112.023524,
+        "lat": 40.503615,
+        "x": 1051.2,
+        "y": 1857.3,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SLC 11",
+        "lon": -112.009104,
+        "lat": 40.685581,
+        "x": 1052.7,
+        "y": 1849.6,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SLC 5",
+        "lon": -112.018684,
+        "lat": 40.765155,
+        "x": 1052.9,
+        "y": 1846.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SLC 10",
+        "lon": -111.943186,
+        "lat": 40.546936,
+        "x": 1054.1,
+        "y": 1856.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SLC 4",
+        "lon": -111.926488,
+        "lat": 40.609287,
+        "x": 1055.0,
+        "y": 1853.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SLC 2",
+        "lon": -111.984166,
+        "lat": 41.052976,
+        "x": 1055.8,
+        "y": 1834.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SLC 1",
+        "lon": -111.920054,
+        "lat": 40.762765,
+        "x": 1056.1,
+        "y": 1846.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SLC 13",
+        "lon": -111.923329,
+        "lat": 40.876486,
+        "x": 1056.7,
+        "y": 1842.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SLC 9",
+        "lon": -111.820273,
+        "lat": 40.555798,
+        "x": 1058.1,
+        "y": 1856.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SLC 12",
+        "lon": -111.873541,
+        "lat": 40.932167,
+        "x": 1058.6,
+        "y": 1840.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SLC 8",
+        "lon": -111.807231,
+        "lat": 40.689746,
+        "x": 1059.3,
+        "y": 1850.8,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SLC 6",
+        "lon": -111.749365,
+        "lat": 40.39637,
+        "x": 1059.5,
+        "y": 1863.6,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Uprising of Edmonton",
+        "lon": -113.504724,
+        "lat": 53.539593,
+        "x": 1159.9,
+        "y": 1302.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "\"Shanghai Sally\" carjacking",
+        "lon": -106.643542,
+        "lat": 35.102593,
+        "x": 1213.5,
+        "y": 2119.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "\"Shanghai Sally\" carjacking",
+        "lon": -106.458238,
+        "lat": 31.77219,
+        "x": 1222.2,
+        "y": 2270.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Cheyenne Mountain Complex",
+        "lon": -104.895219,
+        "lat": 38.767591,
+        "x": 1277.1,
+        "y": 1966.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Uranium City Internment Camp",
+        "lon": -108.604405,
+        "lat": 59.575865,
+        "x": 1330.8,
+        "y": 921.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Internment camp breakout",
+        "lon": -108.601184,
+        "lat": 59.573631,
+        "x": 1330.9,
+        "y": 921.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Los Anything",
+        "lon": -101.920337,
+        "lat": 32.718837,
+        "x": 1377.8,
+        "y": 2239.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Carbon",
+        "lon": -98.841853,
+        "lat": 32.273478,
+        "x": 1485.9,
+        "y": 2261.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Mexico City",
+        "lon": -99.086136,
+        "lat": 19.509177,
+        "x": 1550.7,
+        "y": 2836.3,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "USS Wade",
+        "lon": -94.811876,
+        "lat": 29.193738,
+        "x": 1642.3,
+        "y": 2398.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "\"Shanghai Sally\" boatjacking",
+        "lon": -94.777943,
+        "lat": 29.296301,
+        "x": 1642.9,
+        "y": 2394.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "\"Shanghai Sally\" boat destruction and death",
+        "lon": -94.741818,
+        "lat": 29.216683,
+        "x": 1644.7,
+        "y": 2397.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Jefferson",
+        "lon": -92.18136,
+        "lat": 38.576322,
+        "x": 1698.2,
+        "y": 1980.5,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Saint Louis",
+        "lon": -90.227546,
+        "lat": 38.631535,
+        "x": 1763.2,
+        "y": 1972.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Columbus",
+        "lon": -83.019508,
+        "lat": 40.001091,
+        "x": 1999.3,
+        "y": 1882.8,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Black Mountain Ordinance Works",
+        "lon": -82.076182,
+        "lat": 38.929578,
+        "x": 2033.8,
+        "y": 1920.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Enclave Research Facility Site J",
+        "lon": -81.748997,
+        "lat": 38.985883,
+        "x": 2044.5,
+        "y": 1916.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Liberator robot cache",
+        "lon": -81.700999,
+        "lat": 38.361302,
+        "x": 2048.5,
+        "y": 1942.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "AVR Medical Center",
+        "lon": -81.603079,
+        "lat": 38.330187,
+        "x": 2051.9,
+        "y": 1942.6,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Camp McClintock Infantry Training Camp",
+        "lon": -81.229923,
+        "lat": 38.469496,
+        "x": 2063.9,
+        "y": 1934.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Relay tower EM-B1-27",
+        "lon": -80.663358,
+        "lat": 38.728551,
+        "x": 2081.7,
+        "y": 1919.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Pittsburgh 2",
+        "lon": -80.021556,
+        "lat": 40.453619,
+        "x": 2096.9,
+        "y": 1844.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Pittsburgh 1",
+        "lon": -80.009492,
+        "lat": 40.441732,
+        "x": 2097.3,
+        "y": 1844.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Long Branch Arsenal",
+        "lon": -79.550317,
+        "lat": 43.583977,
+        "x": 2106.1,
+        "y": 1715.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Satellite relay station",
+        "lon": -78.62364,
+        "lat": 38.656192,
+        "x": 2150.2,
+        "y": 1906.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "MRE factory",
+        "lon": -79.262545,
+        "lat": 34.202046,
+        "x": 2155.1,
+        "y": 2100.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Zeus' assassination",
+        "lon": -78.437275,
+        "lat": 38.518267,
+        "x": 2157.1,
+        "y": 1910.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Rapidan Camp",
+        "lon": -78.420145,
+        "lat": 38.491279,
+        "x": 2157.8,
+        "y": 1911.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "SatCom Array NW-07c",
+        "lon": -77.497723,
+        "lat": 39.506941,
+        "x": 2183.9,
+        "y": 1862.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Camp David",
+        "lon": -77.465589,
+        "lat": 39.647537,
+        "x": 2184.4,
+        "y": 1856.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Raven Rock",
+        "lon": -77.419935,
+        "lat": 39.734138,
+        "x": 2185.5,
+        "y": 1852.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Jury Street",
+        "lon": -77.404218,
+        "lat": 39.036479,
+        "x": 2189.2,
+        "y": 1880.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SatCom Array NW-05a",
+        "lon": -77.260932,
+        "lat": 39.658292,
+        "x": 2191.1,
+        "y": 1854.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Linden Street slayings",
+        "lon": -77.279863,
+        "lat": 39.19479,
+        "x": 2192.6,
+        "y": 1873.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "NCRA Response Unit MD-478",
+        "lon": -77.263472,
+        "lat": 39.183943,
+        "x": 2193.2,
+        "y": 1873.6,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Germantown",
+        "lon": -77.246415,
+        "lat": 39.194443,
+        "x": 2193.7,
+        "y": 1873.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Springvale",
+        "lon": -77.167424,
+        "lat": 38.965288,
+        "x": 2197.4,
+        "y": 1881.7,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Megaton",
+        "lon": -77.14023,
+        "lat": 38.91163,
+        "x": 2198.6,
+        "y": 1883.7,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "SatCom Array NN-03d",
+        "lon": -76.995231,
+        "lat": 39.651419,
+        "x": 2200.0,
+        "y": 1852.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Arlington",
+        "lon": -77.073644,
+        "lat": 38.888114,
+        "x": 2200.9,
+        "y": 1884.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "The Pentagon",
+        "lon": -77.056045,
+        "lat": 38.871072,
+        "x": 2201.6,
+        "y": 1884.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "White House",
+        "lon": -77.036525,
+        "lat": 38.897703,
+        "x": 2202.1,
+        "y": 1883.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "The White House",
+        "lon": -77.036537,
+        "lat": 38.897768,
+        "x": 2202.1,
+        "y": 1883.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Vernon Square",
+        "lon": -77.021122,
+        "lat": 38.906445,
+        "x": 2202.6,
+        "y": 1882.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Our Lady of Hope Hospital",
+        "lon": -77.023004,
+        "lat": 38.904224,
+        "x": 2202.6,
+        "y": 1883.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Treatment site",
+        "lon": -77.022265,
+        "lat": 38.904179,
+        "x": 2202.6,
+        "y": 1883.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Takoma Park",
+        "lon": -77.002237,
+        "lat": 38.985013,
+        "x": 2202.8,
+        "y": 1879.5,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "The Capitol Building",
+        "lon": -77.008981,
+        "lat": 38.889905,
+        "x": 2203.1,
+        "y": 1883.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Strategic Air Command headquarters",
+        "lon": -77.016448,
+        "lat": 38.842615,
+        "x": 2203.1,
+        "y": 1885.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Aircraft carrier",
+        "lon": -76.996882,
+        "lat": 38.871602,
+        "x": 2203.6,
+        "y": 1884.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "NCRA Response Unit",
+        "lon": -76.99901,
+        "lat": 38.803267,
+        "x": 2203.9,
+        "y": 1886.9,
+        "folder": "greatwar",
+        "note": "** Depicted location is speculated. **"
+      },
+      {
+        "name": "Turtledove Detention Camp",
+        "lon": -76.343161,
+        "lat": 38.076412,
+        "x": 2229.7,
+        "y": 1911.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "SSN-37-1A",
+        "lon": -76.330769,
+        "lat": 38.046252,
+        "x": 2230.3,
+        "y": 1912.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Pennsylvania",
+        "lon": -75.170495,
+        "lat": 39.940892,
+        "x": 2259.2,
+        "y": 1823.7,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Domestic jettison 2",
+        "lon": -74.388968,
+        "lat": 39.335874,
+        "x": 2288.2,
+        "y": 1840.7,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Domestic jettison 1",
+        "lon": -74.37884,
+        "lat": 39.342777,
+        "x": 2288.5,
+        "y": 1840.3,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "West Point",
+        "lon": -73.956132,
+        "lat": 41.391356,
+        "x": 2292.8,
+        "y": 1753.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "New York City",
+        "lon": -73.985732,
+        "lat": 40.758169,
+        "x": 2294.5,
+        "y": 1779.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Whately Research Facility",
+        "lon": -71.489762,
+        "lat": 42.23898,
+        "x": 2369.9,
+        "y": 1694.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Federal Surveillance Site K-21B",
+        "lon": -71.453812,
+        "lat": 42.253179,
+        "x": 2371.0,
+        "y": 1693.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Federal ration stockpile",
+        "lon": -71.396058,
+        "lat": 42.380452,
+        "x": 2372.4,
+        "y": 1687.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Federal supply cache 84NE",
+        "lon": -71.403883,
+        "lat": 42.265176,
+        "x": 2372.6,
+        "y": 1692.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Greater Mass blood clinic",
+        "lon": -71.338382,
+        "lat": 42.345428,
+        "x": 2374.4,
+        "y": 1688.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "USAF Satellite Station Olivia",
+        "lon": -71.290483,
+        "lat": 42.515574,
+        "x": 2375.2,
+        "y": 1681.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "The Switchboard",
+        "lon": -71.235107,
+        "lat": 42.436141,
+        "x": 2377.4,
+        "y": 1683.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Sentinel Site Prescott",
+        "lon": -71.264923,
+        "lat": 41.988819,
+        "x": 2378.3,
+        "y": 1701.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "US Coast Guard Charles River Station",
+        "lon": -71.21499,
+        "lat": 42.306678,
+        "x": 2378.5,
+        "y": 1688.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Fallon's robbery",
+        "lon": -71.171885,
+        "lat": 42.268077,
+        "x": 2380.1,
+        "y": 1689.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "\"Helping Hands\" Food Bank",
+        "lon": -71.150485,
+        "lat": 42.283115,
+        "x": 2380.7,
+        "y": 1688.8,
+        "folder": "prewar",
+        "note": "** Depicted location is speculated. **"
+      },
+      {
+        "name": "Weapons research",
+        "lon": -71.10457,
+        "lat": 42.354673,
+        "x": 2381.9,
+        "y": 1685.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Rationing site",
+        "lon": -71.093745,
+        "lat": 42.333151,
+        "x": 2382.4,
+        "y": 1686.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Cambridge",
+        "lon": -71.085056,
+        "lat": 42.368859,
+        "x": 2382.5,
+        "y": 1684.7,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "USS Riptide",
+        "lon": -71.088326,
+        "lat": 42.355222,
+        "x": 2382.5,
+        "y": 1685.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Bank robbery",
+        "lon": -71.083722,
+        "lat": 42.351726,
+        "x": 2382.6,
+        "y": 1685.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Roxbury food bank",
+        "lon": -71.083648,
+        "lat": 42.328853,
+        "x": 2382.7,
+        "y": 1686.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "South of Wilson Atomatoys HQ",
+        "lon": -71.07979,
+        "lat": 42.335236,
+        "x": 2382.8,
+        "y": 1686.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "HalluciGen, Inc. (chemical development - SCYTHE Program)",
+        "lon": -71.074173,
+        "lat": 42.354396,
+        "x": 2382.9,
+        "y": 1685.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Mass Bay Medical Center",
+        "lon": -71.06206,
+        "lat": 42.349673,
+        "x": 2383.3,
+        "y": 1685.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Energy weapons lab",
+        "lon": -71.039717,
+        "lat": 42.313698,
+        "x": 2384.2,
+        "y": 1686.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "USA\u00a0Robotics Technology Facility RB-2851",
+        "lon": -71.031082,
+        "lat": 42.364185,
+        "x": 2384.3,
+        "y": 1684.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Revere satellite array",
+        "lon": -71.007299,
+        "lat": 42.40547,
+        "x": 2384.9,
+        "y": 1682.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Wilson Atomatoys factory (munitions production - SCYTHE Program)",
+        "lon": -71.014605,
+        "lat": 42.235394,
+        "x": 2385.4,
+        "y": 1689.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Theater shooting",
+        "lon": -70.938189,
+        "lat": 42.568553,
+        "x": 2386.5,
+        "y": 1675.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Yangtze-31",
+        "lon": -70.920569,
+        "lat": 42.374962,
+        "x": 2387.8,
+        "y": 1682.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Container ship sinking",
+        "lon": -70.886822,
+        "lat": 42.446428,
+        "x": 2388.6,
+        "y": 1679.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Vim! truck attack",
+        "lon": -68.32451,
+        "lat": 44.269789,
+        "x": 2464.3,
+        "y": 1579.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "USS Democracy",
+        "lon": -68.313638,
+        "lat": 44.307112,
+        "x": 2464.5,
+        "y": 1577.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Vim! Pop factory missile attack",
+        "lon": -68.313058,
+        "lat": 44.276271,
+        "x": 2464.7,
+        "y": 1578.8,
+        "folder": "prewar",
+        "note": null
+      }
+    ],
+    "unrest": [
+      {
+        "name": "Looting and riots",
+        "lon": -119.940059,
+        "lat": 38.962741,
+        "x": 783.7,
+        "y": 1859.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Automation riot",
+        "lon": -118.242165,
+        "lat": 34.054341,
+        "x": 817.7,
+        "y": 2093.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Anti-war protest",
+        "lon": -116.697434,
+        "lat": 36.686449,
+        "x": 878.6,
+        "y": 1988.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Anti-corporation protest",
+        "lon": -115.154844,
+        "lat": 36.147038,
+        "x": 928.2,
+        "y": 2025.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Looting and riots",
+        "lon": -99.125968,
+        "lat": 19.452056,
+        "x": 1549.5,
+        "y": 2838.6,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "South Ohio Evacuation Center",
+        "lon": -82.556037,
+        "lat": 38.895467,
+        "x": 2018.0,
+        "y": 1925.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Anti-automation protest",
+        "lon": -81.829711,
+        "lat": 38.471538,
+        "x": 2043.8,
+        "y": 1938.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Automation riot",
+        "lon": -81.855367,
+        "lat": 37.861547,
+        "x": 2045.4,
+        "y": 1963.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Automation riot",
+        "lon": -81.636124,
+        "lat": 38.365061,
+        "x": 2050.7,
+        "y": 1941.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Anti-automation protest",
+        "lon": -81.629699,
+        "lat": 38.356162,
+        "x": 2050.9,
+        "y": 1941.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Anti-automation protest",
+        "lon": -81.586671,
+        "lat": 37.434055,
+        "x": 2056.4,
+        "y": 1979.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Automation riot",
+        "lon": -81.585015,
+        "lat": 37.433043,
+        "x": 2056.5,
+        "y": 1980.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Anti-automation protest",
+        "lon": -81.4748,
+        "lat": 37.360177,
+        "x": 2060.5,
+        "y": 1982.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Automation riot",
+        "lon": -81.311802,
+        "lat": 37.325266,
+        "x": 2066.2,
+        "y": 1982.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Anti-automation protest",
+        "lon": -81.193976,
+        "lat": 37.783788,
+        "x": 2068.0,
+        "y": 1962.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Automation riot",
+        "lon": -81.184813,
+        "lat": 37.776724,
+        "x": 2068.4,
+        "y": 1962.8,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Automation riot",
+        "lon": -80.343893,
+        "lat": 39.280885,
+        "x": 2090.2,
+        "y": 1894.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Anti-automation protest",
+        "lon": -80.341361,
+        "lat": 39.284855,
+        "x": 2090.3,
+        "y": 1894.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Anti-automation protest",
+        "lon": -80.446692,
+        "lat": 37.832491,
+        "x": 2092.9,
+        "y": 1955.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Mine closure protest",
+        "lon": -80.206616,
+        "lat": 39.463827,
+        "x": 2094.1,
+        "y": 1885.8,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Automation riot",
+        "lon": -79.991209,
+        "lat": 40.441235,
+        "x": 2097.9,
+        "y": 1844.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Anti-automation protest",
+        "lon": -80.02131,
+        "lat": 39.341224,
+        "x": 2100.7,
+        "y": 1889.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Looting and riots",
+        "lon": -79.953749,
+        "lat": 39.630857,
+        "x": 2101.9,
+        "y": 1877.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Protest",
+        "lon": -80.131829,
+        "lat": 38.10954,
+        "x": 2102.2,
+        "y": 1941.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Clay riot",
+        "lon": -77.733971,
+        "lat": 39.325073,
+        "x": 2176.9,
+        "y": 1871.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Looting and riots",
+        "lon": -77.036552,
+        "lat": 38.907149,
+        "x": 2202.1,
+        "y": 1883.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Food riot",
+        "lon": -71.083535,
+        "lat": 42.328638,
+        "x": 2382.7,
+        "y": 1686.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Protest",
+        "lon": -71.0633,
+        "lat": 42.361772,
+        "x": 2383.3,
+        "y": 1684.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Looting and riots",
+        "lon": -71.056594,
+        "lat": 42.355546,
+        "x": 2383.5,
+        "y": 1684.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Mob body disposal",
+        "lon": -71.013794,
+        "lat": 42.195461,
+        "x": 2385.6,
+        "y": 1690.7,
+        "folder": "prewar",
+        "note": null
+      }
+    ],
+    "garrison": [
+      {
+        "name": "Elemndorf AFB (occupied)",
+        "lon": -149.810809,
+        "lat": 61.254716,
+        "x": 11.9,
+        "y": 616.4,
+        "folder": "prewar",
+        "note": "** The misspelling is canon in-game. **"
+      },
+      {
+        "name": "Listening post",
+        "lon": -149.676491,
+        "lat": 60.54127,
+        "x": 14.8,
+        "y": 664.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Chugach Overlook AFS (occupied)",
+        "lon": -149.371449,
+        "lat": 60.970309,
+        "x": 26.4,
+        "y": 636.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Navarro Military Base",
+        "lon": -123.69428,
+        "lat": 38.959516,
+        "x": 661.3,
+        "y": 1820.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Military warehouse",
+        "lon": -123.371154,
+        "lat": 41.814626,
+        "x": 697.0,
+        "y": 1700.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Mariposa Military Base",
+        "lon": -119.943485,
+        "lat": 37.500432,
+        "x": 774.6,
+        "y": 1923.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Sierra Army Depot",
+        "lon": -120.152285,
+        "lat": 40.14508,
+        "x": 785.4,
+        "y": 1806.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Marine Corps Mountain Warfare Training Center",
+        "lon": -119.518875,
+        "lat": 38.356848,
+        "x": 793.6,
+        "y": 1890.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Hawthorne Army Depot",
+        "lon": -118.629305,
+        "lat": 38.574326,
+        "x": 824.2,
+        "y": 1888.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Command forward depot",
+        "lon": -119.422119,
+        "lat": 45.807964,
+        "x": 867.2,
+        "y": 1575.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Nellis AFB",
+        "lon": -115.039365,
+        "lat": 36.235575,
+        "x": 932.4,
+        "y": 2022.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Valley of Fire Supply Depot",
+        "lon": -114.533185,
+        "lat": 36.485592,
+        "x": 950.1,
+        "y": 2014.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "National Guard armory",
+        "lon": -111.654176,
+        "lat": 40.114427,
+        "x": 1061.0,
+        "y": 1876.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Fort Knox",
+        "lon": -85.965328,
+        "lat": 37.883302,
+        "x": 1907.3,
+        "y": 1987.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Athens Armory",
+        "lon": -82.100879,
+        "lat": 39.332542,
+        "x": 2031.6,
+        "y": 1904.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Fujiniya Intelligence Base",
+        "lon": -79.998755,
+        "lat": 39.650982,
+        "x": 2100.3,
+        "y": 1876.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Fort Bannister",
+        "lon": -77.440646,
+        "lat": 39.037829,
+        "x": 2188.0,
+        "y": 1881.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Fort Bannister",
+        "lon": -77.443818,
+        "lat": 39.005631,
+        "x": 2188.0,
+        "y": 1882.5,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Chinese infiltration",
+        "lon": -77.261039,
+        "lat": 39.658152,
+        "x": 2191.1,
+        "y": 1854.2,
+        "folder": "prewar",
+        "note": "Implied via the presence of a Chinese Army: Special Ops Training Manual."
+      },
+      {
+        "name": "Quantico military base",
+        "lon": -77.30558,
+        "lat": 38.502417,
+        "x": 2195.1,
+        "y": 1902.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Fort Constantine",
+        "lon": -77.11246,
+        "lat": 39.669103,
+        "x": 2196.0,
+        "y": 1852.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Fort Independence",
+        "lon": -77.205864,
+        "lat": 38.861967,
+        "x": 2196.7,
+        "y": 1886.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Chinese infiltration",
+        "lon": -77.180318,
+        "lat": 38.800596,
+        "x": 2197.8,
+        "y": 1888.6,
+        "folder": "prewar",
+        "note": "Implied via the presence of a\u00a0Chinese Army: Special Ops Training Manual hidden in the ceiling."
+      },
+      {
+        "name": "Chinese infiltration",
+        "lon": -77.109995,
+        "lat": 38.907834,
+        "x": 2199.6,
+        "y": 1883.6,
+        "folder": "prewar",
+        "note": "Implied via the presence of a\u00a0Chinese Army: Special Ops Training Manual on a bookshelf."
+      },
+      {
+        "name": "Wheaton Armory",
+        "lon": -77.050767,
+        "lat": 39.044422,
+        "x": 2200.9,
+        "y": 1877.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Chinese infiltration",
+        "lon": -77.04787,
+        "lat": 38.876894,
+        "x": 2201.9,
+        "y": 1884.3,
+        "folder": "prewar",
+        "note": "Within the Taft Tunnels. Implied via the presence of a\u00a0Chinese Army: Special Ops Training Manual."
+      },
+      {
+        "name": "National Guard depot",
+        "lon": -77.025938,
+        "lat": 38.995409,
+        "x": 2202.0,
+        "y": 1879.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Adams AFB",
+        "lon": -76.866989,
+        "lat": 38.806146,
+        "x": 2208.3,
+        "y": 1885.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "New Plague relief outpost",
+        "lon": -76.344725,
+        "lat": 38.053594,
+        "x": 2229.8,
+        "y": 1912.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "US Naval Office",
+        "lon": -76.336178,
+        "lat": 38.053903,
+        "x": 2230.1,
+        "y": 1911.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Norfolk Naval Base",
+        "lon": -76.341688,
+        "lat": 36.890353,
+        "x": 2237.0,
+        "y": 1960.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Beddown base",
+        "lon": -71.405749,
+        "lat": 42.391051,
+        "x": 2372.0,
+        "y": 1687.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Fort Hagen satellite array",
+        "lon": -71.348852,
+        "lat": 42.34843,
+        "x": 2374.0,
+        "y": 1688.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Fort Hagen",
+        "lon": -71.340086,
+        "lat": 42.348016,
+        "x": 2374.3,
+        "y": 1688.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "ArcJet Systems (military contractor)",
+        "lon": -71.316607,
+        "lat": 42.382164,
+        "x": 2374.9,
+        "y": 1686.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Military storage building",
+        "lon": -71.181838,
+        "lat": 42.193636,
+        "x": 2380.1,
+        "y": 1692.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Military aid station",
+        "lon": -71.06779,
+        "lat": 42.337579,
+        "x": 2383.2,
+        "y": 1685.7,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Listening Post Bravo",
+        "lon": -71.032996,
+        "lat": 42.467274,
+        "x": 2383.8,
+        "y": 1680.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "National Guard training yard",
+        "lon": -71.037521,
+        "lat": 42.395413,
+        "x": 2384.0,
+        "y": 1683.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Fort Strong",
+        "lon": -70.956067,
+        "lat": 42.329989,
+        "x": 2386.9,
+        "y": 1684.8,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Nuka-Cola's disruption team armory",
+        "lon": -68.328868,
+        "lat": 44.287128,
+        "x": 2464.1,
+        "y": 1578.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Mount Desert Island Naval Facility",
+        "lon": -68.313643,
+        "lat": 44.307329,
+        "x": 2464.5,
+        "y": 1577.6,
+        "folder": "prewar",
+        "note": null
+      }
+    ],
+    "checkpoint": [
+      {
+        "name": "MCMW checkpoint",
+        "lon": -119.518202,
+        "lat": 38.355502,
+        "x": 793.6,
+        "y": 1890.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -115.545125,
+        "lat": 35.469899,
+        "x": 913.0,
+        "y": 2052.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -115.172912,
+        "lat": 36.101086,
+        "x": 927.4,
+        "y": 2026.9,
+        "folder": "prewar",
+        "note": "** Note from creator: I am inclined to believe that the Strip's South Gate is a repurposed pre-war military checkpoint due to the old chain-link barbed wire fence. **"
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -115.14736,
+        "lat": 36.15903,
+        "x": 928.5,
+        "y": 2024.5,
+        "folder": "prewar",
+        "note": "** Note from creator: I am inclined to believe that the Strip's North Gate is a repurposed pre-war military checkpoint due to the old chain-link barbed wire fence. Concept art even shows a car gate, which wouldn't really make sense for post-war travel. **"
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -115.134084,
+        "lat": 36.188444,
+        "x": 929.0,
+        "y": 2023.3,
+        "folder": "prewar",
+        "note": "** Note from creator: I am inclined to believe that the Freeside North Gate is a repurposed pre-war military checkpoint due to the old chain-link barbed wire fence. **"
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -115.11634,
+        "lat": 36.173975,
+        "x": 929.6,
+        "y": 2024.1,
+        "folder": "prewar",
+        "note": "** Note from creator: I am inclined to believe that the Freeside east gate is a repurposed pre-war military checkpoint due to the old chain-link barbed wire fence. **"
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -80.698774,
+        "lat": 38.844723,
+        "x": 2080.1,
+        "y": 1914.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -80.428047,
+        "lat": 39.661456,
+        "x": 2086.0,
+        "y": 1879.3,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -79.957106,
+        "lat": 39.623917,
+        "x": 2101.8,
+        "y": 1877.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -79.921479,
+        "lat": 39.645922,
+        "x": 2102.9,
+        "y": 1876.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -79.89076,
+        "lat": 39.651883,
+        "x": 2103.9,
+        "y": 1875.7,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -80.03014,
+        "lat": 38.199039,
+        "x": 2105.2,
+        "y": 1936.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -80.004915,
+        "lat": 38.181682,
+        "x": 2106.2,
+        "y": 1937.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -77.625685,
+        "lat": 38.928157,
+        "x": 2182.3,
+        "y": 1887.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -77.432338,
+        "lat": 39.085684,
+        "x": 2188.0,
+        "y": 1879.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -77.348914,
+        "lat": 39.002428,
+        "x": 2191.2,
+        "y": 1881.8,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -77.278016,
+        "lat": 39.258793,
+        "x": 2192.3,
+        "y": 1870.7,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -77.033842,
+        "lat": 38.895505,
+        "x": 2202.2,
+        "y": 1883.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -77.005955,
+        "lat": 38.890606,
+        "x": 2203.2,
+        "y": 1883.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.365803,
+        "lat": 42.469809,
+        "x": 2373.0,
+        "y": 1683.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.358927,
+        "lat": 42.467586,
+        "x": 2373.2,
+        "y": 1683.9,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Fort Hagen checkpoint",
+        "lon": -71.336472,
+        "lat": 42.348813,
+        "x": 2374.4,
+        "y": 1688.3,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Fort Hagen checkpoint",
+        "lon": -71.337256,
+        "lat": 42.342478,
+        "x": 2374.4,
+        "y": 1688.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.345363,
+        "lat": 42.271936,
+        "x": 2374.4,
+        "y": 1691.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.335234,
+        "lat": 42.343036,
+        "x": 2374.5,
+        "y": 1688.5,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -71.335212,
+        "lat": 42.343014,
+        "x": 2374.5,
+        "y": 1688.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -71.34532,
+        "lat": 42.271889,
+        "x": 2374.5,
+        "y": 1691.4,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.210794,
+        "lat": 42.471009,
+        "x": 2378.0,
+        "y": 1682.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -71.210705,
+        "lat": 42.470957,
+        "x": 2378.0,
+        "y": 1682.1,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.137951,
+        "lat": 42.286213,
+        "x": 2381.1,
+        "y": 1688.5,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -71.138005,
+        "lat": 42.28626,
+        "x": 2381.1,
+        "y": 1688.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.090419,
+        "lat": 42.335621,
+        "x": 2382.5,
+        "y": 1686.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.073459,
+        "lat": 42.342765,
+        "x": 2383.0,
+        "y": 1685.6,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.075832,
+        "lat": 42.330701,
+        "x": 2383.0,
+        "y": 1686.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.067007,
+        "lat": 42.360349,
+        "x": 2383.1,
+        "y": 1684.8,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.064117,
+        "lat": 42.361215,
+        "x": 2383.2,
+        "y": 1684.8,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.065285,
+        "lat": 42.352426,
+        "x": 2383.2,
+        "y": 1685.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Civilian military checkpoint",
+        "lon": -71.067682,
+        "lat": 42.337458,
+        "x": 2383.2,
+        "y": 1685.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.06042,
+        "lat": 42.375335,
+        "x": 2383.3,
+        "y": 1684.2,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.062836,
+        "lat": 42.351445,
+        "x": 2383.3,
+        "y": 1685.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.058433,
+        "lat": 42.36293,
+        "x": 2383.4,
+        "y": 1684.6,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.060044,
+        "lat": 42.350246,
+        "x": 2383.4,
+        "y": 1685.1,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.056674,
+        "lat": 42.352736,
+        "x": 2383.5,
+        "y": 1685.0,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -71.05552,
+        "lat": 42.34182,
+        "x": 2383.6,
+        "y": 1685.4,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Military checkpoint",
+        "lon": -70.981424,
+        "lat": 42.392135,
+        "x": 2385.8,
+        "y": 1682.6,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Fort Strong checkpoint",
+        "lon": -70.955705,
+        "lat": 42.344859,
+        "x": 2386.8,
+        "y": 1684.2,
+        "folder": "prewar",
+        "note": null
+      }
+    ],
+    "shelter": [
+      {
+        "name": "West bunker",
+        "lon": -115.174177,
+        "lat": 35.848156,
+        "x": 926.6,
+        "y": 2038.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "South bunker",
+        "lon": -115.164302,
+        "lat": 35.827261,
+        "x": 926.9,
+        "y": 2039.2,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "North bunker",
+        "lon": -115.157525,
+        "lat": 35.863435,
+        "x": 927.2,
+        "y": 2037.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "East bunker",
+        "lon": -115.148256,
+        "lat": 35.844529,
+        "x": 927.4,
+        "y": 2038.5,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Bunker Beta",
+        "lon": -90.524719,
+        "lat": 40.941957,
+        "x": 1751.8,
+        "y": 1877.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Bunker Gamma",
+        "lon": -89.576851,
+        "lat": 39.227915,
+        "x": 1783.9,
+        "y": 1945.9,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Bunker Alpha",
+        "lon": -87.902527,
+        "lat": 41.610627,
+        "x": 1837.3,
+        "y": 1841.8,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Whitespring bunker",
+        "lon": -80.308311,
+        "lat": 37.786039,
+        "x": 2097.8,
+        "y": 1956.0,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Vault 87",
+        "lon": -78.543154,
+        "lat": 38.688915,
+        "x": 2152.8,
+        "y": 1904.7,
+        "folder": "greatwar",
+        "note": null
+      },
+      {
+        "name": "Vault 87 (FEV research)",
+        "lon": -78.537186,
+        "lat": 38.689773,
+        "x": 2153.0,
+        "y": 1904.7,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Chinese infiltration",
+        "lon": -76.324165,
+        "lat": 38.049716,
+        "x": 2230.5,
+        "y": 1911.9,
+        "folder": "prewar",
+        "note": "Within a bunker underneath the Calvert Mansion."
+      },
+      {
+        "name": "Boston mayoral shelter",
+        "lon": -71.347,
+        "lat": 42.343386,
+        "x": 2374.1,
+        "y": 1688.6,
+        "folder": "prewar",
+        "note": null
+      },
+      {
+        "name": "Recon bunker Theta",
+        "lon": -71.044973,
+        "lat": 42.557698,
+        "x": 2383.0,
+        "y": 1676.9,
+        "folder": "prewar",
+        "note": null
+      }
+    ],
+    "ruin": [
+      {
+        "name": "City ruins",
+        "lon": -121.02111,
+        "lat": 36.129566,
+        "x": 731.7,
+        "y": 1974.2,
+        "folder": "greatwar",
+        "note": "** Evidenced by the unmarked city ruins location in Fallout 1. **"
+      },
+      {
+        "name": "City ruins",
+        "lon": -120.457021,
+        "lat": 34.64611,
+        "x": 744.4,
+        "y": 2046.6,
+        "folder": "greatwar",
+        "note": "** Evidenced by the unmarked city ruins location in Fallout 1. **"
+      },
+      {
+        "name": "City ruins",
+        "lon": -119.988669,
+        "lat": 35.352543,
+        "x": 762.9,
+        "y": 2019.2,
+        "folder": "greatwar",
+        "note": "** Evidenced by the unmarked city ruins location in Fallout 1. **"
+      },
+      {
+        "name": "City ruins",
+        "lon": -119.246069,
+        "lat": 35.77278,
+        "x": 789.5,
+        "y": 2007.3,
+        "folder": "greatwar",
+        "note": "** Evidenced by the unmarked city ruins location in Fallout 1. **"
+      },
+      {
+        "name": "City ruins",
+        "lon": -117.156368,
+        "lat": 32.768238,
+        "x": 852.2,
+        "y": 2161.8,
+        "folder": "greatwar",
+        "note": "** Evidenced by the unmarked city ruins location in Fallout 1. **"
+      },
+      {
+        "name": "City ruins",
+        "lon": -117.018631,
+        "lat": 34.896679,
+        "x": 861.5,
+        "y": 2066.2,
+        "folder": "greatwar",
+        "note": "** Evidenced by the unmarked city ruins location in Fallout 1. **"
+      }
+    ]
+  }
+}

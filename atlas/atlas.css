@@ -791,6 +791,29 @@
   .atl.show-blast .blast-wave{ animation:none; }
 }
 
+/* ---- Canon placemarks (the rest of the Great-War-era record) ----
+   362 marks against 61 blast sites, so the whole point of this block is that they must NOT
+   compete with them. Same phosphor, no animation, a third of the weight: the bombs stay the
+   figure and this is the ground. They ride the same reveal, unanimated, so nothing new moves
+   while the blast waves are expanding.
+   The channel is in the class and the folder is in an attribute, so a reader can be given one
+   kind at a time later without touching the data. */
+.atl .canonlayer{ pointer-events:none; opacity:0; transition:opacity .45s ease .25s; }
+.atl.show-blast .canonlayer{ opacity:1; }
+.atl .canon-mark{
+  fill:none;
+  stroke:hsl(var(--p) calc(70% * var(--psat)) 62% / .75); stroke-width:1;
+  vector-effect:non-scaling-stroke;
+}
+/* Pre-war entries are a different fortnight and are drawn quieter than the aftermath ones. */
+.atl .canon[data-folder="prewar"] .canon-mark{ stroke-opacity:.45; }
+/* Four channels earn a shape of their own; the rest share the ring. A shape per channel would be
+   eight things to learn, and the four below are the ones a reader can name without a legend. */
+.atl .canon-garrison .canon-mark, .atl .canon-battle .canon-mark{ fill:hsl(var(--p) calc(70% * var(--psat)) 55% / .22); }
+.atl .canon-shelter .canon-mark{ r:2.5; stroke-dasharray:2 2; }
+.atl .canon-crash .canon-mark{ r:2.5; }
+.atl .canon-site .canon-mark{ r:2; stroke-opacity:.4; }
+
 /* ===================== TERRITORY WEIGHT =====================
    Every one of the 188 territories used to be drawn at the same fill and the same stroke, so a
    continental power read exactly as loud as an unnamed 1,800px sliver next to it. The map had

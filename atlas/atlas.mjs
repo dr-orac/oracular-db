@@ -962,6 +962,38 @@ export function mount(container, data, opts = {}){
     })
     .catch(err => console.error('atlas.mjs: blast sites failed to load; none drawn', err));
 
+  /* ---- The rest of the Great-War-era record ----
+     362 canon placemarks from the same two KML folders the blast sites came out of, sorted into
+     typed channels by kml_canon_placemarks.py: crashes, checkpoints, unrest, shelters, ruins,
+     garrisons, battles, and a `site` remainder. Drawn as small marks rather than as blast waves,
+     because none of these is a detonation and drawing them alike would make the folder's shape
+     into the bombs' shape - which is exactly the error the 61-not-245 count exists to prevent.
+     Bound to the same event gate as the blast layer. That is the honest limit of what the atlas
+     can express today: there is one control for the Great War and no per-event join for the
+     pre-war entries, so the Resource Wars material rides the same switch. The channel and the
+     source folder are both stamped into the DOM, so when that join exists this becomes a
+     selector change rather than a re-import. */
+  const canonLayer = el('g', {class:'canonlayer', 'aria-hidden':'true'}, svg);
+  fetch(new URL('../data/atlas-canon-placemarks.json', import.meta.url))
+    .then(res => res.ok ? res.json() : null)
+    .then(json => {
+      const chans = json && json.channels && typeof json.channels === 'object' ? json.channels : {};
+      for (const [chan, sites] of Object.entries(chans)){
+        if (!Array.isArray(sites)) continue;
+        for (const s of sites){
+          if (typeof s.x !== 'number' || typeof s.y !== 'number') continue;
+          const g = el('g', {
+            class: 'canon canon-' + chan,
+            'data-folder': s.folder || '',
+            transform: `translate(${s.x} ${s.y})`,
+          }, canonLayer);
+          el('circle', {class:'canon-mark', r:'3.5'}, g);
+          if (s.name) el('title', {}, g).textContent = s.name;
+        }
+      }
+    })
+    .catch(err => console.error('atlas.mjs: canon placemarks failed to load; none drawn', err));
+
   const terrLabelsG = el('g', {class:'terrlabels', 'aria-hidden':'true'}, svg);
   fetch(new URL('../data/atlas-region-meta.json', import.meta.url))
     .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })

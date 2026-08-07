@@ -1,0 +1,886 @@
+{
+ "type": "FeatureCollection",
+ "generatedBy": "tools/mexico-2292-sites.py",
+ "source": "mexico-2292.png",
+ "creator": "u/omega-lf",
+ "licence": "none printed - BLOCKS PUBLICATION of anything derived until the owner rules. Reference material only.",
+ "registrationKm": 7.84,
+ "siteBudget": "a transferred site carries the registration error PLUS the author's own siting error: expect about 10 km typically and up to about 35 km occasionally outside the south-east corner. Never use a site position to decide which side of a nearby border something falls on.",
+ "permitted": [
+  "point sites",
+  "containment",
+  "names attached to regions"
+ ],
+ "notPermitted": [
+  "boundaries",
+  "shared borders",
+  "area claims"
+ ],
+ "what": "area name anchors",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Biggus' Legion",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "baja-peninsula",
+    "positional": false,
+    "anchorOnly": true,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "The whole peninsula, not just the north-west corner. Its measurable coastline is 172 unoccluded pixels - the travel posters cover the rest - which is far too little to fit five parameters to, and the registration's own conclusion is that the author may have assembled Baja from a separate source at a different scale. Its verdict: if Baja ever matters, the way in is a second source sheet, not this one. Names and ordering only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.7783,
+     23.896
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Byzantine Legion",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 28.6,
+    "positionWorstCaseKm": 53.6,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -105.65759,
+     31.48736
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Cult of Santa Muerte",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.6,
+    "positionWorstCaseKm": 54.6,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -101.93009,
+     18.26634
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "El Paraiso",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.7,
+    "positionWorstCaseKm": 54.7,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.99553,
+     17.36077
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Galleoneers",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.6,
+    "positionWorstCaseKm": 54.6,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -95.97556,
+     18.66127
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Huey Altepetl",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.3,
+    "positionWorstCaseKm": 54.3,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -100.50729,
+     22.93004
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Neo-Mayan Kingdoms",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.5,
+    "positionWorstCaseKm": 54.5,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -88.81513,
+     19.4423
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "New New Spain",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.6,
+    "positionWorstCaseKm": 54.6,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -92.3945,
+     18.56059
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Oaxaca Union",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.7,
+    "positionWorstCaseKm": 54.7,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -96.46099,
+     16.64272
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Petro Chico",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.3,
+    "positionWorstCaseKm": 54.3,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -97.95203,
+     22.56099
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Republic of New California",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "north-west",
+    "positional": false,
+    "anchorOnly": true,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.36789,
+     32.33806
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Republic of Texas",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "republic-of-texas",
+    "positional": false,
+    "anchorOnly": true,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "INVENTED geography, not a misdrawn one. The sheet places Austin 26 px east of Piedras Negras where the truth is about 440 px, and 494 px south of it where the truth is north. Take nothing positional from it. Extent derived from the connected blue fill containing Austin."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.66623,
+     24.99347
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Rio Bravo Confederation",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 28.9,
+    "positionWorstCaseKm": 53.9,
+    "readConfidence": "clear",
+    "note": "a reader whose tile clipped the second line reported only 'Rio Bravo'; the fuller reading is kept"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.88192,
+     27.86975
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Socialist Anti-Fruit Republic of Guatemala",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "south-east",
+    "positional": false,
+    "anchorOnly": true,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Guatemala, Belize and the isthmus south of lat 16.1: median 38 km, p75 127 km. Names and containment only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -90.26692,
+     14.36313
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "State of Mexico",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.4,
+    "positionWorstCaseKm": 54.4,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -87.66878,
+     21.03733
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "The Desperados",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.2,
+    "positionWorstCaseKm": 54.2,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.93229,
+     24.29545
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "The Diggers",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.7,
+    "positionWorstCaseKm": 54.7,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -94.71088,
+     17.54376
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "The Hacendados",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 28.8,
+    "positionWorstCaseKm": 53.8,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -104.54713,
+     29.223
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "The Triple Government",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.5,
+    "positionWorstCaseKm": 54.5,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.75343,
+     20.05452
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Tres Gallos Republic",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.4,
+    "positionWorstCaseKm": 54.4,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -104.28401,
+     21.21438
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Vulpes' Legion",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "north-west",
+    "positional": false,
+    "anchorOnly": true,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.87516,
+     32.23644
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Zapato-Leninist Reclamation Front",
+    "kind": "polity",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.7,
+    "positionWorstCaseKm": 54.7,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -92.86428,
+     16.40303
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Tribal Land",
+    "kind": "region",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "north-west",
+    "positional": false,
+    "anchorOnly": true,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -108.79391,
+     30.33673
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Apache",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "north-west",
+    "positional": false,
+    "anchorOnly": true,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -108.82914,
+     33.08226
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Black Frumentaris",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "north-west",
+    "positional": false,
+    "anchorOnly": true,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -110.51867,
+     31.27854
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Blue-Eyes",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "north-west",
+    "positional": false,
+    "anchorOnly": true,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -108.34224,
+     29.90006
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Chichimecas",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.2,
+    "positionWorstCaseKm": 54.2,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -104.16604,
+     24.27467
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Dead-Heads",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "north-west",
+    "positional": false,
+    "anchorOnly": true,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -107.81767,
+     32.22987
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Friends-of-All",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.0,
+    "positionWorstCaseKm": 54.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -107.2961,
+     26.80487
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Hermos' Sons",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "baja-peninsula",
+    "positional": false,
+    "anchorOnly": true,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "The whole peninsula, not just the north-west corner. Its measurable coastline is 172 unoccluded pixels - the travel posters cover the rest - which is far too little to fit five parameters to, and the registration's own conclusion is that the author may have assembled Baja from a separate source at a different scale. Its verdict: if Baja ever matters, the way in is a second source sheet, not this one. Names and ordering only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.96899,
+     29.38948
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Marius' Tribe",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 28.5,
+    "positionWorstCaseKm": 53.5,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -105.7435,
+     32.91639
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Mustaches",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 28.7,
+    "positionWorstCaseKm": 53.7,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.87565,
+     30.85879
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Silent Zone Anomaly",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.0,
+    "positionWorstCaseKm": 54.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -103.43659,
+     26.17276
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Sombrero-Stealers",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 28.8,
+    "positionWorstCaseKm": 53.8,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.64538,
+     29.64067
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Those-Who-Make Things-Go-Boom",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 29.1,
+    "positionWorstCaseKm": 54.1,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -103.37434,
+     25.3394
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "True-Romans",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "north-west",
+    "positional": false,
+    "anchorOnly": true,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.19769,
+     33.05462
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Twin-Snakes",
+    "kind": "tribe",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "anchorOnly": true,
+    "positionToleranceKm": 28.9,
+    "positionWorstCaseKm": 53.9,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -108.3377,
+     28.24729
+    ]
+   }
+  }
+ ]
+}

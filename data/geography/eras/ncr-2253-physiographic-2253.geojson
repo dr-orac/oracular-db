@@ -1,0 +1,169 @@
+{
+ "_doc": "DERIVED from ncr-2253-physiographic-authored.json through the registration in ncr-2253-georef.json. One LineString per name: the baseline the sheet set it along, so a renderer can place curved letterspaced type with `symbol-placement: line` the way the source does. `positionToleranceKm` is the READING tolerance and is far coarser than the sheet's 0.78 km registration - these are area-label anchors, never boundary positions. Rebuild with tools/ncr-2253-labels.py.",
+ "era": 2253,
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Cascades",
+    "kind": "range",
+    "era": 2253,
+    "anchor": [
+     -122.50585,
+     43.04059
+    ],
+    "drawnLengthKm": 124.0,
+    "positionToleranceKm": 10.99
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -122.56754,
+      43.59616
+     ],
+     [
+      -122.44524,
+      42.48499
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Death Valley",
+    "kind": "valley",
+    "era": 2253,
+    "anchor": [
+     -117.49734,
+     36.97365
+    ],
+    "drawnLengthKm": 114.8,
+    "positionToleranceKm": 10.99
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -118.03412,
+      37.25931
+     ],
+     [
+      -116.96495,
+      36.68537
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Great Basin Desert",
+    "kind": "desert",
+    "era": 2253,
+    "anchor": [
+     -115.80948,
+     38.97321
+    ],
+    "drawnLengthKm": 280.4,
+    "positionToleranceKm": 10.99
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -117.25026,
+      39.55624
+     ],
+     [
+      -114.3936,
+      38.37194
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Owyhee",
+    "kind": "region",
+    "era": 2253,
+    "anchor": [
+     -117.94547,
+     42.39211
+    ],
+    "drawnLengthKm": 106.0,
+    "positionToleranceKm": 10.99
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -118.5895,
+      42.40816
+     ],
+     [
+      -117.30181,
+      42.37254
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Sonoran Desert",
+    "kind": "desert",
+    "era": 2253,
+    "anchor": [
+     -114.03322,
+     33.71145
+    ],
+    "drawnLengthKm": 150.6,
+    "positionToleranceKm": 10.99
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -114.54604,
+      33.1901
+     ],
+     [
+      -113.51306,
+      34.23024
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "The Divide",
+    "kind": "range",
+    "era": 2253,
+    "anchor": [
+     -116.77193,
+     36.20211
+    ],
+    "drawnLengthKm": 115.0,
+    "positionToleranceKm": 10.99
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -117.24042,
+      36.55421
+     ],
+     [
+      -116.30809,
+      35.84797
+     ]
+    ]
+   }
+  }
+ ]
+}

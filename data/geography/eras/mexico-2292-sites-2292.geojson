@@ -1,0 +1,1382 @@
+{
+ "type": "FeatureCollection",
+ "generatedBy": "tools/mexico-2292-sites.py",
+ "source": "mexico-2292.png",
+ "creator": "u/omega-lf",
+ "licence": "none printed - BLOCKS PUBLICATION of anything derived until the owner rules. Reference material only.",
+ "registrationKm": 7.84,
+ "siteBudget": "a transferred site carries the registration error PLUS the author's own siting error: expect about 10 km typically and up to about 35 km occasionally outside the south-east corner. Never use a site position to decide which side of a nearby border something falls on.",
+ "permitted": [
+  "point sites",
+  "containment",
+  "names attached to regions"
+ ],
+ "notPermitted": [
+  "boundaries",
+  "shared borders",
+  "area claims"
+ ],
+ "what": "point sites",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Acapulco",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -100.01861,
+     16.92784
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Aguasradiactivas",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -102.25622,
+     21.81516
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Austin",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "republic-of-texas",
+    "positional": false,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "INVENTED geography, not a misdrawn one. The sheet places Austin 26 px east of Piedras Negras where the truth is about 440 px, and 494 px south of it where the truth is north. Take nothing positional from it. Extent derived from the connected blue fill containing Austin."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -100.18884,
+     25.63959
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Bagdad",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -97.49617,
+     25.71852
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Campeche",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -90.51429,
+     19.86931
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Cancoon",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -86.87206,
+     21.25828
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Casa Colorada",
+    "kind": "settlement",
+    "rank": "minor",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -104.4257,
+     27.95506
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Chactemaal",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -88.18703,
+     18.70739
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Chichen Itza Beach",
+    "kind": "settlement",
+    "rank": "minor",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -87.02073,
+     20.86831
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Chihuahua",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -105.7088,
+     28.5702
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Ciudad de Tlaloc",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.08618,
+     23.57764
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Ciudad de la Gasolina",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -97.89312,
+     22.11486
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Colima",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -103.74121,
+     19.30234
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Cuauhtemoc",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -100.92007,
+     22.08886
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Cuernavacaciones",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.22817,
+     18.99229
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Culiacan",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -107.16436,
+     24.91263
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Dallas",
+    "kind": "settlement",
+    "rank": "minor",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "republic-of-texas",
+    "positional": false,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "INVENTED geography, not a misdrawn one. The sheet places Austin 26 px east of Piedras Negras where the truth is about 440 px, and 494 px south of it where the truth is north. Take nothing positional from it. Extent derived from the connected blue fill containing Austin."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.41603,
+     25.39295
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Dayglow",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "north-west",
+    "positional": false,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only.",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -115.62846,
+     33.36303
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "El Agujero",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -89.9971,
+     18.99793
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "El Arbol",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -96.71843,
+     16.99459
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "El Castillo",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -88.52496,
+     20.71355
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "El Comienzo",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -94.38043,
+     18.12078
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "El Paso de Juarez",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -105.81058,
+     31.70712
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Gualadarajaja",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -103.37837,
+     20.69927
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Guanajuato",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -101.30322,
+     20.90037
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Guatemala",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "south-east",
+    "positional": false,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Guatemala, Belize and the isthmus south of lat 16.1: median 38 km, p75 127 km. Names and containment only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -90.32941,
+     14.792
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Hell's Gate",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "north-west",
+    "positional": false,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only.",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.06366,
+     33.14097
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "K'inich",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -90.76397,
+     17.64956
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "La Guerra",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "baja-peninsula",
+    "positional": false,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "The whole peninsula, not just the north-west corner. Its measurable coastline is 172 unoccluded pixels - the travel posters cover the rest - which is far too little to fit five parameters to, and the registration's own conclusion is that the author may have assembled Baja from a separate source at a different scale. Its verdict: if Baja ever matters, the way in is a second source sheet, not this one. Names and ordering only.",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.99854,
+     24.47827
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "La Hermosa",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.3034,
+     26.91624
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "La Manza",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -104.4079,
+     19.22325
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "La Parada",
+    "kind": "settlement",
+    "rank": "minor",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -94.82248,
+     16.85257
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Leon",
+    "kind": "settlement",
+    "rank": "minor",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -101.71526,
+     21.40559
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Los Angeles",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -98.22665,
+     19.04155
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Merida",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -89.63247,
+     20.99579
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Mexico",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.30155,
+     19.36359
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Mictlan",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -101.8908,
+     18.58338
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Morelia",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -101.21906,
+     19.66206
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Piedras Negras",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -100.29056,
+     28.48989
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Puerto Tehuan",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -95.17386,
+     16.19508
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Queretaro",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -100.36783,
+     20.56957
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Rickswood",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -88.62922,
+     17.4334
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "San Antonio",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "republic-of-texas",
+    "positional": false,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "INVENTED geography, not a misdrawn one. The sheet places Austin 26 px east of Piedras Negras where the truth is about 440 px, and 494 px south of it where the truth is north. Take nothing positional from it. Extent derived from the connected blue fill containing Austin."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -100.86769,
+     25.31804
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "San Emiliano de las Casas",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -92.62027,
+     16.80842
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Santo Resplandor",
+    "kind": "settlement",
+    "rank": "minor",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -98.88827,
+     21.01491
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Santo Se\u00f1or",
+    "kind": "settlement",
+    "rank": "minor",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -89.41144,
+     20.18294
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Sevilla",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -92.24311,
+     18.2744
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Te Pico",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -104.87629,
+     21.59608
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Tikal",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -89.33999,
+     17.10094
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Tiruana",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "north-west",
+    "positional": false,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only.",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -115.60774,
+     33.17192
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Tlaxcala",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -98.22826,
+     19.23806
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Toluca",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.70286,
+     19.26184
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Tuxtla",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -93.02528,
+     16.81654
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Two Sun",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "north-west",
+    "positional": false,
+    "positionToleranceKm": null,
+    "positionWorstCaseKm": null,
+    "readConfidence": "clear",
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only."
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.95903,
+     32.4346
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Vallarta",
+    "kind": "settlement",
+    "rank": "minor",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear",
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -105.30485,
+     20.88813
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Vera Mierda",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -96.1305,
+     19.0631
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Villafelipe",
+    "kind": "settlement",
+    "rank": "settlement",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -92.83816,
+     18.01474
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "Zimmerburg",
+    "kind": "settlement",
+    "rank": "major",
+    "era": 2292,
+    "source": "mexico-2292",
+    "creator": "u/omega-lf",
+    "zone": "core",
+    "positional": true,
+    "positionToleranceKm": 10.0,
+    "positionWorstCaseKm": 35.0,
+    "readConfidence": "clear"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.43396,
+     28.42871
+    ]
+   }
+  }
+ ]
+}
