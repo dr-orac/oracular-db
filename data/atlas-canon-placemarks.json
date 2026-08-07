@@ -1,5 +1,5 @@
 {
-  "_doc": "Canon placemarks from the two Great-War-era folders of the Fallout Universe KML (source-maps/fallout-universe-map.kml, snapshot 2026-07-26), imported by docs/changes/map-timeline/trace/kml_canon_placemarks.py and sorted into typed channels. Coordinates are the KML's own lon/lat - which the owner made canonical for site geography - through the shipped atlas-georef.json, so these sit in the same frame as the pins, the regions and the blast sites. The 61 crater and detonation records are NOT here: they ship separately as atlas-blast-sites.json, and the expression that excludes them is the same one that selects them there. Points only; the tool cannot emit a polygon.",
+  "_doc": "Canon placemarks from the two Great-War-era folders of the Fallout Universe KML (source-maps/fallout-universe-map.kml, snapshot 2026-07-26), imported by docs/changes/map-timeline/trace/kml_canon_placemarks.py and sorted into typed channels. Coordinates are the KML's own lon/lat - which the owner made canonical for site geography - through the shipped atlas-georef.json, so these sit in the same frame as the pins, the regions and the blast sites. The Great War folder's 61 crater and detonation records are NOT here: they ship separately as atlas-blast-sites.json, and the exclusion matches that tool's FOLDER as well as its expression - matching the expression alone silently dropped four pre-war nuclear records the blast importer never read, so they shipped nowhere at all. Of those four, ONE lands inside the artwork and is the `detonation` channel; the other three fall outside it and are reported as such rather than dropped in silence, which is the difference. Points only; the tool cannot emit a polygon.",
   "sourceFolders": [
     "Great War and immediate aftermath",
     "Pre-Great War conflicts, major events, and military-related locations"
@@ -7,11 +7,12 @@
   "counts": {
     "folderTotal": 506,
     "notPoint": 55,
-    "alreadyBlast": 65,
-    "outside": 24
+    "alreadyBlast": 61,
+    "outside": 27
   },
-  "shipped": 362,
+  "shipped": 363,
   "channelOrder": [
+    "detonation",
     "crash",
     "checkpoint",
     "unrest",
@@ -3295,6 +3296,17 @@
         "y": 2066.2,
         "folder": "greatwar",
         "note": "** Evidenced by the unmarked city ruins location in Fallout 1. **"
+      }
+    ],
+    "detonation": [
+      {
+        "name": "Nuclear test site",
+        "lon": -115.022638,
+        "lat": 35.346566,
+        "x": 930.2,
+        "y": 2061.7,
+        "folder": "prewar",
+        "note": null
       }
     ]
   }
