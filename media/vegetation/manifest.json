@@ -1,0 +1,16 @@
+{
+  "bounds": [
+    -170.0,
+    7.0,
+    -52.0,
+    72.0
+  ],
+  "projection": "EPSG:3857",
+  "width": 2360,
+  "height": 1971,
+  "image": "natural-earth-2-continent.webp",
+  "built_by": "tools/build-vegetation-reference.py",
+  "source": "Natural Earth II with Shaded Relief and Water, 1:50m",
+  "usage": "Public domain.",
+  "note": "PROJECTION IS LOAD-BEARING. MapLibre image sources do not reproject; they sample the texture linearly across the quad in Mercator. A plate-carree raster placed by these corners is displaced by hundreds of km through the middle and nothing at the edges, so it looks registered. See docs/changes/map-timeline/image-overlay-projection-2026-08-07.md"
+}
