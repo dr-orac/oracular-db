@@ -44,6 +44,25 @@ export const SIGIL_MARKERS = {
     "M -118.1 -94 L 94 118.1 L 118.1 94 L -94 -118.1 Z",
     "M 94 -118.1 L -118.1 94 L -94 118.1 L 118.1 -94 Z"
   ],
+  "city": [
+    "M -126 93 L -126 -24.6 L -74 -24.6 L -74 93 Z",
+    "M -26 93 L -26 -87.6 L 26 -87.6 L 26 93 Z",
+    "M 74 93 L 74 -117 L 126 -117 L 126 93 Z"
+  ],
+  "infrastructure": [
+    "M -115 -5 L 115 -5 L 115 -49 L -115 -49 Z",
+    "M -134 -27 L -134 77 L -96 77 L -96 -27 Z",
+    "M 96 -27 L 96 77 L 134 77 L 134 -27 Z"
+  ],
+  "special": [
+    "M -74 -87.9 a 74 74 0 1 0 148 0 a 74 74 0 1 0 -148 0 Z",
+    "M -127.3 -30.9 a 63.6 63.6 0 1 0 127.3 0 a 63.6 63.6 0 1 0 -127.3 0 Z",
+    "M 0 -30.9 a 63.6 63.6 0 1 0 127.3 0 a 63.6 63.6 0 1 0 -127.3 0 Z",
+    "M 26 140 L 26 -12.4 L -26 -12.4 L -26 140 Z"
+  ],
+  "military": [
+    "M -124 -124 L 124 -124 L 124 24.8 L 76.9 108 L 0 150 L -76.9 108 L -124 24.8 Z"
+  ],
   "outpost": [
     "M -77 0 a 77 77 0 1 0 154 0 a 77 77 0 1 0 -154 0 Z M -43 0 a 43 43 0 1 0 86 0 a 43 43 0 1 0 -86 0 Z",
     "M 15 -60 C 15 -72 15 -84 15 -96 C 15 -99.3 15 -102.7 15 -106 C 15 -106.7 15.7 -108 15 -108 C 5 -108.7 -5 -108 -15 -108 C -15 -96 -15 -84 -15 -72 C -15 -68.7 -15 -65.3 -15 -62 C -15 -61.3 -15.7 -60 -15 -60 C -5 -59.3 5 -60 15 -60 Z M 0 -150 L 21 -108 L 0 -112 L -21 -108 Z",
@@ -57,4 +76,4 @@ export const SIGIL_MARKERS = {
 export const SIGIL_MARKER_SCALE = 0.033333
 
 /** The types this bundle defines, in construction order. */
-export const SIGIL_MARKER_SET = ["settlement","ruin","vault","hazard","landmark","battle","outpost"]
+export const SIGIL_MARKER_SET = ["settlement","ruin","vault","hazard","landmark","battle","city","infrastructure","special","military","outpost"]

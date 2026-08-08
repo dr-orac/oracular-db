@@ -1,0 +1,20 @@
+{
+  "bounds": [
+    -114.9,
+    39.4,
+    -112.4,
+    41.6
+  ],
+  "minzoom": 6,
+  "maxzoom": 12,
+  "tile_count": 1389,
+  "bytes": 65623304,
+  "encoding": "terrarium",
+  "tile_size": 512,
+  "precision_m": 1,
+  "tile_template": "media/dem/region/{z}/{x}/{y}.webp",
+  "built_by": "tools/build-region-dem.py",
+  "source": "https://tiles.mapterhorn.com/{z}/{x}/{y}.webp",
+  "attribution": "Terrain \u00a9 Mapterhorn \u00b7 USGS 3DEP (public domain) \u00b7 COPERNICUS GLO-30 (\u00a9 DLR 2010\u20132014, \u00a9 Airbus DS 2014\u20132018, provided under COPERNICUS by the European Union and ESA) \u00b7 HRDEM \u00a9 Natural Resources Canada (OGL-Canada)",
+  "note": "Terrarium at 1 m precision: the blue channel carries fractions of a metre and is zeroed, which is about two thirds of the bytes and below the source data's own vertical accuracy. Maximum elevation error 1.00 m. Lossless WebP, because the payload is a number per pixel and lossy encoding would invent elevations rather than soften an image."
+}

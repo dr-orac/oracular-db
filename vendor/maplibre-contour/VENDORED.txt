@@ -1,0 +1,67 @@
+maplibre-contour
+================
+
+Version: 0.1.0
+Upstream: https://github.com/onthegomap/maplibre-contour
+Distribution source: https://registry.npmjs.org/maplibre-contour/-/maplibre-contour-0.1.0.tgz
+Retrieved: 2026-08-07
+Licence: BSD-3-Clause, "Copyright (c) 2023, Michael Barry and maplibre-contour
+contributors" — the author of planetiler. Same licence family as MapLibre itself.
+
+Runtime dependencies: none. The published package declares no `dependencies` at
+all, so this one file is the whole of it.
+
+Files retained:
+
+- index.min.js — UMD browser distribution defining `globalThis.mlcontour`.
+  31,197 bytes raw, 10,607 gzipped. It inlines its own web worker as a blob,
+  so there is no second file to serve.
+- LICENSE — upstream licence.
+
+Not retained: `index.js`, `index.cjs`, `index.mjs` (the same code unminified and
+in other module formats — this app loads MapLibre itself as a global script, so
+UMD is the format that matches), the TypeScript declarations, and `src/`.
+
+WHAT IT IS FOR
+It registers a MapLibre protocol handler — the same `addProtocol` mechanism
+PMTiles uses — that reads the app's existing `raster-dem` source, stitches
+neighbouring tiles so lines do not break at seams, and emits real vector tiles
+of isolines by marching squares. That means contour intervals become a runtime
+choice rather than a build-time one, and it retires the contour GeoJSON this app
+used to ship.
+
+THE RELEASE CADENCE IS A KNOWN CAVEAT, NOT A SURPRISE.
+0.1.0 was published 2024-12-21 while commits on `main` run to 2026-04-18, so
+this tarball is the 2024 code and does NOT include the newer protocol worker.
+That was a deliberate choice: this repository pins reviewed versions by policy,
+and the newer work is not published. Do not "fix" this by pointing at `main` or
+at a CDN. See docs/changes/map-timeline/contour-sources-2026-08-07.md § 6.
+
+TWO BEHAVIOURS MEASURED HERE, 2026-08-08, THAT THE UPSTREAM DOCS DO NOT MENTION:
+
+1. CORRECTED 2026-08-08, having first been recorded here the wrong way round.
+   The map DOES fire `idle` with the protocol registered - it waits for the DEM
+   tiles the tracer fetches itself, which are 437 KiB each and 10.3 MiB for one
+   view. Unthrottled that is 1.65 s; at 3 Mbps it is 36 s; below that it exceeds
+   any sane timeout. The earlier "never fires idle" was three reproductions inside
+   one slow network window, and neither the worker nor the timeout was the cause.
+   Plan for the BANDWIDTH, not for a missing event.
+2. Its default `timeoutMs` of 10 s is not enough against this project's DEM host,
+   whose tiles are 437 KiB and take a measured 4.27 s median at six concurrent.
+   It is set to 30 s here, from that measurement.
+
+See docs/changes/map-timeline/live-contours-2026-08-07.md.
+
+Do not replace these with `@latest` URLs or a runtime CDN. Pin a reviewed
+version, update this record and the checksums below, and re-run the map's
+browser gates whenever the dependency is upgraded.
+
+Integrity of the downloaded tarball, checked against the registry's own
+`dist.shasum` at retrieval time:
+
+  maplibre-contour-0.1.0.tgz  sha1 1a95a247f3c40abca4e4d709d7fed2a5513db958
+
+SHA-256:
+
+  index.min.js sha256 e558b23125a14d85fcffb7b5c556babbd7b99cdb6335a2ac5fa0221c4ae5436e
+  LICENSE      sha256 b4a3261f4af65db24e6a2ca23093ac25619e6fe0b5ca5ec75fb09a49817b5c8d
