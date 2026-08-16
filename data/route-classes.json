@@ -1,17 +1,17 @@
 {
  "_doc": "DERIVED, not authored. Road class inferred from the route name by tools/classify-routes.mjs; regenerate rather than hand-edit. `basis` records which rule fired, because a class inferred from a name deserves less trust than one somebody decided. CONDITION IS ABSENT ON PURPOSE: whether a road was rebuilt, abandoned or newly beaten is a fact about the fiction, it is not in the name, and guessing it would be inventing history.",
- "source": "apps/misfits-react/web/public/data/atlas-geo-registry.geojson",
+ "source": "apps/misfits-react/web/public/data/geography/kml/routes-and-regions.geojson",
  "generated_by": "tools/classify-routes.mjs",
  "counts": {
-  "cave": 4,
+  "cave": 5,
   "trail": 2,
-  "subsurface": 42,
-  "unknown": 233,
-  "local": 170,
+  "subsurface": 57,
+  "unknown": 228,
+  "local": 174,
   "rail": 11,
   "secondary": 10,
   "bridge": 6,
-  "highway": 102
+  "highway": 108
  },
  "classes": {
   "routes-and-regions-cave-of-the-abbadon": {
@@ -34,7 +34,12 @@
    "basis": "name matched the subsurface rule",
    "name": "Comstock lode tunnel"
   },
-  "routes-and-regions-unnamed-95": {
+  "routes-and-regions-coastal-grotto": {
+   "class": "cave",
+   "basis": "name matched the cave rule",
+   "name": "Coastal grotto"
+  },
+  "routes-and-regions-unnamed-ac2bae5e": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -45,8 +50,8 @@
    "name": "Raider tunnel"
   },
   "routes-and-regions-old-smuggling-tunnels": {
-   "class": "unknown",
-   "basis": "named, but the name says nothing about what kind of route it is",
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
    "name": "Old smuggling tunnels"
   },
   "routes-and-regions-herzog-mine": {
@@ -59,27 +64,27 @@
    "basis": "name matched the cave rule",
    "name": "Blackdamp Shaft"
   },
-  "routes-and-regions-unnamed-100": {
+  "routes-and-regions-unnamed-81458d2d": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-101": {
+  "routes-and-regions-unnamed-9dc0206f": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-102": {
+  "routes-and-regions-unnamed-e1a2b7b8": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-103": {
+  "routes-and-regions-unnamed-396c864f": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-104": {
+  "routes-and-regions-unnamed-d3d26efa": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -94,22 +99,22 @@
    "basis": "name matched the subsurface rule",
    "name": "Railroad escape tunnel"
   },
-  "routes-and-regions-sewer-tunnels": {
+  "routes-and-regions-sewer-tunnels-978ca7a0": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Sewer tunnels"
   },
-  "routes-and-regions-sewer-tunnels-2": {
+  "routes-and-regions-sewer-tunnels-aec9e8cd": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Sewer tunnels"
   },
-  "routes-and-regions-sewer-tunnels-3": {
+  "routes-and-regions-sewer-tunnels-c6073682": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Sewer tunnels"
   },
-  "routes-and-regions-sewer-tunnels-4": {
+  "routes-and-regions-sewer-tunnels-7d003bb2": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Sewer tunnels"
@@ -119,24 +124,24 @@
    "basis": "name matched the subsurface rule",
    "name": "Sewer tunnel"
   },
-  "routes-and-regions-tunnels": {
-   "class": "unknown",
-   "basis": "named, but the name says nothing about what kind of route it is",
+  "routes-and-regions-tunnels-434f181f": {
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
    "name": "Tunnels"
   },
-  "routes-and-regions-tunnels-2": {
-   "class": "unknown",
-   "basis": "named, but the name says nothing about what kind of route it is",
+  "routes-and-regions-tunnels-e2b3afc1": {
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
    "name": "Tunnels"
   },
-  "routes-and-regions-tunnels-3": {
-   "class": "unknown",
-   "basis": "named, but the name says nothing about what kind of route it is",
+  "routes-and-regions-tunnels-a011dcf6": {
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
    "name": "Tunnels"
   },
-  "routes-and-regions-tunnels-4": {
-   "class": "unknown",
-   "basis": "named, but the name says nothing about what kind of route it is",
+  "routes-and-regions-tunnels-0548a6db": {
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
    "name": "Tunnels"
   },
   "routes-and-regions-fens-street-sewer": {
@@ -154,19 +159,24 @@
    "basis": "name matched the subsurface rule",
    "name": "Malden sewer"
   },
+  "routes-and-regions-septic-tunnel": {
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
+   "name": "Septic tunnel"
+  },
   "routes-and-regions-taft-tunnel": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Taft Tunnel"
   },
-  "routes-and-regions-utility-tunnels": {
-   "class": "unknown",
-   "basis": "named, but the name says nothing about what kind of route it is",
+  "routes-and-regions-utility-tunnels-a280e208": {
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
    "name": "Utility tunnels"
   },
-  "routes-and-regions-utility-tunnels-2": {
-   "class": "unknown",
-   "basis": "named, but the name says nothing about what kind of route it is",
+  "routes-and-regions-utility-tunnels-4b8e1a82": {
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
    "name": "Utility tunnels"
   },
   "routes-and-regions-utility-tunnel": {
@@ -180,58 +190,58 @@
    "name": "Big Bend Tunnel"
   },
   "routes-and-regions-train-tunnels": {
-   "class": "unknown",
-   "basis": "named, but the name says nothing about what kind of route it is",
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
    "name": "Train tunnels"
   },
-  "routes-and-regions-train-tunnel": {
+  "routes-and-regions-train-tunnel-140b3352": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Train tunnel"
   },
-  "routes-and-regions-train-tunnel-2": {
+  "routes-and-regions-train-tunnel-cf3a781f": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Train tunnel"
   },
-  "routes-and-regions-train-tunnel-3": {
+  "routes-and-regions-train-tunnel-39d26aea": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Train tunnel"
   },
-  "routes-and-regions-train-tunnel-4": {
+  "routes-and-regions-train-tunnel-06d93579": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Train tunnel"
   },
-  "routes-and-regions-train-tunnel-5": {
+  "routes-and-regions-train-tunnel-aaa98f40": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Train tunnel"
   },
-  "routes-and-regions-train-tunnel-6": {
+  "routes-and-regions-train-tunnel-f3057e50": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Train tunnel"
   },
-  "routes-and-regions-train-tunnel-7": {
+  "routes-and-regions-train-tunnel-d8e9e243": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Train tunnel"
   },
-  "routes-and-regions-train-tunnel-8": {
+  "routes-and-regions-train-tunnel-892d5f66": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Train tunnel"
   },
-  "routes-and-regions-train-tunnel-9": {
+  "routes-and-regions-train-tunnel-96a6e333": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Train tunnel"
   },
-  "routes-and-regions-presidential-metro": {
-   "class": "unknown",
-   "basis": "named, but the name says nothing about what kind of route it is",
+  "routes-and-regions-presidential-metro-1c7de438": {
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
    "name": "Presidential Metro"
   },
   "routes-and-regions-nuka-world-monorail-tunnel": {
@@ -239,29 +249,29 @@
    "basis": "name matched the subsurface rule",
    "name": "Nuka-World monorail tunnel"
   },
-  "routes-and-regions-metro-tunnel": {
+  "routes-and-regions-metro-tunnel-ab9e36b9": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Metro tunnel"
   },
-  "routes-and-regions-metro-tunnel-2": {
+  "routes-and-regions-metro-tunnel-8fc61d81": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Metro tunnel"
   },
-  "routes-and-regions-metro-tunnel-3": {
+  "routes-and-regions-metro-tunnel-01650550": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Metro tunnel"
   },
-  "routes-and-regions-metro-tunnel-4": {
+  "routes-and-regions-metro-tunnel-0100689a": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Metro tunnel"
   },
   "routes-and-regions-metro-station": {
-   "class": "unknown",
-   "basis": "named, but the name says nothing about what kind of route it is",
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
    "name": "Metro station"
   },
   "routes-and-regions-andrew-station": {
@@ -269,12 +279,12 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Andrew Station"
   },
-  "routes-and-regions-copley-station": {
+  "routes-and-regions-copley-station-6a7cc811": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Copley station"
   },
-  "routes-and-regions-copley-station-2": {
+  "routes-and-regions-copley-station-21119b41": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Copley station"
@@ -299,12 +309,12 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "West Roxbury station"
   },
-  "routes-and-regions-car-tunnel": {
+  "routes-and-regions-car-tunnel-9c9b51f2": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Car tunnel"
   },
-  "routes-and-regions-car-tunnel-2": {
+  "routes-and-regions-car-tunnel-95902f44": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Car tunnel"
@@ -350,9 +360,19 @@
    "name": "Moonvale Tunnel"
   },
   "routes-and-regions-the-dig": {
-   "class": "unknown",
-   "basis": "named, but the name says nothing about what kind of route it is",
+   "class": "subsurface",
+   "basis": "manual exact-id decision: The Dig is an underground subway/tunnel network",
    "name": "The Dig"
+  },
+  "routes-and-regions-riverside-manor-basement": {
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
+   "name": "Riverside Manor basement"
+  },
+  "routes-and-regions-whitespring-congressional-bunker": {
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
+   "name": "Whitespring Congressional Bunker"
   },
   "routes-and-regions-orange-line": {
    "class": "unknown",
@@ -379,62 +399,62 @@
    "basis": "name matched the rail rule",
    "name": "Nuka-World monorail"
   },
-  "routes-and-regions-presidential-metro-2": {
-   "class": "unknown",
-   "basis": "named, but the name says nothing about what kind of route it is",
+  "routes-and-regions-presidential-metro-b6ee5d1f": {
+   "class": "subsurface",
+   "basis": "name matched the subsurface rule",
    "name": "Presidential Metro"
   },
-  "routes-and-regions-elevated-freeway": {
+  "routes-and-regions-elevated-freeway-c569f6cc": {
    "class": "secondary",
    "basis": "name matched the secondary rule",
    "name": "Elevated freeway"
   },
-  "routes-and-regions-elevated-freeway-2": {
+  "routes-and-regions-elevated-freeway-3fc98996": {
    "class": "secondary",
    "basis": "name matched the secondary rule",
    "name": "Elevated freeway"
   },
-  "routes-and-regions-pennsylvania-avenue": {
+  "routes-and-regions-pennsylvania-avenue-faf941e5": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Pennsylvania Avenue"
   },
-  "routes-and-regions-pennsylvania-avenue-2": {
+  "routes-and-regions-pennsylvania-avenue-17bd5de1": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Pennsylvania Avenue"
   },
-  "routes-and-regions-pennsylvania-avenue-3": {
+  "routes-and-regions-pennsylvania-avenue-f204e206": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Pennsylvania Avenue"
   },
-  "routes-and-regions-pennsylvania-avenue-4": {
+  "routes-and-regions-pennsylvania-avenue-6aafa11a": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Pennsylvania Avenue"
   },
-  "routes-and-regions-constitution-avenue": {
+  "routes-and-regions-constitution-avenue-03b0c265": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Constitution Avenue"
   },
-  "routes-and-regions-constitution-avenue-2": {
+  "routes-and-regions-constitution-avenue-0378289c": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Constitution Avenue"
   },
-  "routes-and-regions-connecticut-avenue": {
+  "routes-and-regions-connecticut-avenue-13d19b11": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Connecticut Avenue"
   },
-  "routes-and-regions-connecticut-avenue-2": {
+  "routes-and-regions-connecticut-avenue-8275ce13": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Connecticut Avenue"
   },
-  "routes-and-regions-connecticut-avenue-3": {
+  "routes-and-regions-connecticut-avenue-d120bf16": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Connecticut Avenue"
@@ -459,37 +479,37 @@
    "basis": "name matched the local rule",
    "name": "Madison Drive"
   },
-  "routes-and-regions-massachusetts-avenue": {
+  "routes-and-regions-massachusetts-avenue-cd750d5f": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Massachusetts Avenue"
   },
-  "routes-and-regions-massachusetts-avenue-2": {
+  "routes-and-regions-massachusetts-avenue-34ca09ed": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Massachusetts Avenue"
   },
-  "routes-and-regions-massachusetts-avenue-3": {
+  "routes-and-regions-massachusetts-avenue-7fb5c198": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Massachusetts Avenue"
   },
-  "routes-and-regions-massachusetts-avenue-4": {
+  "routes-and-regions-massachusetts-avenue-cfc5694c": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Massachusetts Avenue"
   },
-  "routes-and-regions-massachusetts-avenue-5": {
+  "routes-and-regions-massachusetts-avenue-097aeb9c": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Massachusetts Avenue"
   },
-  "routes-and-regions-massachusetts-avenue-6": {
+  "routes-and-regions-massachusetts-avenue-763eb235": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Massachusetts Avenue"
   },
-  "routes-and-regions-massachusetts-avenue-7": {
+  "routes-and-regions-massachusetts-avenue-94f4a76d": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Massachusetts Avenue"
@@ -509,12 +529,12 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "L'Enfant Plaza"
   },
-  "routes-and-regions-lincoln-memorial-circle": {
+  "routes-and-regions-lincoln-memorial-circle-b162aaf4": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Lincoln Memorial Circle"
   },
-  "routes-and-regions-lincoln-memorial-circle-2": {
+  "routes-and-regions-lincoln-memorial-circle-c8fa7cd7": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Lincoln Memorial Circle"
@@ -529,7 +549,7 @@
    "basis": "name matched the bridge rule",
    "name": "Ivy League Bridge"
   },
-  "routes-and-regions-unnamed-194": {
+  "routes-and-regions-unnamed-29f9c2e3": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -539,27 +559,27 @@
    "basis": "name matched the local rule",
    "name": "Suffragette Way"
   },
-  "routes-and-regions-g-street": {
+  "routes-and-regions-g-street-d09ce3fc": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "G Street"
   },
-  "routes-and-regions-g-street-2": {
+  "routes-and-regions-g-street-13841a64": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "G Street"
   },
-  "routes-and-regions-g-street-3": {
+  "routes-and-regions-g-street-8ec7be3d": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "G Street"
   },
-  "routes-and-regions-g-street-4": {
+  "routes-and-regions-g-street-08d15dee": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "G Street"
   },
-  "routes-and-regions-g-street-5": {
+  "routes-and-regions-g-street-0c81e525": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "G Street"
@@ -569,7 +589,7 @@
    "basis": "name matched the local rule",
    "name": "Executive Avenue"
   },
-  "routes-and-regions-congress-street": {
+  "routes-and-regions-congress-street-3819e365": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Congress Street"
@@ -579,7 +599,7 @@
    "basis": "name matched the local rule",
    "name": "State Street"
   },
-  "routes-and-regions-court-street": {
+  "routes-and-regions-court-street-2b99359a": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Court Street"
@@ -609,7 +629,7 @@
    "basis": "name matched the local rule",
    "name": "Dartmouth Street"
   },
-  "routes-and-regions-back-street": {
+  "routes-and-regions-back-street-1d47a390": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Back Street"
@@ -649,7 +669,7 @@
    "basis": "name matched the local rule",
    "name": "Park Street"
   },
-  "routes-and-regions-oak-street": {
+  "routes-and-regions-oak-street-e6d8cf9d": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Oak Street"
@@ -699,7 +719,7 @@
    "basis": "name matched the local rule",
    "name": "Storrow Drive West"
   },
-  "routes-and-regions-back-street-2": {
+  "routes-and-regions-back-street-e8ac048f": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Back Street"
@@ -709,17 +729,17 @@
    "basis": "name matched the local rule",
    "name": "Memorial Drive"
   },
-  "routes-and-regions-massachusetts-avenue-8": {
+  "routes-and-regions-massachusetts-avenue-39d34123": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Massachusetts Avenue"
   },
-  "routes-and-regions-massachusetts-avenue-9": {
+  "routes-and-regions-massachusetts-avenue-c45563e7": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Massachusetts Avenue"
   },
-  "routes-and-regions-massachusetts-avenue-10": {
+  "routes-and-regions-massachusetts-avenue-800b30b5": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Massachusetts Avenue"
@@ -759,7 +779,7 @@
    "basis": "name matched the local rule",
    "name": "Kenneth's Ridge Road"
   },
-  "routes-and-regions-newbury-street": {
+  "routes-and-regions-newbury-street-ef25aa37": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Newbury Street"
@@ -774,27 +794,27 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Trinity Place"
   },
-  "routes-and-regions-1st-street": {
+  "routes-and-regions-1st-street-63768d05": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "1st Street"
   },
-  "routes-and-regions-newbury-street-2": {
+  "routes-and-regions-newbury-street-e7e05ee8": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Newbury Street"
   },
-  "routes-and-regions-unnamed-245": {
+  "routes-and-regions-unnamed-01927dfc": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-246": {
+  "routes-and-regions-unnamed-bdcb2c46": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-247": {
+  "routes-and-regions-unnamed-7b662abc": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -804,212 +824,212 @@
    "basis": "name matched the local rule",
    "name": "Jury Street"
   },
-  "routes-and-regions-1st-street-2": {
+  "routes-and-regions-1st-street-79bca7e4": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "1st Street"
   },
-  "routes-and-regions-1st-street-3": {
+  "routes-and-regions-1st-street-cc628ad5": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "1st Street"
   },
-  "routes-and-regions-1st-street-4": {
+  "routes-and-regions-1st-street-44f0c4ba": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "1st Street"
   },
-  "routes-and-regions-1st-street-5": {
+  "routes-and-regions-1st-street-50173c95": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "1st Street"
   },
-  "routes-and-regions-1st-street-6": {
+  "routes-and-regions-1st-street-230536a3": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "1st Street"
   },
-  "routes-and-regions-1st-street-7": {
+  "routes-and-regions-1st-street-d8b5736c": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "1st Street"
   },
-  "routes-and-regions-3rd-street": {
+  "routes-and-regions-3rd-street-f7d5c202": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "3rd Street"
   },
-  "routes-and-regions-3rd-street-2": {
+  "routes-and-regions-3rd-street-0a8bda4a": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "3rd Street"
   },
-  "routes-and-regions-3rd-street-3": {
+  "routes-and-regions-3rd-street-67f18b30": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "3rd Street"
   },
-  "routes-and-regions-3rd-street-4": {
+  "routes-and-regions-3rd-street-aa56788d": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "3rd Street"
   },
-  "routes-and-regions-4th-street": {
+  "routes-and-regions-4th-street-575e8cf5": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "4th Street"
   },
-  "routes-and-regions-4th-street-2": {
+  "routes-and-regions-4th-street-4fb4eb1f": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "4th Street"
   },
-  "routes-and-regions-4th-street-3": {
+  "routes-and-regions-4th-street-f7404920": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "4th Street"
   },
-  "routes-and-regions-4th-street-4": {
+  "routes-and-regions-4th-street-acb9b2fa": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "4th Street"
   },
-  "routes-and-regions-5th-street": {
+  "routes-and-regions-5th-street-30b469b7": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "5th Street"
   },
-  "routes-and-regions-5th-street-2": {
+  "routes-and-regions-5th-street-c2564a25": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "5th Street"
   },
-  "routes-and-regions-5th-street-3": {
+  "routes-and-regions-5th-street-63954167": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "5th Street"
   },
-  "routes-and-regions-5th-street-4": {
+  "routes-and-regions-5th-street-764b82e5": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "5th Street"
   },
-  "routes-and-regions-5th-street-5": {
+  "routes-and-regions-5th-street-d2326077": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "5th Street"
   },
-  "routes-and-regions-5th-street-6": {
+  "routes-and-regions-5th-street-94171a69": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "5th Street"
   },
-  "routes-and-regions-5th-street-7": {
+  "routes-and-regions-5th-street-c4db5993": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "5th Street"
   },
-  "routes-and-regions-5th-street-8": {
+  "routes-and-regions-5th-street-90410ef4": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "5th Street"
   },
-  "routes-and-regions-5th-street-9": {
+  "routes-and-regions-5th-street-b81b9951": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "5th Street"
   },
-  "routes-and-regions-6th-street": {
+  "routes-and-regions-6th-street-9b84e5d2": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "6th Street"
   },
-  "routes-and-regions-6th-street-2": {
+  "routes-and-regions-6th-street-577bf84d": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "6th Street"
   },
-  "routes-and-regions-6th-street-3": {
+  "routes-and-regions-6th-street-9f388693": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "6th Street"
   },
-  "routes-and-regions-6th-street-4": {
+  "routes-and-regions-6th-street-8df43d76": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "6th Street"
   },
-  "routes-and-regions-6th-street-5": {
+  "routes-and-regions-6th-street-ce0e4fea": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "6th Street"
   },
-  "routes-and-regions-6th-street-6": {
+  "routes-and-regions-6th-street-2f9e8f77": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "6th Street"
   },
-  "routes-and-regions-7th-street": {
+  "routes-and-regions-7th-street-713011b4": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "7th Street"
   },
-  "routes-and-regions-7th-street-2": {
+  "routes-and-regions-7th-street-ed1b277d": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "7th Street"
   },
-  "routes-and-regions-7th-street-3": {
+  "routes-and-regions-7th-street-51e80f35": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "7th Street"
   },
-  "routes-and-regions-7th-street-4": {
+  "routes-and-regions-7th-street-aee6ee25": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "7th Street"
   },
-  "routes-and-regions-7th-street-5": {
+  "routes-and-regions-7th-street-56b1e832": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "7th Street"
   },
-  "routes-and-regions-8th-street": {
+  "routes-and-regions-8th-street-059b7cad": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "8th Street"
   },
-  "routes-and-regions-8th-street-2": {
+  "routes-and-regions-8th-street-3315866f": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "8th Street"
   },
-  "routes-and-regions-8th-street-3": {
+  "routes-and-regions-8th-street-e54bab50": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "8th Street"
   },
-  "routes-and-regions-8th-street-4": {
+  "routes-and-regions-8th-street-d4682c14": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "8th Street"
   },
-  "routes-and-regions-8th-street-5": {
+  "routes-and-regions-8th-street-d83b2116": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "8th Street"
   },
-  "routes-and-regions-8th-street-6": {
+  "routes-and-regions-8th-street-25fd9dee": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "8th Street"
   },
-  "routes-and-regions-8th-street-7": {
+  "routes-and-regions-8th-street-98aa29e7": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "8th Street"
   },
-  "routes-and-regions-8th-street-8": {
+  "routes-and-regions-8th-street-a539f189": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "8th Street"
@@ -1024,52 +1044,52 @@
    "basis": "name matched the local rule",
    "name": "Appropriations Avenue"
   },
-  "routes-and-regions-new-hampshire-avenue": {
+  "routes-and-regions-new-hampshire-avenue-934747b0": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "New Hampshire Avenue"
   },
-  "routes-and-regions-new-hampshire-avenue-2": {
+  "routes-and-regions-new-hampshire-avenue-56030e49": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "New Hampshire Avenue"
   },
-  "routes-and-regions-new-hampshire-avenue-3": {
+  "routes-and-regions-new-hampshire-avenue-48bb016c": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "New Hampshire Avenue"
   },
-  "routes-and-regions-new-hampshire-avenue-4": {
+  "routes-and-regions-new-hampshire-avenue-fa622306": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "New Hampshire Avenue"
   },
-  "routes-and-regions-new-hampshire-avenue-5": {
+  "routes-and-regions-new-hampshire-avenue-d723e0cd": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "New Hampshire Avenue"
   },
-  "routes-and-regions-unnamed-298": {
+  "routes-and-regions-unnamed-33fbc1ef": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-299": {
+  "routes-and-regions-unnamed-bb65af21": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-300": {
+  "routes-and-regions-unnamed-92c0d5f2": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-301": {
+  "routes-and-regions-unnamed-33a79a18": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-302": {
+  "routes-and-regions-unnamed-aee11bcd": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -1079,27 +1099,27 @@
    "basis": "name matched the local rule",
    "name": "L Street"
   },
-  "routes-and-regions-unnamed-304": {
+  "routes-and-regions-unnamed-69e19acf": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-305": {
+  "routes-and-regions-unnamed-6d17a837": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-306": {
+  "routes-and-regions-unnamed-7e937166": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-307": {
+  "routes-and-regions-unnamed-ce0fc119": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-skybridge": {
+  "routes-and-regions-skybridge-9ab3f431": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Skybridge"
@@ -1114,22 +1134,22 @@
    "basis": "name matched the local rule",
    "name": "Freedom Street"
   },
-  "routes-and-regions-g-street-6": {
+  "routes-and-regions-g-street-4faaabf5": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "G Street"
   },
-  "routes-and-regions-elevated-freeway-3": {
+  "routes-and-regions-elevated-freeway-17fb84ea": {
    "class": "secondary",
    "basis": "name matched the secondary rule",
    "name": "Elevated freeway"
   },
-  "routes-and-regions-highway": {
+  "routes-and-regions-highway-36febc05": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Highway"
   },
-  "routes-and-regions-highway-2": {
+  "routes-and-regions-highway-1f6d458c": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Highway"
@@ -1139,92 +1159,92 @@
    "basis": "name matched the local rule",
    "name": "High Road"
   },
-  "routes-and-regions-pedestrian-bridge": {
+  "routes-and-regions-pedestrian-bridge-21c077b2": {
    "class": "bridge",
    "basis": "name matched the bridge rule",
    "name": "Pedestrian bridge"
   },
-  "routes-and-regions-pedestrian-bridge-2": {
+  "routes-and-regions-pedestrian-bridge-893b7e32": {
    "class": "bridge",
    "basis": "name matched the bridge rule",
    "name": "Pedestrian bridge"
   },
-  "routes-and-regions-skybridge-2": {
+  "routes-and-regions-skybridge-0590e992": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Skybridge"
   },
-  "routes-and-regions-highway-3": {
+  "routes-and-regions-highway-12920267": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Highway"
   },
-  "routes-and-regions-highway-4": {
+  "routes-and-regions-highway-6ae4ebfa": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Highway"
   },
-  "routes-and-regions-unnamed-321": {
+  "routes-and-regions-unnamed-8c0d390c": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-322": {
+  "routes-and-regions-unnamed-2d998d81": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-highway-5": {
+  "routes-and-regions-highway-7d1feaa3": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Highway"
   },
-  "routes-and-regions-unnamed-324": {
+  "routes-and-regions-unnamed-2196d648": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-325": {
+  "routes-and-regions-unnamed-16531468": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-326": {
+  "routes-and-regions-unnamed-307dfa98": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-327": {
+  "routes-and-regions-unnamed-91a88f1d": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-328": {
+  "routes-and-regions-unnamed-bc868243": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-329": {
+  "routes-and-regions-unnamed-5b39109f": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-330": {
+  "routes-and-regions-unnamed-f1cbbfa2": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-331": {
+  "routes-and-regions-unnamed-2d259a7d": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-332": {
+  "routes-and-regions-unnamed-899a9aa8": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-333": {
+  "routes-and-regions-unnamed-7e632221": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -1264,32 +1284,32 @@
    "basis": "name matched the local rule",
    "name": "Virginia Street"
   },
-  "routes-and-regions-main-street": {
+  "routes-and-regions-main-street-f1a1c9fd": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Main Street"
   },
-  "routes-and-regions-main-street-2": {
+  "routes-and-regions-main-street-32e0b66c": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Main Street"
   },
-  "routes-and-regions-oak-street-2": {
+  "routes-and-regions-oak-street-70b93fa2": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Oak Street"
   },
-  "routes-and-regions-oak-street-3": {
+  "routes-and-regions-oak-street-357b5bf5": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Oak Street"
   },
-  "routes-and-regions-oak-street-4": {
+  "routes-and-regions-oak-street-e027cc2a": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Oak Street"
   },
-  "routes-and-regions-oak-street-5": {
+  "routes-and-regions-oak-street-39a9ca2b": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Oak Street"
@@ -1299,12 +1319,12 @@
    "basis": "name matched the local rule",
    "name": "East Street"
   },
-  "routes-and-regions-washington-street": {
+  "routes-and-regions-washington-street-05e0fe41": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Washington Street"
   },
-  "routes-and-regions-washington-street-2": {
+  "routes-and-regions-washington-street-d3c596f0": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Washington Street"
@@ -1319,7 +1339,7 @@
    "basis": "name matched the local rule",
    "name": "Carpenter Street"
   },
-  "routes-and-regions-court-street-2": {
+  "routes-and-regions-court-street-7be9323d": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Court Street"
@@ -1334,7 +1354,7 @@
    "basis": "name matched the local rule",
    "name": "College Street"
   },
-  "routes-and-regions-congress-street-2": {
+  "routes-and-regions-congress-street-d1c8ff78": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Congress Street"
@@ -1344,52 +1364,52 @@
    "basis": "name matched the local rule",
    "name": "Richland Street"
   },
-  "routes-and-regions-washington-street-3": {
+  "routes-and-regions-washington-street-a1360f19": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Washington Street"
   },
-  "routes-and-regions-blue-ridge-parkway": {
+  "routes-and-regions-blue-ridge-parkway-6c79161b": {
    "class": "secondary",
    "basis": "name matched the secondary rule",
    "name": "Blue Ridge Parkway"
   },
-  "routes-and-regions-unnamed-359": {
+  "routes-and-regions-unnamed-84434b71": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-360": {
+  "routes-and-regions-unnamed-0990ab4a": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-361": {
+  "routes-and-regions-unnamed-bd66d1b2": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-362": {
+  "routes-and-regions-unnamed-c727e2b0": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-363": {
+  "routes-and-regions-unnamed-30b26b8b": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-364": {
+  "routes-and-regions-unnamed-4c08f1b3": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-365": {
+  "routes-and-regions-unnamed-7766076d": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-366": {
+  "routes-and-regions-unnamed-090fcaff": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -1399,12 +1419,12 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Parking lot"
   },
-  "routes-and-regions-pedestrian-bridge-3": {
+  "routes-and-regions-pedestrian-bridge-01013e80": {
    "class": "bridge",
    "basis": "name matched the bridge rule",
    "name": "Pedestrian bridge"
   },
-  "routes-and-regions-pedestrian-bridge-4": {
+  "routes-and-regions-pedestrian-bridge-d0401e4e": {
    "class": "bridge",
    "basis": "name matched the bridge rule",
    "name": "Pedestrian bridge"
@@ -1454,292 +1474,347 @@
    "basis": "name matched the local rule",
    "name": "Baxter Avenue"
   },
-  "routes-and-regions-unnamed-379": {
+  "routes-and-regions-main-street-7ca2927b": {
+   "class": "local",
+   "basis": "name matched the local rule",
+   "name": "Main Street"
+  },
+  "routes-and-regions-3rd-street-b294f6e7": {
+   "class": "local",
+   "basis": "name matched the local rule",
+   "name": "3rd Street"
+  },
+  "routes-and-regions-pickens-road": {
+   "class": "local",
+   "basis": "name matched the local rule",
+   "name": "Pickens Road"
+  },
+  "routes-and-regions-helvetia-adolph-road": {
+   "class": "local",
+   "basis": "name matched the local rule",
+   "name": "Helvetia-Adolph Road"
+  },
+  "routes-and-regions-unnamed-9528457f": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-380": {
+  "routes-and-regions-unnamed-fca049c0": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-381": {
+  "routes-and-regions-unnamed-23f6ad25": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-382": {
+  "routes-and-regions-unnamed-a18c1267": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-383": {
+  "routes-and-regions-unnamed-7ead895b": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-384": {
+  "routes-and-regions-unnamed-fef3c3b9": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-385": {
+  "routes-and-regions-unnamed-321e94c5": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-386": {
+  "routes-and-regions-unnamed-0ce6144b": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-387": {
+  "routes-and-regions-unnamed-ac54295c": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-388": {
+  "routes-and-regions-unnamed-3c9f8f1b": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-389": {
+  "routes-and-regions-unnamed-9f80e7ce": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-390": {
+  "routes-and-regions-unnamed-3241ce23": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-391": {
+  "routes-and-regions-unnamed-d27c7038": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-392": {
+  "routes-and-regions-unnamed-0efcb6cd": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-393": {
+  "routes-and-regions-unnamed-8604daaf": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-394": {
+  "routes-and-regions-unnamed-232b01c8": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-395": {
+  "routes-and-regions-unnamed-99a1120c": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-396": {
+  "routes-and-regions-unnamed-0500343f": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-397": {
+  "routes-and-regions-unnamed-b6b317d0": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-398": {
+  "routes-and-regions-unnamed-6f16938a": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-399": {
+  "routes-and-regions-unnamed-398b0c29": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-400": {
+  "routes-and-regions-unnamed-4bc16456": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-401": {
+  "routes-and-regions-unnamed-8ae576f4": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-402": {
+  "routes-and-regions-unnamed-815b5e2a": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-403": {
+  "routes-and-regions-unnamed-cd3dd577": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-404": {
+  "routes-and-regions-unnamed-fdd50f42": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-405": {
+  "routes-and-regions-unnamed-cca316ba": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-406": {
+  "routes-and-regions-unnamed-74e68ea8": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-407": {
+  "routes-and-regions-unnamed-a70d3284": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-408": {
+  "routes-and-regions-unnamed-1b6a3d96": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-409": {
+  "routes-and-regions-unnamed-85085989": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-410": {
+  "routes-and-regions-unnamed-d92c964f": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-411": {
+  "routes-and-regions-unnamed-b82223df": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-412": {
+  "routes-and-regions-unnamed-7feea5b3": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-413": {
+  "routes-and-regions-unnamed-f61613c8": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-414": {
+  "routes-and-regions-unnamed-69676727": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-415": {
+  "routes-and-regions-unnamed-e5733f1f": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-416": {
+  "routes-and-regions-unnamed-abdfc00a": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-417": {
+  "routes-and-regions-unnamed-f6f2e1e9": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-418": {
+  "routes-and-regions-unnamed-44e5a686": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-419": {
+  "routes-and-regions-unnamed-2feaac0e": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-420": {
+  "routes-and-regions-unnamed-99f82cc8": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-421": {
+  "routes-and-regions-unnamed-c153a276": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-422": {
+  "routes-and-regions-unnamed-5a4181b8": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-423": {
+  "routes-and-regions-unnamed-46343681": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-424": {
+  "routes-and-regions-unnamed-bb550f5e": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-425": {
+  "routes-and-regions-unnamed-710099ee": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-426": {
+  "routes-and-regions-unnamed-b18df0f7": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-427": {
+  "routes-and-regions-unnamed-d1e87ff8": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-428": {
+  "routes-and-regions-unnamed-89f0749a": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-429": {
+  "routes-and-regions-unnamed-03ff78f1": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-430": {
+  "routes-and-regions-unnamed-c9d6774e": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-431": {
+  "routes-and-regions-unnamed-84ad7adb": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-432": {
+  "routes-and-regions-unnamed-3f12432c": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-433": {
+  "routes-and-regions-unnamed-f2a0a277": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-434": {
+  "routes-and-regions-unnamed-94cc46b6": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-435": {
+  "routes-and-regions-unnamed-d732ffc6": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-436": {
+  "routes-and-regions-unnamed-9771728a": {
+   "class": "unknown",
+   "basis": "no name in the source; the KML carries geometry without semantics",
+   "name": null
+  },
+  "routes-and-regions-unnamed-67cf9b51": {
+   "class": "unknown",
+   "basis": "no name in the source; the KML carries geometry without semantics",
+   "name": null
+  },
+  "routes-and-regions-unnamed-c46ee9e9": {
+   "class": "unknown",
+   "basis": "no name in the source; the KML carries geometry without semantics",
+   "name": null
+  },
+  "routes-and-regions-unnamed-df6d5068": {
+   "class": "unknown",
+   "basis": "no name in the source; the KML carries geometry without semantics",
+   "name": null
+  },
+  "routes-and-regions-unnamed-0a435c34": {
+   "class": "unknown",
+   "basis": "no name in the source; the KML carries geometry without semantics",
+   "name": null
+  },
+  "routes-and-regions-unnamed-97b212d0": {
+   "class": "unknown",
+   "basis": "no name in the source; the KML carries geometry without semantics",
+   "name": null
+  },
+  "routes-and-regions-unnamed-4899b0e2": {
+   "class": "unknown",
+   "basis": "no name in the source; the KML carries geometry without semantics",
+   "name": null
+  },
+  "routes-and-regions-unnamed-897d7dd3": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -1749,17 +1824,17 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Elevated roadway"
   },
-  "routes-and-regions-elevated-freeway-4": {
+  "routes-and-regions-elevated-freeway-7152d2cc": {
    "class": "secondary",
    "basis": "name matched the secondary rule",
    "name": "Elevated freeway"
   },
-  "routes-and-regions-elevated-freeway-5": {
+  "routes-and-regions-elevated-freeway-6b848da7": {
    "class": "secondary",
    "basis": "name matched the secondary rule",
    "name": "Elevated freeway"
   },
-  "routes-and-regions-elevated-freeway-6": {
+  "routes-and-regions-elevated-freeway-a5da2799": {
    "class": "secondary",
    "basis": "name matched the secondary rule",
    "name": "Elevated freeway"
@@ -1784,17 +1859,17 @@
    "basis": "name matched the local rule",
    "name": "Basso Boulevard"
   },
-  "routes-and-regions-bus-loop": {
+  "routes-and-regions-bus-loop-fb74a596": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Bus loop"
   },
-  "routes-and-regions-bus-loop-2": {
+  "routes-and-regions-bus-loop-a9ca9eb6": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Bus loop"
   },
-  "routes-and-regions-bus-loop-3": {
+  "routes-and-regions-bus-loop-a7022832": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Bus loop"
@@ -1809,7 +1884,7 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Transit Court"
   },
-  "routes-and-regions-commercial-row": {
+  "routes-and-regions-commercial-row-168d0b41": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Commercial Row"
@@ -1819,22 +1894,22 @@
    "basis": "name matched the local rule",
    "name": "2nd Street"
   },
-  "routes-and-regions-fremont-street": {
+  "routes-and-regions-fremont-street-e21ee939": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Fremont Street"
   },
-  "routes-and-regions-las-vegas-boulevard": {
+  "routes-and-regions-las-vegas-boulevard-edbf1a81": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Las Vegas Boulevard"
   },
-  "routes-and-regions-russell-road": {
+  "routes-and-regions-russell-road-5fc85e2e": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Russell Road"
   },
-  "routes-and-regions-russell-road-2": {
+  "routes-and-regions-russell-road-85158440": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Russell Road"
@@ -1869,7 +1944,7 @@
    "basis": "name matched the highway rule",
    "name": "Nevada State Route 157"
   },
-  "routes-and-regions-nevada-state-route-159": {
+  "routes-and-regions-nevada-state-route-159-c7fee458": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Nevada State Route 159"
@@ -1879,12 +1954,12 @@
    "basis": "name matched the highway rule",
    "name": "Nevada State Route 160"
   },
-  "routes-and-regions-nevada-state-route-161": {
+  "routes-and-regions-nevada-state-route-161-44de47a6": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Nevada State Route 161"
   },
-  "routes-and-regions-nevada-state-route-161-2": {
+  "routes-and-regions-nevada-state-route-161-09566985": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Nevada State Route 161"
@@ -1934,17 +2009,32 @@
    "basis": "name matched the highway rule",
    "name": "West Virginia State Route 83"
   },
+  "routes-and-regions-west-virginia-state-route-83a-4b4bbc51": {
+   "class": "highway",
+   "basis": "name matched the highway rule",
+   "name": "West Virginia State Route 83A"
+  },
+  "routes-and-regions-west-virginia-state-route-83a-c8f9b14b": {
+   "class": "highway",
+   "basis": "name matched the highway rule",
+   "name": "West Virginia State Route 83A"
+  },
+  "routes-and-regions-west-virginia-state-route-84": {
+   "class": "highway",
+   "basis": "name matched the highway rule",
+   "name": "West Virginia State Route 84"
+  },
   "routes-and-regions-west-virginia-state-route-85": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "West Virginia State Route 85"
   },
-  "routes-and-regions-west-virginia-state-route-86": {
+  "routes-and-regions-west-virginia-state-route-86-04fe1555": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "West Virginia State Route 86"
   },
-  "routes-and-regions-west-virginia-state-route-86-2": {
+  "routes-and-regions-west-virginia-state-route-86-73425114": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "West Virginia State Route 86"
@@ -1974,62 +2064,77 @@
    "basis": "name matched the highway rule",
    "name": "West Virginia State Route 88B"
   },
+  "routes-and-regions-west-virginia-state-route-89": {
+   "class": "highway",
+   "basis": "name matched the highway rule",
+   "name": "West Virginia State Route 89"
+  },
   "routes-and-regions-west-virginia-state-route-90": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "West Virginia State Route 90"
+  },
+  "routes-and-regions-west-virginia-state-route-93": {
+   "class": "highway",
+   "basis": "name matched the highway rule",
+   "name": "West Virginia State Route 93"
+  },
+  "routes-and-regions-west-virginia-state-route-93a": {
+   "class": "highway",
+   "basis": "name matched the highway rule",
+   "name": "West Virginia State Route 93A"
   },
   "routes-and-regions-west-virginia-state-route-96": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "West Virginia State Route 96"
   },
-  "routes-and-regions-us-route-6": {
+  "routes-and-regions-us-route-6-7010bf41": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 6"
   },
-  "routes-and-regions-us-route-6-2": {
+  "routes-and-regions-us-route-6-0947e6e6": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 6"
   },
-  "routes-and-regions-us-route-6-3": {
+  "routes-and-regions-us-route-6-21178edc": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 6"
   },
-  "routes-and-regions-us-route-6-4": {
+  "routes-and-regions-us-route-6-e5a6d530": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 6"
   },
-  "routes-and-regions-us-route-6-5": {
+  "routes-and-regions-us-route-6-03d5bf67": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 6"
   },
-  "routes-and-regions-us-route-6-6": {
+  "routes-and-regions-us-route-6-5d4e13c6": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 6"
   },
-  "routes-and-regions-us-route-50": {
+  "routes-and-regions-us-route-50-6c865ba4": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 50"
   },
-  "routes-and-regions-us-route-50-2": {
+  "routes-and-regions-us-route-50-48e22614": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 50"
   },
-  "routes-and-regions-us-route-50-3": {
+  "routes-and-regions-us-route-50-ce3c45f9": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 50"
   },
-  "routes-and-regions-us-route-50-4": {
+  "routes-and-regions-us-route-50-7904ae6d": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 50"
@@ -2044,162 +2149,162 @@
    "basis": "name matched the highway rule",
    "name": "US Route 66"
   },
-  "routes-and-regions-us-route-89": {
+  "routes-and-regions-us-route-89-969a78fa": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 89"
   },
-  "routes-and-regions-us-route-89-2": {
+  "routes-and-regions-us-route-89-18e67964": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 89"
   },
-  "routes-and-regions-us-route-89-3": {
+  "routes-and-regions-us-route-89-baf69e21": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 89"
   },
-  "routes-and-regions-us-route-89-4": {
+  "routes-and-regions-us-route-89-470fcdc2": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 89"
   },
-  "routes-and-regions-us-route-93": {
+  "routes-and-regions-us-route-93-9906a77a": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 93"
   },
-  "routes-and-regions-us-route-93-2": {
+  "routes-and-regions-us-route-93-d8ffc8b7": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 93"
   },
-  "routes-and-regions-us-route-93-3": {
+  "routes-and-regions-us-route-93-01a07673": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 93"
   },
-  "routes-and-regions-us-route-93-4": {
+  "routes-and-regions-us-route-93-b5e32488": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 93"
   },
-  "routes-and-regions-us-route-93-5": {
+  "routes-and-regions-us-route-93-1e4bca4e": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 93"
   },
-  "routes-and-regions-us-route-93-6": {
+  "routes-and-regions-us-route-93-7079602d": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 93"
   },
-  "routes-and-regions-us-route-93-7": {
+  "routes-and-regions-us-route-93-9ab521ef": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 93"
   },
-  "routes-and-regions-us-route-93-8": {
+  "routes-and-regions-us-route-93-faa07dd1": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 93"
   },
-  "routes-and-regions-us-route-95": {
+  "routes-and-regions-us-route-95-7244f9d7": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 95"
   },
-  "routes-and-regions-us-route-95-2": {
+  "routes-and-regions-us-route-95-800255a4": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 95"
   },
-  "routes-and-regions-us-route-95-3": {
+  "routes-and-regions-us-route-95-6ef4d4af": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 95"
   },
-  "routes-and-regions-us-route-95-4": {
+  "routes-and-regions-us-route-95-0613e477": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 95"
   },
-  "routes-and-regions-us-route-95-5": {
+  "routes-and-regions-us-route-95-1865d431": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 95"
   },
-  "routes-and-regions-us-route-95-6": {
+  "routes-and-regions-us-route-95-5aa89c47": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 95"
   },
-  "routes-and-regions-us-route-95-7": {
+  "routes-and-regions-us-route-95-49ffb963": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 95"
   },
-  "routes-and-regions-us-route-95-8": {
+  "routes-and-regions-us-route-95-d18b76f1": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 95"
   },
-  "routes-and-regions-us-route-95-9": {
+  "routes-and-regions-us-route-95-6e1a9799": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 95"
   },
-  "routes-and-regions-us-route-95-10": {
+  "routes-and-regions-us-route-95-a50bf987": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 95"
   },
-  "routes-and-regions-us-route-395": {
+  "routes-and-regions-us-route-395-f303b3e6": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 395"
   },
-  "routes-and-regions-us-route-395-2": {
+  "routes-and-regions-us-route-395-f695772d": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 395"
   },
-  "routes-and-regions-us-route-395-3": {
+  "routes-and-regions-us-route-395-d27e684f": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 395"
   },
-  "routes-and-regions-us-route-395-4": {
+  "routes-and-regions-us-route-395-fc0d09be": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 395"
   },
-  "routes-and-regions-us-route-395-5": {
+  "routes-and-regions-us-route-395-13dca085": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 395"
   },
-  "routes-and-regions-us-route-395-6": {
+  "routes-and-regions-us-route-395-1ce61f6b": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 395"
   },
-  "routes-and-regions-us-route-395-7": {
+  "routes-and-regions-us-route-395-b7823876": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 395"
   },
-  "routes-and-regions-us-route-395-8": {
+  "routes-and-regions-us-route-395-7ef427d8": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 395"
   },
-  "routes-and-regions-us-route-395-9": {
+  "routes-and-regions-us-route-395-5d026a0c": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 395"
   },
-  "routes-and-regions-us-route-395-10": {
+  "routes-and-regions-us-route-395-04b461ae": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "US Route 395"
@@ -2214,12 +2319,12 @@
    "basis": "name matched the highway rule",
    "name": "Interstate 215"
   },
-  "routes-and-regions-interstate-40": {
+  "routes-and-regions-interstate-40-cf01c5cb": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Interstate 40"
   },
-  "routes-and-regions-interstate-40-2": {
+  "routes-and-regions-interstate-40-47af09b0": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Interstate 40"
@@ -2239,17 +2344,17 @@
    "basis": "name matched the highway rule",
    "name": "Interstate 71"
   },
-  "routes-and-regions-interstate-80": {
+  "routes-and-regions-interstate-80-43045dcc": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Interstate 80"
   },
-  "routes-and-regions-interstate-80-2": {
+  "routes-and-regions-interstate-80-3fa98f03": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Interstate 80"
   },
-  "routes-and-regions-interstate-80-3": {
+  "routes-and-regions-interstate-80-8cc980ca": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Interstate 80"
@@ -2279,72 +2384,72 @@
    "basis": "name matched the secondary rule",
    "name": "Boston Expressway"
   },
-  "routes-and-regions-caravan-trade-route": {
+  "routes-and-regions-caravan-trade-route-3c6932c8": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-2": {
+  "routes-and-regions-caravan-trade-route-c54e1162": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-3": {
+  "routes-and-regions-caravan-trade-route-64c7a68c": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-4": {
+  "routes-and-regions-caravan-trade-route-59e1ea48": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-5": {
+  "routes-and-regions-caravan-trade-route-50944b26": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-6": {
+  "routes-and-regions-caravan-trade-route-542ed0dd": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-7": {
+  "routes-and-regions-caravan-trade-route-3e4289ed": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-8": {
+  "routes-and-regions-caravan-trade-route-e6e50afd": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-9": {
+  "routes-and-regions-caravan-trade-route-fc98e646": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-10": {
+  "routes-and-regions-caravan-trade-route-c36dc069": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-11": {
+  "routes-and-regions-caravan-trade-route-ba61d59c": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-12": {
+  "routes-and-regions-caravan-trade-route-72e75dd2": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-13": {
+  "routes-and-regions-caravan-trade-route-eadac25d": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-14": {
+  "routes-and-regions-caravan-trade-route-65239485": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
@@ -2354,7 +2459,7 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "The Long 15"
   },
-  "routes-and-regions-highway-95": {
+  "routes-and-regions-highway-95-0f26e507": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Highway 95"
@@ -2364,67 +2469,67 @@
    "basis": "name matched the highway rule",
    "name": "Highway 89"
   },
-  "routes-and-regions-unnamed-561": {
+  "routes-and-regions-unnamed-f3f76e7a": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-562": {
+  "routes-and-regions-unnamed-fb2f7d15": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-563": {
+  "routes-and-regions-unnamed-7844e850": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-564": {
+  "routes-and-regions-unnamed-54d928b6": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-565": {
+  "routes-and-regions-unnamed-dd2f329c": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-566": {
+  "routes-and-regions-unnamed-4633a0d9": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-567": {
+  "routes-and-regions-unnamed-662b2336": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-highway-95-2": {
+  "routes-and-regions-highway-95-7fdc1e57": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Highway 95"
   },
-  "routes-and-regions-highway-93": {
+  "routes-and-regions-highway-93-a5b80bb8": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Highway 93"
   },
-  "routes-and-regions-highway-93-2": {
+  "routes-and-regions-highway-93-321e3259": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Highway 93"
   },
-  "routes-and-regions-highway-93-3": {
+  "routes-and-regions-highway-93-9ea01c39": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Highway 93"
   },
-  "routes-and-regions-highway-93-4": {
+  "routes-and-regions-highway-93-86bb2ffb": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Highway 93"
   },
-  "routes-and-regions-nevada-state-route-159-2": {
+  "routes-and-regions-nevada-state-route-159-c7f98bd4": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Nevada State Route 159"
@@ -2444,22 +2549,22 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Short Loop / Little Loop"
   },
-  "routes-and-regions-unnamed-577": {
+  "routes-and-regions-unnamed-5e810f0c": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-578": {
+  "routes-and-regions-unnamed-37262668": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-579": {
+  "routes-and-regions-unnamed-ff7b3a2d": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-580": {
+  "routes-and-regions-unnamed-21114bb2": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -2474,32 +2579,32 @@
    "basis": "name matched the highway rule",
    "name": "Highway 360"
   },
-  "routes-and-regions-unnamed-583": {
+  "routes-and-regions-unnamed-20e76f6e": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-584": {
+  "routes-and-regions-unnamed-b74964cf": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-585": {
+  "routes-and-regions-unnamed-7f657d79": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-586": {
+  "routes-and-regions-unnamed-d22806af": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-587": {
+  "routes-and-regions-unnamed-f2d8d636": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-588": {
+  "routes-and-regions-unnamed-500b82d6": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -2509,17 +2614,17 @@
    "basis": "name matched the trail rule",
    "name": "Freedom Trail"
   },
-  "routes-and-regions-unnamed-590": {
+  "routes-and-regions-unnamed-909a324e": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-591": {
+  "routes-and-regions-unnamed-4c971c84": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-las-vegas-boulevard-2": {
+  "routes-and-regions-las-vegas-boulevard-b94e1ba1": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Las Vegas Boulevard"
@@ -2529,67 +2634,67 @@
    "basis": "name matched the local rule",
    "name": "The Strip / Las Vegas Boulevard"
   },
-  "routes-and-regions-fremont-street-2": {
+  "routes-and-regions-fremont-street-6fcf72f9": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Fremont Street"
   },
-  "routes-and-regions-unnamed-595": {
+  "routes-and-regions-unnamed-6f1901d5": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-596": {
+  "routes-and-regions-unnamed-0f151528": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-597": {
+  "routes-and-regions-unnamed-16095a28": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-598": {
+  "routes-and-regions-unnamed-965b937f": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-599": {
+  "routes-and-regions-unnamed-aacede01": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-600": {
+  "routes-and-regions-unnamed-0c6a85d2": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-601": {
+  "routes-and-regions-unnamed-234347a5": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-interstate-40-3": {
+  "routes-and-regions-interstate-40-84dfed68": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Interstate 40"
   },
-  "routes-and-regions-unnamed-603": {
+  "routes-and-regions-unnamed-dcccd54d": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-604": {
+  "routes-and-regions-unnamed-54d99f5d": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-605": {
+  "routes-and-regions-unnamed-c4809d69": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-606": {
+  "routes-and-regions-unnamed-af33192f": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -2599,42 +2704,42 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Crimson Caravan route"
   },
-  "routes-and-regions-highway-50": {
+  "routes-and-regions-highway-50-5bffae65": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Highway 50"
   },
-  "routes-and-regions-highway-50-2": {
+  "routes-and-regions-highway-50-54b52e62": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Highway 50"
   },
-  "routes-and-regions-interstate-80-4": {
+  "routes-and-regions-interstate-80-e230ff9b": {
    "class": "highway",
    "basis": "name matched the highway rule",
    "name": "Interstate 80"
   },
-  "routes-and-regions-caravan-trade-route-15": {
+  "routes-and-regions-caravan-trade-route-64f8444b": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-16": {
+  "routes-and-regions-caravan-trade-route-79dc4415": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-caravan-trade-route-17": {
+  "routes-and-regions-caravan-trade-route-468bff7d": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Caravan trade route"
   },
-  "routes-and-regions-unnamed-614": {
+  "routes-and-regions-unnamed-e9232097": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-blue-ridge-parkway-2": {
+  "routes-and-regions-blue-ridge-parkway-d144bb59": {
    "class": "secondary",
    "basis": "name matched the secondary rule",
    "name": "Blue Ridge Parkway"
@@ -2644,12 +2749,12 @@
    "basis": "name matched the local rule",
    "name": "Virgin Street"
   },
-  "routes-and-regions-commercial-row-2": {
+  "routes-and-regions-commercial-row-324212cc": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Commercial Row"
   },
-  "routes-and-regions-second-street": {
+  "routes-and-regions-second-street-47e02221": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Second Street"
@@ -2659,7 +2764,7 @@
    "basis": "name matched the local rule",
    "name": "First Street"
   },
-  "routes-and-regions-second-street-2": {
+  "routes-and-regions-second-street-553d95eb": {
    "class": "local",
    "basis": "name matched the local rule",
    "name": "Second Street"
@@ -2674,7 +2779,7 @@
    "basis": "name matched the local rule",
    "name": "Home Street"
   },
-  "routes-and-regions-unnamed-623": {
+  "routes-and-regions-unnamed-f381559f": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -2684,27 +2789,27 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Travel route"
   },
-  "routes-and-regions-unnamed-625": {
+  "routes-and-regions-unnamed-50640db2": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-626": {
+  "routes-and-regions-unnamed-bc25d50b": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-627": {
+  "routes-and-regions-unnamed-4170a0d5": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-628": {
+  "routes-and-regions-unnamed-436118dd": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-629": {
+  "routes-and-regions-unnamed-c9888bfe": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -2719,132 +2824,132 @@
    "basis": "name matched the subsurface rule",
    "name": "Trans-Alaskan Pipeline"
   },
-  "routes-and-regions-overhead-pipeline": {
+  "routes-and-regions-overhead-pipeline-c4f45138": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Overhead pipeline"
   },
-  "routes-and-regions-overhead-pipeline-2": {
+  "routes-and-regions-overhead-pipeline-8754998b": {
    "class": "subsurface",
    "basis": "name matched the subsurface rule",
    "name": "Overhead pipeline"
   },
-  "routes-and-regions-trans-siberian-railway": {
+  "routes-and-regions-trans-siberian-railway-4bd39cde": {
    "class": "rail",
    "basis": "name matched the rail rule",
    "name": "Trans-Siberian Railway"
   },
-  "routes-and-regions-trans-siberian-railway-2": {
+  "routes-and-regions-trans-siberian-railway-65f6f5e9": {
    "class": "rail",
    "basis": "name matched the rail rule",
    "name": "Trans-Siberian Railway"
   },
-  "routes-and-regions-trans-siberian-railway-3": {
+  "routes-and-regions-trans-siberian-railway-b4ab836b": {
    "class": "rail",
    "basis": "name matched the rail rule",
    "name": "Trans-Siberian Railway"
   },
-  "routes-and-regions-train-tracks": {
+  "routes-and-regions-train-tracks-5f2d3a37": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-2": {
+  "routes-and-regions-train-tracks-10ed984e": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-3": {
+  "routes-and-regions-train-tracks-97880e70": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-4": {
+  "routes-and-regions-train-tracks-8a6a9012": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-5": {
+  "routes-and-regions-train-tracks-2e62de68": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-6": {
+  "routes-and-regions-train-tracks-06745911": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-7": {
+  "routes-and-regions-train-tracks-c2461842": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-8": {
+  "routes-and-regions-train-tracks-427950c2": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-9": {
+  "routes-and-regions-train-tracks-fe24949e": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-10": {
+  "routes-and-regions-train-tracks-4a98b7bb": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-11": {
+  "routes-and-regions-train-tracks-036ace15": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-12": {
+  "routes-and-regions-train-tracks-172d36a4": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-13": {
+  "routes-and-regions-train-tracks-621101af": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-14": {
+  "routes-and-regions-train-tracks-d988e76a": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-train-tracks-15": {
+  "routes-and-regions-train-tracks-ffbaa169": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Train tracks"
   },
-  "routes-and-regions-monorail": {
+  "routes-and-regions-monorail-325fda48": {
    "class": "rail",
    "basis": "name matched the rail rule",
    "name": "Monorail"
   },
-  "routes-and-regions-monorail-2": {
+  "routes-and-regions-monorail-c3e5bb3e": {
    "class": "rail",
    "basis": "name matched the rail rule",
    "name": "Monorail"
   },
-  "routes-and-regions-monorail-3": {
+  "routes-and-regions-monorail-c79062e1": {
    "class": "rail",
    "basis": "name matched the rail rule",
    "name": "Monorail"
   },
-  "routes-and-regions-monorail-4": {
+  "routes-and-regions-monorail-248e62d3": {
    "class": "rail",
    "basis": "name matched the rail rule",
    "name": "Monorail"
   },
-  "routes-and-regions-boston-mta-monorail": {
+  "routes-and-regions-boston-mta-monorail-10cdbebf": {
    "class": "rail",
    "basis": "name matched the rail rule",
    "name": "Boston MTA Monorail"
   },
-  "routes-and-regions-boston-mta-monorail-2": {
+  "routes-and-regions-boston-mta-monorail-61ebb7c9": {
    "class": "rail",
    "basis": "name matched the rail rule",
    "name": "Boston MTA Monorail"
@@ -2854,17 +2959,17 @@
    "basis": "name matched the rail rule",
    "name": "NCR railroad"
   },
-  "routes-and-regions-unnamed-659": {
+  "routes-and-regions-unnamed-cdd8acf6": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-660": {
+  "routes-and-regions-unnamed-a2b93c43": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
   },
-  "routes-and-regions-unnamed-661": {
+  "routes-and-regions-unnamed-e3286592": {
    "class": "unknown",
    "basis": "no name in the source; the KML carries geometry without semantics",
    "name": null
@@ -2879,12 +2984,12 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Legion ferry"
   },
-  "routes-and-regions-duchess-gambit-route": {
+  "routes-and-regions-duchess-gambit-route-19166c60": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Duchess Gambit route"
   },
-  "routes-and-regions-duchess-gambit-route-2": {
+  "routes-and-regions-duchess-gambit-route-19de18ea": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Duchess Gambit route"
@@ -2894,22 +2999,22 @@
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Dancing Betty route"
   },
-  "routes-and-regions-vertibird-route": {
+  "routes-and-regions-vertibird-route-2f670465": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Vertibird route"
   },
-  "routes-and-regions-vertibird-route-2": {
+  "routes-and-regions-vertibird-route-b81bfbd6": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Vertibird route"
   },
-  "routes-and-regions-vertibird-route-3": {
+  "routes-and-regions-vertibird-route-641d33cf": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Vertibird route"
   },
-  "routes-and-regions-vertibird-route-4": {
+  "routes-and-regions-vertibird-route-f9f840b3": {
    "class": "unknown",
    "basis": "named, but the name says nothing about what kind of route it is",
    "name": "Vertibird route"

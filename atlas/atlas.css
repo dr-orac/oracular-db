@@ -458,7 +458,7 @@
      events"). The card scrolls internally, so the cost is a shorter scroller;
      the alternative was unreachable controls. */
   max-height:calc(100% - 120px);
-  margin:13px;overflow:auto;cursor:auto;transform:none;
+  margin:12px;overflow:auto;cursor:auto;transform:none;
   background:hsl(var(--p) 35% 5% / .93);
   border:1px solid var(--fg-faint);
   box-shadow:4px 4px 0 hsl(var(--p) 60% 10% / .8);
@@ -504,7 +504,7 @@
   background:radial-gradient(circle,var(--fg-faint) 0 1px,transparent 1.2px) 0 100%/6px 3px repeat-x}
 .atl .linkbtn .meta{color:var(--fg-dim);font-size:10px;letter-spacing:1px;white-space:nowrap}
 .atl .linkbtn .yr{color:var(--fg-dim);flex:0 0 auto}
-.atl .pager{display:flex;gap:8px;margin-top:13px}
+.atl .pager{display:flex;gap:8px;margin-top:12px}
 .atl .pager .atl-btn{flex:1}
 .atl .locsub{font-size:10px;letter-spacing:1px;color:var(--fg-dim);margin-bottom:8px}
 .atl .locsub b{font-weight:400;color:var(--fc)}
@@ -526,7 +526,7 @@
 .atl .atl-select-trigger{
   display:inline-block;font:inherit;font-size:var(--sel-fs);letter-spacing:1px;
   color:var(--fg-bright);background:var(--bg3);border:1px solid var(--fg-dim);
-  padding:4px 26px 4px 8px;cursor:pointer;min-width:118px;
+  padding:4px 24px 4px 8px;cursor:pointer;min-width:118px;
   box-shadow:3px 3px 0 var(--btn-shadow);
 }
 .atl .atl-select-trigger:hover{border-color:var(--fg)}
@@ -560,7 +560,7 @@
    overflow:hidden purely clips dots/markers positioned outside the current
    [0,100]% window during a pan or an eased zoom transition. */
 .atl .tlscroll{overflow:hidden}
-.atl .tlbody{position:relative;padding:25px 6px 0 0}
+.atl .tlbody{position:relative;padding:24px 6px 0 0}
 .atl .lanes{position:relative;cursor:grab;touch-action:none}
 .atl .lanes:active{cursor:grabbing}
 .atl .lane{display:flex;align-items:center;height:21px;transition:opacity .18s}
@@ -759,7 +759,7 @@
 
 /* ===================== GREAT WAR DETONATION SITES =====================
    61 craters, shown only while the Great War is the selected event. The bombs belong to the
-   timeline rather than to the map: they are one moment, not a standing feature of 2302, and
+   timeline rather than to the map: they are one moment, not a standing feature of 2296, and
    drawing them permanently would turn a map of the present day into a map of the day it ended.
 
    Two circles per site, not a glyph: a wave that expands once on reveal and a core that stays.

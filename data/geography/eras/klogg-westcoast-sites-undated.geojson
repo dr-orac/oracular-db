@@ -1,0 +1,1046 @@
+{
+ "type": "FeatureCollection",
+ "_doc": "Site markers from the KloggKimball western-US faction sheet. Coordinates come from the sheet's own registration off the state grid; the NAMES were read by eye. THE SHEET PRINTS NO MARKER HIERARCHY - one ring size for everything bar the Wendover square - so there is no `rank` here and inventing one would be reading a distinction the author did not draw. `era` is null because the sheet is undated: it carries no title and no year, checked by looking at both margins.",
+ "generatedBy": "tools/klogg-westcoast-sites.py",
+ "source": "klogg-westcoast-factions.png",
+ "era": null,
+ "eraRole": "detail source",
+ "creator": "u/KloggKimball",
+ "licence": "None stated by the author, who is identified and reachable on Reddit. Staged in-repository; publication to the public host is the owner's own act.",
+ "provenance": {
+  "source": "klogg-westcoast-factions.png",
+  "creator": "u/KloggKimball",
+  "sheetRegistrationKm": {
+   "rms": 1.1462456229785651,
+   "worst": 2.137469634665123
+  },
+  "authorPlacementKm": {
+   "median": 27.881445251975443,
+   "worst": 105.77896051699194,
+   "worstSite": "Denver",
+   "controls": 17,
+   "measuredAgainst": "real-world coordinates of places whose referent is uncontested"
+  },
+  "permits": "names and containment only",
+  "warning": "The sheet registers far better than its markers are placed. Use authorPlacementKm, not sheetRegistrationKm, to decide what may be taken from these points."
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -123.60869935667365,
+     41.753005287376546
+    ]
+   },
+   "properties": {
+    "name": "Arroyo",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     79.0,
+     147.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -122.71310079105886,
+     41.737465345503935
+    ]
+   },
+   "properties": {
+    "name": "Klamath",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     165.0,
+     149.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 94.04,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -122.26530150825148,
+     41.22253874115839
+    ]
+   },
+   "properties": {
+    "name": "Den",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     208.0,
+     215.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -120.22416989359455,
+     41.22253874115839
+    ]
+   },
+   "properties": {
+    "name": "Madoc",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     404.0,
+     215.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -118.65166543536395,
+     41.39463549083208
+    ]
+   },
+   "properties": {
+    "name": "Gecko",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     555.0,
+     193.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -118.88077204517238,
+     41.042133906116035
+    ]
+   },
+   "properties": {
+    "name": "Vault City",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     533.0,
+     238.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -124.16584497598052,
+     40.68378571126357
+    ]
+   },
+   "properties": {
+    "name": "Eureka",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     25.5,
+     283.5
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 13.07,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.91384831963417,
+     40.861233194651234
+    ]
+   },
+   "properties": {
+    "name": "New Jerusalem",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     1202.0,
+     261.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -121.35928900582724,
+     40.339377808393586
+    ]
+   },
+   "properties": {
+    "name": "Redding",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     295.0,
+     327.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 91.57,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -119.5993336850261,
+     39.18668175012877
+    ]
+   },
+   "properties": {
+    "name": "New Reno",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     464.0,
+     471.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 42.22,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -119.0942577497666,
+     39.1018772573942
+    ]
+   },
+   "properties": {
+    "name": "Broken Hills",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     512.5,
+     481.5
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -105.86335103332968,
+     39.06550120451593
+    ]
+   },
+   "properties": {
+    "name": "Denver",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     1783.0,
+     486.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 105.78,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -121.35928900582724,
+     38.61939109802332
+    ]
+   },
+   "properties": {
+    "name": "Sac Town",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     295.0,
+     541.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 12.43,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -105.24892876157071,
+     38.104962029506105
+    ]
+   },
+   "properties": {
+    "name": "NORAD",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     1842.0,
+     604.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 78.91,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -122.25488757144201,
+     37.454731063811614
+    ]
+   },
+   "properties": {
+    "name": "San Francisco",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     209.0,
+     683.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 38.25,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -116.23563209556595,
+     37.636382438840386
+    ]
+   },
+   "properties": {
+    "name": "Area 51",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     787.0,
+     661.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 58.12,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.06121583270969,
+     37.32234314461086
+    ]
+   },
+   "properties": {
+    "name": "Twin Mothers",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     1764.0,
+     699.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -119.32857132797977,
+     37.09840891097885
+    ]
+   },
+   "properties": {
+    "name": "Shady Sands",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     490.0,
+     726.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.45615923259827,
+     36.389103217787046
+    ]
+   },
+   "properties": {
+    "name": "Tibbets Prison",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     1438.0,
+     811.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.47777330508866,
+     36.55658808022144
+    ]
+   },
+   "properties": {
+    "name": "The Nursery",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     1724.0,
+     791.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -115.18382447780905,
+     36.18764414411517
+    ]
+   },
+   "properties": {
+    "name": "Strip",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     888.0,
+     835.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 8.1,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.42360709071744,
+     35.85916559200775
+    ]
+   },
+   "properties": {
+    "name": "The Fort",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     961.0,
+     874.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -117.87062017465338,
+     35.520844731252886
+    ]
+   },
+   "properties": {
+    "name": "Junktown",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     630.0,
+     914.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -115.36086140357011,
+     35.520844731252886
+    ]
+   },
+   "properties": {
+    "name": "Primm",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     871.0,
+     914.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 10.2,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -116.75632893603965,
+     34.97655506659232
+    ]
+   },
+   "properties": {
+    "name": "Necropolis",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     737.0,
+     978.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.74722533068258,
+     35.13000568412176
+    ]
+   },
+   "properties": {
+    "name": "Flagstaff",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     1218.0,
+     960.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 11.54,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -117.88103411146287,
+     34.79716531474864
+    ]
+   },
+   "properties": {
+    "name": "The Hub",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     629.0,
+     999.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -108.92504845531508,
+     34.23082664336901
+    ]
+   },
+   "properties": {
+    "name": "Siri's Town",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     1489.0,
+     1065.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -118.31841945746078,
+     33.69531798829243
+    ]
+   },
+   "properties": {
+    "name": "Boneyard",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     587.0,
+     1127.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 40.03,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.23668036072786,
+     33.35674345563541
+    ]
+   },
+   "properties": {
+    "name": "Phoenix",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     1171.0,
+     1166.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 18.18,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -117.17288640841862,
+     32.62302415329437
+    ]
+   },
+   "properties": {
+    "name": "San Diego",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     697.0,
+     1250.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 10.34,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -116.30852965323226,
+     32.76324991247671
+    ]
+   },
+   "properties": {
+    "name": "The Glow",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     780.0,
+     1234.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.05990550125729,
+     31.98045982129535
+    ]
+   },
+   "properties": {
+    "name": "Two Sun",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "ring",
+    "positionSource": "mechanical - centroid of the hole inside the yellow ring",
+    "pixel": [
+     1284.0,
+     1323.0
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -123.65035510391155,
+     39.13015677336843
+    ]
+   },
+   "properties": {
+    "name": "Navarro",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "read by hand",
+    "positionSource": "read by hand - the size filter or the marker form excludes it",
+    "note": "Drawn with a visibly smaller ring than the other 33, so the size filter drops it. Kept here because the site is real on the sheet and a reader would count it.",
+    "pixel": [
+     75,
+     478
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 27.88,
+    "positionToleranceBasis": "ESTIMATED - the sheet's median over 17 controls; this site is not one of them",
+    "positionWorstCaseKm": 105.78
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -113.96539387110057,
+     40.80607809833257
+    ]
+   },
+   "properties": {
+    "name": "Wendover",
+    "source": "klogg-westcoast-factions.png",
+    "marker": "read by hand",
+    "positionSource": "read by hand - the size filter or the marker form excludes it",
+    "note": "A filled yellow SQUARE, not a ring, and the only one on the sheet. This is the author marking their focus, and it is the one site on this map the Misfits server sits on.",
+    "pixel": [
+     1005,
+     268
+    ],
+    "era": null,
+    "eraRole": "detail source",
+    "creator": "u/KloggKimball",
+    "kind": "site",
+    "readConfidence": "read by eye off the sheet's own label",
+    "positional": true,
+    "positionToleranceKm": 9.79,
+    "positionToleranceBasis": "MEASURED - this site is one of the 17 real-world controls, and this is its own offset",
+    "positionWorstCaseKm": 105.78
+   }
+  }
+ ]
+}

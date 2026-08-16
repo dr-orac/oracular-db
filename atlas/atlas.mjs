@@ -596,7 +596,7 @@ const MARKUP = `
 <div class="atl">
   <div class="hd">
     <h1 class="title">WASTELAND ATLAS</h1>
-    <p class="sub">POST-WAR UNITED STATES &middot; TACTICAL EVENT CARTOGRAPHY &middot; <b>PRESENT DAY 2302</b></p>
+    <p class="sub">POST-WAR UNITED STATES &middot; TACTICAL EVENT CARTOGRAPHY &middot; <b>PRESENT DAY 2296</b></p>
     <p class="hints" aria-hidden="true">TAB panels &nbsp;&middot;&nbsp; &larr; &rarr; scrub &nbsp;&middot;&nbsp; ENTER select &nbsp;&middot;&nbsp; ESC clear &nbsp;&middot;&nbsp; + &minus; zoom</p>
     <div class="scopectl" id="scopectl" role="group" aria-label="Map scope">
       <button class="atl-btn" id="scope-us"     type="button" aria-pressed="true">US</button>
@@ -942,7 +942,7 @@ export function mount(container, data, opts = {}){
   /* ---- Great War detonation sites ----
      61 crater and detonation records imported from the Fallout Universe KML, shown only while
      the Great War is the selected event. The bombs belong to the TIMELINE: they are one moment,
-     not a standing feature of 2302, and drawing them permanently would make a map of the present
+     not a standing feature of 2296, and drawing them permanently would make a map of the present
      day into a map of the day it ended. Bound to the event, the whole continent lights up at
      once for as long as that event is selected, which is the fact worth feeling.
      Positions are the KML's own lon/lat through the shipped georeference, so they sit in the

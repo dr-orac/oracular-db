@@ -62,6 +62,70 @@
       ]
     },
     {
+      "id": "westcoast-civilizations",
+      "era": 2281,
+      "title": "Fallout New Vegas - Map of Major Civilizations",
+      "region": "US west coast, Great Basin, Mojave, Utah, Arizona, Colorado; with a Mojave/New Vegas inset",
+      "bounds": [
+        -124.4974,
+        30.0133,
+        -104.9968,
+        43.6681
+      ],
+      "creator": null,
+      "creditStatus": "PERMANENT CREDIT GAP - the author's Reddit account is deleted. Do not record this as awaiting identification. Credit the artefact: r/ImaginaryMaps, thread 832l2f, author's account deleted.",
+      "licence": "None stated by the author, and none can now be asked for - the account is deleted. PUBLISHED ANYWAY on the owner's ruling of 2026-08-09, which is recorded in full under publishRuling: these sheets are inspiration for our own fan work, by a fan creator, in a non-commercial project. The gate's own policy already separates our expression from theirs; this layer is theirs, and it ships credited to the artefact.",
+      "registration": "Equidistant conic read off the sheet's own printed graticule - apex, cone constant and projection family all measured rather than fitted - with two absolute anchors fitted against Natural Earth's coastline. Worst 1.47 km, confirmed by the fit recovering 120/115/110/105 W and 45/40/35 N without ever being told the grid sits on round degrees.",
+      "layers": [
+        {
+          "file": "westcoast-2281-control-2281.named.geojson",
+          "role": "control",
+          "label": "Territorial control",
+          "note": "Who holds the ground, as the sheet draws it.",
+          "features": 38,
+          "toleranceKm": 1.47,
+          "bounds": [
+            -124.4974,
+            30.0133,
+            -104.9968,
+            43.6681
+          ]
+        }
+      ]
+    },
+    {
+      "id": "qjpth4wkzeq91",
+      "era": 2281,
+      "title": "THE BEAR & THE BULL - Western United States in the year 2281, Overlaid on Pre-War USA",
+      "region": "Western United States, California to the Rockies, Oregon to Sonora",
+      "bounds": [
+        -124.1859,
+        30.8686,
+        -104.4953,
+        42.3925
+      ],
+      "creator": null,
+      "creditStatus": "OPEN CREDIT GAP - creator not identified, and not yet researched",
+      "licence": "None stated on the sheet. Treated exactly as the three other unresolved sheets are: STAGING inside this repository is what the owner asked for on 2026-08-06 and is what publishing the era layer does; PUBLICATION to the public host is the owner's own act and is where an unresolved licence bites. Not withheld, because one rule cannot apply to one of four indistinguishable cases - the reasoning that un-withheld a sheet held alone for a few hours on 2026-08-07.",
+      "registration": "Five parameters against Natural Earth: the two anchors, the apex and the cone constant, with kilometres-per-pixel FIXED at the sheet's own printed 0.767. Fixing it is what makes five parameters honest - scale and latitude trade almost exactly, and freeing both lets a fit shrink the continent and slide it north at no cost to its score. The graticule supplied the starting values and the coastline decided. Recovered cone constant 0.6498, which is legal for a cone; the graticule alone had implied 1.39, which is not, and that impossibility is the corner-bound apex reporting itself.",
+      "layers": [
+        {
+          "file": "bear-and-bull-2281-sites-2281.geojson",
+          "role": "sites",
+          "label": "Settlements",
+          "note": "Point sites the sheet prints a marker for. Positions are the marker centroid, found mechanically; only the names were read by eye. Features with positional: false carry NO usable position - the sheet draws that ground wrong - and the reason is on the feature. toleranceKm below is the worst among the features that DO have a position.",
+          "features": 57,
+          "toleranceKm": null,
+          "bounds": [
+            -124.1859,
+            30.8686,
+            -104.4953,
+            42.3925
+          ]
+        }
+      ]
+    },
+    {
       "id": "mexico-2292",
       "era": 2292,
       "title": "Fallout Mexico \u2014 the Mexican Wastes",
@@ -163,6 +227,38 @@
             30.3913,
             -83.6573,
             35.0269
+          ]
+        }
+      ]
+    },
+    {
+      "id": "klogg-westcoast-factions",
+      "era": null,
+      "title": "Western United States factions: NCR states, a Legion civil war, and five Brotherhood chapters",
+      "region": "US west coast, Great Basin, Mojave, Utah, Arizona, the Colorado front range, and Baja",
+      "bounds": [
+        -124.1658,
+        31.9805,
+        -105.2489,
+        41.753
+      ],
+      "creator": "u/KloggKimball",
+      "creditStatus": "credited",
+      "licence": null,
+      "registration": null,
+      "layers": [
+        {
+          "file": "klogg-westcoast-sites-undated.geojson",
+          "role": "sites",
+          "label": "Settlements",
+          "note": "Point sites the sheet prints a marker for. Positions are the marker centroid, found mechanically; only the names were read by eye. Features with positional: false carry NO usable position - the sheet draws that ground wrong - and the reason is on the feature. toleranceKm below is the worst among the features that DO have a position.",
+          "features": 35,
+          "toleranceKm": 105.78,
+          "bounds": [
+            -124.1658,
+            31.9805,
+            -105.2489,
+            41.753
           ]
         }
       ]

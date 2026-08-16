@@ -1,0 +1,1626 @@
+{
+ "type": "FeatureCollection",
+ "_doc": "Settlement markers from THE BEAR & THE BULL, Western United States in the year 2281. Positions are mechanical - peak correlation against the sheet's own printed legend glyphs - and projected through bear-and-bull-2281-georef.json. The NAMES were read by eye; a marker whose label could not be resolved carries name: null.",
+ "generatedBy": "tools/bear-and-bull-sites.py",
+ "source": "qjpth4wkzeq91.png",
+ "era": 2281,
+ "creator": null,
+ "creatorNote": "OPEN CREDIT GAP - unidentified, deliberately not researched",
+ "licence": "None stated on the sheet. Staged in-repository; publication is the owner's act.",
+ "provenance": {
+  "registration": "bear-and-bull-2281-georef.json",
+  "registrationEvidence": 0.8659860314070911,
+  "sheetVersusRealPlacesKm": {
+   "median": 15.25,
+   "p90": 37.77,
+   "worst": 45.44,
+   "worstSite": "Spanish Fork",
+   "controls": 27,
+   "measuredAgainst": "public coordinates of places whose referent is uncontested",
+   "measuredBy": "the metric in tools/klogg-westcoast-sites.py, unchanged",
+   "whatItIncludes": "the sheet's registration AND the author's own hand placing each marker by eye. It cannot separate them, and it is the error a reader of these points actually experiences."
+  },
+  "permits": "point sites, capitals, containment, names attached to regions",
+  "doesNotPermit": "drawing new borders from it"
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Arroyo",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     252.0,
+     262.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -123.6128,
+     42.18587
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Klamath",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 0.989,
+    "pixel": [
+     457.0,
+     313.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -121.56458,
+     42.21386
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "The Den",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     347.0,
+     386.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -122.41262,
+     41.5352
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Gecko",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     590.0,
+     357.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -120.21044,
+     42.14084
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Abbey",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     647.0,
+     333.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -119.72597,
+     42.39254
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Tribal Village",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     133.0,
+     461.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -124.18586,
+     40.6424
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Modoc",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 0.958,
+    "pixel": [
+     426.0,
+     479.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -121.45718,
+     41.05289
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Vault Village",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     543.0,
+     484.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -120.3631,
+     41.21424
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Vault City",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     578.0,
+     459.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -120.09364,
+     41.43816
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Redding",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     328.0,
+     515.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -122.27125,
+     40.64263
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "New Reno",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "city",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     554.0,
+     740.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -119.70285,
+     39.51606
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Oak Creek",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     415.0,
+     769.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -120.89212,
+     39.09689
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Ouroboros",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "capital",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1334.0,
+     806.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.43009,
+     40.08012
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Jericho",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1460.0,
+     804.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.26138,
+     40.21597
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Sac-Town",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     344.0,
+     826.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -121.39775,
+     38.59659
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "San Francisco",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "capital",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 0.923,
+    "pixel": [
+     204.0,
+     914.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -122.42957,
+     37.76622
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Stockton",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 0.981,
+    "pixel": [
+     339.0,
+     924.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -121.22199,
+     37.93364
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Mormon Refuge",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1852.0,
+     906.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -107.50305,
+     39.82296
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Fountain Green",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1407.0,
+     936.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.5838,
+     39.26527
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Dog Town",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 0.95,
+    "pixel": [
+     2170.0,
+     982.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -104.49532,
+     39.46476
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Shady Sands",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "capital",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     713.0,
+     1004.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -117.74869,
+     37.97882
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Squat",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     787.0,
+     1015.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -117.06993,
+     38.00806
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Circle Junction",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 0.87,
+    "pixel": [
+     1776.0,
+     1042.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -108.08461,
+     38.84034
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Dead Horse Point",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "capital",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1624.0,
+     1096.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.41823,
+     38.3594
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "One Pine",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     639.0,
+     1115.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -118.19239,
+     37.1243
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Caliente",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1067.0,
+     1137.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.37367,
+     37.53703
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Blackfoot",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1528.0,
+     1165.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -110.21165,
+     37.80929
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Three Marys",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "capital",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1221.0,
+     1223.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.8816,
+     37.12273
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "The Narrows",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "capital",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1250.0,
+     1198.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.65801,
+     37.32321
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Maxson",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     490.0,
+     1284.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -119.15859,
+     35.76488
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Kaibab",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1249.0,
+     1284.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.55186,
+     36.73627
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Eastern Virgin",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1256.0,
+     1235.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.55512,
+     37.0773
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Fredonia",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1283.0,
+     1282.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.2544,
+     36.78434
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Lost Hills",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "capital",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     436.0,
+     1295.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -119.59908,
+     35.60741
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Necropolis",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     505.0,
+     1347.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -118.90827,
+     35.36436
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Jacobstown",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     912.0,
+     1299.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -115.48409,
+     36.2509
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "New Vegas",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "capital",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     963.0,
+     1330.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.99114,
+     36.10355
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Mesa Verde",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1753.0,
+     1296.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -108.06569,
+     37.08316
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Junktown",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     653.0,
+     1361.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -117.61661,
+     35.48666
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Scrapheap",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     697.0,
+     1351.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -117.25673,
+     35.61573
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Goodsprings",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 0.989,
+    "pixel": [
+     916.0,
+     1372.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -115.33299,
+     35.76118
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Primm",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     922.0,
+     1399.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -115.23864,
+     35.58557
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "The Hub",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "city",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     707.0,
+     1463.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -116.97602,
+     34.87334
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Bullhead",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1018.0,
+     1510.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.24526,
+     34.94689
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Res",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1633.0,
+     1514.0
+    ],
+    "note": "reads \"Res\" on the sheet - possibly an abbreviation, transcribed verbatim"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -108.92438,
+     35.50391
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Reservation",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1958.0,
+     1527.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.07609,
+     35.62035
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Boneyard",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "city",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     550.0,
+     1566.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -118.12001,
+     33.95748
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Flagstaff",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "capital",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1342.0,
+     1543.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.41597,
+     35.06107
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Sun Dogs",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1234.0,
+     1620.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.2488,
+     34.43117
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Malpais",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1759.0,
+     1638.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -107.72288,
+     34.74169
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Albuquerqe",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 0.973,
+    "pixel": [
+     1920.0,
+     1633.0
+    ],
+    "note": "spelled \"Albuquerqe\" on the sheet"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.33537,
+     34.87197
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Dayglow",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     634.0,
+     1763.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -117.07819,
+     32.7476
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Anza-Borrego",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     745.0,
+     1805.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -116.09296,
+     32.61189
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Phoenix",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1248.0,
+     1776.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.93838,
+     33.3813
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Painted Rock",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1135.0,
+     1843.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.80162,
+     32.81047
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Two Sun",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "town",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     1360.0,
+     1978.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -110.77315,
+     32.10665
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "channel": "sites",
+    "name": "Rattletail",
+    "nameConfidence": "read by eye at 2.4x to 5x zoom",
+    "tier": "village",
+    "isSettlement": true,
+    "era": 2281,
+    "eraRole": "detail source",
+    "source": "qjpth4wkzeq91.png",
+    "creator": null,
+    "creatorNote": "OPEN CREDIT GAP - the author is unidentified and has not been researched",
+    "positionSource": "mechanical - peak correlation against the sheet's own legend glyph",
+    "glyphMatch": 1.0,
+    "pixel": [
+     700.0,
+     2054.0
+    ]
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -116.07092,
+     30.86857
+    ]
+   }
+  }
+ ]
+}

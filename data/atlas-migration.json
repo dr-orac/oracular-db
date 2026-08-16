@@ -2,7 +2,7 @@
   "version": 2,
   "source": "data/atlas-pins.json",
   "coverage_status": "inventory_complete",
-  "marker_count": 137,
+  "marker_count": 149,
   "markers": [
     {
       "name": "Vault 13",
@@ -739,6 +739,54 @@
     {
       "name": "Nellis Air Force Base",
       "world_location_id": null,
+      "status": "research_required"
+    },
+    {
+      "name": "Old Faithful (Yellowstone)",
+      "status": "research_required"
+    },
+    {
+      "name": "The Redwoods",
+      "status": "research_required"
+    },
+    {
+      "name": "Golden Gate Bridge",
+      "status": "research_required"
+    },
+    {
+      "name": "Washington Monument",
+      "status": "research_required"
+    },
+    {
+      "name": "Lincoln Memorial",
+      "status": "research_required"
+    },
+    {
+      "name": "Statue of Liberty",
+      "status": "research_required"
+    },
+    {
+      "name": "Gateway Arch",
+      "status": "research_required"
+    },
+    {
+      "name": "Space Needle",
+      "status": "research_required"
+    },
+    {
+      "name": "The Alamo",
+      "status": "research_required"
+    },
+    {
+      "name": "Fort Knox",
+      "status": "research_required"
+    },
+    {
+      "name": "Brooklyn Bridge",
+      "status": "research_required"
+    },
+    {
+      "name": "Oasis",
       "status": "research_required"
     }
   ]

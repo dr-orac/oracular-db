@@ -288,6 +288,18 @@
   "n": "Vault-Tec's own executives go into cryo-storage in Vault 31 as future \"overseers\"; 32 and 33 are sealed alongside them as the breeding stock for a programme nobody inside has been told about."
  },
  {
+  "y": 2077,
+  "t": "Fort Knox gold moved to Vault 79",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Fort Knox",
+   "Vault 79"
+  ],
+  "n": "A pre-war contingency: the US gold reserve is quietly relocated into the vault rather than left in an undefended depository."
+ },
+ {
   "y": 2078,
   "t": "Vault 87 begins mass-producing Super Mutants",
   "th": [
@@ -476,6 +488,17 @@
    "Mariposa"
   ],
   "n": "Months into his own transformation, the newly-minded Richard Grey absorbs his first willing human subject into the vats."
+ },
+ {
+  "y": 2127,
+  "t": "The Brotherhood claims the Alamo",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "The Alamo"
+  ],
+  "n": "Roughly fifty years after the Great War, the Brotherhood makes the ruins its main base of operations in Texas."
  },
  {
   "y": 2130,
@@ -1318,6 +1341,17 @@
    "Vault 81"
   ],
   "n": "Overseer McNamara allows contact and trade with the outside world after two centuries sealed, the disease vault finally lets anyone in or out."
+ },
+ {
+  "y": 2277,
+  "t": "The Brotherhood restores the GNR relay",
+  "th": [
+   "brotherhood"
+  ],
+  "loc": [
+   "Washington Monument"
+  ],
+  "n": "The Brotherhood holds the monument as an outpost, repairing its transmitter to carry Galaxy News Radio across the Capital Wasteland."
  },
  {
   "y": 2278,

@@ -1,0 +1,153 @@
+{
+ "_doc": "Every folder of the Fallout Universe KML, imported whole on the owner's ruling of 2026-08-09. The source is a Google My Maps export and is therefore ALREADY WGS84: no projection was recovered and no residual exists, which is what makes it the most reliable geometry in this project. Rebuild with tools/kml-import-all.py.",
+ "source": "fallout-universe-map.kml",
+ "creator": "u/Sparky_321, extending the original by u/MarcelusWalrus",
+ "totalFeatures": 4397,
+ "dedicatedRenderers": {
+  "folders": [
+   "routes-and-regions",
+   "prewar-states"
+  ],
+  "why": "These complete-import files are canonical, but their features are not drawn through the generic KML layers. Routes and regions feed classified smoothed roads, named wasteland regions and radiation treatment; pre-war states have their own off-by-default control. Drawing the generic layers too would double the geometry and discard those semantics."
+ },
+ "outsideContinentalScope": 207,
+ "cutAtTheAntimeridian": 6,
+ "canonTags": {
+  "canon": "treat as the map's own canon",
+  "contested": "beta and unreleased material. Imported whole and OFF by default on the owner's ruling, so it can be discounted in one click rather than being absent with no trace of the decision",
+  "prewar-world": "pre-war world geography, outside the continental scope. Same ruling, same treatment: present, labelled, off",
+  "tv-era": "television-era claims, which the community thread this project recorded shows are genuinely disputed - so the map must be able to hold them WITHOUT asserting them"
+ },
+ "layers": [
+  {
+   "slug": "locations",
+   "folder": "Locations",
+   "canon": "canon",
+   "label": "Locations",
+   "defaultOn": true,
+   "file": "locations.geojson",
+   "features": 2279,
+   "named": 2279,
+   "coloured": 2279,
+   "withNotes": 524,
+   "bytes": 696290
+  },
+  {
+   "slug": "routes-and-regions",
+   "folder": "Regions, travel routes, and significant pre-war roads",
+   "canon": "canon",
+   "label": "Routes and regions",
+   "defaultOn": false,
+   "file": "routes-and-regions.geojson",
+   "features": 694,
+   "named": 550,
+   "coloured": 694,
+   "withNotes": 20,
+   "bytes": 602409
+  },
+  {
+   "slug": "factions",
+   "folder": "Factions and controlled territories (prior to 2296)",
+   "canon": "canon",
+   "label": "Faction territories",
+   "defaultOn": false,
+   "file": "factions.geojson",
+   "features": 436,
+   "named": 436,
+   "coloured": 436,
+   "withNotes": 30,
+   "bytes": 281236
+  },
+  {
+   "slug": "prewar-conflicts",
+   "folder": "Pre-Great War conflicts, major events, and military-related locations",
+   "canon": "canon",
+   "label": "Pre-war conflicts",
+   "defaultOn": false,
+   "file": "prewar-conflicts.geojson",
+   "features": 264,
+   "named": 264,
+   "coloured": 264,
+   "withNotes": 24,
+   "bytes": 110994
+  },
+  {
+   "slug": "great-war",
+   "folder": "Great War and immediate aftermath",
+   "canon": "canon",
+   "label": "The Great War",
+   "defaultOn": false,
+   "file": "great-war.geojson",
+   "features": 249,
+   "named": 249,
+   "coloured": 249,
+   "withNotes": 103,
+   "bytes": 77198
+  },
+  {
+   "slug": "beta",
+   "folder": "Beta locations and unreleased games (Fallout Extreme, Van Buren, BOS 2, Project V13)",
+   "canon": "contested",
+   "label": "Beta and unreleased",
+   "defaultOn": false,
+   "file": "beta.geojson",
+   "features": 162,
+   "named": 162,
+   "coloured": 162,
+   "withNotes": 21,
+   "bytes": 73399
+  },
+  {
+   "slug": "factions-former",
+   "folder": "Former factions and controlled territories",
+   "canon": "canon",
+   "label": "Former faction territories",
+   "defaultOn": false,
+   "file": "factions-former.geojson",
+   "features": 142,
+   "named": 142,
+   "coloured": 142,
+   "withNotes": 7,
+   "bytes": 84155
+  },
+  {
+   "slug": "prewar-countries",
+   "folder": "Pre-Great War countries",
+   "canon": "prewar-world",
+   "label": "Pre-war countries",
+   "defaultOn": false,
+   "file": "prewar-countries.geojson",
+   "features": 114,
+   "named": 114,
+   "coloured": 114,
+   "withNotes": 14,
+   "bytes": 120230
+  },
+  {
+   "slug": "prewar-states",
+   "folder": "Pre-Great War Provinces, States, Territories, and Commonwealths",
+   "canon": "prewar-world",
+   "label": "Pre-war states",
+   "defaultOn": false,
+   "file": "prewar-states.geojson",
+   "features": 36,
+   "named": 36,
+   "coloured": 36,
+   "withNotes": 0,
+   "bytes": 54080
+  },
+  {
+   "slug": "factions-tv",
+   "folder": "TV show factions and controlled territories (2296 and onwards)",
+   "canon": "tv-era",
+   "label": "Television-era claims",
+   "defaultOn": false,
+   "file": "factions-tv.geojson",
+   "features": 21,
+   "named": 21,
+   "coloured": 21,
+   "withNotes": 5,
+   "bytes": 20158
+  }
+ ]
+}
