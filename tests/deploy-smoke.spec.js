@@ -28,16 +28,40 @@ const { test, expect } = require("@playwright/test");
   it cannot rot the way its predecessors did.
 */
 
-const SECTIONS = [
-  "#home",
-  "#wiki",
-  "#map",
-  "#paperwork",
-  "#events",
-  "#stories",
-  "#proposals",
-  "#tribe/roster",
-];
+/* WHAT THE DEPLOYMENT SAYS IT HAS, read off the deployment. This was a frozen list, and it rotted
+   the way its own header warns about — just not in the place the header was watching. It named
+   `#home`, deleted in August; `#paperwork` and `#stories`, which the Pack no longer draws; and
+   `#events` and `#proposals`, which it draws nowhere and reaches only by address. An address for a
+   section this Pack does not show LANDS ON THE LANDING, renders a full wiki page, and sails past a
+   "did it render" check. Three of the eight rows asserted nothing about the section they named,
+   and the file could not tell: it froze a section list while congratulating itself on naming no
+   ids.
+
+   So the drawn destinations are discovered from the served page's own navigation, which cannot go
+   stale because it IS the deployment. */
+async function drawnSections(page) {
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.waitForSelector(".nav-grid .navbox", { timeout: 20_000 });
+  return page.evaluate(() =>
+    [...document.querySelectorAll(".nav-grid .navbox")]
+      .map(b => b.getAttribute("aria-label"))
+      .filter(name => name && name !== "Settings")
+      .map(name => "#" + name.toLowerCase().replace(/\s+/g, "-")));
+}
+
+/* AND THE ADDRESSES WE HAND OUT, which have no navigation entry by design and are therefore the
+   ones that can die without anybody noticing. An unlisted section is reached only by a link
+   somebody was given; a `c/` page is a link somebody was given years ago. Explicit because the
+   fact being asserted is "we shared this", and that is not derivable from the app.
+
+   `#roster` is here rather than discovered because the nav's label for it may differ from its
+   address; discovering it as well is harmless and this keeps one row honest either way. */
+const SHARED = ["#proposals", "#events", "#roster"];
+
+/* One legacy share page, checked as a REDIRECT rather than as a section: 43 of them sit in this
+   repository from the retired app and every one is a link somebody may still hold. They forward
+   to `index.html#tribe/roster/<id>`, which the current app's route-compat ratchet covers. */
+const LEGACY_SHARE_PAGE = "c/andrew-stone.html";
 
 test("every entry point boots, renders and raises nothing", async ({ page, baseURL }) => {
   const origin = new URL(baseURL).origin;
@@ -59,7 +83,9 @@ test("every entry point boots, renders and raises nothing", async ({ page, baseU
   await page.addInitScript(() => sessionStorage.setItem("mdb-booted", "1"));
 
   const empty = [];
-  for (const hash of SECTIONS) {
+  const sections = [...new Set([...(await drawnSections(page)), ...SHARED])];
+  expect(sections.length, "the deployment drew no navigation at all").toBeGreaterThan(2);
+  for (const hash of sections) {
     await page.goto(`/${hash}`, { waitUntil: "networkidle" });
     // POLLED, not measured once. The map and the roster both mount asynchronously and
     // are still near-empty when networkidle fires: measuring immediately reported 33
@@ -117,4 +143,17 @@ test("the published preview mounts the complete atlas without errors", async ({ 
   await expect(page.locator('#atlas-map .terr[d]:not([d=""])')).toHaveCount(188, { timeout: 15_000 });
   await expect(page.locator(".pin")).toHaveCount(137, { timeout: 15_000 });
   expect([...new Set(problems)], "errors or misplaced requests while mounting the preview atlas").toEqual([]);
+});
+
+/* A LINK SOMEBODY WAS GIVEN YEARS AGO STILL OPENS THE PERSON IT NAMES. The retired app left 43
+   `c/*.html` pages in this repository, each a meta-refresh into the app's own hash. The publisher
+   is overlay-only and does not delete them, so they stay live — which is right, and only worth
+   anything if they still arrive somewhere. Asserted on the ADDRESS reached, not on what renders
+   there: a character can leave the roster without the redirect being broken. */
+test("a legacy character share page still redirects into the app", async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem("mdb-booted", "1"));
+  await page.goto(`/${LEGACY_SHARE_PAGE}`, { waitUntil: "networkidle" });
+  await expect
+    .poll(() => new URL(page.url()).hash, { timeout: 15_000 })
+    .toMatch(/^#(tribe\/roster\/|roster\/)[a-z0-9-]+/);
 });
