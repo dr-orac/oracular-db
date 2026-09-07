@@ -1,0 +1,90 @@
+{
+ "_generated_by": "tools/emit-atlas-population.py",
+ "_note": "Only figures this project may publish: stated canon, and values authored here. Sources awaiting a creator's permission are held back - see RIGHTS-REGISTER.json.",
+ "_withheld": {
+  "owb_territory": 39,
+  "fan_unpublishable": 60,
+  "no_source": 84,
+  "capacity_only": 0
+ },
+ "bands": [
+  {
+   "band": "outpost",
+   "from": 0,
+   "to": 25
+  },
+  {
+   "band": "hamlet",
+   "from": 25,
+   "to": 150
+  },
+  {
+   "band": "village",
+   "from": 150,
+   "to": 750
+  },
+  {
+   "band": "town",
+   "from": 750,
+   "to": 2500
+  },
+  {
+   "band": "city",
+   "from": 2500,
+   "to": 12000
+  },
+  {
+   "band": "major city",
+   "from": 12000,
+   "to": 60000
+  },
+  {
+   "band": "metropolis",
+   "from": 60000,
+   "to": 1000000000
+  }
+ ],
+ "pins": {
+  "Shady Sands": {
+   "band": "major city",
+   "value": 34852,
+   "year": 2283,
+   "origin": "canon",
+   "basis": "canon: 34,852 (Pre-2283)",
+   "citation": "Fallout TV series: \"The Past,\" \"The Trap,\" \"The Radio,\" \"The Beginning…\""
+  },
+  "New Reno": {
+   "band": "city",
+   "value": 3048,
+   "year": 2280,
+   "origin": "canon",
+   "basis": "canon: 3,048 (2280)",
+   "citation": "Royal Flush p. 98: \"NEW RENO SETTLEMENT ATTRIBUTES Population: 3,048…\""
+  },
+  "Novac": {
+   "band": "outpost",
+   "value": 18,
+   "year": 2280,
+   "origin": "canon",
+   "basis": "canon: 18 (2280)",
+   "citation": "Royal Flush p. 199"
+  },
+  "Enclave Oil Rig": {
+   "band": "town",
+   "value": 1000,
+   "year": null,
+   "origin": "canon",
+   "basis": "canon: ~1,000 total",
+   "citation": "Charles Curling: \"It's not pretty. You should leave as soon as possible. But I'd rather…\""
+  },
+  "Bunker Hill": {
+   "band": "outpost",
+   "value": 11,
+   "year": 2287,
+   "origin": "canon",
+   "basis": "canon: 11}} '''Bunker Hill''' is a small town and trading hub in the Charlestown neighborhood of Boston in the Commonwealth, built around the '''Bunker Hill Monument''' on '''Breed's Hill'''. It serves as a ",
+   "citation": "Bunker Hill Monument plaque"
+  }
+ },
+ "regions": {}
+}

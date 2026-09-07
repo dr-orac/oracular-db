@@ -1,12 +1,13 @@
 {
  "type": "FeatureCollection",
- "_doc": "Settlement markers from THE BEAR & THE BULL, Western United States in the year 2281. Positions are mechanical - peak correlation against the sheet's own printed legend glyphs - and projected through bear-and-bull-2281-georef.json. The NAMES were read by eye; a marker whose label could not be resolved carries name: null.",
- "generatedBy": "tools/bear-and-bull-sites.py",
+ "origin": "external",
  "source": "qjpth4wkzeq91.png",
- "era": 2281,
  "creator": null,
+ "licence": "None stated on the sheet. Treated exactly as the three other unresolved sheets are: STAGING inside this repository is what the owner asked for on 2026-08-06 and is what publishing the era layer does; PUBLICATION to the public host is the owner's own act and is where an unresolved licence bites. Not withheld, because one rule cannot apply to one of four indistinguishable cases - the reasoning that un-withheld a sheet held alone for a few hours on 2026-08-07.",
+ "generatedBy": "tools/publish-era-layers.py",
+ "_doc": "Settlement markers from THE BEAR & THE BULL, Western United States in the year 2281. Positions are mechanical - peak correlation against the sheet's own printed legend glyphs - and projected through bear-and-bull-2281-georef.json. The NAMES were read by eye; a marker whose label could not be resolved carries name: null.",
+ "era": 2281,
  "creatorNote": "OPEN CREDIT GAP - unidentified, deliberately not researched",
- "licence": "None stated on the sheet. Staged in-repository; publication is the owner's act.",
  "provenance": {
   "registration": "bear-and-bull-2281-georef.json",
   "registrationEvidence": 0.8659860314070911,

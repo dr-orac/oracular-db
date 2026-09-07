@@ -1,9 +1,10 @@
 {
  "type": "FeatureCollection",
- "generatedBy": "tools/mexico-2292-sites.py",
+ "origin": "external",
  "source": "mexico-2292.png",
  "creator": "u/omega-lf",
- "licence": "none printed - BLOCKS PUBLICATION of anything derived until the owner rules. Reference material only.",
+ "licence": "none stated by the author - still gated",
+ "generatedBy": "tools/publish-era-layers.py",
  "registrationKm": 7.84,
  "siteBudget": "a transferred site carries the registration error PLUS the author's own siting error: expect about 10 km typically and up to about 35 km occasionally outside the south-east corner. Never use a site position to decide which side of a nearby border something falls on.",
  "permitted": [
@@ -31,7 +32,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -54,7 +56,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -78,7 +81,8 @@
     "positionToleranceKm": null,
     "positionWorstCaseKm": null,
     "readConfidence": "clear",
-    "whyNotPositional": "INVENTED geography, not a misdrawn one. The sheet places Austin 26 px east of Piedras Negras where the truth is about 440 px, and 494 px south of it where the truth is north. Take nothing positional from it. Extent derived from the connected blue fill containing Austin."
+    "whyNotPositional": "INVENTED geography, not a misdrawn one. The sheet places Austin 26 px east of Piedras Negras where the truth is about 440 px, and 494 px south of it where the truth is north. Take nothing positional from it. Extent derived from the connected blue fill containing Austin.",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -102,7 +106,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -126,7 +131,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -150,7 +156,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -173,7 +180,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -197,7 +205,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -221,7 +230,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -244,7 +254,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -267,7 +278,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -290,7 +302,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -313,7 +326,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -336,7 +350,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -360,7 +375,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -383,7 +399,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -407,7 +424,8 @@
     "positionToleranceKm": null,
     "positionWorstCaseKm": null,
     "readConfidence": "clear",
-    "whyNotPositional": "INVENTED geography, not a misdrawn one. The sheet places Austin 26 px east of Piedras Negras where the truth is about 440 px, and 494 px south of it where the truth is north. Take nothing positional from it. Extent derived from the connected blue fill containing Austin."
+    "whyNotPositional": "INVENTED geography, not a misdrawn one. The sheet places Austin 26 px east of Piedras Negras where the truth is about 440 px, and 494 px south of it where the truth is north. Take nothing positional from it. Extent derived from the connected blue fill containing Austin.",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -432,7 +450,8 @@
     "positionWorstCaseKm": null,
     "readConfidence": "clear",
     "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only.",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -455,7 +474,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -478,7 +498,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -501,7 +522,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -524,7 +546,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -547,7 +570,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -570,7 +594,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -593,7 +618,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -617,7 +643,8 @@
     "positionToleranceKm": null,
     "positionWorstCaseKm": null,
     "readConfidence": "clear",
-    "whyNotPositional": "Guatemala, Belize and the isthmus south of lat 16.1: median 38 km, p75 127 km. Names and containment only."
+    "whyNotPositional": "Guatemala, Belize and the isthmus south of lat 16.1: median 38 km, p75 127 km. Names and containment only.",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -642,7 +669,8 @@
     "positionWorstCaseKm": null,
     "readConfidence": "clear",
     "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only.",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -665,7 +693,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -690,7 +719,8 @@
     "positionWorstCaseKm": null,
     "readConfidence": "clear",
     "whyNotPositional": "The whole peninsula, not just the north-west corner. Its measurable coastline is 172 unoccluded pixels - the travel posters cover the rest - which is far too little to fit five parameters to, and the registration's own conclusion is that the author may have assembled Baja from a separate source at a different scale. Its verdict: if Baja ever matters, the way in is a second source sheet, not this one. Names and ordering only.",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -713,7 +743,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -737,7 +768,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -761,7 +793,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -785,7 +818,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -808,7 +842,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -831,7 +866,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -855,7 +891,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -878,7 +915,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -901,7 +939,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -924,7 +963,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -948,7 +988,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -971,7 +1012,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -994,7 +1036,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1018,7 +1061,8 @@
     "positionToleranceKm": null,
     "positionWorstCaseKm": null,
     "readConfidence": "clear",
-    "whyNotPositional": "INVENTED geography, not a misdrawn one. The sheet places Austin 26 px east of Piedras Negras where the truth is about 440 px, and 494 px south of it where the truth is north. Take nothing positional from it. Extent derived from the connected blue fill containing Austin."
+    "whyNotPositional": "INVENTED geography, not a misdrawn one. The sheet places Austin 26 px east of Piedras Negras where the truth is about 440 px, and 494 px south of it where the truth is north. Take nothing positional from it. Extent derived from the connected blue fill containing Austin.",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1041,7 +1085,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1064,7 +1109,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1087,7 +1133,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1110,7 +1157,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1133,7 +1181,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1156,7 +1205,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1181,7 +1231,8 @@
     "positionWorstCaseKm": null,
     "readConfidence": "clear",
     "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only.",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1204,7 +1255,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1227,7 +1279,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1251,7 +1304,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1275,7 +1329,8 @@
     "positionToleranceKm": null,
     "positionWorstCaseKm": null,
     "readConfidence": "clear",
-    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only."
+    "whyNotPositional": "Baja California, the Gulf of California and the Republic of New California: median 97 km, and the sheet's Tijuana is about 135 km from the real one. Names and ordering only.",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1299,7 +1354,8 @@
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
     "readConfidence": "clear",
-    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to"
+    "note": "no candidate number; position read by eye, no glyph within 22 px to snap to",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1322,7 +1378,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1345,7 +1402,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",
@@ -1368,7 +1426,8 @@
     "positional": true,
     "positionToleranceKm": 10.0,
     "positionWorstCaseKm": 35.0,
-    "readConfidence": "clear"
+    "readConfidence": "clear",
+    "holder": "settlement"
    },
    "geometry": {
     "type": "Point",

@@ -113,9 +113,20 @@ test("the served tree has the files the page asks for", async ({ page, baseURL }
   // directly. This is the failure the stale-file cleanup can cause, and the one that
   // deleting playwright.config.js proved nobody would notice until CI was already red.
   const origin = new URL(baseURL).origin;
+  /* THE ONE ABSENCE THE APP IS BUILT TO SURVIVE. The atlas fetches `/BUILT`, a one-line commit
+     stamp, and shows a build line in its credits panel when it finds one. Its own spec says the
+     deployed site is expected NOT to carry it — the stamp is written by the map launcher into its
+     own served directory, not by the publisher — and the app validates the shape before believing
+     it, precisely because a static host answers an unknown path with something. An optional fetch
+     is not a served-tree gap, and treating it as one would either force a fake stamp into the
+     deployment or teach whoever reads this red to ignore it. Named here rather than tolerated
+     silently: if a second path joins it, that is worth an argument. */
+  const OPTIONAL = ["/BUILT"];
   const missing = [];
   page.on("response", r => {
-    if (r.url().startsWith(origin) && r.status() === 404) missing.push(r.url().replace(origin, ""));
+    if (!r.url().startsWith(origin) || r.status() !== 404) return;
+    const path = r.url().replace(origin, "");
+    if (!OPTIONAL.includes(path)) missing.push(path);
   });
   await page.addInitScript(() => sessionStorage.setItem("mdb-booted", "1"));
   await page.goto("/#map", { waitUntil: "networkidle" });

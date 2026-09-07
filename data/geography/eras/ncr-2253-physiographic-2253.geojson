@@ -1,7 +1,12 @@
 {
+ "type": "FeatureCollection",
+ "origin": "external",
+ "source": "ncr-2253-newwest.png",
+ "creator": "u/Polakp",
+ "licence": "none printed - STILL BLOCKS PUBLICATION of anything derived. A name is not a licence. But the author is now identified and reachable, so the question moves from unanswerable to ASKABLE, and asking is the owner's step.",
+ "generatedBy": "tools/publish-era-layers.py",
  "_doc": "DERIVED from ncr-2253-physiographic-authored.json through the registration in ncr-2253-georef.json. One LineString per name: the baseline the sheet set it along, so a renderer can place curved letterspaced type with `symbol-placement: line` the way the source does. `positionToleranceKm` is the READING tolerance and is far coarser than the sheet's 0.78 km registration - these are area-label anchors, never boundary positions. Rebuild with tools/ncr-2253-labels.py.",
  "era": 2253,
- "type": "FeatureCollection",
  "features": [
   {
    "type": "Feature",

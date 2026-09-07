@@ -22,11 +22,34 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://dr-orac.github.io/oracular-db/og-card.png?v=2" />
 
+    <!-- THE COLOUR MODE, BEFORE THE FIRST STYLESHEET. The mode is a fixed layer over the whole
+         page, so a frame painted in the wrong one is a flash of somebody else's screen. This is
+         synchronous and tiny, exactly as INTERFACE's adopting guide asks, and the two vendored
+         sheets are linked after it.
+
+         BOTH VALUES ARE INJECTED, neither typed here: `full` is the Manifest's
+         `defaults.colorMode`, so where a reader starts stays the Pack's to say, and
+         `mdb-settings` is the one storage key lib/stored-settings.ts names. Both are set on the
+         environment by vite.config.ts, which is where the Manifest is read; the comment there says
+         why this is Vite's own env substitution and not a plugin. -->
+    <script>
+      (function () {
+        var mode = "full";
+        // localStorage throws under file:// in some webviews, and a reader who has chosen nothing
+        // is the same case as a reader whose browser will not say: the Manifest's default.
+        try {
+          var chosen = JSON.parse(localStorage.getItem("mdb-settings") || "{}").colorMode;
+          if (chosen) mode = chosen;
+        } catch (e) {}
+        document.documentElement.setAttribute("data-color-mode", mode);
+      })();
+    </script>
+
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="icon" type="image/png" href="./favicon.png" />
     <link rel="apple-touch-icon" href="./icon.png" />
-    <script type="module" crossorigin src="./assets/index-BHuI6ZfM.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-JhmLAsHn.css">
+    <script type="module" crossorigin src="./assets/index-N5s0Hr--.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BrebTdRO.css">
   </head>
 
   <body>

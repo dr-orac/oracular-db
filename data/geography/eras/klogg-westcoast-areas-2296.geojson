@@ -1,0 +1,105 @@
+{
+ "type": "FeatureCollection",
+ "origin": "external",
+ "source": "klogg-westcoast-factions.png",
+ "creator": "u/KloggKimball",
+ "licence": "None stated by the author. He is IDENTIFIED and REACHABLE - u/KloggKimball, signed on the sheet - which puts this sheet in a better position than the five permanent credit gaps and a worse one than any sheet with a stated licence. Staged in this repository, which is what publishing an era layer does; PUBLICATION to the public host is the owner's own act and is where this bites. ASKING HIM FIRST IS STILL OWED and is still the honest order - see publishRuling, which un-held this sheet on the grounds that one rule cannot apply to one of four indistinguishable cases.",
+ "generatedBy": "tools/publish-era-layers.py",
+ "_doc": "THESE FOUR CARRY A NAME AND NO FILL. The sheet letters them straight onto the unclaimed relief, so there is no boundary to extract and inventing one would be drawing a claim the author declined to draw. They are emitted as POINTS in the `areas` channel, whose published note already says exactly this: where a NAME sits, never where the thing is. The Enclave is the sharpest case - the sheet's own legend-less convention gives it capitals the size of CAESAR'S LEGION while drawing it no ground at all.",
+ "era": 2296,
+ "eraRole": "detail source",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.529843,
+     40.766654
+    ]
+   },
+   "properties": {
+    "name": "Enclave",
+    "holder": "enclave",
+    "kind": "area",
+    "era": 2296,
+    "eraRole": "detail source",
+    "source": "klogg-westcoast-factions.png",
+    "creator": "u/KloggKimball",
+    "nameSource": "read by eye off the sheet's own lettering",
+    "positionSource": "the pixel the name is lettered at, projected through the sheet fit",
+    "accuracyKm": null,
+    "accuracyBasis": "NONE, and that is the point. This is where a NAME is printed on unclaimed ground; the sheet draws no boundary for it, so there is no geometry for an accuracy to be about."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -116.589706,
+     40.474185
+    ]
+   },
+   "properties": {
+    "name": "80's Tribe",
+    "holder": "tribes",
+    "kind": "area",
+    "era": 2296,
+    "eraRole": "detail source",
+    "source": "klogg-westcoast-factions.png",
+    "creator": "u/KloggKimball",
+    "nameSource": "read by eye off the sheet's own lettering",
+    "positionSource": "the pixel the name is lettered at, projected through the sheet fit",
+    "accuracyKm": null,
+    "accuracyBasis": "NONE, and that is the point. This is where a NAME is printed on unclaimed ground; the sheet draws no boundary for it, so there is no geometry for an accuracy to be about."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.809709,
+     40.450415
+    ]
+   },
+   "properties": {
+    "name": "New Canaan",
+    "holder": "tribes",
+    "kind": "area",
+    "era": 2296,
+    "eraRole": "detail source",
+    "source": "klogg-westcoast-factions.png",
+    "creator": "u/KloggKimball",
+    "nameSource": "read by eye off the sheet's own lettering",
+    "positionSource": "the pixel the name is lettered at, projected through the sheet fit",
+    "accuracyKm": null,
+    "accuracyBasis": "NONE, and that is the point. This is where a NAME is printed on unclaimed ground; the sheet draws no boundary for it, so there is no geometry for an accuracy to be about."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.434545,
+     37.586885
+    ]
+   },
+   "properties": {
+    "name": "Zion Tribes",
+    "holder": "tribes",
+    "kind": "area",
+    "era": 2296,
+    "eraRole": "detail source",
+    "source": "klogg-westcoast-factions.png",
+    "creator": "u/KloggKimball",
+    "nameSource": "read by eye off the sheet's own lettering",
+    "positionSource": "the pixel the name is lettered at, projected through the sheet fit",
+    "accuracyKm": null,
+    "accuracyBasis": "NONE, and that is the point. This is where a NAME is printed on unclaimed ground; the sheet draws no boundary for it, so there is no geometry for an accuracy to be about."
+   }
+  }
+ ]
+}

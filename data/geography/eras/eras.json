@@ -16,6 +16,9 @@
       "creditStatus": "credited",
       "licence": "none printed - STILL BLOCKS PUBLICATION of anything derived. A name is not a licence. But the author is now identified and reachable, so the question moves from unanswerable to ASKABLE, and asking is the owner's step.",
       "registration": "equidistant conic fitted to its printed graticule, 0.78 km median against Natural Earth's coastline",
+      "identityProperty": "`holder`, with values ncr, enclave, bos, shi, raiders and other, on all 32 control features. Already the field the style expects, so nothing is copied; declared so the manifest can report which sheets carry identity and which do not.",
+      "identityField": "holder",
+      "defaultVisibility": "off. Reached in two deliberate acts - switch the era overlay on, then pick this year in the era row - and every era layer ships `visibility: none`. Declared rather than left implicit because fourteen of sixteen region layers were once found hidden with nobody able to say whether that was intent or a defect.",
       "layers": [
         {
           "file": "ncr-2253-administrative-2253.geojson",
@@ -76,6 +79,9 @@
       "creditStatus": "PERMANENT CREDIT GAP - the author's Reddit account is deleted. Do not record this as awaiting identification. Credit the artefact: r/ImaginaryMaps, thread 832l2f, author's account deleted.",
       "licence": "None stated by the author, and none can now be asked for - the account is deleted. PUBLISHED ANYWAY on the owner's ruling of 2026-08-09, which is recorded in full under publishRuling: these sheets are inspiration for our own fan work, by a fan creator, in a non-commercial project. The gate's own policy already separates our expression from theirs; this layer is theirs, and it ships credited to the artefact.",
       "registration": "Equidistant conic read off the sheet's own printed graticule - apex, cone constant and projection family all measured rather than fitted - with two absolute anchors fitted against Natural Earth's coastline. Worst 1.47 km, confirmed by the fit recovering 120/115/110/105 W and 45/40/35 N without ever being told the grid sits on round degrees.",
+      "identityProperty": "`power`, with values ncr and legion, on all 38 control territories. The map matches on `holder`, so publish-era-layers.py copies this field across at publish time - see identityField. It is declared rather than renamed because four tools in this sheet's own pipeline read `power`, and breaking them to satisfy the style would move the problem rather than solve it. Until 2026-08-17 nothing bridged the two names and every one of these territories painted the fallback tan.",
+      "identityField": "power",
+      "defaultVisibility": "off. Reached in two deliberate acts - switch the era overlay on, then pick this year in the era row - and every era layer ships `visibility: none`. Declared rather than left implicit because fourteen of sixteen region layers were once found hidden with nobody able to say whether that was intent or a defect.",
       "layers": [
         {
           "file": "westcoast-2281-control-2281.named.geojson",
@@ -108,6 +114,9 @@
       "creditStatus": "OPEN CREDIT GAP - creator not identified, and not yet researched",
       "licence": "None stated on the sheet. Treated exactly as the three other unresolved sheets are: STAGING inside this repository is what the owner asked for on 2026-08-06 and is what publishing the era layer does; PUBLICATION to the public host is the owner's own act and is where an unresolved licence bites. Not withheld, because one rule cannot apply to one of four indistinguishable cases - the reasoning that un-withheld a sheet held alone for a few hours on 2026-08-07.",
       "registration": "Five parameters against Natural Earth: the two anchors, the apex and the cone constant, with kilometres-per-pixel FIXED at the sheet's own printed 0.767. Fixing it is what makes five parameters honest - scale and latitude trade almost exactly, and freeing both lets a fit shrink the continent and slide it north at no cost to its score. The graticule supplied the starting values and the coastline decided. Recovered cone constant 0.6498, which is legal for a cone; the graticule alone had implied 1.39, which is not, and that impossibility is the corner-bound apex reporting itself.",
+      "identityProperty": "NONE, and that is the honest answer rather than a gap. This sheet publishes a `sites` role only - 57 point markers - and no site file in the collection has ever carried a `holder`. The map's site layers stopped reading one on 2026-08-17 (ERA_SITE_COLOUR): the holder match had resolved to its fallback for all 158 marks across four sheets since era sites first shipped, so it was an expression that never once matched. There is therefore nothing for `era holder paint` to check here, by construction. If sites are ever joined to the territory containing them - the obvious enrichment - this sheet gains an identity property for the first time and it will be a derived one.",
+      "identityField": null,
+      "defaultVisibility": "off. Reached in two deliberate acts - switch the era overlay on, then pick this year in the era row - and every era layer ships `visibility: none`. Declared rather than left implicit because fourteen of sixteen region layers were once found hidden with nobody able to say whether that was intent or a defect.",
       "layers": [
         {
           "file": "bear-and-bull-2281-sites-2281.geojson",
@@ -140,6 +149,9 @@
       "creditStatus": "credited",
       "licence": "none stated by the author - still gated",
       "registration": "EQUIRECTANGULAR with a standard parallel near 24N, rotated 1.26 degrees. NOT plate carree and - against the expectation carried in from the Savannah sheet - NOT Mercator either. Mercator does beat plate carree by 28%, but only because its sec(phi) ratio happens to be near the ratio the sheet wants; freeing x and y scales on a plain equirectangular beats Mercator, and the two become indistinguishable. The test that separates them: fit on one latitude half and score on the other. Equirectangular generalises across latitude and Mercator does not, by up to 2.2x, in both directions.",
+      "identityProperty": "`kind`, with values polity (22), tribe (14) and region (1), translated to `holder` at publish time by identityValues - tribe becomes tribes, region becomes other, polity passes through. ADDED 2026-08-17; before it, all 37 anchors carried no holder and drew as unclaimed ground. THE ANCHOR ROLES CARRY KIND RATHER THAN FACTION, on purpose: at 7.84 km this sheet may say a power is here and may not say where its border runs, so the features are `anchorOnly` points with the name printed beside them. The name identifies the power; colour is then free to say what SORT of thing it is, which is the distinction the layer exists for. 22 separate polity colours would be a legend nobody can hold in their head.",
+      "identityField": "kind",
+      "defaultVisibility": "off. Two deliberate acts to reach it - switch the era overlay on, then pick 2292 - and every era layer ships `visibility: none`. Declared rather than implicit.",
       "layers": [
         {
           "file": "mexico-2292-areas-2292.geojson",
@@ -172,6 +184,69 @@
       ]
     },
     {
+      "id": "klogg-westcoast-factions",
+      "era": 2296,
+      "title": "Western United States factions: NCR states, a Legion civil war, and five Brotherhood chapters",
+      "region": "US west coast, Great Basin, Mojave, Utah, Arizona, the Colorado front range, and Baja",
+      "bounds": [
+        -124.4314,
+        29.6373,
+        -105.1864,
+        42.7321
+      ],
+      "creator": "u/KloggKimball",
+      "creditStatus": "credited",
+      "licence": "None stated by the author. He is IDENTIFIED and REACHABLE - u/KloggKimball, signed on the sheet - which puts this sheet in a better position than the five permanent credit gaps and a worse one than any sheet with a stated licence. Staged in this repository, which is what publishing an era layer does; PUBLICATION to the public host is the owner's own act and is where this bites. ASKING HIM FIRST IS STILL OWED and is still the honest order - see publishRuling, which un-held this sheet on the grounds that one rule cannot apply to one of four indistinguishable cases.",
+      "registration": "Web Mercator least-squares over six WESTERN STATE LINES, which are surveyed meridians and parallels and so are a graticule the basemap prints without meaning to. 1.15 km rms, 2.14 km worst, re-detected from the pixels on every run rather than stored. Independently confirmed by three drawn lakes at 1.5 to 4.2 km, none of which entered the fit. THIS FIGURE GOVERNS THE BORDERS AND NOT THE MARKERS: the author's site placement carries its own 27.9 km median against real-world geography, which is a measurement of his hand and not of the paper, and the two must never be quoted for each other.",
+      "identityProperty": "`holder`, on every control and areas feature, with values ncr / legion / bos / enclave / tribes. Declared because the map's ERA_HOLDER_COLOUR is a `match` on exactly that property and a sheet that omits it falls through to a tan wash at 0.12 opacity over tan land - present, countable and invisible. That is the undeclared rule recorded in region-layer-defaults-2026-08-16.md, and it is the reason this field is in the register rather than only in the data.",
+      "identityField": null,
+      "defaultVisibility": "off. The era chip is off on a cold load and every era layer ships visibility: none, so this sheet is reached in two deliberate acts - switch the overlay on, then pick 2296 in the era row. Declared rather than left implicit because the parking ruling of 2026-08-16 makes \"switch it on and see it draw\" the admission test for re-admitting a source, and a test with an unwritten starting state is not a test.",
+      "layers": [
+        {
+          "file": "klogg-westcoast-areas-2296.geojson",
+          "role": "areas",
+          "label": "Polity and tribe names",
+          "note": "Where a NAME sits, never where the thing is, and never where its border runs. An anchor says the faction is here; a sheet in this residual band cannot say more.",
+          "features": 4,
+          "toleranceKm": 1.15,
+          "bounds": [
+            -116.5897,
+            37.5869,
+            -106.5298,
+            40.7667
+          ]
+        },
+        {
+          "file": "klogg-westcoast-control-2296.geojson",
+          "role": "control",
+          "label": "Territorial control",
+          "note": "Who holds the ground, as the sheet draws it.",
+          "features": 26,
+          "toleranceKm": 2.14,
+          "bounds": [
+            -124.4314,
+            29.6373,
+            -105.1864,
+            42.7321
+          ]
+        },
+        {
+          "file": "klogg-westcoast-sites-2296.geojson",
+          "role": "sites",
+          "label": "Settlements",
+          "note": "Point sites the sheet prints a marker for. Positions are the marker centroid, found mechanically; only the names were read by eye. Features with positional: false carry NO usable position - the sheet draws that ground wrong - and the reason is on the feature. toleranceKm below is the worst among the features that DO have a position.",
+          "features": 36,
+          "toleranceKm": 105.78,
+          "bounds": [
+            -124.1658,
+            31.9805,
+            -105.2489,
+            41.753
+          ]
+        }
+      ]
+    },
+    {
       "id": "savannah-2313",
       "era": 2313,
       "title": "Map of The States of Savannah",
@@ -185,7 +260,10 @@
       "creator": "u/Tortoise-For-Sale",
       "creditStatus": "credited",
       "licence": "none printed - STILL BLOCKS PUBLICATION of anything derived. A name is not a licence, but the question is now askable. Owner's step.",
-      "registration": null,
+      "registration": "Equidistant conic fitted to Natural Earth's coastline - the sheet prints no graticule, so its real and finely traced shoreline (Outer Banks, Florida Keys, Gulf barrier islands) is the referent. 0.737 km median, the TIGHTEST fit in the collection, which is why this is the one sheet permitted to contribute boundaries over ground the atlas holds thinly. One honest exclusion travels on the features themselves rather than being averaged away: the Mississippi delta zone degrades to 33.8 km and says so per feature.",
+      "identityProperty": "`holder`, with values savannah / tribes / other, on all 9 control and all 5 influence features. ADDED 2026-08-17, and until then this sheet carried NO identity property at all: the map's ERA_HOLDER_COLOUR is a `match` on `holder`, so every one of its 14 polygons fell through to the fallback tan and the best-registered sheet in the collection drew as unclaimed ground. Nothing errored - the fallback exists so a missing holder cannot break a style, which is exactly what made it invisible instead of loud. The value is TRANSLATED from `entityType` by the extractor, so this sheet keeps its own vocabulary (state, occupiedTerritory, tribalArea, displacedPopulation) and the map gets the one field it expects.",
+      "identityField": "holder",
+      "defaultVisibility": "off. Reached in two deliberate acts - switch the era overlay on, then pick 2313 - and every era layer ships `visibility: none`. Declared rather than left implicit because fourteen of sixteen region layers were once found hidden with nobody able to say whether that was intent or a defect.",
       "layers": [
         {
           "file": "savannah-2313-control-2313.geojson",
@@ -227,38 +305,6 @@
             30.3913,
             -83.6573,
             35.0269
-          ]
-        }
-      ]
-    },
-    {
-      "id": "klogg-westcoast-factions",
-      "era": null,
-      "title": "Western United States factions: NCR states, a Legion civil war, and five Brotherhood chapters",
-      "region": "US west coast, Great Basin, Mojave, Utah, Arizona, the Colorado front range, and Baja",
-      "bounds": [
-        -124.1658,
-        31.9805,
-        -105.2489,
-        41.753
-      ],
-      "creator": "u/KloggKimball",
-      "creditStatus": "credited",
-      "licence": null,
-      "registration": null,
-      "layers": [
-        {
-          "file": "klogg-westcoast-sites-undated.geojson",
-          "role": "sites",
-          "label": "Settlements",
-          "note": "Point sites the sheet prints a marker for. Positions are the marker centroid, found mechanically; only the names were read by eye. Features with positional: false carry NO usable position - the sheet draws that ground wrong - and the reason is on the feature. toleranceKm below is the worst among the features that DO have a position.",
-          "features": 35,
-          "toleranceKm": 105.78,
-          "bounds": [
-            -124.1658,
-            31.9805,
-            -105.2489,
-            41.753
           ]
         }
       ]

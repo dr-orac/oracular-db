@@ -1,9 +1,104 @@
 # Geographic base data
 
-**Two scales ship and the renderer switches between them at zoom 4.** The 1:110m files are
-unmodified and carry the zoomed-out view; the 1:10m files are clipped, simplified derivatives and
-carry everything above zoom 4. That split is why 1:110m does not have to be survey-grade and why
-1:10m does not have to cover the globe.
+**The renderer draws two scales and switches at zoom 3: 1:50m below, 1:10m above.**
+
+**CORRECTED 2026-08-18, twice, and both corrections were being repeated in several places.**
+
+*The swap zoom.* This file and `tools/clip-geography.py` both said **zoom 4** and had done since the
+detail scale landed. The style says `3` — `maxzoom: 3` on the coarse layers and `minzoom: 3` on the
+fine ones, at about twenty declarations. Nothing had moved; the number was simply written down wrong
+and then quoted onward, including into a defect diagnosis. It is stated once here now.
+
+*The coarse scale.* It was 1:110m until 2026-08-18. Owner: *"on the higher level of zoom out the
+coastlines jump from looking refined and detailed to suddently looking blocky as you zoom out
+further"*. The diagnosis in hand called this a hard swap between two datasets and proposed 1:50m as
+a **third** rung between them. **Measurement changed the shape of the answer**: a middle rung must
+cover the world or leave holes wherever it is shown, and once 1:50m covers the world at a
+zoom-appropriate tolerance it is simply better than 1:110m everywhere, so it REPLACES the coarse rung
+rather than joining it. Two scales, one swap — the same structure as before, with a coarse scale that
+is not an outline.
+
+**And "blocky" understated it.** The 1:110m set is whole-globe overview geometry, and the counts are
+the real finding:
+
+| layer | 1:110m features | 1:50m features | vertices 110m → 50m |
+|---|---|---|---|
+| land | 127 | 1,420 | 5,143 → 60,669 |
+| lakes | **24** | 412 | 465 → 19,778 |
+| rivers | **13** | 461 | 1,147 → 25,641 |
+
+Twenty-four lakes and thirteen rivers *for the entire world*. Below the swap the map was not drawing
+a simplified world, it was drawing a world with almost nothing in it — so what happened at the swap
+was features **appearing**, not detail arriving, which is why it read as a jump rather than as a
+sharpening.
+
+**The disagreement across the swap, measured** as symmetric difference against the 1:10m land inside
+the window the fine set covers: **131.8 sq deg (3.6% of land area) before, 47.3 sq deg (1.3%)
+after.**
+
+The 1:110m files are **still tracked and still unmodified**. Five build tools derive from them —
+`build-arctic-fill.py`, `build-map-terrain.py`, `fit-political-to-land.py`,
+`build-influence-corridors.py` and `hydrography-gate.mjs`'s overview comparison — and none of that
+changed. They are simply no longer what the renderer draws.
+
+## 1:50m — the coarse scale, world coverage, simplified for the zooms it is shown at
+
+Added 2026-08-18, from the **same pinned commit** `ca96624a56bd078437bca8184e78163e5039ad19` as both
+other scales, so all three are one release of one dataset and cannot drift apart. Public domain.
+
+Derived by `tools/clip-geography.py` with a **world** bbox rather than the North America window, a
+tolerance of `0.02` degrees, and **three** decimal places. Those two numbers are set by the deepest
+zoom this rung is ever shown at, which is 3: one screen pixel there spans about **0.088 degrees**, so
+0.02 is under a quarter of a pixel and 0.001 is a eighty-eighth of one. The 1:10m values (0.002 and
+four decimals) are set by zoom 9 and would store roughly 800 pixels of precision per pixel here.
+
+The `--bbox` and `--precision` flags were added to that tool for this. **The default path is
+unchanged and that was proven rather than assumed**: the pre-change tool and the post-change tool
+were both run over two committed layers and the outputs hash identically.
+
+Upstream, unmodified (checksums of what was fetched, not of what ships):
+
+- `ne_50m_land.geojson` — `e874b27a51d146452be360cafb3cc50c86001074a67d534113e6534682f9826b`
+- `ne_50m_lakes.geojson` — `d350b75978b26fe839b797c2c529b2fb8f47fb3983c03f4964e36d5df9378a52`
+- `ne_50m_rivers_lake_centerlines.geojson` — `f286e0ce978fde999ca2d7a78c764be08542e19b63cded52b05c12d5173ccc51`
+
+Shipped, derived:
+
+- `natural-earth-50m-land.geojson` — `560c0da6c4773caf9656f4fbcc44cdc1c2b8756848ec0bd64a68d2aaad676012`
+- `natural-earth-50m-lakes.geojson` — `d0226f7f76ea86c544a131b6ace139366c2e6b30887eee9bcda2f08596a0e8e2`
+- `natural-earth-50m-rivers.geojson` — `1aa6ec3aa605d17360f589a195a0a82c2db6ac6c3ba8496b538e576803f36e1b`
+
+Generator commands:
+
+```sh
+python3 tools/clip-geography.py ne_50m_land.geojson \
+  apps/misfits-react/web/public/data/geography/natural-earth-50m-land.geojson \
+  0.02 --bbox=-180,-90,180,90 --precision=3
+python3 tools/clip-geography.py ne_50m_lakes.geojson \
+  apps/misfits-react/web/public/data/geography/natural-earth-50m-lakes.geojson \
+  0.02 --bbox=-180,-90,180,90 --precision=3
+python3 tools/clip-geography.py ne_50m_rivers_lake_centerlines.geojson \
+  apps/misfits-react/web/public/data/geography/natural-earth-50m-rivers.geojson \
+  0.02 --bbox=-180,-90,180,90 --precision=3 \
+  --props=scalerank,featurecla,name,min_zoom
+```
+
+**The river property list is SHORTER than the 1:10m one, and the tool refused the long one rather
+than writing nulls.** `dissolve` and `rivernum` do not exist at 1:50m. That refusal is the
+`--props` guard working: a version that quietly wrote missing columns as null would have produced a
+file whose contract looked satisfied and whose values were empty. One of 462 river features is
+dropped as empty after simplification.
+
+**Cost: 76 KiB gzipped for the three 1:110m layers, 356 KiB for the three at 1:50m.** Against the
+1:10m set's 1,232 KiB that is proportionate, and it is paid at the zoom where the map is first
+looked at.
+
+**A measurement that proved nothing, recorded so it is not repeated.** Before committing to moving
+lakes and rivers as well as land, the question asked was whether 1:110m lakes would spill outside a
+1:50m shoreline. Measured: 0.00% outside, for the new pairing AND for the existing one. **That is a
+void result, not a green light** — Natural Earth's land polygons do not have lakes cut out of them,
+so a lake is inside land by construction and the probe could not have detected the fault it was
+aimed at. The three layers move together on the argument the counts above make instead.
 
 ## 1:110m — the overview scale, unmodified
 
@@ -92,6 +187,41 @@ Recording both means the derivation is checkable: fetch the upstream file, run t
 values above, and the result should hash to the shipped line. That is the property the 1:110m files
 get for free by being unmodified, and it should not be lost just because these are processed.
 
+### `natural-earth-10m-coastline.geojson` — the same shore, as a line, without the clip box
+
+Added 2026-08-17 by `tools/build-coastline.py`, derived from `natural-earth-10m-land.geojson` in
+this directory rather than from the Natural Earth download, so it can be regenerated from a clone.
+Same provenance and licence as its parent.
+
+**Why it exists.** A MapLibre `line` layer strokes the *whole* ring, and the 10m land is clipped to
+`(-172, -10, -40, 75)` — so six stroke layers were drawing the clip rectangle as if it were shore:
+38.58 degrees along the north edge, 38.22 along the south, 16.88 east, 1.42 west. Owner, 2026-08-17,
+with a screenshot: *"at a certain level of zoom that square happens but if you zoom out more it
+corrects itself"*. It corrects below zoom 3 because `coast` takes over there on the 1:110m source,
+which is the unclipped world and measures `0.0` on every side.
+
+**No filter could have fixed it.** A filter selects *features*, and the offending segments share a
+ring with real coastline. The split has to happen in the data, which is why this is a file and not a
+paint property.
+
+**What the generator does, and only this:** every ring becomes a LineString, minus the 22 segments
+whose *both* endpoints sit on the same edge of the clip rectangle. 1,725 rings in, 1,731 lines out —
+the six extra are rings that the removal opened into two runs. Vertex order is preserved, so the
+one-sided `line-offset` the waterlines depend on still falls on the seaward side.
+
+**Consumers:** `coast-hi`, `coast-tint`, `coast-shelf`, `coast-waterline-1/2/3`. The *fills* keep the
+box edge deliberately — in the vector plot `land-hi` is not drawn at all, and with the relief on the
+DEM covers it, so the edge survives only where nothing can see it.
+
+**Cost:** 1.96 MB raw, 0.62 MB gzipped, against a 1.96 MB parent it does not replace —
+`land-hi` is still needed for the fill. Six layers repaired by one file is what justifies it; the
+alternative of shipping only the 14 affected rings saves half of it and costs a restructured land
+file, because those rings are the continental ones and hold 49% of the vertices.
+
+**Verified by `tools/clip-edge-gate.py`**, which measures exactly this and already existed: the
+product records `0.0` on all four sides, and the same generator with its segment test disabled
+reproduces the parent's `1.422 / 38.221 / 16.881 / 38.58` exactly.
+
 ## `smoothed/` — the same lines with their curvature put back
 
 Added 2026-08-03. **Derived a second time, from the files above rather than from upstream**, by
@@ -126,8 +256,35 @@ node tools/smooth-lines.mjs \
 node tools/smooth-lines.mjs \
   apps/misfits-react/web/public/data/geography/kml/routes-and-regions.geojson \
   apps/misfits-react/web/public/data/geography/smoothed/atlas-routes.geojson \
-  --skip-class apps/misfits-react/web/public/data/route-classes.json
+  --skip-class apps/misfits-react/web/public/data/route-classes.json \
+  --step 4 --max-subdiv 16
 ```
+
+**The routes are subdivided four times as finely as the rivers, and the reason is that they can
+afford it.** `--step` is degrees of bend earning one inserted point, and its cost curve is set by
+how long the source segments are: the rivers' are 2.6 km apart, so halving the step buys vertices
+everywhere, while a hand trace's are 895 m and adaptive subdivision has little left to add. Measured
+on this file at the default corner and drift guards:
+
+| setting | vertices | gzip KB | seen kinks |
+|---|---|---|---|
+| `--step 12 --max-subdiv 8` (the tool defaults) | 26,239 | 163 | 1,525 |
+| `--step 6 --max-subdiv 12` | 30,839 | 189 | 859 |
+| `--step 4 --max-subdiv 16` (used here) | 32,403 | 197 | 627 |
+
+About 353 of the residual are the corners at or above 60 degrees that Guard 1 preserves on purpose,
+so the part this dial can reach falls from roughly 1,172 to 274. **It buys that without loosening
+either honesty guard**: worst drift from the source line stays at 187 m and worst source vertex
+moved stays at 7 m, because a smaller step samples the same clamped curve more finely rather than
+permitting a different one. Raising `--max-subdiv` past 16 changes nothing at all (859 kinks at both
+12 and 16 on `--step 6`); below `--step 4` the return flattens while the bytes do not.
+
+The defect this fixed, and why the corner guard was the wrong suspect: 57.6% of the visible kinks in
+the previous output were gentle turns of 15 to 30 degrees, not preserved corners. Subdivision is
+driven by bend alone, so a 20-degree turn earned a single inserted point however long its segments
+were — and on a 5 km segment that leaves both halves well above the 1,150 m at which a corner
+becomes visible, so the kink simply moved to the inserted point. Turning `--corner` down would have
+blunted real right angles and left this untouched.
 
 Sources, and the result each one must hash to:
 
@@ -135,8 +292,8 @@ Sources, and the result each one must hash to:
   produces `smoothed/natural-earth-10m-rivers.geojson` — `735b66f9ad4772fb861c0388be255c231fce7c364789fee8a731b6dd8210185e`
   (50,178 vertices to 122,372; 1,064 KB to 2,437 KB raw)
 - `kml/routes-and-regions.geojson` — `a87a27228e0db167efe266052b591a095de5f2f18e5efd3a2fdf5209ad936713`
-  produces `smoothed/atlas-routes.geojson` — `3364547e45dc38dc5018a90d018216bf245ebb682c2355634755a15b2504fd48`
-  (14,699 vertices to 26,249; 588 KB to 669 KB raw)
+  produces `smoothed/atlas-routes.geojson` — `ecd96ae80be0b6c0efcaf0a934aa84ad2738dd8e4dc69a7536cec3d0571da5cc`
+  (14,699 vertices to 32,403; 588 KB to 786 KB raw, 163 KB to 198 KB gzipped)
 
 `smoothed/atlas-routes.geojson` carries all 601 `routes-and-regions` LineStrings with their ids and
 properties unchanged, so every id still joins to `route-classes.json`. The complete KML import stays
@@ -149,6 +306,68 @@ keeps its source precision rather than being quietly rewritten. The generated fi
 current count in its own `_doc`, rather than pinning a stale count in the tool. This is called out
 because the one rounding defect this directory has already suffered looked exactly like the
 opposite case.
+
+## `natural-earth-10m-roads.geojson` — the surveyed skeleton behind the traced network
+
+Added 2026-08-19, from the **same pinned commit** `ca96624a56bd078437bca8184e78163e5039ad19` as the
+land, lakes and rivers, so every Natural Earth layer here is one release of one dataset. Public
+domain. Source file `geojson/ne_10m_roads.geojson`, SHA-256
+`66a0c7b438e92fd124822cc5921cfa11042f48c294ade5e0f03f2c6640fd0248`.
+
+**Why it exists, measured.** The hand-traced network "cuts off hard, especially in the north"
+(owner). That cut is not a clip edge and not a rendering artefact: five routes — US Route 89, 93,
+95, 395 and Interstate 15 — end within **two metres of latitude 49.0000**, spread across 6.3
+degrees of longitude. That is the United States border, and it is there because the traces were made
+from a US-only source. The map was drawing a political boundary as the end of the road.
+
+```sh
+python3 tools/clip-geography.py \
+  <ne_10m_roads.geojson> \
+  apps/misfits-react/web/public/data/geography/natural-earth-10m-roads.geojson \
+  --props=type,prefix,name,scalerank,min_zoom \
+  --select=sov_a3=USA\|CAN\|MEX \
+  --select='type=Major Highway|Secondary Highway|Beltway|Bypass' \
+  --drop=sov_a3=USA --drop='type=Secondary Highway'
+```
+
+produces `natural-earth-10m-roads.geojson` —
+`b66575341feb0810549e8eaa886471fef615040d7e53be7de34ce79f4597b298`
+(56,600 features to 3,856; 2,412 Major Highway, 1,273 Secondary Highway, 166 Beltway, 5 Bypass;
+1.60 MB raw, 343 KB gzipped).
+
+**THE FILTER IS THE WHOLE DESIGN, AND THE OBVIOUS ONE IS WRONG.**
+[roadmap-continental-network.md](../../../../../../docs/changes/map-timeline/roadmap-continental-network.md)
+recommended **Major Highway / Beltway / Bypass only**, at 2,583 features and 191 KB gzipped, on a
+table that compared candidates by **file size**. Built that way and put on the map, it changed almost
+nothing north of the border, because **Natural Earth classes almost all Canadian roads as
+`Secondary Highway`**: of 581 features reaching north of 49 in this window, 460 are Secondary and
+only 34 are Major. The recommended cut filtered out very nearly the exact roads the layer was added
+to draw. The measurement in that document was correct and the conclusion did not follow from it —
+nothing there checked the class distribution of the region the gap was in.
+
+Taking Secondary everywhere costs 8,966 features and 789 KB gzipped, and it would also thicken the
+United States, where the traced network is already dense and the owner has already asked for less
+road clutter. `--drop` states the cut that is actually wanted: **every major highway, plus secondary
+roads only where the traced network does not reach.** 3,856 features, 343 KB. North of 50 degrees
+the layer goes from 156 vertices to 6,781.
+
+Latitude coverage, in vertices per five-degree band. The traced network spans 32.487 to 49.001, so
+every band outside that range is ground it could not reach at all:
+
+| band | vertices | | band | vertices |
+|---|---:|---|---|---:|
+| 65–70 | 238 | | 35–40 | 6,009 |
+| 60–65 | 999 | | 30–35 | 4,141 |
+| 55–60 | 1,526 | | 25–30 | 2,411 |
+| 50–55 | 4,018 | | 20–25 | 3,086 |
+| 45–50 | 6,975 | | 15–20 | 4,017 |
+| 40–45 | 7,562 | | 10–15 | 22 |
+
+**One honest limitation, inherited from the source.** Natural Earth roads is generalised for world
+mapping: it is an interstate-and-major-highway network, not a street network. It will not draw the
+road to a named ruin and should not be zoomed into as though it could. `ROAD_SKELETON` in
+`terrain-style.ts` holds the styling and the reason it is deliberately quieter than the fiction it
+sits behind.
 
 ## `physical-landmarks.geojson` — the permanent skeleton
 

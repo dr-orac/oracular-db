@@ -19,7 +19,8 @@
     "lat": 36.7918,
     "lon": -119.0874,
     "x": 799.4,
-    "y": 1963.3
+    "y": 1963.3,
+    "note": "the ORIGINAL 2142 village, 245 km from the nuked capital; a minor NCR farm town by 2296 [authored - lore/places/shady-sands-original.md]"
   },
   {
     "name": "The Hub",
@@ -808,6 +809,7 @@
     "lon": -117.3,
     "x": 851.2,
     "y": 2077.3,
+    "status": "ruined",
     "note": "ex-NCR capital, crater + sign, its fall drives the plot",
     "source": "TV"
   },
@@ -1305,6 +1307,7 @@
     "x": 2082.1,
     "y": 1918.4,
     "chapter": "Appalachian",
+    "status": "abandoned",
     "note": "founding camp (Taggerdy's Thunder), abandoned 2093, defunct"
   },
   {
@@ -1318,6 +1321,7 @@
     "x": 2097.2,
     "y": 1943.2,
     "chapter": "Appalachian",
+    "status": "destroyed",
     "note": "HQ (ex-Allegheny Asylum); fell to the Scorched, 2095, defunct"
   },
   {
@@ -1331,6 +1335,7 @@
     "x": 2088.2,
     "y": 1927.7,
     "chapter": "Appalachian",
+    "status": "destroyed",
     "note": "power plant, last stand alongside Fort Defiance, defunct 2095"
   },
   {
