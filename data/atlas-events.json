@@ -89,14 +89,14 @@
  },
  {
   "y": 2073,
-  "t": "FEV research begins",
+  "t": "West Tek begins the Pan-Immunity Virion Project, the precursor of FEV",
   "th": [
    "unity"
   ],
   "loc": [
    "The Glow"
   ],
-  "n": "West Tek's Pan-Immunity Project seeds the Forced Evolutionary Virus."
+  "n": "West Tek's Pan-Immunity Virion Project seeds the Forced Evolutionary Virus; renamed FEV in 2075, moved to Mariposa in January 2077."
  },
  {
   "y": 2073,
@@ -558,6 +558,53 @@
   "n": "Overcrowding and clashing factions fracture the vault; the departing majority found Shady Sands on their GECK, while the rest scatter into the Khans, Vipers, and Jackals."
  },
  {
+  "y": 2148,
+  "t": "Vault 13's water chip begins to fail; the vault draws straws",
+  "th": [
+   "vault"
+  ],
+  "loc": [
+   "Vault 13"
+  ],
+  "n": "Owner canon, 2026-09-11: the chip begins to fail about thirteen years before the crisis the games date to 2161. It is a slow bleed, not a sudden failure, so the vault sends searchers out in waves over the following years, chosen by straw lottery rather than an Overseer's order or exile. Orac is in the first wave."
+ },
+ {
+  "y": 2148,
+  "t": "Orac's straw is drawn; among the first sent out",
+  "th": [
+   "vault",
+   "unity"
+  ],
+  "loc": [
+   "Vault 13"
+  ],
+  "n": "Owner canon, 2026-07-26 (docs/changes/map-timeline/orac-interweave.md): aged 28, in the first wave of searchers, thirteen years before the canonical Vault Dweller draws theirs near the end of the vault's patience. Orac, still small, unimposing and idealistic, a lover of the vault's band society, draws his straw the year the chip starts to fail. Counterpart to \"The Vault Dweller sets out\": same vault, same crisis, same lottery, run thirteen years apart."
+ },
+ {
+  "y": 2148,
+  "t": "Captured early by super mutants, barely clear of Vault 13",
+  "th": [
+   "unity",
+   "vault"
+  ],
+  "loc": [
+   "Vault 13"
+  ],
+  "n": "Owner canon, 2026-07-26: not a deliberate ambush; Unity mutants hunting dipping subjects take him early in his search, having barely left the vault's home territory, and only afterward recognise a valuable specimen, a low-radiation vault physician. Held for a time before the Mariposa dipping."
+ },
+ {
+  "y": 2149,
+  "t": "Orac dipped at Mariposa",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Vault 13",
+   "Mariposa"
+  ],
+  "n": "Owner canon, 2026-07-26: aged 29. A \"perfect\" dipping of the kind normally routed into the nightkin ranks; the Lieutenant diverts him into Mariposa high command instead, prized for his intellect and medical training. The clean FEV expression grants enhanced cognition and towering, dark-blue skin. Thirteen years inside the Unity follow, senior enough to matter to its formation, before Mariposa falls in 2162."
+ },
+ {
   "y": 2152,
   "t": "Morpheus's cult joins the Master",
   "th": [
@@ -604,41 +651,6 @@
   "n": "Unity forces attack and garrison Vault 12, tightening the Master's grip on the ghoul city: mass-dipping is already well underway at Mariposa (2137)."
  },
  {
-  "y": 2159,
-  "t": "Vault 13's water chip begins to fail; the vault draws straws",
-  "th": [
-   "vault"
-  ],
-  "loc": [
-   "Vault 13"
-  ],
-  "n": "DATE INFERRED; the crisis began well before the commonly-cited 2161 date, and searchers were sent out over an extended period, chosen by straw lottery rather than an Overseer's order or exile."
- },
- {
-  "y": 2159,
-  "t": "Orac's straw is drawn; among the first sent out",
-  "th": [
-   "vault",
-   "unity"
-  ],
-  "loc": [
-   "Vault 13"
-  ],
-  "n": "DATE INFERRED (Orac, still small, unimposing and idealistic, and a lover of the vault's band society, draws his straw at the early end of the search window) years before the canonical Vault Dweller draws theirs near the end of the vault's patience. Counterpart to \"The Vault Dweller sets out\": same vault, same crisis, same lottery, run years apart."
- },
- {
-  "y": 2160,
-  "t": "Captured early by super mutants, barely clear of Vault 13",
-  "th": [
-   "unity",
-   "vault"
-  ],
-  "loc": [
-   "Vault 13"
-  ],
-  "n": "DATE INFERRED: not a deliberate ambush; he is taken early in his search, having barely left the vault's home territory, and only afterward recognized as a valuable specimen, a low-radiation vault physician. Held for a time before the Mariposa dipping."
- },
- {
   "y": 2161,
   "t": "The Vault Dweller sets out",
   "th": [
@@ -649,18 +661,6 @@
    "Vault 13"
   ],
   "n": "A water-chip crisis puts one wanderer on Unity's trail."
- },
- {
-  "y": 2161,
-  "t": "Orac dipped at Mariposa",
-  "th": [
-   "unity"
-  ],
-  "loc": [
-   "Vault 13",
-   "Mariposa"
-  ],
-  "n": "Captured by super mutants early in his search for a water chip, before he got far from Vault 13, held for a time, then dipped and prized as a low-radiation vault physician worth transforming rather than killing. The clean FEV expression grants enhanced cognition and towering, dark-blue skin; he serves as clinical advisor to the Master's program before its fall."
  },
  {
   "y": 2161,
