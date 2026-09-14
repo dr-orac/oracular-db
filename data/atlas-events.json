@@ -1,5 +1,7 @@
 [
  {
+  "id": "west-tek-founded",
+  "aliases": ["2002-west-tek-founded"],
   "y": 2002,
   "t": "West Tek founded",
   "th": [
@@ -11,6 +13,8 @@
   "n": "A private Pentagon contractor opens weapons and biomedical divisions, the institution that will run the FEV project seven decades later."
  },
  {
+  "id": "vault-tec-university-opens",
+  "aliases": ["2031-vault-tec-university-opens"],
   "y": 2031,
   "t": "Vault-Tec University opens",
   "th": [
@@ -22,6 +26,8 @@
   "n": "Vault-Tec rebrands a Morgantown, WV college into its own training school for overseers and vault engineers."
  },
  {
+  "id": "zax-1-0-comes-online",
+  "aliases": ["2053-zax-1-0-comes-online"],
   "y": 2053,
   "t": "ZAX 1.0 comes online",
   "th": [
@@ -33,6 +39,8 @@
   "n": "Vault-Tec's prototype vault-governance computer is handed to the Department of Energy, a quarter-century before the war, and the direct technical ancestor of the Calculator that will one day run Vault 0."
  },
  {
+  "id": "project-safehouse-breaks-ground",
+  "aliases": ["2054-project-safehouse-breaks-ground"],
   "y": 2054,
   "t": "Project Safehouse breaks ground",
   "th": [
@@ -44,6 +52,8 @@
   "n": "Vault-Tec and the government quietly begin building the 122-vault network, a nationwide social experiment sold to the public as shelter."
  },
  {
+  "id": "vault-13-s-construction-begins",
+  "aliases": ["2063-vault-13-s-construction-begins"],
   "y": 2063,
   "t": "Vault 13's construction begins",
   "th": [
@@ -55,6 +65,8 @@
   "n": "Ground breaks on the vault that anchors our map; completed March 2069, eight years before it is ever sealed."
  },
  {
+  "id": "vault-13-s-construction-completes",
+  "aliases": ["2069-vault-13-s-construction-completes"],
   "y": 2069,
   "t": "Vault 13's construction completes",
   "th": [
@@ -66,6 +78,8 @@
   "n": "Eight years of building ends; the vault will not open for another 92, assuming the water chip holds."
  },
  {
+  "id": "vault-87-finishes-construction",
+  "aliases": ["2071-vault-87-finishes-construction"],
   "y": 2071,
   "t": "Vault 87 finishes construction",
   "th": [
@@ -77,6 +91,8 @@
   "n": "Five years under Dr. Wayne Merrick's Evolutionary Experimentation Program; its purpose is stated plainly on the build order: study Forced Evolutionary Virus on live humans."
  },
  {
+  "id": "vault-tec-s-own-guards-rob-the-gold-vault",
+  "aliases": ["2072-vault-tec-s-own-guards-rob-the-gold-vault"],
   "y": 2072,
   "t": "Vault-Tec's own guards rob the gold vault",
   "th": [
@@ -88,6 +104,8 @@
   "n": "Soldiers assigned to guard America's gold reserve steal millions and flee to a Las Vegas shootout; investigator Flavia Stabo traces the theft and is buried near the vault's entrance for her trouble."
  },
  {
+  "id": "west-tek-begins-the-pan-immunity-virion-project-the-precursor-of-fev",
+  "aliases": ["2073-west-tek-begins-the-pan-immunity-virion-project-the-precursor-of-fev"],
   "y": 2073,
   "t": "West Tek begins the Pan-Immunity Virion Project, the precursor of FEV",
   "th": [
@@ -99,6 +117,8 @@
   "n": "West Tek's Pan-Immunity Virion Project seeds the Forced Evolutionary Virus; renamed FEV in 2075, moved to Mariposa in January 2077."
  },
  {
+  "id": "the-oil-rig-that-starts-a-war",
+  "aliases": ["2073-the-oil-rig-that-starts-a-war"],
   "y": 2073,
   "t": "The oil rig that starts a war",
   "th": [
@@ -110,6 +130,8 @@
   "n": "The US wins the race to drill the world's last reachable deep-sea oil deposit off the California coast; China's sabotage accusation over it ignites the war that ends the world four years later. Poseidon Energy's drilling platform is already earmarked as a shadow-government fallback."
  },
  {
+  "id": "vault-76-seals-over-a-year-early",
+  "aliases": ["2076-vault-76-seals-over-a-year-early"],
   "y": 2076,
   "t": "Vault 76 seals over a year early",
   "th": [
@@ -121,6 +143,8 @@
   "n": "July 4, 2076 (the tricentennial, over fifteen months before the Great War: Vault-Tec dedicates and seals its true control vault as a publicity event, stocked with Vault-Tec University alumni, military, and \"high level government employees\") the one population actually meant to walk back out."
  },
  {
+  "id": "fev-moved-to-mariposa",
+  "aliases": ["2077-fev-moved-to-mariposa"],
   "y": 2077,
   "t": "FEV moved to Mariposa",
   "th": [
@@ -132,6 +156,8 @@
   "n": "The vats are hidden months before the bombs fall."
  },
  {
+  "id": "the-great-war",
+  "aliases": ["2077-the-great-war"],
   "y": 2077,
   "t": "The Great War",
   "th": [
@@ -144,6 +170,8 @@
   "n": "Atomic fire remakes the continent in two hours."
  },
  {
+  "id": "the-skyfire-the-tribe-s-name-for-the-great-war",
+  "aliases": ["2077-the-skyfire-the-tribe-s-name-for-the-great-war"],
   "y": 2077,
   "t": "The Skyfire: the tribe's name for the Great War",
   "th": [
@@ -155,6 +183,8 @@
   "n": "The tribe's own oral term for 2077; the Tree of Life's three coexisting origin stories all tie to \"right after the Skyfire.\""
  },
  {
+  "id": "maxson-s-mutiny-at-mariposa",
+  "aliases": ["2077-maxson-s-mutiny-at-mariposa"],
   "y": 2077,
   "t": "Maxson's mutiny at Mariposa",
   "th": [
@@ -166,6 +196,8 @@
   "n": "Discovering FEV tests on live soldiers, Captain Roger Maxson executes the researchers and radios his unit's secession from the Army: three days before the bombs fall."
  },
  {
+  "id": "vault-12-s-door-fails",
+  "aliases": ["2077-vault-12-s-door-fails"],
   "y": 2077,
   "t": "Vault 12's door fails",
   "th": [
@@ -177,6 +209,8 @@
   "n": "Built with a door engineered never to seal, Vault 12 floods with panicked Bakersfield refugees and slow radiation on the day of the Great War, the first ghouls."
  },
  {
+  "id": "exodus-to-lost-hills",
+  "aliases": ["2077-exodus-to-lost-hills"],
   "y": 2077,
   "t": "Exodus to Lost Hills",
   "th": [
@@ -189,6 +223,8 @@
   "n": "Maxson leads his mutinous soldiers and their families out of the ruined base toward a government bunker to the south, the root the Brotherhood grows from."
  },
  {
+  "id": "vault-111-freezes-its-dwellers",
+  "aliases": ["2077-vault-111-freezes-its-dwellers"],
   "y": 2077,
   "t": "Vault 111 freezes its dwellers",
   "th": [
@@ -200,6 +236,8 @@
   "n": "Told the cryo-pods are for decontamination, the last residents of Sanctuary Hills are sealed away as unwitting subjects in a 210-year suspended-animation study."
  },
  {
+  "id": "the-enclave-retreats-to-the-oil-rig",
+  "aliases": ["2077-the-enclave-retreats-to-the-oil-rig"],
   "y": 2077,
   "t": "The Enclave retreats to the Oil Rig",
   "th": [
@@ -211,6 +249,8 @@
   "n": "As the bombs fall, the President and the shadow government proper relocate to the platform, the seed of everything Navarro and Control Station ENCLAVE become."
  },
  {
+  "id": "vault-77-seals-with-one-man-and-a-crate-of-puppets",
+  "aliases": ["2077-vault-77-seals-with-one-man-and-a-crate-of-puppets"],
   "y": 2077,
   "t": "Vault 77 seals with one man and a crate of puppets",
   "th": [
@@ -222,6 +262,8 @@
   "n": "October 23, 2077, Vault-Tec's cruellest one-line joke: a single occupant, alone, for the isolation experiment to end all isolation experiments."
  },
  {
+  "id": "vault-92-seals-the-white-noise-trial-begins",
+  "aliases": ["2077-vault-92-seals-the-white-noise-trial-begins"],
   "y": 2077,
   "t": "Vault 92 seals; the White Noise trial begins",
   "th": [
@@ -233,6 +275,8 @@
   "n": "Overseer Richard Rubin starts the White Noise Mind Suggestion Combat Experiment on hand-picked musicians the same day the door closes."
  },
  {
+  "id": "vault-88-is-caught-mid-construction",
+  "aliases": ["2077-vault-88-is-caught-mid-construction"],
   "y": 2077,
   "t": "Vault 88 is caught mid-construction",
   "th": [
@@ -244,6 +288,8 @@
   "n": "Overseer Barstow is scheduled to arrive October 22; the bombs fall the next day with the vault still unfinished, its entrance buried under its own rubble before a single resident moves in."
  },
  {
+  "id": "vault-96-seals-over-a-cover-story",
+  "aliases": ["2077-vault-96-seals-over-a-cover-story"],
   "y": 2077,
   "t": "Vault 96 seals over a cover story",
   "th": [
@@ -255,6 +301,8 @@
   "n": "Publicly built to monitor post-war wildlife and restore ecological balance; its real, hidden mandate is breeding and cataloguing mutation itself."
  },
  {
+  "id": "vault-94-seals-a-second-bus-is-left-outside",
+  "aliases": ["2077-vault-94-seals-a-second-bus-is-left-outside"],
   "y": 2077,
   "t": "Vault 94 seals; a second bus is left outside",
   "th": [
@@ -266,6 +314,8 @@
   "n": "Pastor Gabriella Salavar's pacifist congregation is sealed in on schedule; a second busload of latecomers arrives just after the failsafe triggers and is locked out on the surface."
  },
  {
+  "id": "vault-118-seals-over-a-fortune",
+  "aliases": ["2077-vault-118-seals-over-a-fortune"],
   "y": 2077,
   "t": "Vault 118 seals over a fortune",
   "th": [
@@ -277,6 +327,8 @@
   "n": "Four ultra-wealthy investors buy their way into a private vault built around a single pitch: transfer the rich into Robobrains and let the money survive the war even if the body does not."
  },
  {
+  "id": "vaults-31-32-and-33-seal-outside-los-angeles",
+  "aliases": ["2077-vaults-31-32-and-33-seal-outside-los-angeles"],
   "y": 2077,
   "t": "Vaults 31, 32 and 33 seal outside Los Angeles",
   "th": [
@@ -288,6 +340,8 @@
   "n": "Vault-Tec's own executives go into cryo-storage in Vault 31 as future \"overseers\"; 32 and 33 are sealed alongside them as the breeding stock for a programme nobody inside has been told about."
  },
  {
+  "id": "fort-knox-gold-moved-to-vault-79",
+  "aliases": ["2077-fort-knox-gold-moved-to-vault-79"],
   "y": 2077,
   "t": "Fort Knox gold moved to Vault 79",
   "th": [
@@ -300,6 +354,8 @@
   "n": "A pre-war contingency: the US gold reserve is quietly relocated into the vault rather than left in an undefended depository."
  },
  {
+  "id": "vault-87-begins-mass-producing-super-mutants",
+  "aliases": ["2078-vault-87-begins-mass-producing-super-mutants"],
   "y": 2078,
   "t": "Vault 87 begins mass-producing Super Mutants",
   "th": [
@@ -311,6 +367,8 @@
   "n": "The FEV chambers activate; dwellers are converted first, then the survivors begin a two-century cycle of dragging captured wastelanders back down to be infected in turn."
  },
  {
+  "id": "vault-94-s-pacifists-reopen-the-door",
+  "aliases": ["2078-vault-94-s-pacifists-reopen-the-door"],
   "y": 2078,
   "t": "Vault 94's pacifists reopen the door",
   "th": [
@@ -322,6 +380,8 @@
   "n": "One year sealed, as planned: unarmed ambassadors go out carrying access codes to invite wasteland survivors in. One reaches Harpers Ferry; the group that follows him home grows suspicious, massacres the Community Council, then puts a minigun through the G.E.C.K. itself, detonating a level-6 nuclear blast that erases everyone."
  },
  {
+  "id": "puppet-man-s-break",
+  "aliases": ["2079-puppet-man-s-break"],
   "y": 2079,
   "t": "Puppet Man's break",
   "th": [
@@ -333,6 +393,8 @@
   "n": "Fifteen months alone: on February 4 he finds a crate of puppets; by March 30 he believes the Vault Boy puppet is talking to him. Days later he tears the king puppet apart and accuses Vault Boy of the murder, then walks out. His jumpsuit and holotape resurface in Paradise Falls two centuries later."
  },
  {
+  "id": "the-brotherhood-is-born",
+  "aliases": ["2082-the-brotherhood-is-born"],
   "y": 2082,
   "t": "The Brotherhood is born",
   "th": [
@@ -344,6 +406,8 @@
   "n": "Maxson's mutinous soldiers, arrived from Mariposa five years earlier, formalize their creed at Lost Hills, the Fallout Bible's own founding date, corrected from this map's previous, unsourced 2134."
  },
  {
+  "id": "vault-95-seals-with-recovering-addicts",
+  "aliases": ["2082-vault-95-seals-with-recovering-addicts"],
   "y": 2082,
   "t": "Vault 95 seals with recovering addicts",
   "th": [
@@ -355,6 +419,8 @@
   "n": "Overseer Jane Myers runs a genuine rehabilitation programme, for five years it visibly works."
  },
  {
+  "id": "the-stash-reopens-vault-95-turns-on-itself",
+  "aliases": ["2082-the-stash-reopens-vault-95-turns-on-itself"],
   "y": 2082,
   "t": "The stash reopens; Vault 95 turns on itself",
   "th": [
@@ -366,6 +432,8 @@
   "n": "October 23, 2082, five years to the day after sealing: a Vault-Tec plant waits until the vault sleeps, then reopens the drug stockpile he was seeded with from the start. The reveal that it was deliberate destroys every family-like bond the vault built."
  },
  {
+  "id": "necropolis-rises-set-seizes-it",
+  "aliases": ["2083-necropolis-rises-set-seizes-it"],
   "y": 2083,
   "t": "Necropolis rises; Set seizes it",
   "th": [
@@ -377,6 +445,8 @@
   "n": "Survivors found a city in the ghoul-haunted vault; within a year a figure called Set deposes the original overseer and rules for the next 73 years."
  },
  {
+  "id": "vault-96-s-mainframe-kills-its-own-residents",
+  "aliases": ["2085-vault-96-s-mainframe-kills-its-own-residents"],
   "y": 2085,
   "t": "Vault 96's mainframe kills its own residents",
   "th": [
@@ -388,6 +458,8 @@
   "n": "DATE INFERRED: the source gives \"week 148\" after sealing (≈2.8 years). A failed escape attempt trips Superseding Protocol Omega; every original resident dies and the vault freezes over, left for a rogue researcher to repurpose for FEV work decades later."
  },
  {
+  "id": "vault-108-s-gary-project-turns-on-its-makers",
+  "aliases": ["2089-vault-108-s-gary-project-turns-on-its-makers"],
   "y": 2089,
   "t": "Vault 108's Gary Project turns on its makers",
   "th": [
@@ -399,6 +471,8 @@
   "n": "DATE INFERRED; the reactor is built to fail \"about 20 years\" into operation. No calendar year is ever given for when the escalating Gary clones finally took the vault; ~20 years after the c.2069 seal is the only anchor the source offers."
  },
  {
+  "id": "vault-29-opens-harold-walks-out-human",
+  "aliases": ["2090-vault-29-opens-harold-walks-out-human"],
   "y": 2090,
   "t": "Vault 29 opens; Harold walks out human",
   "th": [
@@ -410,6 +484,8 @@
   "n": "No one over fifteen was ever allowed inside; the door opens on schedule and releases a generation raised without a single adult. Harold, not yet a ghoul, sets out to make his fortune trading between survivalist communities."
  },
  {
+  "id": "vault-27-collapses-under-its-own-numbers",
+  "aliases": ["2090-vault-27-collapses-under-its-own-numbers"],
   "y": 2090,
   "t": "Vault 27 collapses under its own numbers",
   "th": [
@@ -421,6 +497,8 @@
   "n": "DATE INFERRED: no source dates this vault at all. Sealed at double its sustainable population (2,000 against a design capacity of 1,000), overcrowding was the entire experiment; no account of its resolution survives beyond the bare setup."
  },
  {
+  "id": "vault-8-opens-vault-city-is-founded",
+  "aliases": ["2091-vault-8-opens-vault-city-is-founded"],
   "y": 2091,
   "t": "Vault 8 opens; Vault City is founded",
   "th": [
@@ -434,6 +512,8 @@
   "n": "A pre-war shipping error swaps Vault 13's spare water chips for Vault 8's second GECK; Vault 8 uses its own GECK to terraform the land and found Vault City, the walled city that spends the next 150 years refusing ghouls, mutants, and, in 2241, the NCR."
  },
  {
+  "id": "angus-founds-the-hub",
+  "aliases": ["2093-angus-founds-the-hub"],
   "y": 2093,
   "t": "Angus founds the Hub",
   "th": [
@@ -445,6 +525,8 @@
   "n": "A trader pitches camp at a desert oasis and starts moving goods between settlements, the seed of New California's trade capital."
  },
  {
+  "id": "fort-defiance-and-thunder-mountain-fall",
+  "aliases": ["2095-fort-defiance-and-thunder-mountain-fall"],
   "y": 2095,
   "t": "Fort Defiance and Thunder Mountain fall",
   "th": [
@@ -457,6 +539,8 @@
   "n": "The Scorched plague overwhelms the Appalachian chapter; both strongholds fall a day apart, ending it for good."
  },
  {
+  "id": "vault-22-s-coughers-sack-zion-canyon",
+  "aliases": ["2096-vault-22-s-coughers-sack-zion-canyon"],
   "y": 2096,
   "t": "Vault 22's \"Coughers\" sack Zion Canyon",
   "th": [
@@ -468,6 +552,8 @@
   "n": "118 armed Vault 22 dwellers arrive fleeing a respiratory plague of their own making, are nicknamed for their hacking cough by the man watching them, then attack, capture and cannibalize the canyon's inhabitants. Randall Clark answers with a guerrilla campaign that kills two-thirds of them inside two weeks."
  },
  {
+  "id": "birth-of-the-master",
+  "aliases": ["2102-birth-of-the-master"],
   "y": 2102,
   "t": "Birth of the Master",
   "th": [
@@ -479,6 +565,8 @@
   "n": "Richard Grey falls into a raw FEV vat and fuses with flesh, beasts, and machines into one gestalt mind."
  },
  {
+  "id": "unity-s-first-convert",
+  "aliases": ["2102-unity-s-first-convert"],
   "y": 2102,
   "t": "Unity's first convert",
   "th": [
@@ -490,6 +578,8 @@
   "n": "Months into his own transformation, the newly-minded Richard Grey absorbs his first willing human subject into the vats."
  },
  {
+  "id": "the-brotherhood-claims-the-alamo",
+  "aliases": ["2127-the-brotherhood-claims-the-alamo"],
   "y": 2127,
   "t": "The Brotherhood claims the Alamo",
   "th": [
@@ -501,6 +591,8 @@
   "n": "Roughly fifty years after the Great War, the Brotherhood makes the ruins its main base of operations in Texas."
  },
  {
+  "id": "vault-11-s-sacrifice-experiment-breaks",
+  "aliases": ["2130-vault-11-s-sacrifice-experiment-breaks"],
   "y": 2130,
   "t": "Vault 11's sacrifice experiment breaks",
   "th": [
@@ -512,6 +604,8 @@
   "n": "DATE INFERRED: no date is given anywhere in canon for this vault. Decades of an annual vote-to-kill end when the last five dwellers refuse to choose and the door opens on its own; four of the five take their own lives from guilt."
  },
  {
+  "id": "the-super-mutant-army-begins",
+  "aliases": ["2137-the-super-mutant-army-begins"],
   "y": 2137,
   "t": "The super mutant army begins",
   "th": [
@@ -523,6 +617,8 @@
   "n": "The Master starts mass-dipping captives in FEV; roughly one in five survives the vats, and about half of those join him."
  },
  {
+  "id": "amnesiac-wakes-near-vault-8",
+  "aliases": ["2140-amnesiac-wakes-near-vault-8"],
   "y": 2140,
   "t": "Amnesiac wakes near Vault 8",
   "th": [
@@ -534,6 +630,8 @@
   "n": "Player hunts equipment stolen from the vault."
  },
  {
+  "id": "vault-8-on-the-road-to-vault-city",
+  "aliases": ["2140-vault-8-on-the-road-to-vault-city"],
   "y": 2140,
   "t": "Vault 8 on the road to Vault City",
   "th": [
@@ -545,6 +643,8 @@
   "n": "Prelude to the GECK-founded Vault City of FO2."
  },
  {
+  "id": "vault-15-splits",
+  "aliases": ["2141-vault-15-splits"],
   "y": 2141,
   "t": "Vault 15 splits",
   "th": [
@@ -558,6 +658,8 @@
   "n": "Overcrowding and clashing factions fracture the vault; the departing majority found Shady Sands on their GECK, while the rest scatter into the Khans, Vipers, and Jackals."
  },
  {
+  "id": "vault-13-s-water-chip-begins-to-fail-the-vault-draws-straws",
+  "aliases": ["2148-vault-13-s-water-chip-begins-to-fail-the-vault-draws-straws"],
   "y": 2148,
   "t": "Vault 13's water chip begins to fail; the vault draws straws",
   "th": [
@@ -569,6 +671,8 @@
   "n": "Owner canon, 2026-09-11: the chip begins to fail about thirteen years before the crisis the games date to 2161. It is a slow bleed, not a sudden failure, so the vault sends searchers out in waves over the following years, chosen by straw lottery rather than an Overseer's order or exile. Orac is in the first wave."
  },
  {
+  "id": "orac-s-straw-is-drawn-among-the-first-sent-out",
+  "aliases": ["2148-orac-s-straw-is-drawn-among-the-first-sent-out"],
   "y": 2148,
   "t": "Orac's straw is drawn; among the first sent out",
   "th": [
@@ -581,6 +685,8 @@
   "n": "Owner canon, 2026-07-26 (docs/changes/map-timeline/orac-interweave.md): aged 28, in the first wave of searchers, thirteen years before the canonical Vault Dweller draws theirs near the end of the vault's patience. Orac, still small, unimposing and idealistic, a lover of the vault's band society, draws his straw the year the chip starts to fail. Counterpart to \"The Vault Dweller sets out\": same vault, same crisis, same lottery, run thirteen years apart."
  },
  {
+  "id": "captured-early-by-super-mutants-barely-clear-of-vault-13",
+  "aliases": ["2148-captured-early-by-super-mutants-barely-clear-of-vault-13"],
   "y": 2148,
   "t": "Captured early by super mutants, barely clear of Vault 13",
   "th": [
@@ -593,6 +699,8 @@
   "n": "Owner canon, 2026-07-26: not a deliberate ambush; Unity mutants hunting dipping subjects take him early in his search, having barely left the vault's home territory, and only afterward recognise a valuable specimen, a low-radiation vault physician. Held for a time before the Mariposa dipping."
  },
  {
+  "id": "orac-dipped-at-mariposa",
+  "aliases": ["2149-orac-dipped-at-mariposa"],
   "y": 2149,
   "t": "Orac dipped at Mariposa",
   "th": [
@@ -605,6 +713,8 @@
   "n": "Owner canon, 2026-07-26: aged 29. A \"perfect\" dipping of the kind normally routed into the nightkin ranks; the Lieutenant diverts him into Mariposa high command instead, prized for his intellect and medical training. The clean FEV expression grants enhanced cognition and towering, dark-blue skin. Thirteen years inside the Unity follow, senior enough to matter to its formation, before Mariposa falls in 2162."
  },
  {
+  "id": "morpheus-s-cult-joins-the-master",
+  "aliases": ["2152-morpheus-s-cult-joins-the-master"],
   "y": 2152,
   "t": "Morpheus's cult joins the Master",
   "th": [
@@ -616,6 +726,8 @@
   "n": "A doomsday preacher and his followers are folded into Unity, becoming the nucleus of the future Children of the Cathedral."
  },
  {
+  "id": "the-lost-hills-expedition-splits-east",
+  "aliases": ["2155-the-lost-hills-expedition-splits-east"],
   "y": 2155,
   "t": "The Lost Hills expedition splits east",
   "th": [
@@ -627,6 +739,8 @@
   "n": "The pure-blood faction wins the \"no tribals\" doctrinal fight; the inclusive dissenters are exiled by airship, a storm scatters the fleet toward Chicago. (date approximate)"
  },
  {
+  "id": "the-cathedral-rises",
+  "aliases": ["2156-the-cathedral-rises"],
   "y": 2156,
   "t": "The Cathedral rises",
   "th": [
@@ -639,6 +753,8 @@
   "n": "The Children of the Cathedral become Unity's missionary face."
  },
  {
+  "id": "the-mutant-army-garrisons-necropolis",
+  "aliases": ["2157-the-mutant-army-garrisons-necropolis"],
   "y": 2157,
   "t": "The mutant army garrisons Necropolis",
   "th": [
@@ -651,6 +767,8 @@
   "n": "Unity forces attack and garrison Vault 12, tightening the Master's grip on the ghoul city: mass-dipping is already well underway at Mariposa (2137)."
  },
  {
+  "id": "the-vault-dweller-sets-out",
+  "aliases": ["2161-the-vault-dweller-sets-out"],
   "y": 2161,
   "t": "The Vault Dweller sets out",
   "th": [
@@ -663,6 +781,8 @@
   "n": "A water-chip crisis puts one wanderer on Unity's trail."
  },
  {
+  "id": "the-vault-dweller-settles-junktown",
+  "aliases": ["2161-the-vault-dweller-settles-junktown"],
   "y": 2161,
   "t": "The Vault Dweller settles Junktown",
   "th": [
@@ -675,6 +795,8 @@
   "n": "Passing through on the water-chip errand, the Vault Dweller tips Junktown's power struggle (Killian Darkwater vs. crime boss Gizmo) and exposes the Hub's criminal Underground."
  },
  {
+  "id": "unity-s-doom-exposed",
+  "aliases": ["2162-unity-s-doom-exposed"],
   "y": 2162,
   "t": "Unity's doom exposed",
   "th": [
@@ -687,6 +809,8 @@
   "n": "Vree proves the super mutants are sterile, Unity can only die out."
  },
  {
+  "id": "fall-of-the-master",
+  "aliases": ["2162-fall-of-the-master"],
   "y": 2162,
   "t": "Fall of the Master",
   "th": [
@@ -699,6 +823,8 @@
   "n": "The Vault Dweller ends the Master and blows the vats."
  },
  {
+  "id": "orac-forced-into-command-is-cut-off-from-unity",
+  "aliases": ["2162-orac-forced-into-command-is-cut-off-from-unity"],
   "y": 2162,
   "t": "Orac, forced into command, is cut off from Unity",
   "th": [
@@ -711,6 +837,8 @@
   "n": "Out hunting vault dwellers when Mariposa falls, Orac is forced into command of a cut-off column as its ranking survivor, severed from the rest of Unity, the survivors are hunted by the Brotherhood for years before finding refuge."
  },
  {
+  "id": "the-vault-dweller-is-exiled",
+  "aliases": ["2162-the-vault-dweller-is-exiled"],
   "y": 2162,
   "t": "The Vault Dweller is exiled",
   "th": [
@@ -722,6 +850,8 @@
   "n": "Overseer Jacoren casts out the wastes' new hero, fearing his example will empty the vault of anyone else tempted to leave. Two months later he turns north with a small band of dwellers and wastelanders."
  },
  {
+  "id": "the-mutant-armies-scatter",
+  "aliases": ["2163-the-mutant-armies-scatter"],
   "y": 2163,
   "t": "The mutant armies scatter",
   "th": [
@@ -734,6 +864,8 @@
   "n": "Freed of the Master's will, Unity's war-bands fragment: some turn raider, the Nightkin are handed Stealth Boys and vanish toward what will become the Mojave, and one large column marches into the mountains far to the east, the same host the Midwestern Brotherhood chapter spends the next three decades fighting alongside the Calculator's robots."
  },
  {
+  "id": "arroyo-founded",
+  "aliases": ["2165-arroyo-founded"],
   "y": 2165,
   "t": "Arroyo founded",
   "th": [
@@ -746,6 +878,8 @@
   "n": "The Vault Dweller leads his exiled band to the \"great canyons\" of southern Oregon and founds the village that becomes his grandchild's home in Fallout 2."
  },
  {
+  "id": "slave-raid-on-the-villa",
+  "aliases": ["2167-slave-raid-on-the-villa"],
   "y": 2167,
   "t": "Slave raid on the Villa",
   "th": [
@@ -757,6 +891,8 @@
   "n": "Raiders enslave the village; the player sets out in pursuit."
  },
  {
+  "id": "flagstaff-s-uranium-economy",
+  "aliases": ["2167-flagstaff-s-uranium-economy"],
   "y": 2167,
   "t": "Flagstaff's uranium economy",
   "th": [
@@ -768,6 +904,8 @@
   "n": "A slaver-state powered by its mine and captive labor."
  },
  {
+  "id": "followers-schism-in-the-desert",
+  "aliases": ["2167-followers-schism-in-the-desert"],
   "y": 2167,
   "t": "Followers schism in the desert",
   "th": [
@@ -780,6 +918,8 @@
   "n": "Rational Followers vs. the Fire death-cult."
  },
  {
+  "id": "left-for-dead-amnesiac-rises",
+  "aliases": ["2170-left-for-dead-amnesiac-rises"],
   "y": 2170,
   "t": "Left for dead, amnesiac rises",
   "th": [
@@ -791,6 +931,8 @@
   "n": "Player wakes in a rad-scorpion cave, seeking their past."
  },
  {
+  "id": "imperial-city-s-iron-order",
+  "aliases": ["2170-imperial-city-s-iron-order"],
   "y": 2170,
   "t": "Imperial City's iron order",
   "th": [
@@ -802,6 +944,8 @@
   "n": "An authoritarian walled enclave dominates the wastes."
  },
  {
+  "id": "the-remnant-church-is-founded-in-hiding",
+  "aliases": ["2172-the-remnant-church-is-founded-in-hiding"],
   "y": 2172,
   "t": "The Remnant Church is founded in hiding",
   "th": [
@@ -813,6 +957,8 @@
   "n": "DATE INFERRED: roughly forty first-generation survivors of Orac's cut-off column found the Church after the long hunt ends, not simultaneous with the Master's fall."
  },
  {
+  "id": "marcus-and-jacob-found-broken-hills",
+  "aliases": ["2185-marcus-and-jacob-found-broken-hills"],
   "y": 2185,
   "t": "Marcus and Jacob found Broken Hills",
   "th": [
@@ -825,6 +971,8 @@
   "n": "A super mutant and a Brotherhood knight, having fought each other to an exhausted draw, make peace instead; then lead a column of human, ghoul, and mutant refugees to a uranium mine and settle it: the diaspora's single peaceful landing point."
  },
  {
+  "id": "founding-of-the-ncr",
+  "aliases": ["2186-founding-of-the-ncr"],
   "y": 2186,
   "t": "Founding of the NCR",
   "th": [
@@ -836,6 +984,8 @@
   "n": "Shady Sands becomes the capital of the New California Republic."
  },
  {
+  "id": "jacob-moves-on-marcus-stays",
+  "aliases": ["2186-jacob-moves-on-marcus-stays"],
   "y": 2186,
   "t": "Jacob moves on; Marcus stays",
   "th": [
@@ -847,6 +997,8 @@
   "n": "Once the new town survives its first winter, Jacob says goodbye and leaves; Marcus stays on as both mayor and sheriff, and will later name Jacobstown after him."
  },
  {
+  "id": "the-council-federates-into-statehood",
+  "aliases": ["2189-the-council-federates-into-statehood"],
   "y": 2189,
   "t": "The council federates into statehood",
   "th": [
@@ -860,6 +1012,8 @@
   "n": "Shady Sands, the Hub, the Boneyard, Maxson, and Dayglow ratify a founding constitution as five states, the actual birth of a republic, three years after the 2186 trial council."
  },
  {
+  "id": "tandi-elected-ncr-president",
+  "aliases": ["2196-tandi-elected-ncr-president"],
   "y": 2196,
   "t": "Tandi elected NCR President",
   "th": [
@@ -871,6 +1025,8 @@
   "n": "The council unanimously elects the same girl the Vault Dweller met at Shady Sands in 2161; she will serve an unbroken 52-year presidency."
  },
  {
+  "id": "the-midwestern-brotherhood-defeats-the-calculator",
+  "aliases": ["2197-the-midwestern-brotherhood-defeats-the-calculator"],
   "y": 2197,
   "t": "The Midwestern Brotherhood defeats the Calculator",
   "th": [
@@ -882,6 +1038,8 @@
   "n": "The exiled chapter's war against the rogue AI ends; its empire spans Colorado Springs to Lake Michigan, the most inclusive Brotherhood doctrine in the wasteland."
  },
  {
+  "id": "the-shi-entrench-as-the-steel-palace",
+  "aliases": ["2200-the-shi-entrench-as-the-steel-palace"],
   "y": 2200,
   "t": "The Shi entrench as the Steel Palace",
   "th": [
@@ -893,6 +1051,8 @@
   "n": "The stranded submarine Shi-huang-ti's crew, sheltering in Chinatown's ruins since 2077, finish stripping their hull into the reinforced Steel Palace, an isolationist enclave that stays out of wasteland politics."
  },
  {
+  "id": "curie-perfects-vault-81-s-universal-cure",
+  "aliases": ["2204-curie-perfects-vault-81-s-universal-cure"],
   "y": 2204,
   "t": "Curie perfects Vault 81's universal cure",
   "th": [
@@ -904,6 +1064,8 @@
   "n": "Decades of solitary research after every human scientist dies pays off: the Vault's actual, hidden objective is finally completed, by a robot, not a person."
  },
  {
+  "id": "the-west-coast-brotherhood-turns-inward",
+  "aliases": ["2205-the-west-coast-brotherhood-turns-inward"],
   "y": 2205,
   "t": "The West Coast Brotherhood turns inward",
   "th": [
@@ -916,6 +1078,8 @@
   "n": "Watching the NCR grow from township to federation, the Elders double down on hoarding energy weapons and refusing outside recruits, the same doctrine that will grind the chapter down decades later."
  },
  {
+  "id": "navarro-becomes-the-mainland-vertibird-base",
+  "aliases": ["2220-navarro-becomes-the-mainland-vertibird-base"],
   "y": 2220,
   "t": "Navarro becomes the mainland Vertibird base",
   "th": [
@@ -927,6 +1091,8 @@
   "n": "The old Poseidon Oil refinery is converted into a refueling/maintenance post, extending the Oil Rig's limited-range Vertibirds onto the coast: the arrangement the Chosen One finds intact in 2242."
  },
  {
+  "id": "the-institute-takes-vault-111-s-last-resident",
+  "aliases": ["2227-the-institute-takes-vault-111-s-last-resident"],
   "y": 2227,
   "t": "The Institute takes Vault 111's last resident",
   "th": [
@@ -938,6 +1104,8 @@
   "n": "210 years into a cryogenic-suspension experiment its occupants believed was decontamination, an Institute agent finds the vault, kills the Sole Survivor's spouse, and takes their infant son, the frozen sleeper goes back under, alone, for decades more."
  },
  {
+  "id": "redding-s-gold-becomes-the-ncr-s-currency-backbone",
+  "aliases": ["2230-redding-s-gold-becomes-the-ncr-s-currency-backbone"],
   "y": 2230,
   "t": "Redding's gold becomes the NCR's currency backbone",
   "th": [
@@ -950,6 +1118,8 @@
   "n": "When the Republic switches to gold-backed dollars, Redding's two mines become the chokepoint every faction needs, the seed of the three-way NCR/New Reno/Vault City tug-of-war that peaks in 2241."
  },
  {
+  "id": "the-boomers-occupy-nellis-air-force-base",
+  "aliases": ["2231-the-boomers-occupy-nellis-air-force-base"],
   "y": 2231,
   "t": "The Boomers occupy Nellis Air Force Base",
   "th": [
@@ -961,6 +1131,8 @@
   "n": "DATE INFERRED: New Vegas (2281) describes this as \"a little over 50 years ago,\" the only anchor given. Vault 34's survivors of the flooded, over-armed vault below finally leave for the walled airfield they still hold."
  },
  {
+  "id": "gecko-founded-on-the-old-reactor",
+  "aliases": ["2235-gecko-founded-on-the-old-reactor"],
   "y": 2235,
   "t": "Gecko founded on the old reactor",
   "th": [
@@ -972,6 +1144,8 @@
   "n": "Ghouls resettle the derelict Poseidon Atomic Powerplant northeast of Vault City; scavenged know-how brings the reactor back online the same year, and Vault City's contempt for its new neighbors begins immediately."
  },
  {
+  "id": "harold-arrives-at-gecko",
+  "aliases": ["2238-harold-arrives-at-gecko"],
   "y": 2238,
   "t": "Harold arrives at Gecko",
   "th": [
@@ -983,6 +1157,8 @@
   "n": "The wandering, half-mutated-tree survivor, already a wasteland legend by this point, settles in to help run Gecko's powerplant."
  },
  {
+  "id": "the-slags-break-the-seal-near-modoc",
+  "aliases": ["2238-the-slags-break-the-seal-near-modoc"],
   "y": 2238,
   "t": "The Slags break the Seal near Modoc",
   "th": [
@@ -994,6 +1170,8 @@
   "n": "Descendants of a militia family that sealed itself underground during the Great War resurface and quietly farm beside the town; it takes Modoc years to realize its \"Ghost Farm\" neighbors are pale, wide-eyed kin rather than raiders."
  },
  {
+  "id": "the-ncr-spreads",
+  "aliases": ["2241-the-ncr-spreads"],
   "y": 2241,
   "t": "The NCR spreads",
   "th": [
@@ -1006,6 +1184,8 @@
   "n": "The young Republic pushes north and east (Fallout 2)."
  },
  {
+  "id": "jet-reaches-redding-s-miners",
+  "aliases": ["2241-jet-reaches-redding-s-miners"],
   "y": 2241,
   "t": "Jet reaches Redding's miners",
   "th": [
@@ -1017,6 +1197,8 @@
   "n": "Myron's cheaper, faster Mordino-family remanufacture of the drug hits the gold camps in January and starts a mass addiction epidemic, the opening move in the New Reno/Redding/Vault City power triangle Fallout 2 is built on."
  },
  {
+  "id": "vault-city-spurns-the-ncr-and-the-bishops-alike",
+  "aliases": ["2241-vault-city-spurns-the-ncr-and-the-bishops-alike"],
   "y": 2241,
   "t": "Vault City spurns the NCR and the Bishops alike",
   "th": [
@@ -1031,6 +1213,8 @@
   "n": "In February the council rejects both an NCR alliance and a Bishop-family pact, choosing isolation; the NCR responds by hiring Bishop mercenaries to raid the city into compliance and planting the agent Thomas Moore inside its walls to agitate for \"democratic reform.\""
  },
  {
+  "id": "new-reno-s-four-families",
+  "aliases": ["2241-new-reno-s-four-families"],
   "y": 2241,
   "t": "New Reno's Four Families",
   "th": [
@@ -1042,6 +1226,8 @@
   "n": "Salvatore, Mordino, Bishop, and Wright split the gambling city between them, the Wrights alone bound by actual blood, the rest by turf and habit."
  },
  {
+  "id": "drought-drives-the-search-for-a-new-geck",
+  "aliases": ["2241-drought-drives-the-search-for-a-new-geck"],
   "y": 2241,
   "t": "Drought drives the search for a new GECK",
   "th": [
@@ -1055,6 +1241,8 @@
   "n": "Arroyo's crops fail; the Chosen One is sent to find a replacement GECK and instead finds Vault 13, the Vault Dweller's old home, emptied of people and full of intelligent deathclaws."
  },
  {
+  "id": "navarro-falls",
+  "aliases": ["2242-navarro-falls"],
   "y": 2242,
   "t": "Navarro falls",
   "th": [
@@ -1066,6 +1254,8 @@
   "n": "The Chosen One breaks the Enclave's mainland base."
  },
  {
+  "id": "fall-of-the-enclave-oil-rig",
+  "aliases": ["2242-fall-of-the-enclave-oil-rig"],
   "y": 2242,
   "t": "Fall of the Enclave Oil Rig",
   "th": [
@@ -1077,6 +1267,8 @@
   "n": "The Chosen One destroys Control Station Enclave, the Enclave's offshore HQ."
  },
  {
+  "id": "edward-sallow-crowned-caesar",
+  "aliases": ["2247-edward-sallow-crowned-caesar"],
   "y": 2247,
   "t": "Edward Sallow crowned Caesar",
   "th": [
@@ -1088,6 +1280,8 @@
   "n": "A captured NCR frumentarius impresses the Blackfoot tribe with old-world war doctrine and takes the name Caesar within a year."
  },
  {
+  "id": "father-elijah-secures-helios-one",
+  "aliases": ["2250-father-elijah-secures-helios-one"],
   "y": 2250,
   "t": "Father Elijah secures HELIOS One",
   "th": [
@@ -1099,6 +1293,8 @@
   "n": "Mojave chapter anchors to a fixed solar-plant site, diverting from mobile recovery doctrine."
  },
  {
+  "id": "the-brotherhood-hunts-the-remnant-church-to-near-extinction",
+  "aliases": ["2250-the-brotherhood-hunts-the-remnant-church-to-near-extinction"],
   "y": 2250,
   "t": "The Brotherhood hunts the Remnant Church to near-extinction",
   "th": [
@@ -1111,6 +1307,8 @@
   "n": "DATE INFERRED, positioned to leave a plausible runway to 2295's \"only three remain.\" The Church is pursued ruthlessly until it too must be abandoned."
  },
  {
+  "id": "caesar-s-legion-annexes-flagstaff-as-its-capital",
+  "aliases": ["2255-caesar-s-legion-annexes-flagstaff-as-its-capital"],
   "y": 2255,
   "t": "Caesar's Legion annexes Flagstaff as its capital",
   "th": [
@@ -1122,6 +1320,8 @@
   "n": "Between 2248 and 2255 the Legion christens the Flagstaff ruins its first capital, before Caesar ever sets his sights on Vegas."
  },
  {
+  "id": "the-brotherhood-outcasts-break-from-the-citadel",
+  "aliases": ["2258-the-brotherhood-outcasts-break-from-the-citadel"],
   "y": 2258,
   "t": "The Brotherhood Outcasts break from the Citadel",
   "th": [
@@ -1133,6 +1333,8 @@
   "n": "Casdin and dissenting scribes/knights abandon Lyons over his refusal to strip Fort Independence for tech, taking a stockpile of gear with them. (date approximate)"
  },
  {
+  "id": "vault-18-breaks-open",
+  "aliases": ["2260-vault-18-breaks-open"],
   "y": 2260,
   "t": "Vault 18 breaks open",
   "th": [
@@ -1144,6 +1346,8 @@
   "n": "A fateful Vault-Ball night forces the player out."
  },
  {
+  "id": "tail-of-the-ncr-enclave-war",
+  "aliases": ["2260-tail-of-the-ncr-enclave-war"],
   "y": 2260,
   "t": "Tail of the NCR-Enclave War",
   "th": [
@@ -1157,6 +1361,8 @@
   "n": "A 20-year factional war winds down in SoCal."
  },
  {
+  "id": "the-ncr-launches-the-mojave-campaign",
+  "aliases": ["2271-the-ncr-launches-the-mojave-campaign"],
   "y": 2271,
   "t": "The NCR launches the Mojave Campaign",
   "th": [
@@ -1169,6 +1375,8 @@
   "n": "Formal NCR expansion east of the Colorado begins, years before the Legion becomes an existential threat."
  },
  {
+  "id": "hoover-dam-restarted-the-ncr-opens-an-embassy-on-the-strip",
+  "aliases": ["2274-hoover-dam-restarted-the-ncr-opens-an-embassy-on-the-strip"],
   "y": 2274,
   "t": "Hoover Dam restarted, the NCR opens an embassy on the Strip",
   "th": [
@@ -1183,6 +1391,8 @@
   "n": "Power returns to Vegas under NCR engineers; Boulder City and McCarran are garrisoned as forward posts, the infrastructure Caesar goes to war over three years later."
  },
  {
+  "id": "operation-sunburst",
+  "aliases": ["2276-operation-sunburst"],
   "y": 2276,
   "t": "Operation Sunburst",
   "th": [
@@ -1194,6 +1404,8 @@
   "n": "NCR assault outnumbers the Brotherhood 15-to-1 despite T-51b power armor; catastrophic defeat, Father Elijah disappears."
  },
  {
+  "id": "509th-detachment-dispatched-to-the-salt-flats",
+  "aliases": ["2276-509th-detachment-dispatched-to-the-salt-flats"],
   "y": 2276,
   "t": "509th detachment dispatched to the salt flats",
   "th": [
@@ -1205,6 +1417,8 @@
   "n": "A small \"disposable\" detachment (leader redacted in-source) is sent toward the Northeast salt flats as Hidden Valley locks down; this is the chapter's founding arrival at Wendover."
  },
  {
+  "id": "the-ncr-occupies-helios-one-after-the-brotherhood-s-defeat",
+  "aliases": ["2276-the-ncr-occupies-helios-one-after-the-brotherhood-s-defeat"],
   "y": 2276,
   "t": "The NCR occupies HELIOS One after the Brotherhood's defeat",
   "th": [
@@ -1217,6 +1431,8 @@
   "n": "Operation Sunburst's winner inherits the solar plant Father Elijah bled his chapter defending."
  },
  {
+  "id": "first-battle-of-hoover-dam",
+  "aliases": ["2277-first-battle-of-hoover-dam"],
   "y": 2277,
   "t": "First Battle of Hoover Dam",
   "th": [
@@ -1230,6 +1446,8 @@
   "n": "The NCR throws Caesar's Legion back across the Colorado."
  },
  {
+  "id": "fall-of-raven-rock",
+  "aliases": ["2277-fall-of-raven-rock"],
   "y": 2277,
   "t": "Fall of Raven Rock",
   "th": [
@@ -1241,6 +1459,8 @@
   "n": "The Enclave's Capital campaign is broken (Fallout 3)."
  },
  {
+  "id": "the-citadel-secured",
+  "aliases": ["2277-the-citadel-secured"],
   "y": 2277,
   "t": "The Citadel secured",
   "th": [
@@ -1252,6 +1472,8 @@
   "n": "Lyons' Brotherhood anchors the Capital Wasteland."
  },
  {
+  "id": "lyons-pride-breaks-the-enclave-at-the-purifier",
+  "aliases": ["2277-lyons-pride-breaks-the-enclave-at-the-purifier"],
   "y": 2277,
   "t": "Lyons' Pride breaks the Enclave at the Purifier",
   "th": [
@@ -1264,6 +1486,8 @@
   "n": "The Capital Wasteland chapter secures Project Purity; Sarah Lyons dies in the final battle."
  },
  {
+  "id": "fall-of-shady-sands",
+  "aliases": ["2277-fall-of-shady-sands"],
   "y": 2277,
   "t": "Fall of Shady Sands",
   "th": [
@@ -1276,6 +1500,8 @@
   "n": "Chalkboard-dated nuking of the NCR capital; debated vs New Vegas (2281): creators say the blast is \"just after\" NV."
  },
  {
+  "id": "the-legion-fortifies-fortification-hill-opposite-the-dam",
+  "aliases": ["2277-the-legion-fortifies-fortification-hill-opposite-the-dam"],
   "y": 2277,
   "t": "The Legion fortifies Fortification Hill opposite the Dam",
   "th": [
@@ -1287,6 +1513,8 @@
   "n": "Caesar's new capital-in-the-field, built the same year as the First Battle it stages."
  },
  {
+  "id": "the-legion-enslaves-cottonwood-cove-as-its-river-crossing",
+  "aliases": ["2277-the-legion-enslaves-cottonwood-cove-as-its-river-crossing"],
   "y": 2277,
   "t": "The Legion enslaves Cottonwood Cove as its river crossing",
   "th": [
@@ -1298,6 +1526,8 @@
   "n": "The Legion's only reliable way across the Colorado into NCR territory; garrisoned throughout the war that follows."
  },
  {
+  "id": "the-legate-is-burned-alive-for-the-dam-s-defeat",
+  "aliases": ["2277-the-legate-is-burned-alive-for-the-dam-s-defeat"],
   "y": 2277,
   "t": "The Legate is burned alive for the Dam's defeat",
   "th": [
@@ -1309,6 +1539,8 @@
   "n": "Caesar has the Malpais Legate coated in pitch, set alight, and thrown into the canyon by his own Praetorian Guard, the price of losing Hoover Dam."
  },
  {
+  "id": "project-purity-is-activated-flooding-the-capital-wasteland-with-clean-water",
+  "aliases": ["2277-project-purity-is-activated-flooding-the-capital-wasteland-with-clean-water"],
   "y": 2277,
   "t": "Project Purity is activated, flooding the Capital Wasteland with clean water",
   "th": [
@@ -1321,6 +1553,8 @@
   "n": "The Lone Wanderer completes James's life work at the cost of the Enclave's war footing: distinct from the Purifier battle already on our map, this is the water itself going out."
  },
  {
+  "id": "the-divide-catastrophe-hopeville-and-ashton-wiped-out",
+  "aliases": ["2277-the-divide-catastrophe-hopeville-and-ashton-wiped-out"],
   "y": 2277,
   "t": "The Divide catastrophe: Hopeville and Ashton wiped out",
   "th": [
@@ -1332,6 +1566,8 @@
   "n": "DATE INFERRED: sources disagree (2277 vs. the Courier's own 2281 present); either way it predates New Vegas's opening."
  },
  {
+  "id": "vault-81-opens-its-door-for-the-first-time",
+  "aliases": ["2277-vault-81-opens-its-door-for-the-first-time"],
   "y": 2277,
   "t": "Vault 81 opens its door for the first time",
   "th": [
@@ -1343,6 +1579,8 @@
   "n": "Overseer McNamara allows contact and trade with the outside world after two centuries sealed, the disease vault finally lets anyone in or out."
  },
  {
+  "id": "the-brotherhood-restores-the-gnr-relay",
+  "aliases": ["2277-the-brotherhood-restores-the-gnr-relay"],
   "y": 2277,
   "t": "The Brotherhood restores the GNR relay",
   "th": [
@@ -1354,6 +1592,8 @@
   "n": "The Brotherhood holds the monument as an outpost, repairing its transmitter to carry Galaxy News Radio across the Capital Wasteland."
  },
  {
+  "id": "bitter-springs-massacre",
+  "aliases": ["2278-bitter-springs-massacre"],
   "y": 2278,
   "t": "Bitter Springs Massacre",
   "th": [
@@ -1365,6 +1605,8 @@
   "n": "NCR's 1st Recon Battalion, the same unit that broke the Legion at the First Battle the year before, guns down a Great Khans caravan of mostly noncombatants; the stain follows First Recon for the rest of the war."
  },
  {
+  "id": "broken-steel-epilogue-the-enclave-s-remnant-is-annihilated",
+  "aliases": ["2278-broken-steel-epilogue-the-enclave-s-remnant-is-annihilated"],
   "y": 2278,
   "t": "Broken Steel epilogue: the Enclave's remnant is annihilated",
   "th": [
@@ -1377,6 +1619,8 @@
   "n": "Lyons' Brotherhood, now backed by NCR-adjacent tech recovery, finishes what the Purifier battle started, the last organized East Coast Enclave force goes down at the airfield where the Prydwen will later be built."
  },
  {
+  "id": "the-remnants-endure",
+  "aliases": ["2281-the-remnants-endure"],
   "y": 2281,
   "t": "The remnants endure",
   "th": [
@@ -1388,6 +1632,8 @@
   "n": "Marcus's mutants outlive their maker; Jacobstown seeks a cure."
  },
  {
+  "id": "the-legion-s-mojave-hold",
+  "aliases": ["2281-the-legion-s-mojave-hold"],
   "y": 2281,
   "t": "The Legion's Mojave hold",
   "th": [
@@ -1400,6 +1646,8 @@
   "n": "Caesar seizes footholds west of the river."
  },
  {
+  "id": "second-battle-of-hoover-dam",
+  "aliases": ["2281-second-battle-of-hoover-dam"],
   "y": 2281,
   "t": "Second Battle of Hoover Dam",
   "th": [
@@ -1413,6 +1661,8 @@
   "n": "NCR and Legion collide again for the Mojave (New Vegas)."
  },
  {
+  "id": "ncr-exiles-flee-north",
+  "aliases": ["2281-ncr-exiles-flee-north"],
   "y": 2281,
   "t": "NCR Exiles flee north",
   "th": [
@@ -1424,6 +1674,8 @@
   "n": "Disillusioned NCR soldiers found a new home in Portland."
  },
  {
+  "id": "northern-legion-strikes",
+  "aliases": ["2281-northern-legion-strikes"],
   "y": 2281,
   "t": "Northern Legion strikes",
   "th": [
@@ -1435,6 +1687,8 @@
   "n": "A Legion branch moves to seize Portland's resources."
  },
  {
+  "id": "crusaders-of-steel-arrive",
+  "aliases": ["2281-crusaders-of-steel-arrive"],
   "y": 2281,
   "t": "Crusaders of Steel arrive",
   "th": [
@@ -1446,6 +1700,8 @@
   "n": "A Mormon-influenced Brotherhood splinter seeks revenge."
  },
  {
+  "id": "white-legs-broken-at-zion-tribal-kin-scattered",
+  "aliases": ["2281-white-legs-broken-at-zion-tribal-kin-scattered"],
   "y": 2281,
   "t": "White Legs broken at Zion; tribal kin scattered",
   "th": [
@@ -1458,6 +1714,8 @@
   "n": "Honest Hearts. The White Legs, kin who \"chained themselves to the Legion\" per tribal reckoning, are shattered and scattered by the Eighties; the tribe's own doc anchors its present to roughly fifteen years after this event."
  },
  {
+  "id": "the-courier-is-shot-and-left-for-dead-outside-goodsprings",
+  "aliases": ["2281-the-courier-is-shot-and-left-for-dead-outside-goodsprings"],
   "y": 2281,
   "t": "The Courier is shot and left for dead outside Goodsprings",
   "th": [
@@ -1469,6 +1727,8 @@
   "n": "Fallout: New Vegas opens; Doc Mitchell revives a courier robbed of the platinum chip by Benny's crew."
  },
  {
+  "id": "caesar-s-legion-burns-nipton-to-the-ground",
+  "aliases": ["2281-caesar-s-legion-burns-nipton-to-the-ground"],
   "y": 2281,
   "t": "Caesar's Legion burns Nipton to the ground",
   "th": [
@@ -1480,6 +1740,8 @@
   "n": "A one-town object lesson in Legion occupation (staged \"trials,\" mass crucifixion, the settlement torched) discovered freshly smoking by the Courier en route to Vegas."
  },
  {
+  "id": "ulysses-confronts-the-courier-at-the-divide",
+  "aliases": ["2281-ulysses-confronts-the-courier-at-the-divide"],
   "y": 2281,
   "t": "Ulysses confronts the Courier at the Divide",
   "th": [
@@ -1491,6 +1753,8 @@
   "n": "Lonesome Road's climax: the Courier learns they themselves triggered the catastrophe here, years before becoming \"the Courier\" of the main game."
  },
  {
+  "id": "mr-house-preserves-the-strip-s-neutrality-through-the-ncr-legion-war",
+  "aliases": ["2281-mr-house-preserves-the-strip-s-neutrality-through-the-ncr-legion-war"],
   "y": 2281,
   "t": "Mr. House preserves the Strip's neutrality through the NCR-Legion war",
   "th": [
@@ -1503,6 +1767,8 @@
   "n": "New Vegas's standing condition throughout 2281: connective tissue between the Mojave Campaign and the Second Battle already on our map."
  },
  {
+  "id": "the-silent-years-begin",
+  "aliases": ["2282-the-silent-years-begin"],
   "y": 2282,
   "t": "The Silent Years begin",
   "th": [
@@ -1514,6 +1780,8 @@
   "n": "Hidden Valley in lockdown under Elder McNamara, Lost Hills preoccupied with the NCR, the Wendover detachment gets fewer than five transmissions in twelve years and survives on salvage and discipline."
  },
  {
+  "id": "the-prydwen-reaches-the-commonwealth",
+  "aliases": ["2287-the-prydwen-reaches-the-commonwealth"],
   "y": 2287,
   "t": "The Prydwen reaches the Commonwealth",
   "th": [
@@ -1525,6 +1793,8 @@
   "n": "Elder Maxson leads the East Coast chapter to Boston to confront the Institute, mooring the Prydwen and staging out of Cambridge Police Station."
  },
  {
+  "id": "the-sole-survivor-emerges-from-vault-111",
+  "aliases": ["2287-the-sole-survivor-emerges-from-vault-111"],
   "y": 2287,
   "t": "The Sole Survivor emerges from Vault 111",
   "th": [
@@ -1536,6 +1806,8 @@
   "n": "Two hundred and ten years frozen; Fallout 4 begins with a search for an infant son who is, by the time the vault opens, an old man."
  },
  {
+  "id": "nick-valentine-is-freed-from-vault-114",
+  "aliases": ["2287-nick-valentine-is-freed-from-vault-114"],
   "y": 2287,
   "t": "Nick Valentine is freed from Vault 114",
   "th": [
@@ -1547,6 +1819,8 @@
   "n": "The Sole Survivor's synth-detective ally is broken out of raider captivity, first concrete step of the Institute investigation."
  },
  {
+  "id": "battle-of-bunker-hill",
+  "aliases": ["2287-battle-of-bunker-hill"],
   "y": 2287,
   "t": "Battle of Bunker Hill",
   "th": [
@@ -1558,6 +1832,8 @@
   "n": "A Railroad operation to extract captured synths collapses into open firefight with Institute Coursers, the war the Prydwen arrives into."
  },
  {
+  "id": "diamond-city-s-mayor-exposed-as-an-institute-synth",
+  "aliases": ["2287-diamond-city-s-mayor-exposed-as-an-institute-synth"],
   "y": 2287,
   "t": "Diamond City's mayor exposed as an Institute synth",
   "th": [
@@ -1569,6 +1845,8 @@
   "n": "Mayor McDonough is unmasked as a Gen-3 infiltrator, proof the Institute has been inside the Commonwealth's biggest settlement for years before anyone noticed."
  },
  {
+  "id": "the-prydwen-was-built-at-adams-air-force-base",
+  "aliases": ["2287-the-prydwen-was-built-at-adams-air-force-base"],
   "y": 2287,
   "t": "The Prydwen was built at Adams Air Force Base",
   "th": [
@@ -1580,6 +1858,8 @@
   "n": "The airship that mothballed the East Coast Enclave in 2278 is where the Commonwealth expedition's flagship is constructed nine years later, one site, two Brotherhood chapters."
  },
  {
+  "id": "the-commonwealth-s-fate-forks-on-the-sole-survivor-s-final-choice",
+  "aliases": ["2287-the-commonwealth-s-fate-forks-on-the-sole-survivor-s-final-choice"],
   "y": 2287,
   "t": "The Commonwealth's fate forks on the Sole Survivor's final choice",
   "th": [
@@ -1591,6 +1871,8 @@
   "n": "Three mutually exclusive endings (Institute purged by the Railroad, Institute purged by the Brotherhood, or Institute survives under the Sole Survivor) Bethesda has never named one canon."
  },
  {
+  "id": "only-three-of-the-remnant-church-remain",
+  "aliases": ["2295-only-three-of-the-remnant-church-remain"],
   "y": 2295,
   "t": "Only three of the Remnant Church remain",
   "th": [
@@ -1602,6 +1884,8 @@
   "n": "A century of attrition under Brotherhood patrols and NCR Rangers reduces some forty survivors to three."
  },
  {
+  "id": "lucy-leaves-vault-33",
+  "aliases": ["2296-lucy-leaves-vault-33"],
   "y": 2296,
   "t": "Lucy leaves Vault 33",
   "th": [
@@ -1614,6 +1898,8 @@
   "n": "Moldaver's raiders sack the vault and take Hank; Lucy goes topside to recover him."
  },
  {
+  "id": "the-ghoul-and-the-bounty",
+  "aliases": ["2296-the-ghoul-and-the-bounty"],
   "y": 2296,
   "t": "The Ghoul and the bounty",
   "th": [
@@ -1626,6 +1912,8 @@
   "n": "Cooper Howard hunts Wilzig's head/diode; BoS squire Maximus races for the same prize."
  },
  {
+  "id": "moldaver-seizes-the-cold-fusion",
+  "aliases": ["2296-moldaver-seizes-the-cold-fusion"],
   "y": 2296,
   "t": "Moldaver seizes the cold fusion",
   "th": [
@@ -1639,6 +1927,8 @@
   "n": "Moldaver powers the reactor from the Enclave diode, then, dying, warns Maximus what the Brotherhood will do with it; NCR and Brotherhood forces collide at the Observatory, the Brotherhood takes it anyway, and Maximus is dubbed Knight for his part in the battle."
  },
  {
+  "id": "vault-tec-enclave-conspiracy",
+  "aliases": ["2296-vault-tec-enclave-conspiracy"],
   "y": 2296,
   "t": "Vault-Tec/Enclave conspiracy",
   "th": [
@@ -1652,6 +1942,8 @@
   "n": "Norm MacLean uncovers the truth behind Vaults 32/33's rotating \"overseer\" system: Vault-Tec's own board, frozen in Vault 31 and periodically thawed to run a breeding programme pairing 32 and 33's dwellers with revived executives, engineering a class of \"super managers\" for the post-war surface. Vault-Tec's role in the bombs and its Enclave ties exposed alongside it."
  },
  {
+  "id": "quintus-convenes-the-chapter-elders-against-the-commonwealth",
+  "aliases": ["2296-quintus-convenes-the-chapter-elders-against-the-commonwealth"],
   "y": 2296,
   "t": "Quintus convenes the chapter elders against the Commonwealth",
   "th": [
@@ -1665,6 +1957,8 @@
   "n": "San Fernando, Grand Canyon, Coronado and Yosemite elders meet to plot revolt; Commonwealth liaison Paladin Harkness arrives uninvited and ends it."
  },
  {
+  "id": "the-resurgence",
+  "aliases": ["2296-the-resurgence"],
   "y": 2296,
   "t": "The Resurgence",
   "th": [
@@ -1676,6 +1970,8 @@
   "n": "A renewed Enclave threat ends the isolation policy; the 509th deploys \"Surgical Teams\" and transitions from Hidden Watcher to Active Vanguard."
  },
  {
+  "id": "the-tribe-s-present-era-salt-flat-sovereignty-amid-three-armies",
+  "aliases": ["2296-the-tribe-s-present-era-salt-flat-sovereignty-amid-three-armies"],
   "y": 2296,
   "t": "The tribe's present era: salt-flat sovereignty amid three armies",
   "th": [
@@ -1691,6 +1987,8 @@
   "n": "Both the Bear and the Bull still reach to control the region, but no single power rules; survival favours those who can fight when they must and talk when they can."
  },
  {
+  "id": "vault-4-shelters-shady-sands-s-survivors",
+  "aliases": ["2296-vault-4-shelters-shady-sands-s-survivors"],
   "y": 2296,
   "t": "Vault 4 shelters Shady Sands's survivors",
   "th": [
@@ -1703,6 +2001,8 @@
   "n": "Survivors of the blast venerate Lee Moldaver as their \"Flame Mother,\" keeping Shady Sands's memory and a grudge alive underground."
  },
  {
+  "id": "scientist-wilzig-defects-from-the-enclave-with-a-cold-fusion-prototype",
+  "aliases": ["2296-scientist-wilzig-defects-from-the-enclave-with-a-cold-fusion-prototype"],
   "y": 2296,
   "t": "Scientist Wilzig defects from the Enclave with a cold-fusion prototype",
   "th": [
@@ -1714,6 +2014,8 @@
   "n": "The theft that starts the season's three-way chase: distinct from the chase itself and the reactor being seized, both already on our map."
  },
  {
+  "id": "hank-maclean-revealed-as-shady-sands-s-bomber",
+  "aliases": ["2296-hank-maclean-revealed-as-shady-sands-s-bomber"],
   "y": 2296,
   "t": "Hank MacLean revealed as Shady Sands's bomber",
   "th": [
@@ -1726,6 +2028,8 @@
   "n": "Moldaver tells Lucy the truth at gunpoint: Hank set off the device himself, after discovering his wife had taken their children to live in the NCR capital."
  },
  {
+  "id": "robco-s-implant-chip-exposed-as-the-bombing-s-mechanism",
+  "aliases": ["2296-robco-s-implant-chip-exposed-as-the-bombing-s-mechanism"],
   "y": 2296,
   "t": "RobCo's implant chip exposed as the bombing's mechanism",
   "th": [
@@ -1737,6 +2041,8 @@
   "n": "A Brain-Computer-Interface chip, Robert House's tech, turns an unwitting carrier into a walking, mumbling delivery system; how Hank himself accessed a working nuclear device is still not shown on-screen."
  },
  {
+  "id": "maximus-kills-paladin-harkness",
+  "aliases": ["2296-maximus-kills-paladin-harkness"],
   "y": 2296,
   "t": "Maximus kills Paladin Harkness",
   "th": [
@@ -1748,6 +2054,8 @@
   "n": "The Commonwealth chapter's liaison threatens Ghoul children; Maximus shoots him despite Quintus's explicit warning: a killing Maximus himself calls grounds for civil war between San Fernando and the Commonwealth."
  },
  {
+  "id": "arthur-maxson-confirmed-as-the-commonwealth-s-living-elder",
+  "aliases": ["2296-arthur-maxson-confirmed-as-the-commonwealth-s-living-elder"],
   "y": 2296,
   "t": "Arthur Maxson confirmed as the Commonwealth's living Elder",
   "th": [
@@ -1759,6 +2067,8 @@
   "n": "A Coronado elder's on-screen line names Maxson directly, confirming Fallout 4's East Coast chapter, not a soft reboot, still runs the Commonwealth nine years later."
  },
  {
+  "id": "lucy-and-the-ghoul-reach-new-vegas-the-show-reintroduces-mr-house",
+  "aliases": ["2296-lucy-and-the-ghoul-reach-new-vegas-the-show-reintroduces-mr-house"],
   "y": 2296,
   "t": "Lucy and the Ghoul reach New Vegas; the show reintroduces Mr. House",
   "th": [
@@ -1770,6 +2080,8 @@
   "n": "Season 1's closing beat becomes Season 2's premise: the show relocates its center of gravity from LA to the Mojave, and Robert House becomes a season-long antagonist, its first direct engagement with New Vegas's cast rather than by reference."
  },
  {
+  "id": "the-church-s-final-collapse-orac-makes-his-way-to-wendover",
+  "aliases": ["2296-the-church-s-final-collapse-orac-makes-his-way-to-wendover"],
   "y": 2296,
   "t": "The Church's final collapse; Orac makes his way to Wendover",
   "th": [
@@ -1781,6 +2093,8 @@
   "n": "DATE INFERRED, placed directly after \"only three remain.\" What remains of the Remnant Church cannot hold; Orac arrives at the Bazaar with nothing left of the institution he led for over a century."
  },
  {
+  "id": "orac-busks-in-the-bazaar-funds-care-for-unity-veterans",
+  "aliases": ["2297-orac-busks-in-the-bazaar-funds-care-for-unity-veterans"],
   "y": 2297,
   "t": "Orac busks in the Bazaar; funds care for Unity veterans",
   "th": [
@@ -1793,6 +2107,8 @@
   "n": "DATE INFERRED: he plays music in the town, the vault band-lover's one surviving pleasure, and raises money for the physically and mentally infirm veterans of the Army of the Unity. This is where the town's wary trust in him begins."
  },
  {
+  "id": "orac-earns-the-town-s-trust-becomes-wendover-s-guardian",
+  "aliases": ["2298-orac-earns-the-town-s-trust-becomes-wendover-s-guardian"],
   "y": 2298,
   "t": "Orac earns the town's trust; becomes Wendover's guardian",
   "th": [
@@ -1805,6 +2121,8 @@
   "n": "DATE INFERRED, directly preceding \"the blue wizard comes to the Tree\" (2299). Orac becomes the town's impromptu guardian when Wendover comes under threat; the Tree of Life studies that follow begin from here, as a continuation of veteran medicine, not ideology arriving first."
  },
  {
+  "id": "the-blue-wizard-comes-to-the-tree",
+  "aliases": ["2299-the-blue-wizard-comes-to-the-tree"],
   "y": 2299,
   "t": "The blue wizard comes to the Tree",
   "th": [
@@ -1817,6 +2135,8 @@
   "n": "A willing volunteer is absorbed into the Tree of Life, \"much like the master once absorbed beings into itself\", his face remains visible in the bark. (Identifying the tribe's unnamed \"strange blue wizard\" with Orac is this atlas's own reading, not the source doc's.)"
  },
  {
+  "id": "orac-assembles-the-gardeners",
+  "aliases": ["2300-orac-assembles-the-gardeners"],
   "y": 2300,
   "t": "Orac assembles \"the Gardeners\"",
   "th": [
@@ -1828,6 +2148,8 @@
   "n": "Recruitment phase: Brotherhood scribes approached via a defected Head Scribe, the Tribe's guardianship negotiated, NCR floated as an alternative research partner."
  },
  {
+  "id": "the-tree-s-absorption-accelerates",
+  "aliases": ["2301-the-tree-s-absorption-accelerates"],
   "y": 2301,
   "t": "The Tree's absorption accelerates",
   "th": [
@@ -1840,6 +2162,8 @@
   "n": "What began as one willing volunteer becomes a pattern; Orac's private \"gentler, rooted alternative to the original Unity\" starts to look less gentle."
  },
  {
+  "id": "a-new-master-takes-root",
+  "aliases": ["2302-a-new-master-takes-root"],
   "y": 2302,
   "t": "A new Master takes root",
   "th": [

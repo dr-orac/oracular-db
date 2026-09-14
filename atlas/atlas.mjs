@@ -1202,17 +1202,21 @@ export function mount(container, data, opts = {}){
   const homePin = PINS.find(p => p.home) || PINS[0];
   const homeX = homePin.x, homeY = homePin.y;
 
-  /* ---- stable slugs for hash routing (Phase 3.1) ----
-     Pins/events carry no `id` field, only display text, so slugs are
-     derived and de-duplicated here. A slug is preferred over an array
-     index for events because indices shift when EVENTS gains entries. */
+  /* ---- stable ids for hash routing (Phase 3.1) ----
+     Stored ids win. A missing id retains the old derived fallback, so an
+     unfrozen new record remains reachable without weakening existing links. */
   function slugify(s){
     return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'x';
   }
   const PIN_SLUG = {}, SLUG_PIN = {};
   {
-    const used = new Set();
+    const used = new Set(PINS.flatMap(p => p.id ? [p.id] : []));
     for (const p of PINS){
+      if (!p.id) continue;
+      PIN_SLUG[p.name] = p.id; SLUG_PIN[p.id] = p.name;
+    }
+    for (const p of PINS){
+      if (p.id) continue;
       const base = slugify(p.name);
       let s = base, n = 2;
       while (used.has(s)) s = base + '-' + (n++);
@@ -1224,6 +1228,17 @@ export function mount(container, data, opts = {}){
   {
     const used = new Set();
     EVENTS.forEach((e, i) => {
+      if (!e.id && e.aliases && e.aliases.length) throw new Error(`event ${i} has aliases but no frozen id`);
+      if (!e.id) return;
+      EVENT_SLUG[i] = e.id;
+      for (const s of [e.id, ...(e.aliases || [])]){
+        if (!s) throw new Error(`event ${i} has an empty frozen id or alias`);
+        if (used.has(s)) throw new Error(`duplicate frozen event id or alias: ${s}`);
+        used.add(s); SLUG_EVENT[s] = i;
+      }
+    });
+    EVENTS.forEach((e, i) => {
+      if (e.id) return;
       const base = e.y + '-' + slugify(e.t);
       let s = base, n = 2;
       while (used.has(s)) s = base + '-' + (n++);
