@@ -2227,7 +2227,7 @@ export function mount(container, data, opts = {}){
     const pctOf = y => (y - v.y0) / span * 100;
     THREAD_ORDER.forEach(th => {
       const lane = laneEls[th];
-      if (lane.classList.contains('off')) return; /* thread-filtered lanes stay fully hidden; nothing to cluster */
+      /* An off lane is dimmed, not hidden, so it clusters like any other. */
       const track = lane.querySelector('.lane-track');
       const trackW = track.clientWidth || 1;
       const items = [];
@@ -2610,8 +2610,21 @@ export function mount(container, data, opts = {}){
 
   const visibleEvents = () => EVENTS.map((e,i) => i).filter(i =>
     state.thread === 'all' || EVENTS[i].th.includes(state.thread));
-  const primaryDot = i => evDots[i].find(d =>
-    d.offsetParent !== null && getComputedStyle(d).visibility !== 'hidden') || evDots[i][0];
+  /* Where stepping starts when the selection sits outside the lens: the visible event on the
+     far side of it in the stepping direction, so Prev/Next and the arrow keys walk from where
+     the reader is rather than jumping to the thread's first or last. -1 means "before the
+     first", vis.length "after the last", which is what the callers already handle. */
+  const lensIndexOf = (vis, dir) => {
+    if (state.ev === null) return dir > 0 ? -1 : vis.length;
+    const at = vis.indexOf(state.ev);
+    if (at !== -1) return at;
+    const after = vis.findIndex(i => i > state.ev);
+    return dir > 0 ? (after === -1 ? vis.length : after) - 1 : (after === -1 ? vis.length : after);
+  };
+  /* Prefer a dot on a lane inside the lens; a dimmed one only when nothing brighter shows. */
+  const showing = d => d.offsetParent !== null && getComputedStyle(d).visibility !== 'hidden';
+  const primaryDot = i => evDots[i].find(d => showing(d) && !d.closest('.lane.off'))
+    || evDots[i].find(showing) || evDots[i][0];
 
   function syncTabstops(){
     Object.values(evDots).flat().forEach(d => d.tabIndex = -1);
@@ -2719,9 +2732,9 @@ export function mount(container, data, opts = {}){
       b.addEventListener('click', () => selectLoc(b.dataset.loc)));
     card.querySelectorAll('[data-ev]').forEach(b =>
       b.addEventListener('click', () => {
-        const i = +b.dataset.ev;
-        if (!visibleEvents().includes(i)){ threadSelect.setValue('all', {silent:true}); applyThread('all', true); }
-        selectEvent(i);
+        /* An event outside the lens is dimmed, not gone, so selecting it no longer has to
+           throw the thread away. */
+        selectEvent(+b.dataset.ev);
       }));
     card.querySelectorAll('[data-step]').forEach(b =>
       b.addEventListener('click', () => stepEvent(+b.dataset.step)));
@@ -2785,10 +2798,7 @@ export function mount(container, data, opts = {}){
   function stepEvent(dir){
     const vis = visibleEvents();
     if (!vis.length) return;
-    let idx = state.ev === null ? (dir > 0 ? -1 : vis.length)
-                                : vis.indexOf(state.ev);
-    if (idx === -1) idx = 0;
-    idx = Math.min(vis.length - 1, Math.max(0, idx + dir));
+    const idx = Math.min(vis.length - 1, Math.max(0, lensIndexOf(vis, dir) + dir));
     selectEvent(vis[idx]);
   }
 
@@ -2798,10 +2808,10 @@ export function mount(container, data, opts = {}){
     for (const th in laneEls) laneEls[th].classList.toggle('off', t !== 'all' && th !== t);
     EVENTS.forEach((e, i) => {
       if (!connEls[i]) return;
-      connEls[i].style.visibility =
-        (t === 'all' || e.th.includes(t)) ? 'visible' : 'hidden';
+      connEls[i].classList.toggle('off', !(t === 'all' || e.th.includes(t)));
     });
-    if (state.ev !== null && !visibleEvents().includes(state.ev)) clearSel();
+    /* The selection survives a lens change: the event is still on the timeline, dimmed. Only
+       stepping and the arrow keys follow the thread. */
     layoutTimeline(); /* lane visibility changed: reclustering may add/remove markers */
     syncTabstops();
     if (!silent) announce(t === 'all'
@@ -2983,8 +2993,8 @@ export function mount(container, data, opts = {}){
     const vis = visibleEvents();
     if (!vis.length) return;
     let idx = state.ev !== null ? vis.indexOf(state.ev) : -1;
-    if (ev.key === 'ArrowRight') idx = Math.min(vis.length - 1, idx + 1);
-    if (ev.key === 'ArrowLeft')  idx = idx === -1 ? vis.length - 1 : Math.max(0, idx - 1);
+    if (ev.key === 'ArrowRight') idx = Math.min(vis.length - 1, lensIndexOf(vis, +1) + 1);
+    if (ev.key === 'ArrowLeft')  idx = state.ev === null ? vis.length - 1 : Math.max(0, lensIndexOf(vis, -1) - 1);
     if (ev.key === 'Home') idx = 0;
     if (ev.key === 'End')  idx = vis.length - 1;
     /* select FIRST (which reframes/unclusters the target via frameTimelineOn),

@@ -563,9 +563,16 @@
 .atl .tlbody{position:relative;padding:24px 6px 0 0}
 .atl .lanes{position:relative;cursor:grab;touch-action:none}
 .atl .lanes:active{cursor:grabbing}
-.atl .lane{display:flex;align-items:center;height:21px;transition:opacity .18s}
-.atl .lane.off{opacity:.22}
-.atl .lane.off .dot{visibility:hidden}
+.atl .lane{display:flex;align-items:center;height:21px}
+.atl .lane-lbl,.atl .lane-track::before,.atl .tlcluster,.atl .conn{transition:opacity .18s}
+/* A thread is a LENS, not a filter (roadmap-timeline-layers-and-character-maps.md §3.4): an off
+   lane dims and its dots stay where they are, still there to click, so the reader keeps the
+   world's history under the thread they chose. Hiding the dots made the timeline a subtraction
+   and emptied a decade a click away from a full one. */
+/* The parts dim, not the lane, so the CURRENT dot keeps its full glow on an off lane. */
+.atl .lane.off .lane-lbl,.atl .lane.off .lane-track::before,.atl .lane.off .tlcluster,
+.atl .lane.off .dot:not([aria-current="true"]){opacity:.22}
+.atl .conn.off{opacity:.22}
 /* Thread identity is a SWATCH, not the text colour. Colouring 9px label text
    with the faction hues put seven of the nine lanes between 2.1:1 and 4.2:1 on
    a themed panel: measured, not assumed; and identity hues are fixed, so

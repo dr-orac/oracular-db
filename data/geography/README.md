@@ -447,3 +447,49 @@ python3 tools/build-sea-ice.py <extent_N_201609_polygon_v4.0.shp> --write
 python3 tools/build-sea-ice.py --check      # ratchet; needs no source
 python3 tools/build-sea-ice.py --self-test  # the projection maths
 ```
+
+## `hydrography.geojson` — the river network, with the water in it
+
+The 461 river lines above carry a cartographer's `scalerank` and nothing hydrological. This file is
+the HydroRIVERS v1.0 North America network (Lehner & Grill 2013, HydroSHEDS licence, attribution
+required — see `CREDITS.md`) cut to the same window as the other 1:10m layers at flow class ≤ 4:
+**28,947 reaches, 67,854 vertices after Visvalingam 12% keep-shapes, 862 KB gzipped**, eight
+fields under their upstream names. `NEXT_DOWN` is the network — 0 is the sea, an id not in the
+file is a channel below the cut (28,741 of the reaches join a reach that is here) — so "what is
+downstream of this crater" is a walk over a field the data already carries. `ORD_STRA` (Strahler
+order 4–9 here) is the LOD ladder; tiers are a property, not separate files, until a renderer asks.
+
+**Drawn by the `waterways` chip since 2026-09-18, off by default** (owner ruling 2026-08-18: the
+data landed first). `tests/browser/shipped-data-reach.json` names it deliberate; the `hydrography
+network` gate holds the count, the fields, the window, the joined-up network, the licence member
+and the TAINTED count.
+
+**`TAINTED: 1` and `LOAD` (0..1)** (both absent = clean) mark every reach downstream of one of the
+61 blast sites: the builder finds the nearest channel to each site (any vertex within 50 km, in
+either file) and walks `NEXT_DOWN` carrying a load of 1 that is divided by discharge wherever the
+water gets bigger — the water roadmap's own transport model (§ 5 step 2), dilution falling out of
+`DIS_AV_CMS`; loads from different craters add where their walks meet; the walk ends under a
+twentieth (`LOAD_FLOOR`). 1,607 reaches, 5,979 km, all 61 sites reaching a channel; 1,167 of the
+marks are here and 440 in the local file. <!-- Superseded 2026-09-19: from 2026-09-18 the walk
+stopped at the next confluence with a reach of higher Strahler order (963 reaches, 3,511 km; 603
+here, 360 local) - an interim reading of "dilution by order" with no discharge in it. --> (First cut at 25 km: 858 reaches and ten sites
+marking nothing — and the channel each missed was already in the files 28–43 km away, so the radius
+that gated them was this search radius, not the local cut's. Corrected on review the same day.) `waterways-tainted` and `waterways-tainted-local` draw
+them in the radiation amber over the other bands, the line's opacity following `LOAD`. Decision 2026-09-18, taken under the owner's
+"go ahead on all the calls"; the alternatives it was measured against are in
+`tools/measure-downstream.py`.
+
+`hydrography-local.geojson` is the second file the same builder writes: the class-5 reaches within
+60 km of a blast site or draining to a closed basin — 2,582 reaches, 1,466 of them the Great
+Basin's — sized for the downstream-of-a-blast walk and the endorheic marking, which the trunks
+cut cannot carry (its endorheic count is eleven). Drawn by the same `waterways` chip as
+`waterways-local`, endorheic reaches in a dry hue. The 60 km radius stands (decision 2026-09-18):
+every site has a class-5 channel within it — the ten sites the first walk missed were gated by the
+walk's own 25 km search radius (`NEAR_KM`, now 50), not by this cut, a diagnosis this paragraph got
+wrong for an afternoon. The chip stays off by default — 862 KB of trunks is not a default download.
+
+```sh
+python3 tools/build-hydrography.py            # needs ~/Documents/map-sources/hydro/ (outside git); writes both files
+node tools/hydrography-network-gate.mjs       # ratchet on the trunks; needs no source
+node tools/hydrography-network-gate.mjs --file apps/misfits-react/web/public/data/geography/hydrography-local.geojson --baseline tools/hydrography-local-baseline.json
+```
