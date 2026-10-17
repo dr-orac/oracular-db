@@ -2,7 +2,7 @@
   "version": 2,
   "source": "data/atlas-pins.json",
   "coverage_status": "inventory_complete",
-  "marker_count": 149,
+  "marker_count": 167,
   "markers": [
     {
       "name": "Vault 13",
@@ -311,7 +311,7 @@
       "status": "research_required"
     },
     {
-      "name": "The New Master",
+      "name": "The Unitree",
       "legacy_id": "treeMaster",
       "world_location_id": null,
       "status": "research_required"
@@ -787,6 +787,78 @@
     },
     {
       "name": "Oasis",
+      "status": "research_required"
+    },
+    {
+      "name": "Bunker Beta",
+      "status": "research_required"
+    },
+    {
+      "name": "Bunker Gamma",
+      "status": "research_required"
+    },
+    {
+      "name": "Bunker Delta",
+      "status": "research_required"
+    },
+    {
+      "name": "Bonneville Station",
+      "status": "research_required"
+    },
+    {
+      "name": "Salt Column Castrum",
+      "status": "research_required"
+    },
+    {
+      "name": "Lacerta's Camp at Alamo",
+      "status": "research_required"
+    },
+    {
+      "name": "Lacerta's Camp at Pioche",
+      "status": "research_required"
+    },
+    {
+      "name": "Lacerta's Camp at Ely",
+      "status": "research_required"
+    },
+    {
+      "name": "Lacerta's Camp at Currie",
+      "status": "research_required"
+    },
+    {
+      "name": "Saltair",
+      "status": "research_required"
+    },
+    {
+      "name": "Idaho Falls",
+      "status": "research_required"
+    },
+    {
+      "name": "Vault 14",
+      "status": "research_required"
+    },
+    {
+      "name": "Gente del Sol",
+      "status": "research_required"
+    },
+    {
+      "name": "Sinaloa Cartel",
+      "status": "research_required"
+    },
+    {
+      "name": "Baudelio Ranchers",
+      "status": "research_required"
+    },
+    {
+      "name": "Las Granjas",
+      "status": "research_required"
+    },
+    {
+      "name": "Free Fighters",
+      "status": "research_required"
+    },
+    {
+      "name": "Republic of the Rio Grande",
       "status": "research_required"
     }
   ]

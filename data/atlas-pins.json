@@ -65,6 +65,11 @@
     "id": "lost-hills",
     "name": "Lost Hills",
     "faction": "brotherhood",
+    "control": {
+      "faction": "brotherhood",
+      "reachKm": 150,
+      "basis": "the West Coast Brotherhood's High Elders at Lost Hills (Fallout canon; Misfits wiki: 'preoccupied with the NCR' through the 2280s-90s). The NCR of 2296 is 'cut off from its distant heartland' (Misfits wiki), so central California is contested ground, and the Elders hold a bastion around their bunker (owner, 2026-09-25: the Brotherhood holds bastions at key sites)"
+    },
     "type": "military",
     "size": 0.15,
     "priority": 1,
@@ -138,6 +143,10 @@
     "id": "vault-city",
     "name": "Vault City",
     "faction": "other",
+    "control": {
+      "faction": "ncr",
+      "basis": "a canon NCR state (Fallout: New Vegas); no source has it leave the Republic, so it carries the NCR after the capital fell in 2277 (owner, 2026-09-24: the Republic fights on from the north)"
+    },
     "type": "vault",
     "size": 0.4,
     "priority": 2,
@@ -174,6 +183,10 @@
     "id": "redding",
     "name": "Redding",
     "faction": "other",
+    "control": {
+      "faction": "ncr",
+      "basis": "a canon NCR state (Fallout: New Vegas); no source has it leave the Republic, so it carries the NCR after the capital fell in 2277 (owner, 2026-09-24: the Republic fights on from the north)"
+    },
     "type": "settlement",
     "size": 0.18,
     "priority": 2,
@@ -198,6 +211,10 @@
     "id": "primm",
     "name": "Primm",
     "faction": "other",
+    "control": {
+      "faction": "ncr",
+      "basis": "last canon holder: NCR garrison under the New Vegas NCR ending, the canon fork this atlas follows (canon-timeline-modern.md §4b), carried to 2296 until an event row changes it"
+    },
     "type": "settlement",
     "size": 0.12,
     "priority": 3,
@@ -210,6 +227,10 @@
     "id": "novac",
     "name": "Novac",
     "faction": "other",
+    "control": {
+      "faction": "ncr",
+      "basis": "last canon holder: NCR garrison under the New Vegas NCR ending, the canon fork this atlas follows (canon-timeline-modern.md §4b), carried to 2296 until an event row changes it"
+    },
     "type": "settlement",
     "size": 0.06,
     "priority": 3,
@@ -338,7 +359,11 @@
     "lon": -112.99,
     "x": 1004.5,
     "y": 1989.5,
-    "control": "none"
+    "control": {
+      "faction": "tribe",
+      "branch": "Sorrows and Dead Horses",
+      "basis": "Misfits tribe lore, regional history: the Sorrows and the Dead Horses of Zion united and drove the Eighties back from Highway 50"
+    }
   },
   {
     "id": "the-sierra-madre",
@@ -555,6 +580,11 @@
     "id": "chicago",
     "name": "Chicago",
     "faction": "other",
+    "control": {
+      "faction": "brotherhood",
+      "branch": "Midwestern",
+      "basis": "brotherhood-chapters.md: the Midwestern chapter (Fallout Tactics, contested canon tier) is a direct match for the 2296 map's Midwest band; the owner's accepted August overlay draws it"
+    },
     "type": "city",
     "size": 0.98,
     "priority": 2,
@@ -563,6 +593,48 @@
     "x": 1845,
     "y": 1830.7,
     "chapter": "Midwestern"
+  },
+  {
+    "id": "bunker-beta",
+    "name": "Bunker Beta",
+    "faction": "brotherhood",
+    "type": "military",
+    "size": 0.15,
+    "priority": 2,
+    "lat": 40.941904,
+    "lon": -90.524319,
+    "x": 1751.8,
+    "y": 1877.9,
+    "chapter": "Midwestern",
+    "note": "Midwestern Brotherhood bunker (Fallout Tactics), canon per the KML locations layer (locations-bunker-beta)"
+  },
+  {
+    "id": "bunker-gamma",
+    "name": "Bunker Gamma",
+    "faction": "brotherhood",
+    "type": "military",
+    "size": 0.15,
+    "priority": 2,
+    "lat": 39.227915,
+    "lon": -89.576851,
+    "x": 1783.9,
+    "y": 1945.9,
+    "chapter": "Midwestern",
+    "note": "Midwestern Brotherhood bunker the chapter moved south to after defeating the Beastlords (Fallout Tactics; KML locations-bunker-gamma)"
+  },
+  {
+    "id": "bunker-delta",
+    "name": "Bunker Delta",
+    "faction": "brotherhood",
+    "type": "military",
+    "size": 0.15,
+    "priority": 2,
+    "lat": 38.354077,
+    "lon": -95.942675,
+    "x": 1573.3,
+    "y": 1995.4,
+    "chapter": "Midwestern",
+    "note": "Midwestern Brotherhood bunker taken after Gammorin's super mutants were defeated (Fallout Tactics; KML locations-bunker-delta)"
   },
   {
     "id": "detroit",
@@ -604,6 +676,10 @@
     "id": "phoenix",
     "name": "Phoenix",
     "faction": "other",
+    "control": {
+      "faction": "legion",
+      "basis": "last canon holder: the Legion's Arizona heartland, Flagstaff its capital (Fallout: New Vegas, 2281), carried to 2296 until an event row changes it"
+    },
     "type": "city",
     "size": 0.88,
     "priority": 2,
@@ -623,18 +699,6 @@
     "lon": -90.0449,
     "x": 1778.9,
     "y": 2121.6
-  },
-  {
-    "id": "the-new-master",
-    "name": "The New Master",
-    "faction": "other",
-    "type": "special",
-    "size": 0.2,
-    "priority": 1,
-    "lat": 40.7,
-    "lon": -114,
-    "x": 988.4,
-    "y": 1835.3
   },
   {
     "id": "vault-101",
@@ -989,6 +1053,10 @@
     "id": "flagstaff",
     "name": "Flagstaff",
     "faction": "other",
+    "control": {
+      "faction": "legion",
+      "basis": "last canon holder: the Legion's Arizona heartland, Flagstaff its capital (Fallout: New Vegas, 2281), carried to 2296 until an event row changes it"
+    },
     "type": "city",
     "size": 0.5,
     "priority": 2,
@@ -1197,12 +1265,23 @@
     "x": 765.9,
     "y": 1552.5,
     "note": "NCR Exiles base",
-    "source": "Frontier"
+    "source": "Frontier",
+    "control": {
+      "faction": "ncr",
+      "basis": "The Frontier (fan mod, below canon and OWB in the evidence order) is its only source. reachKm 150: a garrison, not a capital; uncapped it painted Washington, Oregon and Idaho as NCR (measured 2026-09-24)",
+      "reachKm": 150
+    }
   },
   {
     "id": "ostia",
     "name": "Ostia",
     "faction": "legion",
+    "control": {
+      "faction": "legion",
+      "branch": "Northern Legion",
+      "basis": "event northern-legion-strikes (2281); lore record northern-legion; The Frontier (fan mod, below canon and OWB in the evidence order) is its only source. reachKm 150: a garrison, not a capital; uncapped it painted Washington, Oregon and Idaho as Legion (measured 2026-09-24)",
+      "reachKm": 150
+    },
     "type": "military",
     "size": 0.18,
     "priority": 2,
@@ -1318,6 +1397,11 @@
     "id": "kearny-airfield-wendover-field",
     "name": "Kearny Airfield (Wendover Field)",
     "faction": "brotherhood",
+    "control": {
+      "faction": "brotherhood",
+      "reachKm": 180,
+      "basis": "the 509th Chapter's base, the local chapter (Misfits wiki, Brotherhood of Steel). Resurgent in 2296: it sends 'surgical teams deep into the Utah territories', and its codex (2.1.1) has it maintain outposts on pre-war sites, so it holds real ground around Wendover. It remains an island holding among the NCR, the Noxa Column and the tribe, on that wiki basis (owner, 2026-09-25: the local chapter gets territory)"
+    },
     "type": "military",
     "size": 0.5,
     "priority": 1,
@@ -1341,7 +1425,8 @@
     "x": 987.4,
     "y": 1833.5,
     "chapter": "509th",
-    "note": "Townsfolk town the 509th patrols/claims tech rights over; real Wendover, UT"
+    "note": "Independent city-state of the Bazaar (Townsfolk); no single power rules it (Misfits wiki Townsfolk; tribe lore regional history); real Wendover, UT",
+    "control": "none"
   },
   {
     "id": "bonneville-salt-flats",
@@ -1349,18 +1434,28 @@
     "faction": "brotherhood",
     "type": "landmark",
     "size": 0.6,
-    "priority": 2,
+    "priority": 1,
     "lat": 40.7335,
     "lon": -113.9294,
     "x": 990.9,
     "y": 1834.4,
     "chapter": "509th",
-    "note": "the flats the 509th's region is named for"
+    "note": "the flats the 509th's region is named for",
+    "control": {
+      "faction": "tribe",
+      "branch": "Willowers",
+      "basis": "Misfits tribe lore, regional history: the tribe holds this salt. The Legion's Salt Column claims the flats in its own dossier (Misfits wiki Caesar's Legion), recorded as a claim, not a holding"
+    }
   },
   {
     "id": "hidden-valley-bunker",
     "name": "Hidden Valley Bunker",
     "faction": "brotherhood",
+    "control": {
+      "faction": "brotherhood",
+      "reachKm": 35,
+      "basis": "the Mojave Chapter's bunker, in 'total lockdown' under Elder McNamara after HELIOS One fell in 2276 (Misfits wiki, Brotherhood of Steel); OWB 2275 has the Mojave Brotherhood on Hidden Valley and Black Mountain. A bastion inside Lacerta's Vegas ground, not a domain (owner, 2026-09-25: Brotherhood bastions at key sites)"
+    },
     "type": "military",
     "size": 0.08,
     "priority": 2,
@@ -1498,7 +1593,8 @@
     "x": 1485,
     "y": 2258.4,
     "chapter": "Texas",
-    "note": "setting of Fallout: Brotherhood of Steel (2004), non-canon spin-off"
+    "note": "setting of Fallout: Brotherhood of Steel (2004), non-canon spin-off",
+    "control": "none"
   },
   {
     "id": "grand-canyon",
@@ -1519,6 +1615,11 @@
     "id": "coronado",
     "name": "Coronado",
     "faction": "brotherhood",
+    "control": {
+      "faction": "brotherhood",
+      "reachKm": 15,
+      "basis": "a Brotherhood chapter from the Fallout TV series, season 2; no Misfits source gives it ground in 2296 inside NCR California, so it holds its base's footprint only (owner, 2026-09-25: hostile enclaves need lore backing)"
+    },
     "type": "military",
     "size": 0.15,
     "priority": 2,
@@ -1816,6 +1917,11 @@
     "lon": -115.034,
     "x": 932.5,
     "y": 2021.8,
+    "control": {
+      "faction": "ncr",
+      "basis": "Fallout: New Vegas: the Boomers hold Nellis behind walls and artillery and keep to themselves; their NCR tie is an alliance, not an NCR administration. reachKm 30: the Boomers' writ does not run up the road north. The walled base itself is under the map's smallest holding (800 km2), so it yields no territory; it is still theirs (2026-09-25)",
+      "reachKm": 30
+    },
     "note": "real Nellis AFB, NV; the Boomers' walled home since ~2231"
   },
   {
@@ -1933,6 +2039,7 @@
     "id": "the-alamo",
     "name": "The Alamo",
     "faction": "brotherhood",
+    "control": "none",
     "type": "landmark",
     "size": 0.04,
     "priority": 2,
@@ -1981,5 +2088,309 @@
     "note": "Harold's grove, the franchise's one unambiguous regrowth site. Position DERIVED, not attested: 'west of Old Olney' projected into the atlas's stretched Fallout 3 frame, low-to-moderate confidence. The imported KML draws it at 39.67/-76.90, rejected because that lies the wrong side of Old Olney and the same KML places Paradise Falls at 39.2276/-77.2857 with Oasis north of it in game. The KML polygon is kept; only its label is suppressed where this pin draws the name.",
     "x": 2192.5,
     "y": 1872.3
+  },
+  {
+    "id": "bonneville-station",
+    "name": "Bonneville Station",
+    "faction": "ncr",
+    "type": "military",
+    "size": 0.15,
+    "priority": 3,
+    "lat": 40.7391,
+    "lon": -114.0731,
+    "control": {
+      "faction": "ncr",
+      "branch": "Salt Dogs Battalion",
+      "basis": "Misfits wiki New California Republic: the Salt Dogs Battalion garrisons Bonneville Station on the Nevada side of the Wendover bridge. reachKm 150: an outpost, not a capital (Misfits tribe lore: the Legion cut to scattered outposts; the NCR holds a foothold)",
+      "reachKm": 150
+    },
+    "note": "NCR Salt Dogs Battalion garrison, Nevada side of the Wendover bridge (West Wendover, NV); the bridge is a permanent NCR asset",
+    "source": "Misfits wiki",
+    "x": 986.3,
+    "y": 1833.1
+  },
+  {
+    "id": "salt-column-castrum",
+    "name": "Salt Column Castrum",
+    "faction": "legion",
+    "type": "military",
+    "size": 0.15,
+    "priority": 2,
+    "lat": 40.76,
+    "lon": -113.95,
+    "control": {
+      "faction": "legion",
+      "branch": "Noxa Column",
+      "basis": "Misfits wiki Caesar's Legion: the Noxa (Salt) Column under Augustus Verus Caldius holds its ground on the I-80 corridor at the Utah-Nevada line; tribe lore: the Legion is cut to scattered outposts. Position approximate: on I-80 on the flats east of Wendover. reachKm 20, contesting at priority 1: a castrum on the I-80 flats, 10 km from the 509th's airfield, holds its camp ground and no more (Misfits tribe lore: the Legion cut to scattered outposts; the NCR holds a foothold). At priority 2 the 509th takes all of it; wider, it swallows the 509th and the Willowers (measured 2026-09-25)",
+      "priority": 1,
+      "reachKm": 20
+    },
+    "note": "Noxa Column camp, Legio Vera; rejects Lacerta as a pretender. Position approximate",
+    "source": "Misfits wiki",
+    "x": 990.4,
+    "y": 1833.1
+  },
+  {
+    "id": "saltair",
+    "name": "Saltair",
+    "faction": "other",
+    "type": "settlement",
+    "size": 0.2,
+    "priority": 1,
+    "lat": 40.7666,
+    "lon": -112.2066,
+    "control": {
+      "faction": "eighties",
+      "basis": "Misfits tribe lore, regional history: the Eighties claimed the Great Salt Lake after the White Legs broke; Misfits wiki Outlaws: they own the I-80 corridor through northern Utah. Saltair is the real I-80 landmark on the lake's south shore, chosen as their seat"
+    },
+    "note": "The Eighties' hold on the Great Salt Lake, on I-80; waning since the Zion tribes pushed them off Highway 50",
+    "source": "Misfits lore",
+    "x": 1046.8,
+    "y": 1844.9
+  },
+  {
+    "id": "idaho-falls",
+    "name": "Idaho Falls",
+    "faction": "other",
+    "type": "settlement",
+    "size": 0.2,
+    "priority": 1,
+    "lat": 43.4917,
+    "lon": -112.0339,
+    "control": {
+      "faction": "khans",
+      "basis": "Misfits tribe roleplay guide: the Den Mother's people were displaced from Idaho by the upheaval of the Khans; OWB places its Northern Khans next door in Wyoming. Idaho Falls is a judgement seat between the two, confidence low"
+    },
+    "note": "Khans' northern holding (judgement seat, low confidence)",
+    "source": "Misfits lore; OWB",
+    "x": 1072.3,
+    "y": 1732.1
+  },
+  {
+    "id": "the-unitree",
+    "name": "The Unitree",
+    "faction": "other",
+    "type": "special",
+    "size": 0.2,
+    "priority": 1,
+    "lat": 40.7305,
+    "lon": -114.041,
+    "note": "The Gardeners' heart, below the Bazaar, central south of Wendover (position approximate, from the Gardeners implementation spec: the Bazaar underground, south edge)",
+    "source": "Gardeners draft",
+    "x": 987.3,
+    "y": 1833.7
+  },
+  {
+    "id": "vault-14",
+    "name": "Vault 14",
+    "faction": "vault",
+    "type": "vault",
+    "size": 0.15,
+    "priority": 2,
+    "lat": 40.745,
+    "lon": -114.03,
+    "control": "none",
+    "note": "The vault beneath the Wendover region; its dwellers are one of the server's three civilian settlements with the town and the village (owner; Misfits wiki Vault Dwellers). Position approximate",
+    "source": "Misfits wiki; owner",
+    "x": 987.8,
+    "y": 1833.2
+  },
+  {
+    "id": "gente-del-sol",
+    "name": "Gente del Sol",
+    "faction": "other",
+    "type": "settlement",
+    "size": 0.2,
+    "priority": 1,
+    "lat": 29.27,
+    "lon": -110.77,
+    "control": {
+      "faction": "mexico",
+      "branch": "Gente del Sol",
+      "basis": "OWB 2275 owner of this ground, seated at its OWB position (seed guidance only). Owner 2026-09-24: seed the northern Mexican polities so the Legion's southern edge is a contest, not the real border; every traced sheet and OWB keep the Legion out of Mexico"
+    },
+    "note": "Northern Mexican polity (OWB), a light holder so the Legion does not spill into empty ground",
+    "source": "OWB",
+    "x": 1075.9,
+    "y": 2366
+  },
+  {
+    "id": "sinaloa-cartel",
+    "name": "Sinaloa Cartel",
+    "faction": "other",
+    "type": "settlement",
+    "size": 0.2,
+    "priority": 1,
+    "lat": 27.99,
+    "lon": -108.17,
+    "control": {
+      "faction": "mexico",
+      "branch": "Sinaloa Cartel",
+      "basis": "OWB 2275 owner of this ground, seated at its OWB position (seed guidance only). Owner 2026-09-24: seed the northern Mexican polities so the Legion's southern edge is a contest, not the real border; every traced sheet and OWB keep the Legion out of Mexico"
+    },
+    "note": "Northern Mexican polity (OWB), a light holder so the Legion does not spill into empty ground",
+    "source": "OWB",
+    "x": 1171.7,
+    "y": 2437.6
+  },
+  {
+    "id": "baudelio-ranchers",
+    "name": "Baudelio Ranchers",
+    "faction": "other",
+    "type": "settlement",
+    "size": 0.2,
+    "priority": 1,
+    "lat": 30.22,
+    "lon": -107.91,
+    "control": {
+      "faction": "mexico",
+      "branch": "Baudelio Ranchers",
+      "basis": "OWB 2275 owner of this ground, seated at its OWB position (seed guidance only). Owner 2026-09-24: seed the northern Mexican polities so the Legion's southern edge is a contest, not the real border; every traced sheet and OWB keep the Legion out of Mexico"
+    },
+    "note": "Northern Mexican polity (OWB), a light holder so the Legion does not spill into empty ground",
+    "source": "OWB",
+    "x": 1174.6,
+    "y": 2335.8
+  },
+  {
+    "id": "las-granjas",
+    "name": "Las Granjas",
+    "faction": "other",
+    "type": "settlement",
+    "size": 0.2,
+    "priority": 1,
+    "lat": 29.27,
+    "lon": -106.5,
+    "control": {
+      "faction": "mexico",
+      "branch": "Las Granjas",
+      "basis": "OWB 2275 owner of this ground, seated at its OWB position (seed guidance only). Owner 2026-09-24: seed the northern Mexican polities so the Legion's southern edge is a contest, not the real border; every traced sheet and OWB keep the Legion out of Mexico"
+    },
+    "note": "Northern Mexican polity (OWB), a light holder so the Legion does not spill into empty ground",
+    "source": "OWB",
+    "x": 1226.9,
+    "y": 2384.9
+  },
+  {
+    "id": "free-fighters",
+    "name": "Free Fighters",
+    "faction": "other",
+    "type": "settlement",
+    "size": 0.2,
+    "priority": 1,
+    "lat": 26.16,
+    "lon": -108.16,
+    "control": {
+      "faction": "mexico",
+      "branch": "Free Fighters",
+      "basis": "OWB 2275 owner of this ground, seated at its OWB position (seed guidance only). Owner 2026-09-24: seed the northern Mexican polities so the Legion's southern edge is a contest, not the real border; every traced sheet and OWB keep the Legion out of Mexico"
+    },
+    "note": "Northern Mexican polity (OWB), a light holder so the Legion does not spill into empty ground",
+    "source": "OWB",
+    "x": 1178.7,
+    "y": 2521.6
+  },
+  {
+    "id": "republic-of-the-rio-grande",
+    "name": "Republic of the Rio Grande",
+    "faction": "other",
+    "type": "settlement",
+    "size": 0.2,
+    "priority": 1,
+    "lat": 27.64,
+    "lon": -102.03,
+    "control": {
+      "faction": "mexico",
+      "branch": "Republic of the Rio Grande",
+      "basis": "OWB 2275 owner of this ground, seated at its OWB position (seed guidance only). Owner 2026-09-24: seed the northern Mexican polities so the Legion's southern edge is a contest, not the real border; every traced sheet and OWB keep the Legion out of Mexico"
+    },
+    "note": "Northern Mexican polity (OWB), a light holder so the Legion does not spill into empty ground",
+    "source": "OWB",
+    "x": 1392.9,
+    "y": 2471.3
+  },
+  {
+    "id": "lacerta-s-camp-at-alamo",
+    "name": "Lacerta's Camp at Alamo",
+    "faction": "legion",
+    "type": "military",
+    "size": 0.08,
+    "priority": 2,
+    "lat": 37.365,
+    "lon": -115.164,
+    "control": {
+      "faction": "legion",
+      "branch": "Lacerta",
+      "basis": "Misfits wiki Caesar's Legion and the community lore thread: Lacerta's Legion holds New Vegas and advances north; tribe lore: the Eighties are waning. A forward camp on US-93 at Alamo, position approximate; reachKm 80, contesting at priority 1: a waypoint on the advance that holds its stretch of road (owner, 2026-09-25: the Legion's territory snakes north toward Wendover)",
+      "priority": 1,
+      "reachKm": 80
+    },
+    "note": "Lacerta's advance north up US-93. Position approximate",
+    "source": "Misfits wiki",
+    "x": 934.3,
+    "y": 1971.4
+  },
+  {
+    "id": "lacerta-s-camp-at-pioche",
+    "name": "Lacerta's Camp at Pioche",
+    "faction": "legion",
+    "type": "military",
+    "size": 0.08,
+    "priority": 2,
+    "lat": 37.929,
+    "lon": -114.452,
+    "control": {
+      "faction": "legion",
+      "branch": "Lacerta",
+      "basis": "Misfits wiki Caesar's Legion and the community lore thread: Lacerta's Legion holds New Vegas and advances north; tribe lore: the Eighties are waning. A forward camp on US-93 at Pioche, position approximate; reachKm 80, contesting at priority 1: a waypoint on the advance that holds its stretch of road (owner, 2026-09-25: the Legion's territory snakes north toward Wendover)",
+      "priority": 1,
+      "reachKm": 80
+    },
+    "note": "Lacerta's advance north up US-93. Position approximate",
+    "source": "Misfits wiki",
+    "x": 960.6,
+    "y": 1952.4
+  },
+  {
+    "id": "lacerta-s-camp-at-ely",
+    "name": "Lacerta's Camp at Ely",
+    "faction": "legion",
+    "type": "military",
+    "size": 0.08,
+    "priority": 2,
+    "lat": 39.247,
+    "lon": -114.889,
+    "control": {
+      "faction": "legion",
+      "branch": "Lacerta",
+      "basis": "Misfits wiki Caesar's Legion and the community lore thread: Lacerta's Legion holds New Vegas and advances north; tribe lore: the Eighties are waning. A forward camp on US-93 at Ely, position approximate; reachKm 80, contesting at priority 1: a waypoint on the advance that holds its stretch of road (owner, 2026-09-25: the Legion's territory snakes north toward Wendover)",
+      "priority": 1,
+      "reachKm": 80
+    },
+    "note": "Lacerta's advance north up US-93. Position approximate",
+    "source": "Misfits wiki",
+    "x": 952.6,
+    "y": 1890.9
+  },
+  {
+    "id": "lacerta-s-camp-at-currie",
+    "name": "Lacerta's Camp at Currie",
+    "faction": "legion",
+    "type": "military",
+    "size": 0.08,
+    "priority": 2,
+    "lat": 40.264,
+    "lon": -114.751,
+    "control": {
+      "faction": "legion",
+      "branch": "Lacerta",
+      "basis": "Misfits wiki Caesar's Legion and the community lore thread: Lacerta's Legion holds New Vegas and advances north; tribe lore: the Eighties are waning. A forward camp on US-93 at Currie, position approximate; reachKm 80, contesting at priority 1: a waypoint on the advance that holds its stretch of road (owner, 2026-09-25: the Legion's territory snakes north toward Wendover)",
+      "priority": 1,
+      "reachKm": 80
+    },
+    "note": "Lacerta's advance north up US-93. Position approximate",
+    "source": "Misfits wiki",
+    "x": 962.2,
+    "y": 1847.3
   }
 ]

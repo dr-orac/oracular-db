@@ -567,15 +567,15 @@
  {
   "id": "unity-s-first-convert",
   "aliases": ["2102-unity-s-first-convert"],
-  "y": 2102,
-  "t": "Unity's first convert",
+  "y": 2103,
+  "t": "Unity's first super mutant",
   "th": [
    "unity"
   ],
   "loc": [
    "Mariposa"
   ],
-  "n": "Months into his own transformation, the newly-minded Richard Grey absorbs his first willing human subject into the vats."
+  "n": "After a winter of failed dippings of captured wanderers, none of whom survive the vats, the first viable super mutant walks out of Grey's Mariposa vats."
  },
  {
   "id": "the-brotherhood-claims-the-alamo",
@@ -1872,8 +1872,8 @@
  },
  {
   "id": "only-three-of-the-remnant-church-remain",
-  "aliases": ["2295-only-three-of-the-remnant-church-remain"],
-  "y": 2295,
+  "aliases": ["2295-only-three-of-the-remnant-church-remain", "2291-only-three-of-the-remnant-church-remain"],
+  "y": 2291,
   "t": "Only three of the Remnant Church remain",
   "th": [
    "unity"
@@ -1882,6 +1882,61 @@
    "The Cathedral"
   ],
   "n": "A century of attrition under Brotherhood patrols and NCR Rangers reduces some forty survivors to three."
+ },
+ {
+  "id": "the-church-s-final-collapse-orac-makes-his-way-to-wendover",
+  "aliases": ["2296-the-church-s-final-collapse-orac-makes-his-way-to-wendover", "2292-the-church-s-final-collapse-orac-makes-his-way-to-wendover"],
+  "y": 2292,
+  "t": "The Church's final collapse; Orac makes his way to Wendover",
+  "th": [
+   "unity"
+  ],
+  "loc": [
+   "Wendover"
+  ],
+  "n": "DATE INFERRED, placed directly after \"only three remain.\" What remains of the Remnant Church cannot hold; Orac arrives at the Bazaar with nothing left of the institution he led for over a century."
+ },
+ {
+  "id": "orac-busks-in-the-bazaar-funds-care-for-unity-veterans",
+  "aliases": ["2297-orac-busks-in-the-bazaar-funds-care-for-unity-veterans", "2293-orac-busks-in-the-bazaar-funds-care-for-unity-veterans"],
+  "y": 2293,
+  "t": "Orac busks in the Bazaar; funds care for Unity veterans",
+  "th": [
+   "unity",
+   "town"
+  ],
+  "loc": [
+   "Wendover"
+  ],
+  "n": "DATE INFERRED: he plays music in the town, the vault band-lover's one surviving pleasure, and raises money for the physically and mentally infirm veterans of the Army of the Unity. This is where the town's wary trust in him begins."
+ },
+ {
+  "id": "orac-earns-the-town-s-trust-becomes-wendover-s-guardian",
+  "aliases": ["2298-orac-earns-the-town-s-trust-becomes-wendover-s-guardian", "2294-orac-earns-the-town-s-trust-becomes-wendover-s-guardian"],
+  "y": 2294,
+  "t": "Orac earns the town's trust; becomes Wendover's guardian",
+  "th": [
+   "unity",
+   "town"
+  ],
+  "loc": [
+   "Wendover"
+  ],
+  "n": "DATE INFERRED, directly preceding \"the blue wizard comes to the Tree\" (2299). Orac becomes the town's impromptu guardian when Wendover comes under threat; the Tree of Life studies that follow begin from here, as a continuation of veteran medicine, not ideology arriving first."
+ },
+ {
+  "id": "the-blue-wizard-comes-to-the-tree",
+  "aliases": ["2299-the-blue-wizard-comes-to-the-tree", "2295-the-blue-wizard-comes-to-the-tree"],
+  "y": 2295,
+  "t": "The blue wizard comes to the Tree",
+  "th": [
+   "unity",
+   "tribe"
+  ],
+  "loc": [
+   "Wendover"
+  ],
+  "n": "A willing volunteer is absorbed into the Tree of Life, \"much like the master once absorbed beings into itself\", his face remains visible in the bark. (Identifying the tribe's unnamed \"strange blue wizard\" with Orac is this atlas's own reading, not the source doc's.)"
  },
  {
   "id": "lucy-leaves-vault-33",
@@ -1955,6 +2010,32 @@
    "Yosemite"
   ],
   "n": "San Fernando, Grand Canyon, Coronado and Yosemite elders meet to plot revolt; Commonwealth liaison Paladin Harkness arrives uninvited and ends it."
+ },
+ {
+  "id": "the-ncr-announces-the-utah-campaign",
+  "aliases": ["2296-the-ncr-announces-the-utah-campaign"],
+  "y": 2296,
+  "t": "The NCR announces the Utah Campaign",
+  "th": [
+   "ncr"
+  ],
+  "loc": [
+   "Bonneville Station"
+  ],
+  "n": "The NCR opens a campaign for Utah's salt. The Salt Dogs Battalion garrisons Bonneville Station on the Nevada side of the Wendover bridge, with a small Ranger detachment to secure the region for larger NCR involvement. The Rangers later found Ranger Station Juliet and return to abolition and law in the wastes (Misfits wiki, New California Republic Rangers)."
+ },
+ {
+  "id": "the-enclave-s-wendover-branch-wakes",
+  "aliases": ["2296-the-enclave-s-wendover-branch-wakes"],
+  "y": 2296,
+  "t": "The Enclave's Wendover branch wakes",
+  "th": [
+   "enclave"
+  ],
+  "loc": [
+   "Wendover"
+  ],
+  "n": "A secretive Enclave branch emerges in Wendover, begun by one member woken from 200 years of cryogenic stasis: the Reformer, Daniel Kukowski. It turns from open war to bio-engineering and energy physics, calls itself the United States Army, and recruits by propaganda (Misfits wiki, The Enclave). Its threat ends the 509th's isolation."
  },
  {
   "id": "the-resurgence",
@@ -2080,72 +2161,33 @@
   "n": "Season 1's closing beat becomes Season 2's premise: the show relocates its center of gravity from LA to the Mojave, and Robert House becomes a season-long antagonist, its first direct engagement with New Vegas's cast rather than by reference."
  },
  {
-  "id": "the-church-s-final-collapse-orac-makes-his-way-to-wendover",
-  "aliases": ["2296-the-church-s-final-collapse-orac-makes-his-way-to-wendover"],
+  "id": "orac-founds-the-gardeners",
+  "aliases": ["2300-orac-assembles-the-gardeners", "orac-assembles-the-gardeners", "2296-orac-founds-the-gardeners"],
   "y": 2296,
-  "t": "The Church's final collapse; Orac makes his way to Wendover",
+  "t": "Orac founds the Gardeners",
   "th": [
    "unity"
   ],
   "loc": [
    "Wendover"
   ],
-  "n": "DATE INFERRED, placed directly after \"only three remain.\" What remains of the Remnant Church cannot hold; Orac arrives at the Bazaar with nothing left of the institution he led for over a century."
+  "n": "Dr Orac Piyre, the Blue Wizard, founds the Gardeners (Children of the Garden), an order of healers and preachers with a chapel and counter at the Bazaar; super mutants and nightkin walk openly with them. In 2296 they hold no ground beyond the Bazaar chapel, by the settlement's permission, and the old church outside town (Gardeners draft, public level)."
  },
  {
-  "id": "orac-busks-in-the-bazaar-funds-care-for-unity-veterans",
-  "aliases": ["2297-orac-busks-in-the-bazaar-funds-care-for-unity-veterans"],
-  "y": 2297,
-  "t": "Orac busks in the Bazaar; funds care for Unity veterans",
+  "id": "lacerta-crowns-himself-caesar",
+  "aliases": ["2296-lacerta-crowns-himself-caesar"],
+  "y": 2296,
+  "t": "Lacerta crowns himself Caesar",
   "th": [
-   "unity",
-   "town"
+   "legion"
   ],
   "loc": [
-   "Wendover"
+   "The Fort",
+   "The Strip",
+   "Flagstaff",
+   "Phoenix"
   ],
-  "n": "DATE INFERRED: he plays music in the town, the vault band-lover's one surviving pleasure, and raises money for the physically and mentally infirm veterans of the Army of the Unity. This is where the town's wary trust in him begins."
- },
- {
-  "id": "orac-earns-the-town-s-trust-becomes-wendover-s-guardian",
-  "aliases": ["2298-orac-earns-the-town-s-trust-becomes-wendover-s-guardian"],
-  "y": 2298,
-  "t": "Orac earns the town's trust; becomes Wendover's guardian",
-  "th": [
-   "unity",
-   "town"
-  ],
-  "loc": [
-   "Wendover"
-  ],
-  "n": "DATE INFERRED, directly preceding \"the blue wizard comes to the Tree\" (2299). Orac becomes the town's impromptu guardian when Wendover comes under threat; the Tree of Life studies that follow begin from here, as a continuation of veteran medicine, not ideology arriving first."
- },
- {
-  "id": "the-blue-wizard-comes-to-the-tree",
-  "aliases": ["2299-the-blue-wizard-comes-to-the-tree"],
-  "y": 2299,
-  "t": "The blue wizard comes to the Tree",
-  "th": [
-   "unity",
-   "tribe"
-  ],
-  "loc": [
-   "Wendover"
-  ],
-  "n": "A willing volunteer is absorbed into the Tree of Life, \"much like the master once absorbed beings into itself\", his face remains visible in the bark. (Identifying the tribe's unnamed \"strange blue wizard\" with Orac is this atlas's own reading, not the source doc's.)"
- },
- {
-  "id": "orac-assembles-the-gardeners",
-  "aliases": ["2300-orac-assembles-the-gardeners"],
-  "y": 2300,
-  "t": "Orac assembles \"the Gardeners\"",
-  "th": [
-   "unity"
-  ],
-  "loc": [
-   "Wendover"
-  ],
-  "n": "Recruitment phase: Brotherhood scribes approached via a defected Head Scribe, the Tribe's guardianship negotiated, NCR floated as an alternative research partner."
+  "n": "Caesar named no successor. The Lacerta Legate destroys the record and takes the laurels, reuniting most of the split Legion behind him (Fallout season 2): the Arizona heartland (Flagstaff, Phoenix) and the Mojave camps answer to him. His Legion holds New Vegas and advances north along the road to Wendover (Misfits wiki, Caesar's Legion; the 2026-08-08 community lore thread). The Noxa Column at Wendover calls him a pretender. Owner: his side wears green, the Noxa Column red."
  },
  {
   "id": "the-tree-s-absorption-accelerates",
@@ -2162,16 +2204,16 @@
   "n": "What began as one willing volunteer becomes a pattern; Orac's private \"gentler, rooted alternative to the original Unity\" starts to look less gentle."
  },
  {
-  "id": "a-new-master-takes-root",
-  "aliases": ["2302-a-new-master-takes-root"],
+  "id": "the-unitree-takes-root",
+  "aliases": ["2302-a-new-master-takes-root", "a-new-master-takes-root"],
   "y": 2302,
-  "t": "A new Master takes root",
+  "t": "The Unitree takes root (planned)",
   "th": [
    "unity"
   ],
   "loc": [
-   "The New Master"
+   "The Unitree"
   ],
-  "n": "Near Wendover, in the present, a new Master rises, a tree that drinks the living into itself."
+  "n": "The Gardeners' planned launch event at the Bazaar, central south of Wendover. Planned, not yet run; it keeps a year past the 2296 present so the present map does not draw it until the owner runs it."
  }
 ]

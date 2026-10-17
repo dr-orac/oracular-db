@@ -3,9 +3,9 @@
  "source": "apps/misfits-react/web/public/data/atlas-events.json",
  "generated_by": "tools/classify-events.mjs",
  "counts": {
-  "founding": 9,
+  "founding": 10,
   "opening": 9,
-  "unclassified": 121,
+  "unclassified": 123,
   "construction": 6,
   "sealing": 8,
   "treaty": 2,
@@ -410,8 +410,8 @@
   "43": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
-   "year": 2102,
-   "title": "Unity's first convert",
+   "year": 2103,
+   "title": "Unity's first super mutant",
    "loc": [
     "Mariposa"
    ]
@@ -1305,13 +1305,49 @@
   "140": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
-   "year": 2295,
+   "year": 2291,
    "title": "Only three of the Remnant Church remain",
    "loc": [
     "The Cathedral"
    ]
   },
   "141": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2292,
+   "title": "The Church's final collapse; Orac makes his way to Wendover",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "142": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2293,
+   "title": "Orac busks in the Bazaar; funds care for Unity veterans",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "143": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2294,
+   "title": "Orac earns the town's trust; becomes Wendover's guardian",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "144": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2295,
+   "title": "The blue wizard comes to the Tree",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "145": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1321,7 +1357,7 @@
     "Filly"
    ]
   },
-  "142": {
+  "146": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1330,7 +1366,7 @@
     "Super Duper Mart"
    ]
   },
-  "143": {
+  "147": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1339,7 +1375,7 @@
     "Griffith Observatory"
    ]
   },
-  "144": {
+  "148": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1349,7 +1385,7 @@
     "Enclave Research Base"
    ]
   },
-  "145": {
+  "149": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1360,7 +1396,25 @@
     "Yosemite"
    ]
   },
-  "146": {
+  "150": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "The NCR announces the Utah Campaign",
+   "loc": [
+    "Bonneville Station"
+   ]
+  },
+  "151": {
+   "kind": "unclassified",
+   "basis": "the title does not state what kind of event this is",
+   "year": 2296,
+   "title": "The Enclave's Wendover branch wakes",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "152": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1369,7 +1423,7 @@
     "Kearny Airfield (Wendover Field)"
    ]
   },
-  "147": {
+  "153": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1379,7 +1433,7 @@
     "Bonneville Salt Flats"
    ]
   },
-  "148": {
+  "154": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1388,7 +1442,7 @@
     "Vault 4"
    ]
   },
-  "149": {
+  "155": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1397,7 +1451,7 @@
     "Enclave Research Base"
    ]
   },
-  "150": {
+  "156": {
    "kind": "discovery",
    "basis": "title matched the discovery rule: \"revealed\"",
    "year": 2296,
@@ -1406,7 +1460,7 @@
     "Griffith Observatory"
    ]
   },
-  "151": {
+  "157": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1415,7 +1469,7 @@
     "Ruins of Shady Sands"
    ]
   },
-  "152": {
+  "158": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1424,7 +1478,7 @@
     "Brotherhood Outpost"
    ]
   },
-  "153": {
+  "159": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1433,7 +1487,7 @@
     "Boston Airport"
    ]
   },
-  "154": {
+  "160": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
@@ -1442,52 +1496,28 @@
     "The Strip"
    ]
   },
-  "155": {
+  "161": {
+   "kind": "founding",
+   "basis": "title matched the founding rule: \"founds\"",
+   "year": 2296,
+   "title": "Orac founds the Gardeners",
+   "loc": [
+    "Wendover"
+   ]
+  },
+  "162": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2296,
-   "title": "The Church's final collapse; Orac makes his way to Wendover",
+   "title": "Lacerta crowns himself Caesar",
    "loc": [
-    "Wendover"
+    "The Fort",
+    "The Strip",
+    "Flagstaff",
+    "Phoenix"
    ]
   },
-  "156": {
-   "kind": "unclassified",
-   "basis": "the title does not state what kind of event this is",
-   "year": 2297,
-   "title": "Orac busks in the Bazaar; funds care for Unity veterans",
-   "loc": [
-    "Wendover"
-   ]
-  },
-  "157": {
-   "kind": "unclassified",
-   "basis": "the title does not state what kind of event this is",
-   "year": 2298,
-   "title": "Orac earns the town's trust; becomes Wendover's guardian",
-   "loc": [
-    "Wendover"
-   ]
-  },
-  "158": {
-   "kind": "unclassified",
-   "basis": "the title does not state what kind of event this is",
-   "year": 2299,
-   "title": "The blue wizard comes to the Tree",
-   "loc": [
-    "Wendover"
-   ]
-  },
-  "159": {
-   "kind": "unclassified",
-   "basis": "the title does not state what kind of event this is",
-   "year": 2300,
-   "title": "Orac assembles \"the Gardeners\"",
-   "loc": [
-    "Wendover"
-   ]
-  },
-  "160": {
+  "163": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2301,
@@ -1496,13 +1526,13 @@
     "Wendover"
    ]
   },
-  "161": {
+  "164": {
    "kind": "unclassified",
    "basis": "the title does not state what kind of event this is",
    "year": 2302,
-   "title": "A new Master takes root",
+   "title": "The Unitree takes root (planned)",
    "loc": [
-    "The New Master"
+    "The Unitree"
    ]
   }
  }
