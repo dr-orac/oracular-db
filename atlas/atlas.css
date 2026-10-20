@@ -300,7 +300,7 @@
 .atl .field[data-group="arroyo"]{color:#8fc96f}
 .atl .field[data-group="ciphers"]{color:#d67f9e}
 @media (prefers-reduced-motion: reduce){
-  .atl .fieldlayer{transition:none}
+  .atl .fieldlayer,.atl .terrlbl{transition:none}
 }
 /* the layer control sits under the source-filter chips, same corner idiom */
 .atl .layerctl{display:flex;gap:5px}
