@@ -47,6 +47,8 @@
      those themes, which is the same guard its --img-sat line already applies to
      images one line above, and which --ph was re-introducing. */
   --psat: var(--ph-sat, 1);
+  /* The atlas's micro-label size: the letter-spaced captions, chips and counters. */
+  --atl-type-micro: 9px;
   --bg2: var(--bg-panel, hsl(var(--p) 32% 6%));
   --bg3: var(--bg-panel-2, hsl(var(--p) 28% 9%));
   --btn-shadow: hsl(var(--p) calc(55% * var(--psat)) 16%);
@@ -160,7 +162,7 @@
 .atl .atl-btn{
   font:inherit;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
   color:var(--fg);background:var(--bg3);border:1px solid var(--fg-dim);
-  padding:5px 10px;cursor:pointer;border-radius:0;
+  padding:4px 10px;cursor:pointer;border-radius:0;
   box-shadow:3px 3px 0 var(--btn-shadow);
   text-shadow:none;
   transition:color .12s,border-color .12s;
@@ -303,7 +305,7 @@
   .atl .fieldlayer,.atl .terrlbl{transition:none}
 }
 /* the layer control sits under the source-filter chips, same corner idiom */
-.atl .layerctl{display:flex;gap:5px}
+.atl .layerctl{display:flex;gap:4px}
 
 /* pins: priority-tiered, collision-avoided labels (see atlas.mjs's "LABEL
    PLACEMENT"): priority 1 is always labelled, priority 2 labels from LOD1
@@ -385,7 +387,7 @@
 .atl .maplegend{
   position:absolute;left:12px;bottom:10px;z-index:4;
   display:grid;grid-template-columns:auto auto;gap:2px 14px;
-  font-size:9px;letter-spacing:1px;color:var(--fg-dim);
+  font-size:var(--atl-type-micro);letter-spacing:1px;color:var(--fg-dim);
   background:hsl(var(--p) 40% 4% / .75);border:1px solid var(--fg-faint);
   padding:7px 10px;
 }
@@ -415,11 +417,11 @@
    actually contains (see mount()'s FILTERS), so this is layout-only. */
 .atl .mapctl{
   position:absolute;left:12px;top:10px;z-index:4;
-  display:flex;flex-direction:column;align-items:flex-start;gap:5px;max-width:58%;
+  display:flex;flex-direction:column;align-items:flex-start;gap:4px;max-width:58%;
 }
-.atl .gamefilter{display:flex;flex-wrap:wrap;gap:5px}
+.atl .gamefilter{display:flex;flex-wrap:wrap;gap:4px}
 .atl .fchip{
-  font:inherit;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+  font:inherit;font-size:var(--atl-type-micro);letter-spacing:1px;text-transform:uppercase;cursor:pointer;
   color:var(--fg-dim);background:hsl(var(--p) 40% 4% / .75);border:1px solid var(--fg-faint);
   padding:3px 7px;border-radius:0;text-shadow:none;
 }
@@ -431,7 +433,7 @@
    speaks it through the shared #status live region). */
 .atl .scopenote{
   position:absolute;right:12px;top:10px;z-index:4;max-width:36%;
-  font-size:9px;letter-spacing:.5px;line-height:1.5;color:var(--fg-dim);
+  font-size:var(--atl-type-micro);letter-spacing:.5px;line-height:1.5;color:var(--fg-dim);
   background:hsl(var(--p) 40% 4% / .8);border:1px solid var(--fg-faint);
   padding:6px 9px;
 }
@@ -482,7 +484,7 @@
 }
 .atl .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .atl .atl-chip{
-  font:inherit;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;
+  font:inherit;font-size:var(--atl-type-micro);letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;
   color:var(--fg);background:none;border:1px solid var(--fg-faint);padding:3px 8px 3px 6px;
   display:inline-block;border-radius:0;margin:0;text-shadow:none;
 }
@@ -581,7 +583,7 @@
    floor has no headroom to spend) and the hue moves to a chip, the same
    idiom .atl-chip and .locsub already use. */
 .atl .lane-lbl{flex:0 0 var(--lbl);padding-right:12px;text-align:right;
-  font-size:9px;letter-spacing:1.5px;color:var(--fg-dim);
+  font-size:var(--atl-type-micro);letter-spacing:1.5px;color:var(--fg-dim);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   position:sticky;left:0;z-index:2;background:var(--bg2);line-height:21px}
 .atl .lane-lbl::after{content:"";display:inline-block;width:6px;height:6px;
@@ -613,9 +615,9 @@
 .atl .dot.in-cluster{visibility:hidden}
 .atl .tlcluster{
   position:absolute;top:50%;left:var(--x);transform:translate(-50%,-50%);
-  min-width:20px;height:17px;padding:0 5px;
+  min-width:20px;height:17px;padding:0 4px;
   display:flex;align-items:center;justify-content:center;
-  font:inherit;font-size:9px;letter-spacing:.5px;font-variant-numeric:tabular-nums;
+  font:inherit;font-size:var(--atl-type-micro);letter-spacing:.5px;font-variant-numeric:tabular-nums;
   color:var(--bg);background:var(--c);border:1px solid var(--fg-bright);
   cursor:pointer;box-shadow:0 0 6px var(--c);
 }
@@ -644,7 +646,7 @@
 .atl .axis{position:relative;height:20px;margin-left:var(--lbl);margin-right:6px;
   border-top:1px solid var(--fg-faint)}
 .atl .tick{position:absolute;top:0;transform:translateX(-50%);
-  font-size:9px;letter-spacing:1px;color:var(--fg-dim);padding-top:4px}
+  font-size:var(--atl-type-micro);letter-spacing:1px;color:var(--fg-dim);padding-top:4px}
 .atl .tick::before{content:"";position:absolute;left:50%;top:0;width:1px;height:3px;background:var(--fg-dim)}
 /* overview strip: full 2000-2308 span, always; a draggable window shows
    the track's current zoomed/panned range so it's never lost while zoomed
